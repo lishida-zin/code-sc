@@ -1079,6 +1079,23 @@
             </div>
           </div>
 
+          <!-- Phase 4: モダンJS・実践 -->
+          <div class="nav-accordion" data-accordion="js-phase4">
+            <div class="nav-accordion-header" onclick="toggleAccordion('js-phase4')">
+              <span>Phase 4: モダンJS</span>
+              <span class="nav-accordion-icon">▶</span>
+            </div>
+            <div class="nav-accordion-content">
+              <a href="#modern1" class="nav-link" data-section="modern1">24. 分割代入</a>
+              <a href="#modern2" class="nav-link" data-section="modern2">25. スプレッド構文</a>
+              <a href="#modern3" class="nav-link" data-section="modern3">26. テンプレートリテラル</a>
+              <a href="#modern4" class="nav-link" data-section="modern4">27. モジュール</a>
+              <a href="#modern5" class="nav-link" data-section="modern5">28. クラス</a>
+              <a href="#modern6" class="nav-link" data-section="modern6">29. クロージャ</a>
+              <a href="#modern7" class="nav-link" data-section="modern7">30. this</a>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -1125,7 +1142,7 @@
         <div class="dashboard-card">
           <h3>Level 2: JavaScript</h3>
           <div class="progress-container">
-            <progress id="level2-progress" value="0" max="23"></progress>
+            <progress id="level2-progress" value="0" max="30"></progress>
           </div>
           <p>Webページに「動き」を加える言語を読めるようになります。</p>
         </div>
@@ -9135,6 +9152,1837 @@ const data = await response.json();</code></pre>
       </button>
     </section>
 
+    <!-- ============================================
+         Phase 4: モダンJS・実践
+         ============================================ -->
+
+    <!-- modern1: 分割代入 -->
+    <section id="modern1">
+      <h1>24. 分割代入</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎯</span>
+          このレッスンで読めるようになること
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>オブジェクトの分割代入を読める</li>
+          <li>配列の分割代入を読める</li>
+          <li>デフォルト値、リネームを理解できる</li>
+        </ul>
+      </div>
+
+      <h2>分割代入とは？</h2>
+
+      <p>
+        <strong>分割代入</strong>（Destructuring）は、<br>
+        <strong>オブジェクトや配列から値を取り出す</strong>便利な書き方です。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">📦</span>
+          たとえ話：箱から中身を取り出す
+        </div>
+        <p style="margin:0;">
+          箱（オブジェクト）の中にある物を、<br>
+          <strong>一度に複数取り出して名前を付ける</strong>イメージです。
+        </p>
+      </div>
+
+      <h2>オブジェクトの分割代入</h2>
+
+      <div class="compare-box">
+        <div class="compare-item bad">
+          <div class="compare-label">❌ 従来の書き方</div>
+          <pre><code>const user = { name: '太郎', age: 25 };
+
+const name = user.name;
+const age = user.age;</code></pre>
+        </div>
+        <div class="compare-item good">
+          <div class="compare-label">⭕ 分割代入</div>
+          <pre><code>const user = { name: '太郎', age: 25 };
+
+const { name, age } = user;
+// name → '太郎'
+// age  → 25</code></pre>
+        </div>
+      </div>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          重要：変数名 = プロパティ名
+        </div>
+        <p style="margin:0;">
+          <code>{ name }</code>と書くと、<code>user.name</code>の値が<br>
+          <strong>同じ名前の変数</strong><code>name</code>に入ります。
+        </p>
+      </div>
+
+      <h2>配列の分割代入</h2>
+
+      <pre><code>const colors = ['赤', '青', '緑'];
+
+const [first, second, third] = colors;
+// first  → '赤'
+// second → '青'
+// third  → '緑'</code></pre>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          配列は順番で取り出す
+        </div>
+        <p style="margin:0;">
+          オブジェクト → <strong>名前</strong>で取り出す<br>
+          配列 → <strong>順番</strong>で取り出す
+        </p>
+      </div>
+
+      <h2>デフォルト値</h2>
+
+      <pre><code>const user = { name: '太郎' };
+
+// ageがない場合、20がデフォルト
+const { name, age = 20 } = user;
+// name → '太郎'
+// age  → 20（デフォルト値）</code></pre>
+
+      <h2>リネーム（別名を付ける）</h2>
+
+      <pre><code>const user = { name: '太郎', age: 25 };
+
+// nameをuserNameという変数に入れる
+const { name: userName, age: userAge } = user;
+// userName → '太郎'
+// userAge  → 25</code></pre>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          読み方に注意
+        </div>
+        <p style="margin:0;">
+          <code>name: userName</code>は<br>
+          「nameを<strong>userNameとして</strong>取り出す」という意味です。
+        </p>
+      </div>
+
+      <h2>ネスト（入れ子）の分割代入</h2>
+
+      <pre><code>const user = {
+  name: '太郎',
+  address: {
+    city: '東京',
+    zip: '100-0001'
+  }
+};
+
+// addressの中のcityを取り出す
+const { address: { city } } = user;
+// city → '東京'</code></pre>
+
+      <h2>関数の引数で使う</h2>
+
+      <p>
+        <strong>実務で最も多い使い方</strong>です。<br>
+        Reactなどで頻繁に見かけます。
+      </p>
+
+      <pre><code>// ❌ 従来の書き方
+function greet(user) {
+  console.log(`こんにちは、${user.name}さん`);
+}
+
+// ⭕ 分割代入を使う
+function greet({ name, age }) {
+  console.log(`こんにちは、${name}さん（${age}歳）`);
+}
+
+greet({ name: '太郎', age: 25 });
+// → 'こんにちは、太郎さん（25歳）'</code></pre>
+
+      <!-- クイズ1 -->
+      <div class="quiz" id="modern1-q1">
+        <p class="quiz-question">
+          <strong>クイズ1：</strong>この分割代入で<code>x</code>の値は？
+        </p>
+        <pre><code>const obj = { a: 1, b: 2, c: 3 };
+const { b: x } = obj;</code></pre>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="modern1-q1" value="1">
+            <span>1</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="modern1-q1" value="2">
+            <span>2</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern1-q1" value="3">
+            <span>undefined</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('modern1-q1', '2')">答え合わせ</button>
+        <div class="quiz-result"></div>
+        <div class="quiz-explanation" data-explanation="modern1-q1">
+          <strong>解説：</strong><code>{ b: x }</code>は「bをxとして取り出す」という意味。
+          <code>obj.b</code>の値2が<code>x</code>に入ります。
+        </div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="modern1-q2">
+        <p class="quiz-question">
+          <strong>クイズ2：</strong>配列の分割代入で<code>second</code>の値は？
+        </p>
+        <pre><code>const [first, second] = [10, 20, 30];</code></pre>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="modern1-q2" value="1">
+            <span>10</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="modern1-q2" value="2">
+            <span>20</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern1-q2" value="3">
+            <span>30</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('modern1-q2', '2')">答え合わせ</button>
+        <div class="quiz-result"></div>
+        <div class="quiz-explanation" data-explanation="modern1-q2">
+          <strong>解説：</strong>配列の分割代入は順番で取り出します。
+          <code>first</code>に10、<code>second</code>に20が入ります。
+          30は取り出されません。
+        </div>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>オブジェクト → <code>{ name }</code>で名前を指定して取り出す</li>
+          <li>配列 → <code>[a, b]</code>で順番に取り出す</li>
+          <li>デフォルト値 → <code>{ name = '名無し' }</code></li>
+          <li>リネーム → <code>{ name: userName }</code></li>
+          <li><strong>関数の引数で使うパターンが最も多い</strong></li>
+        </ul>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('modern1')">
+        <span class="icon">✓</span> 完了して次へ
+      </button>
+    </section>
+
+    <!-- modern2: スプレッド構文 -->
+    <section id="modern2">
+      <h1>25. スプレッド構文</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎯</span>
+          このレッスンで読めるようになること
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>スプレッド構文（...）の使い方を理解</li>
+          <li>配列・オブジェクトのコピーを読める</li>
+          <li>レスト構文との違いがわかる</li>
+        </ul>
+      </div>
+
+      <h2>スプレッド構文とは？</h2>
+
+      <p>
+        <strong>スプレッド構文</strong>（Spread Syntax）は、<br>
+        <strong>...</strong>（ドット3つ）で配列やオブジェクトを<strong>展開</strong>します。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🎴</span>
+          たとえ話：トランプを広げる
+        </div>
+        <p style="margin:0;">
+          トランプの束（配列）を<strong>テーブルに広げる</strong>イメージ。<br>
+          1枚ずつバラバラに展開されます。
+        </p>
+      </div>
+
+      <h2>配列のスプレッド</h2>
+
+      <pre><code>const arr1 = [1, 2, 3];
+const arr2 = [4, 5, 6];
+
+// 配列を結合
+const combined = [...arr1, ...arr2];
+// → [1, 2, 3, 4, 5, 6]
+
+// 配列をコピー
+const copy = [...arr1];
+// → [1, 2, 3]（別の配列）</code></pre>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          重要：シャローコピー（浅いコピー）
+        </div>
+        <p style="margin:0;">
+          スプレッド構文は<strong>1階層目</strong>だけコピーします。<br>
+          ネストしたオブジェクトは<strong>参照が共有</strong>されます。
+        </p>
+      </div>
+
+      <h2>オブジェクトのスプレッド</h2>
+
+      <pre><code>const user = { name: '太郎', age: 25 };
+
+// オブジェクトをコピー
+const copy = { ...user };
+// → { name: '太郎', age: 25 }（別のオブジェクト）
+
+// プロパティを追加・上書き
+const updated = { ...user, age: 26, city: '東京' };
+// → { name: '太郎', age: 26, city: '東京' }</code></pre>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          実務超重要：イミュータブル更新
+        </div>
+        <p style="margin:0;">
+          Reactなどで状態を更新するとき、<br>
+          <strong>元のオブジェクトを変更せず、新しいオブジェクトを作る</strong>のが鉄則。<br>
+          スプレッド構文はそのための必須テクニックです。
+        </p>
+      </div>
+
+      <div class="compare-box">
+        <div class="compare-item bad">
+          <div class="compare-label">❌ 直接変更（ミュータブル）</div>
+          <pre><code>const user = { name: '太郎', age: 25 };
+
+// 元のオブジェクトを変更
+user.age = 26;  // ← 危険！</code></pre>
+        </div>
+        <div class="compare-item good">
+          <div class="compare-label">⭕ 新しく作る（イミュータブル）</div>
+          <pre><code>const user = { name: '太郎', age: 25 };
+
+// 新しいオブジェクトを作成
+const updated = { ...user, age: 26 };</code></pre>
+        </div>
+      </div>
+
+      <h2>レスト構文（残り全部）</h2>
+
+      <p>
+        同じ<code>...</code>でも、<strong>残りをまとめる</strong>使い方もあります。
+      </p>
+
+      <pre><code>// 配列の残り
+const [first, ...rest] = [1, 2, 3, 4, 5];
+// first → 1
+// rest  → [2, 3, 4, 5]
+
+// オブジェクトの残り
+const { name, ...others } = { name: '太郎', age: 25, city: '東京' };
+// name   → '太郎'
+// others → { age: 25, city: '東京' }</code></pre>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          スプレッド vs レスト
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>名前</th>
+              <th>位置</th>
+              <th>意味</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>スプレッド</td>
+              <td>右辺</td>
+              <td>展開する</td>
+            </tr>
+            <tr>
+              <td>レスト</td>
+              <td>左辺</td>
+              <td>残りをまとめる</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>関数の引数で使う</h2>
+
+      <pre><code>function sum(a, b, c) {
+  return a + b + c;
+}
+
+const numbers = [1, 2, 3];
+
+// 配列を展開して引数に渡す
+sum(...numbers);  // → 6
+// sum(1, 2, 3) と同じ</code></pre>
+
+      <!-- クイズ1 -->
+      <div class="quiz" id="modern2-q1">
+        <p class="quiz-question">
+          <strong>クイズ1：</strong>この<code>result</code>の値は？
+        </p>
+        <pre><code>const a = [1, 2];
+const b = [3, 4];
+const result = [...a, ...b];</code></pre>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="modern2-q1" value="1">
+            <span>[[1, 2], [3, 4]]</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="modern2-q1" value="2">
+            <span>[1, 2, 3, 4]</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern2-q1" value="3">
+            <span>[1, 2, [3, 4]]</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('modern2-q1', '2')">答え合わせ</button>
+        <div class="quiz-result"></div>
+        <div class="quiz-explanation" data-explanation="modern2-q1">
+          <strong>解説：</strong>スプレッド構文は配列を展開するので、
+          <code>[...a, ...b]</code>は<code>[1, 2, 3, 4]</code>になります。
+        </div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="modern2-q2">
+        <p class="quiz-question">
+          <strong>クイズ2：</strong>この<code>updated</code>の<code>age</code>は？
+        </p>
+        <pre><code>const user = { name: '太郎', age: 25 };
+const updated = { ...user, age: 30 };</code></pre>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="modern2-q2" value="1">
+            <span>25</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="modern2-q2" value="2">
+            <span>30</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern2-q2" value="3">
+            <span>エラー</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('modern2-q2', '2')">答え合わせ</button>
+        <div class="quiz-result"></div>
+        <div class="quiz-explanation" data-explanation="modern2-q2">
+          <strong>解説：</strong>後から指定したプロパティで上書きされます。
+          <code>...user</code>で<code>age: 25</code>が入った後、
+          <code>age: 30</code>で上書きされます。
+        </div>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><code>...</code>で配列・オブジェクトを展開</li>
+          <li>コピー → <code>[...arr]</code> / <code>{ ...obj }</code></li>
+          <li>結合 → <code>[...arr1, ...arr2]</code></li>
+          <li>上書き → <code>{ ...obj, key: newValue }</code></li>
+          <li><strong>シャローコピー</strong>（1階層のみ）に注意</li>
+        </ul>
+      </div>
+
+      <h2>レビューで指摘すべきポイント</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          よくある問題
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>問題</th>
+              <th>指摘例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>オブジェクトの直接変更</td>
+              <td>「スプレッド構文でコピーしてから更新すべき」</td>
+            </tr>
+            <tr>
+              <td>ネストの深いオブジェクトでスプレッド</td>
+              <td>「シャローコピーなので内部オブジェクトは共有される」</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('modern2')">
+        <span class="icon">✓</span> 完了して次へ
+      </button>
+    </section>
+
+    <!-- modern3: テンプレートリテラル -->
+    <section id="modern3">
+      <h1>26. テンプレートリテラル</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎯</span>
+          このレッスンで読めるようになること
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>バッククォート文字列を読める</li>
+          <li>変数の埋め込み（${}）を理解</li>
+          <li>複数行文字列を読める</li>
+        </ul>
+      </div>
+
+      <h2>テンプレートリテラルとは？</h2>
+
+      <p>
+        <strong>テンプレートリテラル</strong>は、<br>
+        <strong>バッククォート（`）</strong>で囲む文字列です。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">⌨️</span>
+          バッククォートの位置
+        </div>
+        <p style="margin:0;">
+          キーボードの左上、<strong>Shiftキー + @</strong>で入力。<br>
+          シングルクォート（'）やダブルクォート（"）とは違います。
+        </p>
+      </div>
+
+      <h2>変数の埋め込み</h2>
+
+      <div class="compare-box">
+        <div class="compare-item bad">
+          <div class="compare-label">❌ 従来の書き方（文字列結合）</div>
+          <pre><code>const name = '太郎';
+const age = 25;
+
+const msg = 'こんにちは、' + name + 'さん（' + age + '歳）';</code></pre>
+        </div>
+        <div class="compare-item good">
+          <div class="compare-label">⭕ テンプレートリテラル</div>
+          <pre><code>const name = '太郎';
+const age = 25;
+
+const msg = `こんにちは、${name}さん（${age}歳）`;</code></pre>
+        </div>
+      </div>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          重要：${ }の中に式が書ける
+        </div>
+        <p style="margin:0;">
+          <code>${ }</code>の中には変数だけでなく、<br>
+          <strong>計算式や関数呼び出し</strong>も書けます。
+        </p>
+      </div>
+
+      <pre><code>const price = 1000;
+const tax = 0.1;
+
+// 計算式を埋め込み
+const msg = `税込価格: ${price * (1 + tax)}円`;
+// → '税込価格: 1100円'
+
+// 関数呼び出しを埋め込み
+const name = 'taro';
+const greeting = `こんにちは、${name.toUpperCase()}さん`;
+// → 'こんにちは、TAROさん'</code></pre>
+
+      <h2>複数行の文字列</h2>
+
+      <div class="compare-box">
+        <div class="compare-item bad">
+          <div class="compare-label">❌ 従来の書き方</div>
+          <pre><code>const html = '<div>\n' +
+  '  <p>Hello</p>\n' +
+  '</div>';</code></pre>
+        </div>
+        <div class="compare-item good">
+          <div class="compare-label">⭕ テンプレートリテラル</div>
+          <pre><code>const html = `<div>
+  <p>Hello</p>
+</div>`;</code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          改行がそのまま入る
+        </div>
+        <p style="margin:0;">
+          バッククォート内の改行は、<br>
+          <strong>そのまま改行文字</strong>として扱われます。
+        </p>
+      </div>
+
+      <h2>実務での使用例</h2>
+
+      <pre><code>// APIエンドポイントの構築
+const userId = 123;
+const url = `https://api.example.com/users/${userId}/profile`;
+
+// エラーメッセージ
+const error = new Error(`ユーザーID ${userId} が見つかりません`);
+
+// HTML生成（注意：XSS対策が必要）
+const items = ['りんご', 'みかん', 'ぶどう'];
+const html = `<ul>
+  ${items.map(item => `<li>${item}</li>`).join('')}
+</ul>`;</code></pre>
+
+      <!-- クイズ1 -->
+      <div class="quiz" id="modern3-q1">
+        <p class="quiz-question">
+          <strong>クイズ1：</strong>この<code>result</code>の値は？
+        </p>
+        <pre><code>const a = 5;
+const b = 3;
+const result = `${a} + ${b} = ${a + b}`;</code></pre>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="modern3-q1" value="1">
+            <span>'a + b = a + b'</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="modern3-q1" value="2">
+            <span>'5 + 3 = 8'</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern3-q1" value="3">
+            <span>'${a} + ${b} = ${a + b}'</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('modern3-q1', '2')">答え合わせ</button>
+        <div class="quiz-result"></div>
+        <div class="quiz-explanation" data-explanation="modern3-q1">
+          <strong>解説：</strong><code>${ }</code>内は評価されて値に置き換わります。
+          <code>${a}</code>は5、<code>${b}</code>は3、<code>${a + b}</code>は8になります。
+        </div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="modern3-q2">
+        <p class="quiz-question">
+          <strong>クイズ2：</strong>次のうち、正しいテンプレートリテラルは？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="modern3-q2" value="1">
+            <span>'Hello ${name}'</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern3-q2" value="2">
+            <span>"Hello ${name}"</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="modern3-q2" value="3">
+            <span>`Hello ${name}`</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('modern3-q2', '3')">答え合わせ</button>
+        <div class="quiz-result"></div>
+        <div class="quiz-explanation" data-explanation="modern3-q2">
+          <strong>解説：</strong>テンプレートリテラルは<strong>バッククォート（`）</strong>で囲みます。
+          シングルクォートやダブルクォートでは<code>${ }</code>が文字列として扱われます。
+        </div>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>バッククォート（`）で囲む</li>
+          <li><code>${変数}</code>で値を埋め込む</li>
+          <li><code>${式}</code>で計算結果を埋め込む</li>
+          <li>改行がそのまま入る</li>
+          <li><strong>文字列結合より読みやすい</strong></li>
+        </ul>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('modern3')">
+        <span class="icon">✓</span> 完了して次へ
+      </button>
+    </section>
+
+    <!-- modern4: モジュール -->
+    <section id="modern4">
+      <h1>27. モジュール</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎯</span>
+          このレッスンで読めるようになること
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>import/exportの基本を読める</li>
+          <li>名前付きエクスポートとデフォルトエクスポートの違い</li>
+          <li>モジュールの利点を理解</li>
+        </ul>
+      </div>
+
+      <h2>モジュールとは？</h2>
+
+      <p>
+        <strong>モジュール</strong>は、<br>
+        <strong>コードをファイル単位で分割・再利用する仕組み</strong>です。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🧩</span>
+          たとえ話：レゴブロック
+        </div>
+        <p style="margin:0;">
+          各モジュール = 1つのレゴブロック<br>
+          組み合わせて大きなものを作ります。
+        </p>
+      </div>
+
+      <h2>なぜモジュールが必要？</h2>
+
+      <div class="compare-box">
+        <div class="compare-item bad">
+          <div class="compare-label">❌ 1ファイルに全部</div>
+          <pre><code>// app.js（1000行）
+// ユーザー関連の関数
+// 商品関連の関数
+// カート関連の関数
+// 決済関連の関数
+// ...全部ここに</code></pre>
+        </div>
+        <div class="compare-item good">
+          <div class="compare-label">⭕ モジュール分割</div>
+          <pre><code>// user.js
+// product.js
+// cart.js
+// payment.js
+// app.js（メイン）</code></pre>
+        </div>
+      </div>
+
+      <h2>名前付きエクスポート</h2>
+
+      <pre><code>// math.js
+export const PI = 3.14159;
+
+export function add(a, b) {
+  return a + b;
+}
+
+export function multiply(a, b) {
+  return a * b;
+}</code></pre>
+
+      <pre><code>// 使う側（main.js）
+import { PI, add, multiply } from './math.js';
+
+console.log(PI);          // 3.14159
+console.log(add(1, 2));   // 3</code></pre>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          重要：{ }で囲む
+        </div>
+        <p style="margin:0;">
+          名前付きエクスポートをインポートするときは、<br>
+          <strong>{ }で囲む</strong>必要があります。<br>
+          名前は<strong>エクスポート時と同じ</strong>にします。
+        </p>
+      </div>
+
+      <h2>デフォルトエクスポート</h2>
+
+      <pre><code>// User.js
+export default class User {
+  constructor(name) {
+    this.name = name;
+  }
+}</code></pre>
+
+      <pre><code>// 使う側（main.js）
+import User from './User.js';  // { }不要
+
+const user = new User('太郎');</code></pre>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          名前付き vs デフォルト
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>種類</th>
+              <th>エクスポート</th>
+              <th>インポート</th>
+              <th>用途</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>名前付き</td>
+              <td><code>export const x</code></td>
+              <td><code>{ x }</code></td>
+              <td>複数の関数・定数</td>
+            </tr>
+            <tr>
+              <td>デフォルト</td>
+              <td><code>export default</code></td>
+              <td><code>X</code>（{ }なし）</td>
+              <td>メインのクラス・関数</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>混在パターン</h2>
+
+      <pre><code>// api.js
+export const API_URL = 'https://api.example.com';
+
+export function get(path) {
+  return fetch(API_URL + path);
+}
+
+export default {
+  get,
+  API_URL
+};</code></pre>
+
+      <pre><code>// 使う側
+// 方法1: 名前付きでインポート
+import { API_URL, get } from './api.js';
+
+// 方法2: デフォルトでインポート
+import api from './api.js';
+api.get('/users');</code></pre>
+
+      <h2>リネーム（as）</h2>
+
+      <pre><code>// 名前が衝突するときに使う
+import { add as mathAdd } from './math.js';
+import { add as stringAdd } from './string.js';
+
+mathAdd(1, 2);     // 数値の加算
+stringAdd('a', 'b'); // 文字列の結合</code></pre>
+
+      <h2>全部インポート（*）</h2>
+
+      <pre><code>// すべてを1つのオブジェクトとしてインポート
+import * as math from './math.js';
+
+math.PI;           // 3.14159
+math.add(1, 2);    // 3</code></pre>
+
+      <!-- クイズ1 -->
+      <div class="quiz" id="modern4-q1">
+        <p class="quiz-question">
+          <strong>クイズ1：</strong>名前付きエクスポートをインポートする正しい書き方は？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="modern4-q1" value="1">
+            <span>import { add } from './math.js'</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern4-q1" value="2">
+            <span>import add from './math.js'</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern4-q1" value="3">
+            <span>import (add) from './math.js'</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('modern4-q1', '1')">答え合わせ</button>
+        <div class="quiz-result"></div>
+        <div class="quiz-explanation" data-explanation="modern4-q1">
+          <strong>解説：</strong>名前付きエクスポートは<code>{ }</code>で囲みます。
+          <code>{ }</code>なしはデフォルトエクスポート用です。
+        </div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="modern4-q2">
+        <p class="quiz-question">
+          <strong>クイズ2：</strong>デフォルトエクスポートの特徴は？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="modern4-q2" value="1">
+            <span>1ファイルに複数作れる</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="modern4-q2" value="2">
+            <span>1ファイルに1つだけ</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern4-q2" value="3">
+            <span>必ず定義が必要</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('modern4-q2', '2')">答え合わせ</button>
+        <div class="quiz-result"></div>
+        <div class="quiz-explanation" data-explanation="modern4-q2">
+          <strong>解説：</strong>デフォルトエクスポートは1ファイルに<strong>1つだけ</strong>です。
+          名前付きエクスポートは複数作れます。
+        </div>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><code>export</code>で公開、<code>import</code>で読み込み</li>
+          <li>名前付き → <code>{ }</code>で囲む</li>
+          <li>デフォルト → <code>{ }</code>不要、1ファイル1つ</li>
+          <li><code>as</code>でリネーム可能</li>
+          <li><strong>コードを分割して保守性を上げる</strong></li>
+        </ul>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('modern4')">
+        <span class="icon">✓</span> 完了して次へ
+      </button>
+    </section>
+
+    <!-- modern5: クラス -->
+    <section id="modern5">
+      <h1>28. クラス</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎯</span>
+          このレッスンで読めるようになること
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>class構文の基本を読める</li>
+          <li>constructor, メソッドを理解</li>
+          <li>継承（extends）を読める</li>
+        </ul>
+      </div>
+
+      <h2>クラスとは？</h2>
+
+      <p>
+        <strong>クラス</strong>は、<br>
+        <strong>オブジェクトの設計図</strong>です。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🏭</span>
+          たとえ話：たい焼きの型
+        </div>
+        <p style="margin:0;">
+          <strong>クラス</strong> = たい焼きの型（設計図）<br>
+          <strong>インスタンス</strong> = 焼かれたたい焼き（実体）<br>
+          1つの型から何個でも作れます。
+        </p>
+      </div>
+
+      <h2>基本的なクラス</h2>
+
+      <pre><code>class User {
+  // コンストラクタ（初期化処理）
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  // メソッド
+  greet() {
+    return `こんにちは、${this.name}です`;
+  }
+}
+
+// インスタンス作成
+const taro = new User('太郎', 25);
+console.log(taro.name);    // '太郎'
+console.log(taro.greet()); // 'こんにちは、太郎です'</code></pre>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          重要：newを付ける
+        </div>
+        <p style="margin:0;">
+          クラスからインスタンスを作るときは、<br>
+          必ず<strong>new</strong>を付けます。<br>
+          付けないとエラーになります。
+        </p>
+      </div>
+
+      <h2>継承（extends）</h2>
+
+      <pre><code>// 親クラス
+class Animal {
+  constructor(name) {
+    this.name = name;
+  }
+
+  speak() {
+    return `${this.name}が鳴きます`;
+  }
+}
+
+// 子クラス（Animalを継承）
+class Dog extends Animal {
+  speak() {
+    return `${this.name}がワンワン！`;
+  }
+}
+
+const dog = new Dog('ポチ');
+console.log(dog.speak()); // 'ポチがワンワン！'</code></pre>
+
+      <h2>super（親を呼ぶ）</h2>
+
+      <pre><code>class Animal {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
+class Dog extends Animal {
+  constructor(name, breed) {
+    super(name);  // 親のconstructorを呼ぶ（必須！）
+    this.breed = breed;
+  }
+}
+
+const dog = new Dog('ポチ', '柴犬');
+console.log(dog.name);  // 'ポチ'
+console.log(dog.breed); // '柴犬'</code></pre>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          superは最初に呼ぶ
+        </div>
+        <p style="margin:0;">
+          子クラスのconstructorで<code>this</code>を使う前に、<br>
+          <strong>必ずsuper()を呼ぶ</strong>必要があります。
+        </p>
+      </div>
+
+      <h2>getter / setter</h2>
+
+      <pre><code>class Circle {
+  constructor(radius) {
+    this._radius = radius;
+  }
+
+  // getter（取得時に呼ばれる）
+  get area() {
+    return Math.PI * this._radius ** 2;
+  }
+
+  // setter（設定時に呼ばれる）
+  set radius(value) {
+    if (value <= 0) throw new Error('正の値を指定');
+    this._radius = value;
+  }
+}
+
+const circle = new Circle(5);
+console.log(circle.area);   // 78.54...（関数呼び出しなし）
+circle.radius = 10;         // setterが呼ばれる</code></pre>
+
+      <h2>static（静的メソッド）</h2>
+
+      <pre><code>class MathUtil {
+  static add(a, b) {
+    return a + b;
+  }
+}
+
+// インスタンス不要で呼べる
+MathUtil.add(1, 2);  // 3</code></pre>
+
+      <!-- クイズ1 -->
+      <div class="quiz" id="modern5-q1">
+        <p class="quiz-question">
+          <strong>クイズ1：</strong>クラスからインスタンスを作る正しい方法は？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="modern5-q1" value="1">
+            <span>User('太郎')</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="modern5-q1" value="2">
+            <span>new User('太郎')</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern5-q1" value="3">
+            <span>User.create('太郎')</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('modern5-q1', '2')">答え合わせ</button>
+        <div class="quiz-result"></div>
+        <div class="quiz-explanation" data-explanation="modern5-q1">
+          <strong>解説：</strong>クラスからインスタンスを作るには<strong>new</strong>が必要です。
+          newなしで呼ぶとエラーになります。
+        </div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="modern5-q2">
+        <p class="quiz-question">
+          <strong>クイズ2：</strong>子クラスのconstructorで必ず最初にすることは？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="modern5-q2" value="1">
+            <span>this.name = name;</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="modern5-q2" value="2">
+            <span>super()を呼ぶ</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern5-q2" value="3">
+            <span>return this;</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('modern5-q2', '2')">答え合わせ</button>
+        <div class="quiz-result"></div>
+        <div class="quiz-explanation" data-explanation="modern5-q2">
+          <strong>解説：</strong>extendsで継承したクラスのconstructorでは、
+          <code>this</code>を使う前に<strong>super()</strong>で親のconstructorを呼ぶ必要があります。
+        </div>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><code>class</code>はオブジェクトの設計図</li>
+          <li><code>constructor</code>で初期化</li>
+          <li><code>new</code>でインスタンス作成</li>
+          <li><code>extends</code>で継承、<code>super</code>で親を呼ぶ</li>
+          <li><code>static</code>はインスタンス不要で呼べる</li>
+        </ul>
+      </div>
+
+      <h2>レビューで指摘すべきポイント</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          よくある問題
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>問題</th>
+              <th>指摘例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>不要なクラス</td>
+              <td>「1つのメソッドなら関数で十分」</td>
+            </tr>
+            <tr>
+              <td>super()忘れ</td>
+              <td>「継承時はsuper()が必須」</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('modern5')">
+        <span class="icon">✓</span> 完了して次へ
+      </button>
+    </section>
+
+    <!-- modern6: クロージャ -->
+    <section id="modern6">
+      <h1>29. クロージャ</h1>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">⭐</span>
+          面接頻出トピック
+        </div>
+        <p style="margin:0;">
+          クロージャは<strong>技術面接でほぼ確実に聞かれます</strong>。<br>
+          しっかり理解しておきましょう。
+        </p>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎯</span>
+          このレッスンで読めるようになること
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>クロージャの概念を理解</li>
+          <li>クロージャを使ったコードを読める</li>
+          <li>実用的なパターンを把握</li>
+        </ul>
+      </div>
+
+      <h2>クロージャとは？</h2>
+
+      <p>
+        <strong>クロージャ</strong>は、<br>
+        <strong>外側の変数を「覚えている」関数</strong>です。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🎒</span>
+          たとえ話：リュックを背負った関数
+        </div>
+        <p style="margin:0;">
+          関数が「リュック」を背負っていて、<br>
+          その中に<strong>外側の変数を持ち歩いている</strong>イメージ。<br>
+          関数がどこに行っても、リュックの中身（変数）にアクセスできます。
+        </p>
+      </div>
+
+      <h2>基本的な例</h2>
+
+      <pre><code>function createCounter() {
+  let count = 0;  // この変数が「閉じ込められる」
+
+  return function() {
+    count++;
+    return count;
+  };
+}
+
+const counter = createCounter();
+
+console.log(counter());  // 1
+console.log(counter());  // 2
+console.log(counter());  // 3</code></pre>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          重要ポイント
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><code>count</code>は<code>createCounter</code>の中で定義</li>
+          <li><code>createCounter()</code>の実行が終わっても<code>count</code>は消えない</li>
+          <li>返された関数が<code>count</code>を「覚えている」</li>
+        </ul>
+      </div>
+
+      <h2>なぜ変数が消えない？</h2>
+
+      <pre><code>// 通常、関数が終わると変数は消える
+function normal() {
+  let x = 10;
+  return x;
+}
+// normal()が終わると、xは消える
+
+// クロージャでは消えない
+function createClosure() {
+  let x = 10;
+  return function() {
+    return x;  // xを参照している
+  };
+}
+const fn = createClosure();
+// createClosure()は終わったが、
+// fn()がxを参照しているので、xは残る</code></pre>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          ガベージコレクション
+        </div>
+        <p style="margin:0;">
+          JavaScriptは「誰も使わない変数」を自動で削除します。<br>
+          クロージャで参照されている変数は<strong>「使われている」ので消えない</strong>のです。
+        </p>
+      </div>
+
+      <h2>実用例1：プライベート変数</h2>
+
+      <pre><code>function createBankAccount(initial) {
+  let balance = initial;  // 外からアクセス不可
+
+  return {
+    deposit(amount) {
+      balance += amount;
+      return balance;
+    },
+    withdraw(amount) {
+      if (amount > balance) {
+        throw new Error('残高不足');
+      }
+      balance -= amount;
+      return balance;
+    },
+    getBalance() {
+      return balance;
+    }
+  };
+}
+
+const account = createBankAccount(1000);
+account.deposit(500);   // 1500
+account.withdraw(200);  // 1300
+account.balance;        // undefined（アクセスできない！）</code></pre>
+
+      <h2>実用例2：カリー化</h2>
+
+      <pre><code>function multiply(a) {
+  return function(b) {
+    return a * b;
+  };
+}
+
+const double = multiply(2);
+const triple = multiply(3);
+
+double(5);  // 10
+triple(5);  // 15</code></pre>
+
+      <h2>面接でよく聞かれる問題</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          有名な罠：ループとクロージャ
+        </div>
+        <p>このコードの出力は？</p>
+        <pre><code>// ❌ よくある間違い（var使用）
+for (var i = 0; i < 3; i++) {
+  setTimeout(function() {
+    console.log(i);
+  }, 1000);
+}
+// 期待: 0, 1, 2
+// 実際: 3, 3, 3（！）</code></pre>
+        <p style="margin:0;">
+          <strong>理由：</strong>varはブロックスコープを持たないため、<br>
+          すべてのsetTimeoutが<strong>同じi（最終値3）</strong>を参照します。
+        </p>
+      </div>
+
+      <pre><code>// ⭕ 解決策1: letを使う（推奨）
+for (let i = 0; i < 3; i++) {
+  setTimeout(function() {
+    console.log(i);
+  }, 1000);
+}
+// 出力: 0, 1, 2
+
+// ⭕ 解決策2: クロージャで値を閉じ込める
+for (var i = 0; i < 3; i++) {
+  (function(j) {
+    setTimeout(function() {
+      console.log(j);
+    }, 1000);
+  })(i);
+}
+// 出力: 0, 1, 2</code></pre>
+
+      <!-- クイズ1 -->
+      <div class="quiz" id="modern6-q1">
+        <p class="quiz-question">
+          <strong>クイズ1：</strong>クロージャとは何ですか？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="modern6-q1" value="1">
+            <span>関数を閉じる構文</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="modern6-q1" value="2">
+            <span>外側の変数を覚えている関数</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern6-q1" value="3">
+            <span>関数を終了させる仕組み</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('modern6-q1', '2')">答え合わせ</button>
+        <div class="quiz-result"></div>
+        <div class="quiz-explanation" data-explanation="modern6-q1">
+          <strong>解説：</strong>クロージャは、関数が定義された時点の<strong>スコープ（変数環境）を覚えている</strong>関数です。
+          外側の関数が終了しても、その変数にアクセスできます。
+        </div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="modern6-q2">
+        <p class="quiz-question">
+          <strong>クイズ2：</strong>この<code>counter()</code>を3回呼んだ結果は？
+        </p>
+        <pre><code>function createCounter() {
+  let count = 0;
+  return function() {
+    return ++count;
+  };
+}
+const counter = createCounter();
+counter(); counter(); counter();</code></pre>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="modern6-q2" value="1">
+            <span>1, 1, 1</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern6-q2" value="2">
+            <span>0, 0, 0</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="modern6-q2" value="3">
+            <span>1, 2, 3</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('modern6-q2', '3')">答え合わせ</button>
+        <div class="quiz-result"></div>
+        <div class="quiz-explanation" data-explanation="modern6-q2">
+          <strong>解説：</strong>クロージャにより<code>count</code>が保持されます。
+          呼び出すたびにインクリメントされるので、1, 2, 3となります。
+        </div>
+      </div>
+
+      <!-- クイズ3（ループの罠） -->
+      <div class="quiz" id="modern6-q3">
+        <p class="quiz-question">
+          <strong>クイズ3：</strong>このコードの出力は？（1秒後）
+        </p>
+        <pre><code>for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 1000);
+}</code></pre>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="modern6-q3" value="1">
+            <span>0, 1, 2</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="modern6-q3" value="2">
+            <span>3, 3, 3</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern6-q3" value="3">
+            <span>undefined, undefined, undefined</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('modern6-q3', '2')">答え合わせ</button>
+        <div class="quiz-result"></div>
+        <div class="quiz-explanation" data-explanation="modern6-q3">
+          <strong>解説：</strong><code>var</code>はブロックスコープを持たないため、
+          すべてのsetTimeoutが<strong>同じi</strong>を参照します。
+          ループ終了時にiは3なので、3が3回出力されます。
+          <strong>letを使えば0, 1, 2になります。</strong>
+        </div>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>クロージャ = 外側の変数を覚えている関数</li>
+          <li>プライベート変数の実現に使える</li>
+          <li>ループ + <code>var</code> + 非同期は罠（<code>let</code>を使う）</li>
+          <li><strong>面接頻出</strong>：必ず理解しておく</li>
+        </ul>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('modern6')">
+        <span class="icon">✓</span> 完了して次へ
+      </button>
+    </section>
+
+    <!-- modern7: this -->
+    <section id="modern7">
+      <h1>30. this</h1>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">⭐</span>
+          面接頻出 & つまずきポイント
+        </div>
+        <p style="margin:0;">
+          <code>this</code>はJavaScript最大の難関の一つ。<br>
+          <strong>「何を指すかは呼び出し方で変わる」</strong>のがポイントです。
+        </p>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎯</span>
+          このレッスンで読めるようになること
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>thisの基本ルールを理解</li>
+          <li>呼び出し方による違いを把握</li>
+          <li>アロー関数のthisを理解</li>
+        </ul>
+      </div>
+
+      <h2>thisとは？</h2>
+
+      <p>
+        <strong>this</strong>は、<br>
+        <strong>「今、この関数を呼び出しているもの」</strong>を指します。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">👆</span>
+          たとえ話：「私」という代名詞
+        </div>
+        <p style="margin:0;">
+          「私」が誰を指すかは、<strong>誰が話しているか</strong>で変わる。<br>
+          thisも同じで、<strong>どう呼び出されたか</strong>で変わります。
+        </p>
+      </div>
+
+      <h2>thisの4つのパターン</h2>
+
+      <h3>1. メソッド呼び出し</h3>
+
+      <pre><code>const user = {
+  name: '太郎',
+  greet() {
+    console.log(this.name);  // this = user
+  }
+};
+
+user.greet();  // '太郎'
+// user.greet() → thisはuser</code></pre>
+
+      <h3>2. 関数呼び出し（注意！）</h3>
+
+      <pre><code>function showThis() {
+  console.log(this);
+}
+
+showThis();  // window（ブラウザ）/ undefined（strictモード）
+// 誰も呼んでいないので、thisはグローバルか未定義</code></pre>
+
+      <h3>3. コンストラクタ（new）</h3>
+
+      <pre><code>class User {
+  constructor(name) {
+    this.name = name;  // this = 新しいインスタンス
+  }
+}
+
+const taro = new User('太郎');
+// new User() → thisは新しく作られるオブジェクト</code></pre>
+
+      <h3>4. アロー関数（重要！）</h3>
+
+      <pre><code>const user = {
+  name: '太郎',
+  greet: () => {
+    console.log(this.name);  // undefined！
+  }
+};
+
+user.greet();
+// アロー関数は「自分のthis」を持たない
+// 外側のthis（この場合window）を使う</code></pre>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          超重要：アロー関数のthis
+        </div>
+        <p style="margin:0;">
+          アロー関数は<strong>thisを持たない</strong>。<br>
+          <strong>定義された場所の外側のthis</strong>をそのまま使います。
+        </p>
+      </div>
+
+      <h2>よくある問題：thisが消える</h2>
+
+      <div class="compare-box">
+        <div class="compare-item bad">
+          <div class="compare-label">❌ thisが消える</div>
+          <pre><code>const user = {
+  name: '太郎',
+  greet() {
+    setTimeout(function() {
+      console.log(this.name);
+    }, 1000);
+  }
+};
+
+user.greet();
+// undefined（thisがwindowになる）</code></pre>
+        </div>
+        <div class="compare-item good">
+          <div class="compare-label">⭕ アロー関数で解決</div>
+          <pre><code>const user = {
+  name: '太郎',
+  greet() {
+    setTimeout(() => {
+      console.log(this.name);
+    }, 1000);
+  }
+};
+
+user.greet();
+// '太郎'（アロー関数は外側のthisを使う）</code></pre>
+        </div>
+      </div>
+
+      <h2>thisを固定する方法</h2>
+
+      <pre><code>const user = {
+  name: '太郎',
+  greet() {
+    console.log(this.name);
+  }
+};
+
+// bind: thisを固定した新しい関数を返す
+const boundGreet = user.greet.bind(user);
+boundGreet();  // '太郎'
+
+// call: thisを指定して即実行
+user.greet.call({ name: '花子' });  // '花子'
+
+// apply: callと同じだが、引数を配列で渡す
+user.greet.apply({ name: '花子' });  // '花子'</code></pre>
+
+      <h2>まとめ表</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>呼び出し方</th>
+            <th>thisの値</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>obj.method()</code></td>
+            <td>obj</td>
+          </tr>
+          <tr>
+            <td><code>func()</code></td>
+            <td>window / undefined</td>
+          </tr>
+          <tr>
+            <td><code>new Class()</code></td>
+            <td>新しいインスタンス</td>
+          </tr>
+          <tr>
+            <td><code>() => {}</code></td>
+            <td>外側のthis（固定）</td>
+          </tr>
+          <tr>
+            <td><code>func.bind(x)()</code></td>
+            <td>x（固定）</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- クイズ1 -->
+      <div class="quiz" id="modern7-q1">
+        <p class="quiz-question">
+          <strong>クイズ1：</strong>アロー関数のthisの特徴は？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="modern7-q1" value="1">
+            <span>呼び出し方でthisが変わる</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="modern7-q1" value="2">
+            <span>外側のthisをそのまま使う</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern7-q1" value="3">
+            <span>thisは常にundefined</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('modern7-q1', '2')">答え合わせ</button>
+        <div class="quiz-result"></div>
+        <div class="quiz-explanation" data-explanation="modern7-q1">
+          <strong>解説：</strong>アロー関数は<strong>自分のthisを持たない</strong>ため、
+          定義された場所の<strong>外側のthis</strong>をそのまま使います。
+          これを「レキシカルthis」と呼びます。
+        </div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="modern7-q2">
+        <p class="quiz-question">
+          <strong>クイズ2：</strong>この<code>user.greet()</code>の出力は？
+        </p>
+        <pre><code>const user = {
+  name: '太郎',
+  greet() {
+    console.log(this.name);
+  }
+};
+user.greet();</code></pre>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="modern7-q2" value="1">
+            <span>'太郎'</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern7-q2" value="2">
+            <span>undefined</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern7-q2" value="3">
+            <span>エラー</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('modern7-q2', '1')">答え合わせ</button>
+        <div class="quiz-result"></div>
+        <div class="quiz-explanation" data-explanation="modern7-q2">
+          <strong>解説：</strong><code>user.greet()</code>のように
+          <strong>オブジェクト.メソッド()</strong>で呼ぶと、
+          thisはそのオブジェクト（user）を指します。
+        </div>
+      </div>
+
+      <!-- クイズ3 -->
+      <div class="quiz" id="modern7-q3">
+        <p class="quiz-question">
+          <strong>クイズ3：</strong>このコードの出力は？
+        </p>
+        <pre><code>const user = {
+  name: '太郎',
+  greet: () => {
+    console.log(this.name);
+  }
+};
+user.greet();</code></pre>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="modern7-q3" value="1">
+            <span>'太郎'</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="modern7-q3" value="2">
+            <span>undefined</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="modern7-q3" value="3">
+            <span>エラー</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('modern7-q3', '2')">答え合わせ</button>
+        <div class="quiz-result"></div>
+        <div class="quiz-explanation" data-explanation="modern7-q3">
+          <strong>解説：</strong>アロー関数は<strong>外側のthis</strong>を使います。
+          このコードではオブジェクトリテラルの外側はグローバルスコープなので、
+          thisはwindow（strictモードではundefined）を指し、
+          <code>this.name</code>はundefinedになります。
+        </div>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><code>this</code>は呼び出し方で変わる</li>
+          <li><code>obj.method()</code> → thisはobj</li>
+          <li>アロー関数 → 外側のthisを使う（固定）</li>
+          <li>コールバックでは<strong>アロー関数が便利</strong></li>
+          <li><code>bind/call/apply</code>でthisを固定できる</li>
+        </ul>
+      </div>
+
+      <h2>レビューで指摘すべきポイント</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          よくある問題
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>問題</th>
+              <th>指摘例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>コールバックでthisが消える</td>
+              <td>「アロー関数に変更すべき」</td>
+            </tr>
+            <tr>
+              <td>メソッドにアロー関数</td>
+              <td>「オブジェクトメソッドは通常関数で」</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card card-success" style="margin-top:40px;">
+        <div class="card-title">
+          <span class="icon">🎉</span>
+          Phase 4 & Level 2 完了！
+        </div>
+        <p style="margin:0;">
+          モダンJavaScriptの重要構文をマスターしました！<br>
+          これで<strong>Level 2: JavaScript</strong>は終了です。
+        </p>
+        <p style="margin:0;">
+          次の<strong>Level 3: React/TypeScript</strong>では、<br>
+          これらの知識を活かしてUIライブラリを学びます。
+        </p>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('modern7')">
+        <span class="icon">✓</span> 完了してナビに戻る
+      </button>
+    </section>
+
   </main>
 
   <script>
@@ -9367,7 +11215,8 @@ const data = await response.json();</code></pre>
       // Level 2
       const level2Sections = ['js1','js2','js3','js4','js5','js6','js7','js8','js9',
                               'dom1','dom2','dom3','dom4','dom5','dom6',
-                              'async1','async2','async3','async4','async5','async6','async7','async8'];
+                              'async1','async2','async3','async4','async5','async6','async7','async8',
+                              'modern1','modern2','modern3','modern4','modern5','modern6','modern7'];
       const level2Count = completed.filter(s => level2Sections.includes(s)).length;
       const level2Progress = document.getElementById('level2-progress');
       if (level2Progress) level2Progress.value = level2Count;
