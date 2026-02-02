@@ -5509,6 +5509,60 @@ for (let i = 0; i < 5; i++) {
         <div class="quiz-feedback"></div>
       </div>
 
+      <div class="quiz" id="quiz-js5-2">
+        <div class="quiz-question">
+          <strong>問題2：</strong>以下のswitch文の出力結果は？
+          <pre><code>switch (1) {
+  case 1:
+    console.log("A");
+  case 2:
+    console.log("B");
+    break;
+  default:
+    console.log("C");
+}</code></pre>
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-js5-2" value="a">
+            A のみ
+          </label>
+          <label class="quiz-option" data-correct="true" data-explanation="case 1でbreakがないため、case 2も続けて実行されます（フォールスルー）。case 2のbreakでswitch文を抜けるのでdefaultは実行されません。break忘れはよくあるバグです。">
+            <input type="radio" name="quiz-js5-2" value="b">
+            A, B
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-js5-2" value="c">
+            A, B, C
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-js5-2')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" id="quiz-js5-3">
+        <div class="quiz-question">
+          <strong>問題3：</strong>このコードの問題点は？
+          <pre><code>const result = a > 0 ? a < 10 ? "小" : "大" : "負";</code></pre>
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-js5-3" value="a">
+            エラーになる
+          </label>
+          <label class="quiz-option" data-correct="true" data-explanation="三項演算子のネストは可読性が著しく低下します。if-else文に書き換えるか、意図が明確になるよう括弧を追加すべきです。レビューで見かけたら必ず指摘しましょう。">
+            <input type="radio" name="quiz-js5-3" value="b">
+            読みにくい（ネストは避けるべき）
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-js5-3" value="c">
+            問題はない
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-js5-3')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
       <button class="complete-btn" onclick="completeSection('js5')">
         <span class="icon">✓</span>
         このページを完了
@@ -5666,6 +5720,55 @@ console.log(multiply(5));</code></pre>
           </label>
         </div>
         <button class="quiz-submit" onclick="checkQuiz('quiz-js6')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" id="quiz-js6-2">
+        <div class="quiz-question">
+          <strong>問題2：</strong>以下のコードの結果は？
+          <pre><code>greet();  // ← 定義より先に呼び出し
+
+function greet() {
+  console.log("Hello");
+}</code></pre>
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="true" data-explanation="関数宣言は「巻き上げ（ホイスティング）」されるため、定義より前に呼び出せます。ただしアロー関数や関数式はホイスティングされないので注意！">
+            <input type="radio" name="quiz-js6-2" value="a">
+            "Hello" が出力される
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-js6-2" value="b">
+            エラーになる
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-js6-2" value="c">
+            undefined
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-js6-2')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" id="quiz-js6-3">
+        <div class="quiz-question">
+          <strong>問題3：</strong>アロー関数と通常関数の違いで正しいのは？
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-js6-3" value="a">
+            アロー関数はreturnが書けない
+          </label>
+          <label class="quiz-option" data-correct="true" data-explanation="アロー関数は自身のthisを持たず、定義時の外側のthisを引き継ぎます。これはコールバック関数で特に重要な違いです。thisの挙動はLevel 2 Phase 4で詳しく学びます。">
+            <input type="radio" name="quiz-js6-3" value="b">
+            アロー関数は自身のthisを持たない
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-js6-3" value="c">
+            アロー関数は引数を取れない
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-js6-3')">回答する</button>
         <div class="quiz-feedback"></div>
       </div>
 
@@ -6906,6 +7009,58 @@ form.addEventListener('submit', (event) => {
         <div class="quiz-feedback"></div>
       </div>
 
+      <div class="quiz" id="quiz-dom4-2">
+        <div class="quiz-question">
+          <strong>問題2：</strong>以下のコードで、ボタンをクリックしたとき<code>e.target</code>と<code>e.currentTarget</code>は同じ？
+          <pre><code>&lt;div id="parent"&gt;
+  &lt;button id="child"&gt;クリック&lt;/button&gt;
+&lt;/div&gt;
+
+parent.addEventListener('click', (e) => {
+  console.log(e.target.id);
+  console.log(e.currentTarget.id);
+});</code></pre>
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom4-2" value="a">
+            両方とも "child"
+          </label>
+          <label class="quiz-option" data-correct="true" data-explanation="targetは「実際にクリックされた要素」（child）、currentTargetは「イベントリスナーが登録された要素」（parent）です。イベント委譲で必須の知識です。">
+            <input type="radio" name="quiz-dom4-2" value="b">
+            target: "child", currentTarget: "parent"
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom4-2" value="c">
+            両方とも "parent"
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-dom4-2')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" id="quiz-dom4-3">
+        <div class="quiz-question">
+          <strong>問題3：</strong>レビューで指摘すべきコードは？
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="true" data-explanation="onclick属性はHTMLとJSが混在し、保守性が低下します。addEventListenerを使うと、複数のイベントハンドラを登録でき、HTMLとJSを分離できます。">
+            <input type="radio" name="quiz-dom4-3" value="a">
+            &lt;button onclick="handleClick()"&gt;
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom4-3" value="b">
+            button.addEventListener('click', handleClick)
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom4-3" value="c">
+            両方問題ない
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-dom4-3')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
       <button class="complete-btn" onclick="completeSection('dom4')">
         <span class="icon">✓</span>
         このページを完了
@@ -7630,6 +7785,33 @@ getUser(userId, (error, user) => {
         </div>
       </div>
 
+      <!-- クイズ2 -->
+      <div class="quiz" id="async2-q2">
+        <p class="quiz-question">
+          <strong>クイズ2：</strong>コールバック地獄を解消する現代的な方法は？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async2-q2" value="1">
+            <span>関数を分割する</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async2-q2" value="2">
+            <span>Promise / async-await を使う</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async2-q2" value="3">
+            <span>コメントを増やす</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async2-q2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async2-q2">
+          <strong>解説：</strong>Promise/async-awaitを使うと、ネストなしで
+          非同期処理を順番に書けます。これがES2015以降の標準的な方法です。
+        </div>
+      </div>
+
       <div class="card card-info">
         <div class="card-title">
           <span class="icon">📝</span>
@@ -8041,6 +8223,34 @@ Promise.resolve()
           returnがないと戻り値はundefinedになります。
           <code>x => x + 5</code>（括弧なし）なら25ですが、
           <code>x => { x + 5; }</code>（波括弧あり）は明示的なreturnが必要です。
+        </div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="async4-q2">
+        <p class="quiz-question">
+          <strong>クイズ2：</strong>Promiseチェーンでエラーが発生した場合、どこまで伝播する？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async4-q2" value="1">
+            <span>次の.then()で止まる</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async4-q2" value="2">
+            <span>.catch()まで伝播する</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async4-q2" value="3">
+            <span>すべての.then()を実行してから.catch()</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async4-q2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async4-q2">
+          <strong>解説：</strong>Promiseチェーンでエラーが発生すると、
+          途中の.then()をスキップして.catch()まで一気に伝播します。
+          これがPromiseのエラー伝播の仕組みです。
         </div>
       </div>
 
@@ -8599,6 +8809,39 @@ async function getData() {
         </div>
       </div>
 
+      <!-- クイズ2 -->
+      <div class="quiz" id="async6-q2">
+        <p class="quiz-question">
+          <strong>クイズ2：</strong>このコードの問題点は？
+          <pre><code>try {
+  const data = await fetchData();
+} catch (error) {
+  // 何もしない
+}</code></pre>
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async6-q2" value="1">
+            <span>問題なし</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async6-q2" value="2">
+            <span>エラーを握り潰している</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async6-q2" value="3">
+            <span>finallyがない</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async6-q2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async6-q2">
+          <strong>解説：</strong>catchで何もしないと、エラーが「握り潰され」ます。
+          バグの原因がわからなくなるため、最低限console.errorでログ出力するか、
+          必要に応じてthrowで再スローすべきです。
+        </div>
+      </div>
+
       <h2>レビューで指摘すべきポイント</h2>
 
       <div class="card card-danger">
@@ -8841,6 +9084,34 @@ async function checkout() {
           <strong>解説：</strong>3つの処理に依存関係がないなら、
           直列に待つ必要はありません。Promise.allで並列実行すれば、
           3倍速くなる可能性があります。パフォーマンスレビューで必ず指摘すべき点です。
+        </div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="async7-q2">
+        <p class="quiz-question">
+          <strong>クイズ2：</strong>Promise.all と Promise.allSettled の違いは？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async7-q2" value="1">
+            <span>違いはない</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async7-q2" value="2">
+            <span>allは1つでも失敗すると即エラー、allSettledは全結果を返す</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async7-q2" value="3">
+            <span>allSettledは速い</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async7-q2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async7-q2">
+          <strong>解説：</strong>Promise.allは1つでも失敗すると即座にrejectされます。
+          一方、Promise.allSettledは全Promiseが完了するのを待ち、
+          成功・失敗の両方を含む結果配列を返します。用途に応じて使い分けましょう。
         </div>
       </div>
 
