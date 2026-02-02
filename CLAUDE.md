@@ -16,6 +16,10 @@ Claudeは以下の役割を担う：
 2. ユーザーの回答ごとにコミット&プッシュする
 3. 飽きないよう、実践的で面白い例を使う
 4. 小さなステップで着実に進める
+5. **Phase完了時、HTMLで教科書を作成** → textbook/ に保存
+   - 学んだ内容・問題・ポイントをまとめる
+   - 学習しながら自分だけのオリジナル教科書を育てる
+   - HTML/CSSの実践にもなる
 
 ## Git運用
 - ブランチ: `lesson/*` で各レッスンを管理
@@ -56,5 +60,10 @@ code-sc/
 │   ├── 01-html-intro/
 │   ├── 02-tags-basic/
 │   └── ...
-└── exercises/         # 演習問題
+├── exercises/         # 演習問題
+└── textbook/          # オリジナル教科書（HTML）
+    ├── index.html     # 目次
+    ├── phase1-html.html
+    ├── phase2-css.html
+    └── ...
 ```
