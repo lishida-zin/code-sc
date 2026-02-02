@@ -73,6 +73,67 @@
     .nav-link.active { background: var(--accent); color: white; }
     .nav-link.completed::before { content: "✓ "; color: var(--success); }
 
+    .nav-title {
+      color: var(--accent);
+      text-decoration: none;
+      display: block;
+    }
+    .nav-title:hover { color: var(--accent-light); }
+
+    /* ダッシュボード */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .dashboard-card {
+      background: var(--bg-card);
+      border-radius: 8px;
+      padding: 1.5rem;
+      border-left: 4px solid var(--accent);
+    }
+    .dashboard-card h3 {
+      margin: 0 0 1rem;
+      color: var(--accent-light);
+    }
+    .dashboard-card-disabled {
+      opacity: 0.5;
+      border-left-color: var(--border);
+    }
+    .dashboard-phase {
+      margin: 0.75rem 0;
+    }
+    .dashboard-phase span {
+      font-size: 0.9rem;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+    .progress-bar-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .progress-bar-container progress {
+      flex: 1;
+      height: 16px;
+    }
+    .progress-bar-container span {
+      font-size: 0.8rem;
+      min-width: 50px;
+      text-align: right;
+    }
+    .dashboard-total {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 1.1rem;
+    }
+    .dashboard-total span {
+      color: var(--success);
+      font-size: 1.3rem;
+    }
+
     /* メインコンテンツ */
     main {
       margin-left: var(--nav-width);
@@ -284,23 +345,7 @@
 </head>
 <body>
   <nav id="main-nav">
-    <h1>いしだ式エンジニアへの道</h1>
-
-    <div class="progress-container">
-      <small>Phase 1 (HTML)</small>
-      <progress id="phase1-progress" value="0" max="7"></progress>
-      <small id="phase1-text">0 / 7</small>
-    </div>
-    <div class="progress-container">
-      <small>Phase 2 (CSS)</small>
-      <progress id="phase2-progress" value="0" max="7"></progress>
-      <small id="phase2-text">0 / 7</small>
-    </div>
-    <div class="progress-container">
-      <small>Phase 3 (実践)</small>
-      <progress id="phase3-progress" value="0" max="4"></progress>
-      <small id="phase3-text">0 / 4</small>
-    </div>
+    <h1><a href="#dashboard" class="nav-title" data-section="dashboard">いしだ式エンジニアへの道</a></h1>
 
     <div class="nav-section">
       <details class="nav-level" open>
@@ -359,8 +404,81 @@
   </nav>
 
   <main>
+    <!-- ダッシュボード -->
+    <section id="dashboard" class="active">
+      <h1>学習ダッシュボード</h1>
+
+      <div class="card card-info">
+        <strong>目標</strong>
+        <p>実務シニアレベルのコードレビュー力を身につけ、AIが書いたコードの問題を見抜けるようになる。</p>
+      </div>
+
+      <h2>全体進捗</h2>
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h3>Level 1: HTML/CSS</h3>
+          <div class="dashboard-progress">
+            <div class="dashboard-phase">
+              <span>Phase 1: HTML基礎</span>
+              <div class="progress-bar-container">
+                <progress id="phase1-progress" value="0" max="7"></progress>
+                <span id="phase1-text">0 / 7</span>
+              </div>
+            </div>
+            <div class="dashboard-phase">
+              <span>Phase 2: CSS基礎</span>
+              <div class="progress-bar-container">
+                <progress id="phase2-progress" value="0" max="7"></progress>
+                <span id="phase2-text">0 / 7</span>
+              </div>
+            </div>
+            <div class="dashboard-phase">
+              <span>Phase 3: 実践</span>
+              <div class="progress-bar-container">
+                <progress id="phase3-progress" value="0" max="4"></progress>
+                <span id="phase3-text">0 / 4</span>
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-total">
+            <strong>Level 1 進捗: </strong><span id="level1-total">0%</span>
+          </div>
+        </div>
+
+        <div class="dashboard-card dashboard-card-disabled">
+          <h3>Level 2: JavaScript</h3>
+          <p style="opacity:0.6;">準備中...</p>
+        </div>
+
+        <div class="dashboard-card dashboard-card-disabled">
+          <h3>Level 3: React/TypeScript</h3>
+          <p style="opacity:0.6;">準備中...</p>
+        </div>
+      </div>
+
+      <h2>学習の進め方</h2>
+      <div class="card">
+        <ol>
+          <li><strong>順番に学習</strong>：左のメニューから順に進めてください</li>
+          <li><strong>クイズで確認</strong>：各セクション末のクイズで理解度を確認</li>
+          <li><strong>完了ボタン</strong>：理解したら「完了」ボタンで次へ</li>
+          <li><strong>復習</strong>：Phase完了時に復習クイズでまとめ</li>
+        </ol>
+      </div>
+
+      <h2>学習記録</h2>
+      <div class="card" id="study-log">
+        <p>完了したセクションがここに表示されます。</p>
+      </div>
+
+      <h2>次のステップ</h2>
+      <div class="card card-warning" id="next-step">
+        <p>左のメニューから <strong>「1. HTMLとは？」</strong> を開始してください。</p>
+      </div>
+    </section>
+
     <!-- セクション1: HTMLとは？ -->
-    <section id="sec1" class="active">
+    <section id="sec1">
       <h1>1. HTMLとは？</h1>
 
       <div class="card card-info">
@@ -3267,15 +3385,37 @@ section:has(:empty) {
   <script>
     // 状態管理
     const state = {
-      currentSection: 'sec1',
+      currentSection: 'dashboard',
       completed: JSON.parse(localStorage.getItem('ishida-completed') || '[]'),
       quizResults: JSON.parse(localStorage.getItem('ishida-quiz') || '{}')
+    };
+
+    // セクション名のマッピング
+    const sectionNames = {
+      'sec1': '1. HTMLとは？',
+      'sec2': '2. タグの基本構造',
+      'sec3': '3. 文書構造',
+      'sec4': '4. テキスト要素',
+      'sec5': '5. リンク・画像',
+      'sec6': '6. リスト',
+      'sec7': '7. セマンティックHTML',
+      'css1': '8. CSSとは？',
+      'css2': '9. セレクタ',
+      'css3': '10. 色・背景',
+      'css4': '11. テキスト装飾',
+      'css5': '12. ボックスモデル',
+      'css6': '13. Flexbox',
+      'css7': '14. Grid',
+      'prac1': '15. DevTools入門',
+      'prac2': '16. 実サイト読解',
+      'prac3': '17. UIパターン認識',
+      'prac4': '18. 2026年CSS新機能'
     };
 
     // セクション切り替え
     function showSection(id) {
       document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      document.querySelectorAll('.nav-link, .nav-title').forEach(l => l.classList.remove('active'));
 
       const section = document.getElementById(id);
       const link = document.querySelector(`[data-section="${id}"]`);
@@ -3288,7 +3428,7 @@ section:has(:empty) {
     }
 
     // ナビゲーションクリック
-    document.querySelectorAll('.nav-link').forEach(link => {
+    document.querySelectorAll('.nav-link, .nav-title').forEach(link => {
       link.addEventListener('click', e => {
         e.preventDefault();
         showSection(link.dataset.section);
@@ -3345,7 +3485,7 @@ section:has(:empty) {
       }
       updateProgress();
 
-      const nextSections = ['sec1','sec2','sec3','sec4','sec5','sec6','sec7','review','glossary','css1','css2','css3','css4','css5','css6','css7','css-review','css-glossary','prac1','prac2','prac3','prac4','prac-review','prac-glossary'];
+      const nextSections = ['dashboard','sec1','sec2','sec3','sec4','sec5','sec6','sec7','review','glossary','css1','css2','css3','css4','css5','css6','css7','css-review','css-glossary','prac1','prac2','prac3','prac4','prac-review','prac-glossary'];
       const currentIndex = nextSections.indexOf(sectionId);
       if (currentIndex < nextSections.length - 1) {
         showSection(nextSections[currentIndex + 1]);
@@ -3369,11 +3509,39 @@ section:has(:empty) {
       document.getElementById('phase3-progress').value = phase3Completed;
       document.getElementById('phase3-text').textContent = `${phase3Completed} / 4`;
 
+      // Level 1 合計進捗
+      const level1Total = phase1Completed + phase2Completed + phase3Completed;
+      const level1Max = 7 + 7 + 4;
+      const level1Percent = Math.round((level1Total / level1Max) * 100);
+      document.getElementById('level1-total').textContent = `${level1Percent}%`;
+
+      // ナビゲーションの完了マーク
       document.querySelectorAll('.nav-link').forEach(link => {
         if (state.completed.includes(link.dataset.section)) {
           link.classList.add('completed');
         }
       });
+
+      // 学習記録の更新
+      const studyLog = document.getElementById('study-log');
+      if (state.completed.length > 0) {
+        const completedNames = state.completed
+          .filter(s => sectionNames[s])
+          .map(s => `<span class="badge badge-success" style="margin:2px;">${sectionNames[s]}</span>`)
+          .join(' ');
+        studyLog.innerHTML = `<p><strong>完了済み（${state.completed.filter(s => sectionNames[s]).length}セクション）:</strong></p>${completedNames}`;
+      }
+
+      // 次のステップの更新
+      const nextStep = document.getElementById('next-step');
+      const allSections = ['sec1','sec2','sec3','sec4','sec5','sec6','sec7','css1','css2','css3','css4','css5','css6','css7','prac1','prac2','prac3','prac4'];
+      const nextSection = allSections.find(s => !state.completed.includes(s));
+      if (nextSection && sectionNames[nextSection]) {
+        nextStep.innerHTML = `<p>次は <a href="#${nextSection}" onclick="showSection('${nextSection}'); return false;"><strong>「${sectionNames[nextSection]}」</strong></a> を学習しましょう。</p>`;
+      } else if (level1Percent === 100) {
+        nextStep.innerHTML = `<p style="color:var(--success);"><strong>Level 1 完了！おめでとうございます！</strong><br>Level 2: JavaScript は準備中です。</p>`;
+        nextStep.className = 'card card-success';
+      }
     }
 
     // 初期化
