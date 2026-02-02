@@ -4545,7 +4545,7 @@ color: rgb(255, 0, 0);</code></pre>
             <input type="radio" name="quiz-js1" value="a">
             HTML=動き、CSS=構造、JavaScript=見た目
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="HTML（HyperText Markup Language）は文書の構造、CSS（Cascading Style Sheets）は見た目、JavaScript（JS）は動的な振る舞いを担当します。3つが協力してWebページを作ります。">
             <input type="radio" name="quiz-js1" value="b">
             HTML=構造、CSS=見た目、JavaScript=動き
           </label>
@@ -4767,7 +4767,7 @@ const for = 1;      // エラー</code></pre>
             <input type="radio" name="quiz-js2-1" value="b">
             let
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="「まずconstで書き、再代入が必要ならletに変える」がベストプラクティスです。constを基本にすることで、意図しない再代入によるバグを防げます。">
             <input type="radio" name="quiz-js2-1" value="c">
             const
           </label>
@@ -4788,7 +4788,7 @@ var count = 1;</code></pre>
             <input type="radio" name="quiz-js2-2" value="a">
             問題なし。正常に動作する。
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="varは同じ名前で再宣言してもエラーになりません。これは危険です。let/constなら再宣言するとエラーになり、バグに気づけます。varは2015年以降使う理由がありません。">
             <input type="radio" name="quiz-js2-2" value="b">
             varは再宣言を許すため、意図しない上書きに気づけない
           </label>
@@ -4817,7 +4817,7 @@ console.log(y);</code></pre>
             <input type="radio" name="quiz-js2-3" value="a">
             10, 20 と表示される
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="varは「関数スコープ」なのでブロック{}の外に漏れます。letは「ブロックスコープ」なので{}内にとどまります。これがvarを避けるべき最大の理由です。">
             <input type="radio" name="quiz-js2-3" value="b">
             10 と表示され、yでエラーになる
           </label>
@@ -4996,9 +4996,9 @@ Array.isArray({});   // false</code></pre>
       <!-- クイズ -->
       <h2>確認クイズ</h2>
 
-      <div class="quiz" id="quiz-js3">
+      <div class="quiz" id="quiz-js3-1">
         <div class="quiz-question">
-          <strong>問題：</strong>以下のコードの結果として正しいものは？
+          <strong>問題1：</strong>以下のコードの結果として正しいものは？
           <pre><code>const original = { count: 1 };
 const copy = original;
 copy.count = 100;
@@ -5006,19 +5006,44 @@ console.log(original.count);</code></pre>
         </div>
         <div class="quiz-options">
           <label class="quiz-option" data-correct="false">
-            <input type="radio" name="quiz-js3" value="a">
+            <input type="radio" name="quiz-js3-1" value="a">
             1（originalは変わらない）
           </label>
-          <label class="quiz-option" data-correct="true">
-            <input type="radio" name="quiz-js3" value="b">
+          <label class="quiz-option" data-correct="true" data-explanation="オブジェクトは「参照型」です。copy = original は値のコピーではなく、同じオブジェクトを指す「参照」のコピーです。そのため、copyを変更するとoriginalも変わります。独立したコピーを作るには {...original} を使います。">
+            <input type="radio" name="quiz-js3-1" value="b">
             100（参照がコピーされるため、同じオブジェクトを指す）
           </label>
           <label class="quiz-option" data-correct="false">
-            <input type="radio" name="quiz-js3" value="c">
+            <input type="radio" name="quiz-js3-1" value="c">
             エラーになる
           </label>
         </div>
-        <button class="quiz-submit" onclick="checkQuiz('quiz-js3')">回答する</button>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-js3-1')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- 追加問題：typeof -->
+      <div class="quiz" id="quiz-js3-2" style="margin-top:32px;">
+        <div class="quiz-question">
+          <strong>問題2：</strong>以下のコードの出力結果は？
+          <pre><code>console.log(typeof null);
+console.log(typeof [1, 2, 3]);</code></pre>
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-js3-2" value="a">
+            "null" と "array"
+          </label>
+          <label class="quiz-option" data-correct="true" data-explanation="typeof null が &quot;object&quot; を返すのはJavaScriptの有名な歴史的バグです。また、配列も typeof では &quot;object&quot; になります。配列かどうかを調べるには Array.isArray() を使いましょう。">
+            <input type="radio" name="quiz-js3-2" value="b">
+            "object" と "object"
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-js3-2" value="c">
+            "undefined" と "object"
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-js3-2')">回答する</button>
         <div class="quiz-feedback"></div>
       </div>
 
@@ -5184,7 +5209,7 @@ const result = isReady && execute();  // isReadyがtrueの時だけ実行</code>
             <input type="radio" name="quiz-js4-1" value="a">
             両方 true
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="==は型変換してから比較するので、数値1と文字列&quot;1&quot;は等しいと判定します。===は型も含めて比較するので、型が違う時点でfalseです。常に===を使いましょう。">
             <input type="radio" name="quiz-js4-1" value="b">
             == は true、=== は false
           </label>
@@ -5208,7 +5233,7 @@ const result = isReady && execute();  // isReadyがtrueの時だけ実行</code>
             <input type="radio" name="quiz-js4-2" value="a">
             8
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="文字列 + 数値 は「文字列の結合」になります。&quot;5&quot; + 3 = &quot;53&quot;。数値として計算したい場合は Number(&quot;5&quot;) + 3 や parseInt(&quot;5&quot;) + 3 を使います。">
             <input type="radio" name="quiz-js4-2" value="b">
             "53"
           </label>
@@ -5238,7 +5263,7 @@ const result = isReady && execute();  // isReadyがtrueの時だけ実行</code>
             <input type="radio" name="quiz-js4-3" value="b">
             showError()の呼び出し方がおかしい
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="== null は null と undefined の両方を検出しますが、これは暗黙の型変換に依存しています。明示的に userInput === null || userInput === undefined と書くか、== を許容するルールをチームで決めておく必要があります。基本は===推奨です。">
             <input type="radio" name="quiz-js4-3" value="c">
             == ではなく === を使うべき
           </label>
@@ -5436,7 +5461,7 @@ for (let i = 0; i < 5; i++) {
             <input type="radio" name="quiz-js5" value="a">
             0, 1, 2
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="continueは「今回のループをスキップして次へ進む」命令です。i=1のときcontinueが実行され、console.logは実行されずに次のi=2へ進みます。breakとの違いも覚えておきましょう（breakはループ自体を終了）。">
             <input type="radio" name="quiz-js5" value="b">
             0, 2
           </label>
@@ -5596,7 +5621,7 @@ console.log(multiply(5));</code></pre>
             <input type="radio" name="quiz-js6" value="a">
             NaN
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="b = 2 はデフォルト引数です。bに値が渡されなかった場合、自動的に2が使われます。multiply(5)はa=5, b=2となり、5 * 2 = 10です。デフォルト引数はES6から追加された便利な機能です。">
             <input type="radio" name="quiz-js6" value="b">
             10
           </label>
@@ -5737,9 +5762,9 @@ test();</code></pre>
       <!-- クイズ -->
       <h2>確認クイズ</h2>
 
-      <div class="quiz" id="quiz-js7">
+      <div class="quiz" id="quiz-js7-1">
         <div class="quiz-question">
-          <strong>問題：</strong>以下のコードの結果は？
+          <strong>問題1：</strong>以下のコードの結果は？
           <pre><code>let x = 1;
 
 function test() {
@@ -5752,19 +5777,46 @@ console.log(x);</code></pre>
         </div>
         <div class="quiz-options">
           <label class="quiz-option" data-correct="false">
-            <input type="radio" name="quiz-js7" value="a">
+            <input type="radio" name="quiz-js7-1" value="a">
             2, 2
           </label>
-          <label class="quiz-option" data-correct="true">
-            <input type="radio" name="quiz-js7" value="b">
+          <label class="quiz-option" data-correct="true" data-explanation="関数内の let x = 2 は関数スコープ内の「別の変数」です。外側の x = 1 とは独立しています。これを「シャドーイング」と呼びます。同じ名前でも、スコープが違えば別の変数です。">
+            <input type="radio" name="quiz-js7-1" value="b">
             2, 1
           </label>
           <label class="quiz-option" data-correct="false">
-            <input type="radio" name="quiz-js7" value="c">
+            <input type="radio" name="quiz-js7-1" value="c">
             1, 1
           </label>
         </div>
-        <button class="quiz-submit" onclick="checkQuiz('quiz-js7')">回答する</button>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-js7-1')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- 追加問題：varのスコープ漏れ -->
+      <div class="quiz" id="quiz-js7-2" style="margin-top:32px;">
+        <div class="quiz-question">
+          <strong>問題2：</strong>以下のコードで、console.logの結果はどうなりますか？
+          <pre><code>for (var i = 0; i < 3; i++) {
+  // 処理
+}
+console.log(i);</code></pre>
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-js7-2" value="a">
+            エラーになる（iはforブロック内でしか使えない）
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-js7-2" value="b">
+            2（最後にインクリメントされる前の値）
+          </label>
+          <label class="quiz-option" data-correct="true" data-explanation="varはブロックスコープを持たないため、forループの外でもiにアクセスできます。ループ終了後、i=3になっています。letを使えばエラーになり、スコープ漏れを防げます。これがvarを使わない大きな理由の1つです。">
+            <input type="radio" name="quiz-js7-2" value="c">
+            3（ループ終了後の値がそのまま残る）
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-js7-2')">回答する</button>
         <div class="quiz-feedback"></div>
       </div>
 
@@ -5908,9 +5960,9 @@ numbers.includes(3);            // true</code></pre>
       <!-- クイズ -->
       <h2>確認クイズ</h2>
 
-      <div class="quiz" id="quiz-js8">
+      <div class="quiz" id="quiz-js8-1">
         <div class="quiz-question">
-          <strong>問題：</strong>以下のコードの結果は？
+          <strong>問題1：</strong>以下のコードの結果は？
           <pre><code>const nums = [1, 2, 3, 4, 5];
 const result = nums
   .filter(n => n % 2 === 1)
@@ -5919,19 +5971,45 @@ console.log(result);</code></pre>
         </div>
         <div class="quiz-options">
           <label class="quiz-option" data-correct="false">
-            <input type="radio" name="quiz-js8" value="a">
+            <input type="radio" name="quiz-js8-1" value="a">
             [10, 20, 30, 40, 50]
           </label>
-          <label class="quiz-option" data-correct="true">
-            <input type="radio" name="quiz-js8" value="b">
+          <label class="quiz-option" data-correct="true" data-explanation="メソッドチェーンは上から順に読みます。① filter で奇数 [1,3,5] を抽出 → ② map で各要素を10倍 [10,30,50]。処理の順番を追うことがコードを読む力です。">
+            <input type="radio" name="quiz-js8-1" value="b">
             [10, 30, 50]
           </label>
           <label class="quiz-option" data-correct="false">
-            <input type="radio" name="quiz-js8" value="c">
+            <input type="radio" name="quiz-js8-1" value="c">
             [1, 3, 5]
           </label>
         </div>
-        <button class="quiz-submit" onclick="checkQuiz('quiz-js8')">回答する</button>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-js8-1')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- 追加問題：reduce -->
+      <div class="quiz" id="quiz-js8-2" style="margin-top:32px;">
+        <div class="quiz-question">
+          <strong>問題2：</strong>以下のコードの結果は？
+          <pre><code>const prices = [100, 200, 300];
+const total = prices.reduce((acc, price) => acc + price, 50);
+console.log(total);</code></pre>
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-js8-2" value="a">
+            600（100+200+300）
+          </label>
+          <label class="quiz-option" data-correct="true" data-explanation="reduceの第2引数（ここでは50）が初期値です。計算の流れ: 50→150→350→650。初期値を見落とすと間違えやすいポイントです。初期値がないと配列の最初の要素が初期値になります。">
+            <input type="radio" name="quiz-js8-2" value="b">
+            650（初期値50 + 100+200+300）
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-js8-2" value="c">
+            50（初期値だけが返される）
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-js8-2')">回答する</button>
         <div class="quiz-feedback"></div>
       </div>
 
@@ -6121,7 +6199,7 @@ console.log(config.db?.host);</code></pre>
             <input type="radio" name="quiz-js9" value="a">
             "https://example.com" と エラー
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="オプショナルチェーン（?.）は、途中がnullやundefinedでもエラーにならずundefinedを返します。config.dbは存在しないのでconfig.db?.hostはundefinedになります。APIレスポンスなど、存在が不確実なデータに便利です。">
             <input type="radio" name="quiz-js9" value="b">
             "https://example.com" と undefined
           </label>
@@ -6265,7 +6343,7 @@ console.log(document.title);</code></pre>
             <input type="radio" name="quiz-dom1" value="a">
             DOMはHTMLファイルそのもののこと
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="DOM（Document Object Model）はHTMLをJavaScriptで操作できるようにした「オブジェクトのツリー構造」です。HTMLファイル自体ではなく、ブラウザが解析して作ったメモリ上の表現です。">
             <input type="radio" name="quiz-dom1" value="b">
             DOMはブラウザがHTMLを解析して作るツリー構造
           </label>
@@ -6403,7 +6481,7 @@ element?.textContent;  // undefined（エラーにならない）</code></pre>
             <input type="radio" name="quiz-dom2" value="a">
             document.querySelector('.item')
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="querySelectorは「最初の1つだけ」、querySelectorAllは「すべて」を取得します。複数要素を扱う場合はquerySelectorAllを使い、forEachでループ処理できます。">
             <input type="radio" name="quiz-dom2" value="b">
             document.querySelectorAll('.item')
           </label>
@@ -6570,7 +6648,7 @@ commentBox.innerHTML = userComment;</code></pre>
             <input type="radio" name="quiz-dom3-1" value="a">
             問題なし
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="innerHTMLにユーザー入力を直接渡すとXSS（クロスサイトスクリプティング）攻撃が可能になります。悪意あるスクリプトが実行される危険があります。ユーザー入力にはtextContentを使いましょう。">
             <input type="radio" name="quiz-dom3-1" value="b">
             XSS脆弱性がある。textContentを使うべき
           </label>
@@ -6593,7 +6671,7 @@ commentBox.innerHTML = userComment;</code></pre>
             <input type="radio" name="quiz-dom3-2" value="a">
             el.style.color = 'red';
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="スタイル変更はclassListでクラスを切り替えるのがベストプラクティスです。CSSでスタイルを定義し、JSではクラスの追加/削除だけ行うことで、関心の分離（CSS=見た目、JS=振る舞い）を保てます。">
             <input type="radio" name="quiz-dom3-2" value="b">
             el.classList.add('highlight');
           </label>
@@ -6628,7 +6706,7 @@ commentBox.innerHTML = userComment;</code></pre>
             <input type="radio" name="quiz-dom3-3" value="b">
             forEachの使い方が間違っている
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="result.titleがデータベースやAPIから取得したユーザー入力由来のデータなら、innerHTMLに直接渡すとXSS攻撃が可能です。AIはこのようなコードを書きがちです。安全なのはtextContentを使うか、サニタイズすることです。">
             <input type="radio" name="quiz-dom3-3" value="c">
             result.titleがユーザー入力由来ならXSS脆弱性がある
           </label>
@@ -6780,7 +6858,7 @@ form.addEventListener('submit', (event) => {
             <input type="radio" name="quiz-dom4" value="a">
             event.stopSubmit();
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="preventDefault()はブラウザのデフォルト動作をキャンセルします。フォーム送信のページ遷移、リンクのページ遷移などを止められます。SPAでのルーティングやバリデーション実装で必須のメソッドです。">
             <input type="radio" name="quiz-dom4" value="b">
             event.preventDefault();
           </label>
@@ -6910,7 +6988,7 @@ container.addEventListener('click', (e) => {
             <input type="radio" name="quiz-dom5" value="a">
             querySelectorAllで取得してforEachでaddEventListener
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="イベント委譲（Event Delegation）は、親要素にリスナーを1つだけ付けてバブリングを利用する手法です。メモリ効率が良く、動的に追加された要素にも自動対応します。大量の要素を扱う際の定番パターンです。">
             <input type="radio" name="quiz-dom5" value="b">
             親要素にaddEventListenerしてe.target.matches('.item')で判定
           </label>
@@ -7051,7 +7129,7 @@ form.addEventListener('submit', (event) => {
             <input type="radio" name="quiz-dom6" value="a">
             form.getAllValues()
           </label>
-          <label class="quiz-option" data-correct="true">
+          <label class="quiz-option" data-correct="true" data-explanation="FormData APIは、フォームの全入力値をまとめて取得できる標準APIです。formData.get('name')で個別取得、Object.fromEntries(formData)でオブジェクト化できます。fetch APIとの相性も良いです。">
             <input type="radio" name="quiz-dom6" value="b">
             new FormData(form)
           </label>
@@ -7237,6 +7315,13 @@ form.addEventListener('submit', (event) => {
       const feedback = quiz.querySelector('.quiz-feedback');
       let answered = false;
       let correct = false;
+      let explanation = '';
+
+      // 正解の選択肢から解説を取得
+      const correctOption = quiz.querySelector('.quiz-option[data-correct="true"]');
+      if (correctOption && correctOption.dataset.explanation) {
+        explanation = correctOption.dataset.explanation;
+      }
 
       options.forEach(opt => {
         const input = opt.querySelector('input');
@@ -7256,11 +7341,11 @@ form.addEventListener('submit', (event) => {
       if (correct) {
         feedback.classList.add('correct');
         feedback.classList.remove('incorrect');
-        feedback.innerHTML = '<strong>正解！</strong> その通りです。';
+        feedback.innerHTML = '<strong>正解！</strong>' + (explanation ? '<br><span style="font-weight:normal;">' + explanation + '</span>' : ' その通りです。');
       } else {
         feedback.classList.add('incorrect');
         feedback.classList.remove('correct');
-        feedback.innerHTML = '<strong>不正解...</strong> もう一度考えてみましょう。';
+        feedback.innerHTML = '<strong>不正解...</strong>' + (explanation ? '<br><span style="font-weight:normal;">正解の理由: ' + explanation + '</span>' : ' もう一度考えてみましょう。');
       }
     }
 
