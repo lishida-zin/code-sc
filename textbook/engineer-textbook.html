@@ -113,6 +113,18 @@
       background: #450A0A;
       border-color: #F87171;
     }
+    [data-theme="dark"] .compare-blue {
+      background: #1E3A5F;
+      border-color: #60A5FA;
+    }
+    [data-theme="dark"] .compare-green {
+      background: #14532D;
+      border-color: #4ADE80;
+    }
+    [data-theme="dark"] .compare-orange {
+      background: #451A03;
+      border-color: #FB923C;
+    }
     [data-theme="dark"] .quiz-option {
       background: #1E293B;
       border-color: #334155;
@@ -571,6 +583,31 @@
 
     .compare-good .compare-label { color: var(--accent-green); }
     .compare-bad .compare-label { color: var(--accent-red); }
+
+    /* 青と緑の比較ボックス（ブラウザ/サーバーなど） */
+    .compare-blue {
+      background: #EFF6FF;
+      border: 3px solid var(--accent-blue);
+      border-radius: 12px;
+      padding: calc(var(--spacing-unit) * 3);
+    }
+    .compare-blue .compare-title { color: var(--accent-blue); }
+
+    .compare-green {
+      background: #F0FDF4;
+      border: 3px solid var(--accent-green);
+      border-radius: 12px;
+      padding: calc(var(--spacing-unit) * 3);
+    }
+    .compare-green .compare-title { color: var(--accent-green); }
+
+    .compare-orange {
+      background: #FFF7ED;
+      border: 3px solid var(--accent-orange);
+      border-radius: 12px;
+      padding: calc(var(--spacing-unit) * 3);
+    }
+    .compare-orange .compare-title { color: var(--accent-orange); }
 
     /* ============================================
        テーブル
@@ -4410,8 +4447,8 @@ color: rgb(255, 0, 0);</code></pre>
       </p>
 
       <div class="compare-box">
-        <div class="compare-item" style="background:#EFF6FF;border:3px solid var(--accent-blue);border-radius:12px;padding:24px;">
-          <div class="compare-title" style="font-weight:bold;font-size:20px;margin-bottom:16px;color:var(--accent-blue);">
+        <div class="compare-blue">
+          <div class="compare-title" style="font-weight:bold;font-size:20px;margin-bottom:16px;">
             ブラウザ（フロントエンド）
           </div>
           <p>
@@ -4423,8 +4460,8 @@ color: rgb(255, 0, 0);</code></pre>
             <li>ボタンクリック、アニメーションなど</li>
           </ul>
         </div>
-        <div class="compare-item" style="background:#F0FDF4;border:3px solid var(--accent-green);border-radius:12px;padding:24px;">
-          <div class="compare-title" style="font-weight:bold;font-size:20px;margin-bottom:16px;color:var(--accent-green);">
+        <div class="compare-green">
+          <div class="compare-title" style="font-weight:bold;font-size:20px;margin-bottom:16px;">
             サーバー（バックエンド）
           </div>
           <p>
@@ -4597,8 +4634,8 @@ const userName = "太郎";
 const config = { debug: true };</code></pre>
           <p><strong>一度入れたら変えない</strong>ものに使う</p>
         </div>
-        <div class="compare-bad" style="background:#FFF7ED;border-color:var(--accent-orange);">
-          <div class="compare-title" style="color:var(--accent-orange);">
+        <div class="compare-orange">
+          <div class="compare-title">
             <span class="icon">🔄</span> let（必要な時だけ）
           </div>
           <pre><code>// 変わる値
