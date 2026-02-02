@@ -117,10 +117,41 @@
       background: #1E293B;
       border-color: #334155;
     }
-    [data-theme="dark"] .quiz-option:hover,
-    [data-theme="dark"] .quiz-option.selected {
+    [data-theme="dark"] .quiz-option input[type="radio"] {
+      border-color: #475569;
+      background: #1E293B;
+    }
+    [data-theme="dark"] .quiz-option input[type="radio"]:checked {
+      border-color: #A78BFA;
+      background: #A78BFA;
+    }
+    [data-theme="dark"] .quiz-option:hover {
       background: #334155;
-      border-color: #60A5FA;
+      border-color: #A78BFA;
+    }
+    [data-theme="dark"] .quiz-option:has(input:checked),
+    [data-theme="dark"] .quiz-option.selected {
+      background: #3B2E63;
+      border-color: #A78BFA;
+      box-shadow: 0 0 0 2px #A78BFA;
+    }
+    [data-theme="dark"] .quiz-option.correct {
+      background: #14532D;
+      border-color: #4ADE80;
+      box-shadow: 0 0 0 2px #4ADE80;
+    }
+    [data-theme="dark"] .quiz-option.correct input[type="radio"]:checked {
+      border-color: #4ADE80;
+      background: #4ADE80;
+    }
+    [data-theme="dark"] .quiz-option.incorrect {
+      background: #450A0A;
+      border-color: #F87171;
+      box-shadow: 0 0 0 2px #F87171;
+    }
+    [data-theme="dark"] .quiz-option.incorrect input[type="radio"]:checked {
+      border-color: #F87171;
+      background: #F87171;
     }
     [data-theme="dark"] .quiz-feedback.correct {
       background: #14532D;
@@ -590,36 +621,85 @@
     }
 
     .quiz-option {
-      display: block;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
       padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 3);
       margin: calc(var(--spacing-unit) * 1.5) 0;
-      background: white;
+      background: var(--bg-card);
       border: 3px solid var(--border-light);
       border-radius: 10px;
       cursor: pointer;
       transition: all 0.2s;
       font-size: 18px;
       line-height: 1.6;
+      position: relative;
+    }
+
+    /* ラジオボタンをカスタムスタイルに */
+    .quiz-option input[type="radio"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      border: 3px solid var(--border-light);
+      border-radius: 50%;
+      margin: 2px 0 0 0;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .quiz-option input[type="radio"]:checked {
+      border-color: var(--accent-purple);
+      background: var(--accent-purple);
+    }
+
+    .quiz-option input[type="radio"]:checked::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
     }
 
     .quiz-option:hover {
       border-color: var(--accent-purple);
-      background: #FAF5FF;
+      background: #F5F3FF;
     }
 
+    .quiz-option:has(input:checked),
     .quiz-option.selected {
       border-color: var(--accent-purple);
-      background: #FAF5FF;
+      background: #EDE9FE;
+      box-shadow: 0 0 0 2px var(--accent-purple);
     }
 
     .quiz-option.correct {
       border-color: var(--accent-green);
-      background: #F0FDF4;
+      background: #DCFCE7;
+      box-shadow: 0 0 0 2px var(--accent-green);
+    }
+
+    .quiz-option.correct input[type="radio"]:checked {
+      border-color: var(--accent-green);
+      background: var(--accent-green);
     }
 
     .quiz-option.incorrect {
       border-color: var(--accent-red);
-      background: #FEF2F2;
+      background: #FEE2E2;
+      box-shadow: 0 0 0 2px var(--accent-red);
+    }
+
+    .quiz-option.incorrect input[type="radio"]:checked {
+      border-color: var(--accent-red);
+      background: var(--accent-red);
     }
 
     .quiz-btn {
@@ -7100,6 +7180,20 @@ form.addEventListener('submit', (event) => {
     // ============================================
     // クイズ機能
     // ============================================
+
+    // 選択時のスタイル更新（:has()のフォールバック）
+    document.querySelectorAll('.quiz-option input[type="radio"]').forEach(input => {
+      input.addEventListener('change', () => {
+        // 同じグループの全オプションからselectedを削除
+        const quizContainer = input.closest('.quiz');
+        quizContainer.querySelectorAll('.quiz-option').forEach(opt => {
+          opt.classList.remove('selected');
+        });
+        // 選択されたオプションにselectedを追加
+        input.closest('.quiz-option').classList.add('selected');
+      });
+    });
+
     function checkQuiz(quizId) {
       const quiz = document.getElementById(quizId);
       const options = quiz.querySelectorAll('.quiz-option');
