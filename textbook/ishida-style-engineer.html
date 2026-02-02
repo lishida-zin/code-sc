@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>いしだ式エンジニアへの道 - HTML教科書</title>
+  <title>いしだ式エンジニアへの道 - HTML/CSS教科書</title>
   <style>
     :root {
       --bg-primary: #1a1a2e;
@@ -251,9 +251,14 @@
     <h1>いしだ式エンジニアへの道</h1>
 
     <div class="progress-container">
-      <small>Phase 1 進捗</small>
-      <progress id="phase-progress" value="0" max="7"></progress>
-      <small id="progress-text">0 / 7 完了</small>
+      <small>Phase 1 (HTML)</small>
+      <progress id="phase1-progress" value="0" max="7"></progress>
+      <small id="phase1-text">0 / 7</small>
+    </div>
+    <div class="progress-container">
+      <small>Phase 2 (CSS)</small>
+      <progress id="phase2-progress" value="0" max="7"></progress>
+      <small id="phase2-text">0 / 7</small>
     </div>
 
     <div class="nav-section">
@@ -268,6 +273,17 @@
       <a href="#sec7" class="nav-link" data-section="sec7">7. セマンティックHTML</a>
       <a href="#review" class="nav-link" data-section="review">復習チェック</a>
       <a href="#glossary" class="nav-link" data-section="glossary">用語集</a>
+
+      <h3 style="font-size:0.85rem; color:var(--accent-light); margin:0.5rem 0; margin-top:1rem;">Phase 2: CSS基礎</h3>
+      <a href="#css1" class="nav-link" data-section="css1">8. CSSとは？</a>
+      <a href="#css2" class="nav-link" data-section="css2">9. セレクタ</a>
+      <a href="#css3" class="nav-link" data-section="css3">10. 色・背景</a>
+      <a href="#css4" class="nav-link" data-section="css4">11. テキスト装飾</a>
+      <a href="#css5" class="nav-link" data-section="css5">12. ボックスモデル</a>
+      <a href="#css6" class="nav-link" data-section="css6">13. Flexbox</a>
+      <a href="#css7" class="nav-link" data-section="css7">14. Grid</a>
+      <a href="#css-review" class="nav-link" data-section="css-review">CSS復習チェック</a>
+      <a href="#css-glossary" class="nav-link" data-section="css-glossary">CSS用語集</a>
     </div>
   </nav>
 
@@ -1240,6 +1256,1218 @@
         <dd>障害の有無に関わらず、誰でも利用できること。</dd>
       </dl>
     </section>
+
+    <!-- ========================================== -->
+    <!-- Phase 2: CSS基礎 -->
+    <!-- ========================================== -->
+
+    <!-- CSS セクション1: CSSとは？ -->
+    <section id="css1">
+      <h1>8. CSSとは？</h1>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>CSSの役割と目的</li>
+          <li>CSSの3つの適用方法</li>
+          <li>カスケードの基本概念</li>
+        </ul>
+      </div>
+
+      <h2>たとえ話：家のインテリア</h2>
+      <p>HTMLが「家の骨組み（柱、壁、部屋の配置）」なら、CSSは「インテリア」です。</p>
+      <ul>
+        <li><strong>壁の色</strong>を決める</li>
+        <li><strong>家具の配置</strong>を決める</li>
+        <li><strong>照明の雰囲気</strong>を決める</li>
+      </ul>
+      <p>骨組み（HTML）が同じでも、インテリア（CSS）を変えれば全く違う印象の家になります。</p>
+
+      <h2>語源を知る</h2>
+      <div class="card">
+        <p><strong>CSS</strong> = <strong>C</strong>ascading <strong>S</strong>tyle <strong>S</strong>heets</p>
+        <ul>
+          <li><strong>Cascading</strong>：滝のように流れ落ちる → スタイルが優先度順に適用される</li>
+          <li><strong>Style</strong>：見た目、デザイン</li>
+          <li><strong>Sheets</strong>：シート、設定書</li>
+        </ul>
+      </div>
+
+      <h2>CSSの3つの適用方法</h2>
+      <table>
+        <tr>
+          <th>方法</th>
+          <th>書き方</th>
+          <th>推奨度</th>
+        </tr>
+        <tr>
+          <td>外部CSS</td>
+          <td><code>&lt;link rel="stylesheet" href="style.css"&gt;</code></td>
+          <td><span class="badge badge-success">推奨</span></td>
+        </tr>
+        <tr>
+          <td>内部CSS</td>
+          <td><code>&lt;style&gt;...&lt;/style&gt;</code></td>
+          <td><span class="badge badge-warning">状況次第</span></td>
+        </tr>
+        <tr>
+          <td>インラインCSS</td>
+          <td><code>style="..."</code></td>
+          <td><span class="badge badge-info">避ける</span></td>
+        </tr>
+      </table>
+
+      <div class="card card-success">
+        <strong>なぜ外部CSSが推奨？</strong>
+        <ul>
+          <li><strong>関心の分離</strong>：HTML（構造）とCSS（見た目）を別ファイルに</li>
+          <li><strong>再利用性</strong>：複数ページで同じCSSを共有</li>
+          <li><strong>キャッシュ</strong>：ブラウザがCSSをキャッシュして高速化</li>
+        </ul>
+      </div>
+
+      <h2>CSSの基本構文</h2>
+      <div class="card">
+        <pre>セレクタ {
+  プロパティ: 値;
+  プロパティ: 値;
+}
+
+例：
+p {
+  color: blue;
+  font-size: 16px;
+}</pre>
+      </div>
+
+      <table>
+        <tr>
+          <th>用語</th>
+          <th>意味</th>
+          <th>例</th>
+        </tr>
+        <tr>
+          <td>セレクタ</td>
+          <td>どの要素にスタイルを適用するか</td>
+          <td><code>p</code>, <code>.class</code>, <code>#id</code></td>
+        </tr>
+        <tr>
+          <td>プロパティ</td>
+          <td>何を変えるか</td>
+          <td><code>color</code>, <code>font-size</code></td>
+        </tr>
+        <tr>
+          <td>値</td>
+          <td>どう変えるか</td>
+          <td><code>blue</code>, <code>16px</code></td>
+        </tr>
+      </table>
+
+      <details>
+        <summary>開発思想：関心の分離</summary>
+        <div>
+          <p><strong>WHY</strong>：構造（HTML）と見た目（CSS）を混ぜると管理が大変</p>
+          <p><strong>HOW</strong>：HTMLは構造のみ、CSSは見た目のみを担当</p>
+          <p><strong>EFFECT</strong>：保守しやすい、デザイン変更が容易、チーム開発に最適</p>
+        </div>
+      </details>
+
+      <div class="quiz" data-quiz="css-q1">
+        <h4>確認クイズ</h4>
+        <p>CSSを適用する方法として最も推奨されるのは？</p>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="css-q1" value="a" hidden>
+          A. インラインCSS（style属性）
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="css-q1" value="b" hidden>
+          B. 外部CSS（linkタグ）
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="css-q1" value="c" hidden>
+          C. 内部CSS（styleタグ）
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('css-q1', 'b')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('css1')">このセクションを完了</button>
+    </section>
+
+    <!-- CSS セクション2: セレクタ -->
+    <section id="css2">
+      <h1>9. セレクタ</h1>
+
+      <div class="card card-warning">
+        <strong>CSS最重要セクション</strong>
+        <p>セレクタを理解しないとCSSは読めない。ここをしっかり押さえる。</p>
+      </div>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>基本セレクタ（要素、クラス、ID）</li>
+          <li>結合セレクタ（子孫、子、隣接）</li>
+          <li>詳細度（優先順位）の仕組み</li>
+        </ul>
+      </div>
+
+      <h2>基本セレクタ</h2>
+      <table>
+        <tr>
+          <th>セレクタ</th>
+          <th>書き方</th>
+          <th>意味</th>
+          <th>詳細度</th>
+        </tr>
+        <tr>
+          <td>要素セレクタ</td>
+          <td><code>p</code></td>
+          <td>すべてのp要素</td>
+          <td>0-0-1</td>
+        </tr>
+        <tr>
+          <td>クラスセレクタ</td>
+          <td><code>.box</code></td>
+          <td>class="box"の要素</td>
+          <td>0-1-0</td>
+        </tr>
+        <tr>
+          <td>IDセレクタ</td>
+          <td><code>#header</code></td>
+          <td>id="header"の要素</td>
+          <td>1-0-0</td>
+        </tr>
+        <tr>
+          <td>全称セレクタ</td>
+          <td><code>*</code></td>
+          <td>すべての要素</td>
+          <td>0-0-0</td>
+        </tr>
+      </table>
+
+      <div class="card">
+        <pre>/* 要素セレクタ */
+p { color: black; }
+
+/* クラスセレクタ（.で始まる） */
+.highlight { background: yellow; }
+
+/* IDセレクタ（#で始まる） */
+#main-title { font-size: 32px; }</pre>
+      </div>
+
+      <h2>クラスとIDの違い</h2>
+      <div class="card card-warning">
+        <table>
+          <tr>
+            <th></th>
+            <th>クラス (.class)</th>
+            <th>ID (#id)</th>
+          </tr>
+          <tr>
+            <td>使用回数</td>
+            <td>何度でも使える</td>
+            <td>1ページに1回のみ</td>
+          </tr>
+          <tr>
+            <td>用途</td>
+            <td>スタイル適用（推奨）</td>
+            <td>ページ内リンク、JS操作</td>
+          </tr>
+          <tr>
+            <td>詳細度</td>
+            <td>低い</td>
+            <td>高い</td>
+          </tr>
+        </table>
+        <p><strong>実務では：クラスを使う、IDはCSSでは避ける</strong></p>
+      </div>
+
+      <h2>結合セレクタ</h2>
+      <table>
+        <tr>
+          <th>セレクタ</th>
+          <th>書き方</th>
+          <th>意味</th>
+        </tr>
+        <tr>
+          <td>子孫セレクタ</td>
+          <td><code>div p</code></td>
+          <td>div内のすべてのp（深さ問わず）</td>
+        </tr>
+        <tr>
+          <td>子セレクタ</td>
+          <td><code>div > p</code></td>
+          <td>divの直接の子のpのみ</td>
+        </tr>
+        <tr>
+          <td>隣接セレクタ</td>
+          <td><code>h1 + p</code></td>
+          <td>h1の直後のp</td>
+        </tr>
+        <tr>
+          <td>一般兄弟</td>
+          <td><code>h1 ~ p</code></td>
+          <td>h1の後のすべてのp（兄弟要素）</td>
+        </tr>
+      </table>
+
+      <div class="card">
+        <pre>/* 子孫セレクタ：nav内のすべてのa */
+nav a { color: white; }
+
+/* 子セレクタ：ulの直接の子のliのみ */
+ul > li { list-style: none; }
+
+/* 隣接セレクタ：h2の直後のp */
+h2 + p { font-weight: bold; }</pre>
+      </div>
+
+      <h2>詳細度（Specificity）</h2>
+      <div class="card card-danger">
+        <p><strong>CSSが「効かない」原因の90%は詳細度</strong></p>
+        <p>詳細度 = どのセレクタが優先されるかを決める点数</p>
+        <pre>計算方法：(ID, クラス, 要素)
+
+#header      → (1, 0, 0) = 100点
+.nav .link   → (0, 2, 0) = 20点
+div p        → (0, 0, 2) = 2点
+
+点数が高いほうが勝つ</pre>
+      </div>
+
+      <div class="card card-danger">
+        <strong>❌ !important の乱用</strong>
+        <pre>p { color: red !important; } /* 最終手段。使わない設計にすべき */</pre>
+        <p>!importantは「詳細度を無視して最優先」。使うと保守が困難に。</p>
+      </div>
+
+      <details>
+        <summary>開発思想：KISS原則</summary>
+        <div>
+          <p><strong>KISS</strong> = Keep It Simple, Stupid（シンプルに保て）</p>
+          <p><strong>WHY</strong>：複雑なセレクタは読みにくく、保守困難</p>
+          <p><strong>HOW</strong>：クラスを使い、ネストは浅く</p>
+          <p><strong>EFFECT</strong>：誰でも理解でき、変更しやすい</p>
+        </div>
+      </details>
+
+      <div class="quiz" data-quiz="css-q2">
+        <h4>確認クイズ</h4>
+        <p>詳細度が最も高いのは？</p>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="css-q2" value="a" hidden>
+          A. div p
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="css-q2" value="b" hidden>
+          B. .container
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="css-q2" value="c" hidden>
+          C. #header
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('css-q2', 'c')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="card card-success">
+        <strong>レビュー観点</strong>
+        <ul>
+          <li>IDセレクタをCSSで使っていないか？</li>
+          <li>セレクタが深すぎないか？（3階層以上は要注意）</li>
+          <li>!importantを使っていないか？</li>
+        </ul>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('css2')">このセクションを完了</button>
+    </section>
+
+    <!-- CSS セクション3: 色・背景 -->
+    <section id="css3">
+      <h1>10. 色・背景</h1>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>色の指定方法（名前、HEX、RGB、HSL）</li>
+          <li>背景プロパティ</li>
+          <li>CSS変数（カスタムプロパティ）</li>
+        </ul>
+      </div>
+
+      <h2>色の指定方法</h2>
+      <table>
+        <tr>
+          <th>方法</th>
+          <th>例</th>
+          <th>特徴</th>
+        </tr>
+        <tr>
+          <td>色名</td>
+          <td><code>red</code>, <code>blue</code></td>
+          <td>分かりやすいが限定的</td>
+        </tr>
+        <tr>
+          <td>HEX（16進数）</td>
+          <td><code>#ff0000</code>, <code>#f00</code></td>
+          <td>最も一般的、デザインツールと相性◎</td>
+        </tr>
+        <tr>
+          <td>RGB</td>
+          <td><code>rgb(255, 0, 0)</code></td>
+          <td>赤・緑・青の光の三原色</td>
+        </tr>
+        <tr>
+          <td>RGBA</td>
+          <td><code>rgba(255, 0, 0, 0.5)</code></td>
+          <td>RGB + 透明度（Alpha）</td>
+        </tr>
+        <tr>
+          <td>HSL</td>
+          <td><code>hsl(0, 100%, 50%)</code></td>
+          <td>色相・彩度・明度（直感的）</td>
+        </tr>
+      </table>
+
+      <div class="card">
+        <pre>/* すべて同じ「赤」 */
+color: red;
+color: #ff0000;
+color: #f00;
+color: rgb(255, 0, 0);
+color: hsl(0, 100%, 50%);
+
+/* 透明度付き */
+background: rgba(0, 0, 0, 0.5);  /* 半透明の黒 */</pre>
+      </div>
+
+      <h2>背景プロパティ</h2>
+      <div class="card">
+        <pre>/* 背景色 */
+background-color: #f0f0f0;
+
+/* 背景画像 */
+background-image: url('image.jpg');
+background-size: cover;      /* 要素を覆う */
+background-position: center; /* 中央配置 */
+background-repeat: no-repeat;/* 繰り返さない */
+
+/* 一括指定 */
+background: #f0f0f0 url('image.jpg') center/cover no-repeat;</pre>
+      </div>
+
+      <h2>CSS変数（カスタムプロパティ）</h2>
+      <div class="card card-warning">
+        <strong>2026年の必須知識</strong>
+        <p>同じ値を何度も書くのではなく、変数として定義する。</p>
+        <pre>/* 変数を定義（:rootは文書全体） */
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #2ecc71;
+  --spacing: 16px;
+}
+
+/* 変数を使用 */
+.button {
+  background: var(--primary-color);
+  padding: var(--spacing);
+}
+
+.card {
+  border-color: var(--primary-color);
+  margin: var(--spacing);
+}</pre>
+      </div>
+
+      <div class="card card-success">
+        <strong>CSS変数のメリット</strong>
+        <ul>
+          <li><strong>一括変更</strong>：変数を1箇所変えれば全体に反映</li>
+          <li><strong>可読性</strong>：<code>#3498db</code>より<code>--primary-color</code>の方が意味が分かる</li>
+          <li><strong>テーマ切り替え</strong>：ダークモード対応が容易</li>
+        </ul>
+      </div>
+
+      <details>
+        <summary>開発思想：DRY原則</summary>
+        <div>
+          <p><strong>DRY</strong> = Don't Repeat Yourself（繰り返しを避けよ）</p>
+          <p><strong>WHY</strong>：同じ値を何度も書くと、変更時に漏れが発生</p>
+          <p><strong>HOW</strong>：CSS変数で値を一元管理</p>
+          <p><strong>EFFECT</strong>：保守性向上、一貫性維持</p>
+        </div>
+      </details>
+
+      <div class="quiz" data-quiz="css-q3">
+        <h4>確認クイズ</h4>
+        <p>CSS変数を使用するときの書き方は？</p>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="css-q3" value="a" hidden>
+          A. $primary-color
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="css-q3" value="b" hidden>
+          B. var(--primary-color)
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="css-q3" value="c" hidden>
+          C. @primary-color
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('css-q3', 'b')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('css3')">このセクションを完了</button>
+    </section>
+
+    <!-- CSS セクション4: テキスト装飾 -->
+    <section id="css4">
+      <h1>11. テキスト装飾</h1>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>フォント関連プロパティ</li>
+          <li>テキスト関連プロパティ</li>
+          <li>Web フォントの使い方</li>
+        </ul>
+      </div>
+
+      <h2>フォント関連（font-*）</h2>
+      <div class="card">
+        <pre>/* フォントサイズ */
+font-size: 16px;      /* ピクセル */
+font-size: 1rem;      /* ルート要素基準（推奨） */
+font-size: 1.2em;     /* 親要素基準 */
+
+/* フォントファミリー */
+font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+
+/* フォントの太さ */
+font-weight: normal;  /* 400 */
+font-weight: bold;    /* 700 */
+font-weight: 600;     /* 数値指定 */
+
+/* フォントスタイル */
+font-style: italic;   /* 斜体 */</pre>
+      </div>
+
+      <h3>単位の使い分け</h3>
+      <table>
+        <tr>
+          <th>単位</th>
+          <th>意味</th>
+          <th>用途</th>
+        </tr>
+        <tr>
+          <td>px</td>
+          <td>ピクセル（固定）</td>
+          <td>border, shadow など固定値</td>
+        </tr>
+        <tr>
+          <td>rem</td>
+          <td>ルート要素基準</td>
+          <td>フォントサイズ（推奨）</td>
+        </tr>
+        <tr>
+          <td>em</td>
+          <td>親要素基準</td>
+          <td>padding, margin（要素内相対）</td>
+        </tr>
+        <tr>
+          <td>%</td>
+          <td>親要素基準</td>
+          <td>幅、高さ</td>
+        </tr>
+      </table>
+
+      <div class="card card-warning">
+        <strong>px固定の問題</strong>
+        <p>ユーザーがブラウザの文字サイズを変更しても、px指定だと変わらない。</p>
+        <p>→ アクセシビリティのため<code>rem</code>を使う</p>
+      </div>
+
+      <h2>テキスト関連（text-*）</h2>
+      <div class="card">
+        <pre>/* 文字揃え */
+text-align: left;     /* 左揃え */
+text-align: center;   /* 中央揃え */
+text-align: right;    /* 右揃え */
+
+/* 行間 */
+line-height: 1.8;     /* フォントサイズの1.8倍（推奨） */
+
+/* 文字間隔 */
+letter-spacing: 0.05em;
+
+/* 装飾 */
+text-decoration: none;       /* 下線なし */
+text-decoration: underline;  /* 下線 */
+
+/* 変換 */
+text-transform: uppercase;   /* 大文字 */</pre>
+      </div>
+
+      <h2>Webフォント（Google Fonts）</h2>
+      <div class="card">
+        <pre>/* head内でフォントを読み込む */
+&lt;link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet"&gt;
+
+/* CSSで使用 */
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+}</pre>
+      </div>
+
+      <div class="quiz" data-quiz="css-q4">
+        <h4>確認クイズ</h4>
+        <p>レスポンシブ・アクセシビリティに最適なフォントサイズの単位は？</p>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="css-q4" value="a" hidden>
+          A. px
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="css-q4" value="b" hidden>
+          B. rem
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="css-q4" value="c" hidden>
+          C. pt
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('css-q4', 'b')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('css4')">このセクションを完了</button>
+    </section>
+
+    <!-- CSS セクション5: ボックスモデル -->
+    <section id="css5">
+      <h1>12. ボックスモデル</h1>
+
+      <div class="card card-warning">
+        <strong>CSS超重要概念</strong>
+        <p>すべてのHTML要素は「ボックス」として扱われる。これを理解しないとレイアウトは組めない。</p>
+      </div>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>ボックスモデルの4層構造</li>
+          <li>margin, padding, border の違い</li>
+          <li>box-sizing の重要性</li>
+        </ul>
+      </div>
+
+      <h2>ボックスモデルの構造</h2>
+      <div class="card">
+        <pre>┌─────────────────────────────────┐
+│           margin（外側の余白）    │
+│  ┌───────────────────────────┐  │
+│  │      border（境界線）       │  │
+│  │  ┌─────────────────────┐  │  │
+│  │  │  padding（内側の余白）│  │  │
+│  │  │  ┌───────────────┐  │  │  │
+│  │  │  │   content     │  │  │  │
+│  │  │  │  （内容領域）   │  │  │  │
+│  │  │  └───────────────┘  │  │  │
+│  │  └─────────────────────┘  │  │
+│  └───────────────────────────┘  │
+└─────────────────────────────────┘</pre>
+      </div>
+
+      <table>
+        <tr>
+          <th>プロパティ</th>
+          <th>意味</th>
+          <th>特徴</th>
+        </tr>
+        <tr>
+          <td>content</td>
+          <td>内容（テキスト、画像等）</td>
+          <td>width, heightで指定</td>
+        </tr>
+        <tr>
+          <td>padding</td>
+          <td>内側の余白</td>
+          <td>背景色が適用される</td>
+        </tr>
+        <tr>
+          <td>border</td>
+          <td>境界線</td>
+          <td>色・太さ・スタイル</td>
+        </tr>
+        <tr>
+          <td>margin</td>
+          <td>外側の余白</td>
+          <td>透明、要素間の間隔</td>
+        </tr>
+      </table>
+
+      <h2>margin と padding の書き方</h2>
+      <div class="card">
+        <pre>/* 4方向すべて同じ */
+margin: 10px;
+
+/* 上下 / 左右 */
+margin: 10px 20px;
+
+/* 上 / 左右 / 下 */
+margin: 10px 20px 30px;
+
+/* 上 / 右 / 下 / 左（時計回り） */
+margin: 10px 20px 30px 40px;
+
+/* 個別指定 */
+margin-top: 10px;
+margin-right: 20px;
+margin-bottom: 30px;
+margin-left: 40px;</pre>
+      </div>
+
+      <h2>box-sizing（超重要）</h2>
+      <div class="card card-danger">
+        <strong>問題：width を指定しても意図通りにならない</strong>
+        <pre>/* デフォルト（content-box） */
+.box {
+  width: 100px;
+  padding: 20px;
+  border: 5px solid black;
+}
+/* → 実際の幅 = 100 + 20*2 + 5*2 = 150px */</pre>
+      </div>
+
+      <div class="card card-success">
+        <strong>解決策：box-sizing: border-box</strong>
+        <pre>/* border-box を指定 */
+.box {
+  box-sizing: border-box;
+  width: 100px;
+  padding: 20px;
+  border: 5px solid black;
+}
+/* → 実際の幅 = 100px（padding, borderを含む） */
+
+/* 全要素に適用（推奨） */
+*, *::before, *::after {
+  box-sizing: border-box;
+}</pre>
+      </div>
+
+      <h2>margin の相殺（Collapse）</h2>
+      <div class="card card-warning">
+        <p>縦方向のmarginは「相殺」される（大きい方だけが適用）</p>
+        <pre>&lt;div style="margin-bottom: 30px"&gt;上&lt;/div&gt;
+&lt;div style="margin-top: 20px"&gt;下&lt;/div&gt;
+
+/* 間隔は 30px + 20px = 50px ではなく、30px */</pre>
+        <p>これを知らないと「余白が効かない」と悩むことに。</p>
+      </div>
+
+      <div class="quiz" data-quiz="css-q5">
+        <h4>確認クイズ</h4>
+        <p>width: 100pxの要素にpadding: 20pxを追加。box-sizing: border-boxの場合、実際の幅は？</p>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="css-q5" value="a" hidden>
+          A. 140px
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="css-q5" value="b" hidden>
+          B. 100px
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="css-q5" value="c" hidden>
+          C. 120px
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('css-q5', 'b')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="card card-success">
+        <strong>レビュー観点</strong>
+        <ul>
+          <li>box-sizing: border-box が設定されているか？</li>
+          <li>margin と padding を混同していないか？</li>
+          <li>マジックナンバー（意味不明な数値）がないか？</li>
+        </ul>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('css5')">このセクションを完了</button>
+    </section>
+
+    <!-- CSS セクション6: Flexbox -->
+    <section id="css6">
+      <h1>13. Flexbox</h1>
+
+      <div class="card card-warning">
+        <strong>現代レイアウトの基本</strong>
+        <p>横並び、中央揃え、均等配置。これらは全部Flexboxで解決。</p>
+      </div>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>Flexboxの基本概念</li>
+          <li>親要素（コンテナ）のプロパティ</li>
+          <li>子要素（アイテム）のプロパティ</li>
+          <li>よくあるパターン</li>
+        </ul>
+      </div>
+
+      <h2>Flexboxの有効化</h2>
+      <div class="card">
+        <pre>.container {
+  display: flex;
+}
+
+/* これだけで子要素が横並びになる */</pre>
+      </div>
+
+      <h2>主軸と交差軸</h2>
+      <div class="card">
+        <pre>flex-direction: row（デフォルト）の場合
+
+主軸（main axis）→→→→→→→→→→
+↓ ┌───┐ ┌───┐ ┌───┐
+交 │ 1 │ │ 2 │ │ 3 │
+差 └───┘ └───┘ └───┘
+軸
+（cross axis）
+
+justify-content → 主軸方向の配置
+align-items     → 交差軸方向の配置</pre>
+      </div>
+
+      <h2>コンテナ（親）のプロパティ</h2>
+      <table>
+        <tr>
+          <th>プロパティ</th>
+          <th>値</th>
+          <th>効果</th>
+        </tr>
+        <tr>
+          <td>flex-direction</td>
+          <td>row / column</td>
+          <td>横並び / 縦並び</td>
+        </tr>
+        <tr>
+          <td>justify-content</td>
+          <td>flex-start / center / flex-end / space-between / space-around</td>
+          <td>主軸方向の配置</td>
+        </tr>
+        <tr>
+          <td>align-items</td>
+          <td>flex-start / center / flex-end / stretch</td>
+          <td>交差軸方向の配置</td>
+        </tr>
+        <tr>
+          <td>flex-wrap</td>
+          <td>nowrap / wrap</td>
+          <td>折り返すかどうか</td>
+        </tr>
+        <tr>
+          <td>gap</td>
+          <td>10px など</td>
+          <td>アイテム間の間隔</td>
+        </tr>
+      </table>
+
+      <h2>よく使うパターン</h2>
+      <div class="card card-success">
+        <strong>中央揃え（上下左右中央）</strong>
+        <pre>.container {
+  display: flex;
+  justify-content: center;  /* 横方向中央 */
+  align-items: center;      /* 縦方向中央 */
+  height: 100vh;
+}</pre>
+      </div>
+
+      <div class="card card-success">
+        <strong>両端揃え（ヘッダーのロゴとナビ）</strong>
+        <pre>.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}</pre>
+      </div>
+
+      <div class="card card-success">
+        <strong>等間隔で並べる</strong>
+        <pre>.nav {
+  display: flex;
+  gap: 20px;  /* アイテム間を20pxずつ空ける */
+}</pre>
+      </div>
+
+      <h2>アイテム（子）のプロパティ</h2>
+      <div class="card">
+        <pre>/* 余ったスペースの配分 */
+.item {
+  flex-grow: 1;   /* 余白を均等に分配 */
+}
+
+/* 縮む比率 */
+.item {
+  flex-shrink: 0; /* 縮まない */
+}
+
+/* 基準サイズ */
+.item {
+  flex-basis: 200px;
+}
+
+/* 一括指定 */
+.item {
+  flex: 1;        /* grow: 1, shrink: 1, basis: 0% */
+}</pre>
+      </div>
+
+      <details>
+        <summary>開発思想：floatからの脱却</summary>
+        <div>
+          <p><strong>過去</strong>：横並びは float: left で実現（clearfixなど面倒）</p>
+          <p><strong>現在</strong>：Flexboxで簡単・直感的に実現</p>
+          <p>→ floatはレイアウトには使わない。画像の回り込みのみ。</p>
+        </div>
+      </details>
+
+      <div class="quiz" data-quiz="css-q6">
+        <h4>確認クイズ</h4>
+        <p>要素を上下左右中央に配置するには？</p>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="css-q6" value="a" hidden>
+          A. justify-content: center; align-items: center;
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="css-q6" value="b" hidden>
+          B. text-align: center; vertical-align: middle;
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="css-q6" value="c" hidden>
+          C. margin: auto; padding: auto;
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('css-q6', 'a')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="card card-success">
+        <strong>レビュー観点</strong>
+        <ul>
+          <li>floatでレイアウトを組んでいないか？</li>
+          <li>不要な入れ子divがないか？</li>
+          <li>gapを使わずmarginで間隔を作っていないか？</li>
+        </ul>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('css6')">このセクションを完了</button>
+    </section>
+
+    <!-- CSS セクション7: Grid -->
+    <section id="css7">
+      <h1>14. Grid</h1>
+
+      <div class="card card-warning">
+        <strong>2次元レイアウトの決定版</strong>
+        <p>Flexboxは1次元（行 or 列）、Gridは2次元（行 と 列）を同時に扱える。</p>
+      </div>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>Gridの基本概念</li>
+          <li>グリッドの定義方法</li>
+          <li>アイテムの配置</li>
+          <li>FlexboxとGridの使い分け</li>
+        </ul>
+      </div>
+
+      <h2>Gridの有効化</h2>
+      <div class="card">
+        <pre>.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;  /* 3列 */
+  grid-template-rows: 100px 200px;      /* 2行 */
+  gap: 20px;                            /* 間隔 */
+}</pre>
+      </div>
+
+      <h2>単位: fr（fraction）</h2>
+      <div class="card">
+        <pre>/* frは「余ったスペースの比率」 */
+grid-template-columns: 1fr 2fr 1fr;
+/* → 1:2:1 の比率で分割 */
+
+grid-template-columns: 200px 1fr;
+/* → 左は固定200px、残りを右が取る */
+
+grid-template-columns: repeat(3, 1fr);
+/* → 1fr 1fr 1fr と同じ */</pre>
+      </div>
+
+      <h2>よく使うパターン</h2>
+      <div class="card card-success">
+        <strong>カードレイアウト（レスポンシブ）</strong>
+        <pre>.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+/* → 最小250px、それ以上なら均等に広がる */
+/* → 幅に応じて自動的に列数が変わる */</pre>
+      </div>
+
+      <div class="card card-success">
+        <strong>Holy Grailレイアウト</strong>
+        <pre>.layout {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "nav    main   aside"
+    "footer footer footer";
+  grid-template-columns: 200px 1fr 200px;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+}
+
+.header { grid-area: header; }
+.nav    { grid-area: nav; }
+.main   { grid-area: main; }
+.aside  { grid-area: aside; }
+.footer { grid-area: footer; }</pre>
+      </div>
+
+      <h2>アイテムの配置</h2>
+      <div class="card">
+        <pre>/* 行と列の位置を指定 */
+.item {
+  grid-column: 1 / 3;  /* 1列目から3列目の手前まで（2列分） */
+  grid-row: 1 / 2;     /* 1行目 */
+}
+
+/* spanで範囲指定 */
+.item {
+  grid-column: span 2;  /* 2列分 */
+}</pre>
+      </div>
+
+      <h2>FlexboxとGridの使い分け</h2>
+      <table>
+        <tr>
+          <th>状況</th>
+          <th>適切な選択</th>
+        </tr>
+        <tr>
+          <td>横一列に並べる</td>
+          <td>Flexbox</td>
+        </tr>
+        <tr>
+          <td>中央揃え</td>
+          <td>Flexbox</td>
+        </tr>
+        <tr>
+          <td>カードを格子状に並べる</td>
+          <td>Grid</td>
+        </tr>
+        <tr>
+          <td>ページ全体のレイアウト</td>
+          <td>Grid</td>
+        </tr>
+        <tr>
+          <td>内容に応じて伸縮</td>
+          <td>Flexbox</td>
+        </tr>
+        <tr>
+          <td>明確な行×列構造</td>
+          <td>Grid</td>
+        </tr>
+      </table>
+
+      <div class="card card-info">
+        <strong>シンプルなルール</strong>
+        <p><strong>1次元（横 or 縦）</strong>→ Flexbox</p>
+        <p><strong>2次元（横 と 縦）</strong>→ Grid</p>
+      </div>
+
+      <div class="quiz" data-quiz="css-q7">
+        <h4>確認クイズ</h4>
+        <p>格子状にカードを並べる場合、適切なのは？</p>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="css-q7" value="a" hidden>
+          A. Flexbox
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="css-q7" value="b" hidden>
+          B. Grid
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="css-q7" value="c" hidden>
+          C. float
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('css-q7', 'b')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('css7')">このセクションを完了</button>
+    </section>
+
+    <!-- CSS 復習チェック -->
+    <section id="css-review">
+      <h1>CSS復習チェックポイント</h1>
+
+      <div class="card card-info">
+        <strong>Phase 2 総合確認</strong>
+        <p>CSSの基礎を復習しましょう。</p>
+      </div>
+
+      <div class="quiz" data-quiz="css-review1">
+        <h4>Q1. CSSの詳細度で最も高いのは？</h4>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="css-review1" value="a" hidden>
+          A. クラスセレクタ (.class)
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="css-review1" value="b" hidden>
+          B. IDセレクタ (#id)
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="css-review1" value="c" hidden>
+          C. 要素セレクタ (div)
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('css-review1', 'b')">回答</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" data-quiz="css-review2">
+        <h4>Q2. box-sizing: border-boxの効果は？</h4>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="css-review2" value="a" hidden>
+          A. widthにpaddingとborderが含まれる
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="css-review2" value="b" hidden>
+          B. marginが自動計算される
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="css-review2" value="c" hidden>
+          C. borderが非表示になる
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('css-review2', 'a')">回答</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" data-quiz="css-review3">
+        <h4>Q3. 1次元レイアウトに適しているのは？</h4>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="css-review3" value="a" hidden>
+          A. Grid
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="css-review3" value="b" hidden>
+          B. Flexbox
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="css-review3" value="c" hidden>
+          C. float
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('css-review3', 'b')">回答</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" data-quiz="css-review4">
+        <h4>Q4. CSS変数の定義に使うのは？</h4>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="css-review4" value="a" hidden>
+          A. $variable: value;
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="css-review4" value="b" hidden>
+          B. @variable: value;
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="css-review4" value="c" hidden>
+          C. --variable: value;
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('css-review4', 'c')">回答</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <h2>レビューチェックリスト</h2>
+      <div class="card card-warning">
+        <strong>CSSレビューで指摘すべき問題</strong>
+        <table>
+          <tr>
+            <th>問題</th>
+            <th>指摘例</th>
+          </tr>
+          <tr>
+            <td>!important乱用</td>
+            <td>「詳細度の設計を見直すべき」</td>
+          </tr>
+          <tr>
+            <td>マジックナンバー</td>
+            <td>「変数化すべき」</td>
+          </tr>
+          <tr>
+            <td>floatレイアウト</td>
+            <td>「Flexbox/Gridを使うべき」</td>
+          </tr>
+          <tr>
+            <td>px固定</td>
+            <td>「レスポンシブ対応していない」</td>
+          </tr>
+          <tr>
+            <td>命名が曖昧</td>
+            <td>「.box → .card-containerなど意味のある名前に」</td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- CSS 用語集 -->
+    <section id="css-glossary">
+      <h1>CSS用語集</h1>
+
+      <dl>
+        <dt>CSS</dt>
+        <dd>Cascading Style Sheets。Webページの見た目を定義する言語。</dd>
+
+        <dt>セレクタ (Selector)</dt>
+        <dd>スタイルを適用する対象を指定するパターン。例: p, .class, #id</dd>
+
+        <dt>プロパティ (Property)</dt>
+        <dd>変更する見た目の種類。例: color, font-size, margin</dd>
+
+        <dt>値 (Value)</dt>
+        <dd>プロパティに設定する具体的な内容。例: red, 16px, 10%</dd>
+
+        <dt>詳細度 (Specificity)</dt>
+        <dd>セレクタの優先度を決める点数システム。ID > クラス > 要素</dd>
+
+        <dt>カスケード (Cascade)</dt>
+        <dd>スタイルが「滝のように」流れ落ちて適用される仕組み。</dd>
+
+        <dt>ボックスモデル (Box Model)</dt>
+        <dd>すべての要素が持つ4層構造。content + padding + border + margin</dd>
+
+        <dt>CSS変数 / カスタムプロパティ</dt>
+        <dd>--で始まる再利用可能な値。var()で参照。</dd>
+
+        <dt>Flexbox</dt>
+        <dd>1次元レイアウト用のCSS。横並び・縦並びに最適。</dd>
+
+        <dt>Grid</dt>
+        <dd>2次元レイアウト用のCSS。行と列の格子状配置に最適。</dd>
+
+        <dt>rem</dt>
+        <dd>ルート要素(html)のfont-sizeを基準とした相対単位。</dd>
+
+        <dt>fr</dt>
+        <dd>Grid専用の単位。余った空間を比率で分配。fraction（分数）の略。</dd>
+      </dl>
+    </section>
   </main>
 
   <script>
@@ -1323,7 +2551,7 @@
       }
       updateProgress();
 
-      const nextSections = ['sec1','sec2','sec3','sec4','sec5','sec6','sec7','review','glossary'];
+      const nextSections = ['sec1','sec2','sec3','sec4','sec5','sec6','sec7','review','glossary','css1','css2','css3','css4','css5','css6','css7','css-review','css-glossary'];
       const currentIndex = nextSections.indexOf(sectionId);
       if (currentIndex < nextSections.length - 1) {
         showSection(nextSections[currentIndex + 1]);
@@ -1332,11 +2560,15 @@
 
     // 進捗更新
     function updateProgress() {
-      const total = 7;
-      const completed = state.completed.filter(s => s.startsWith('sec')).length;
+      // Phase 1 (HTML)
+      const phase1Completed = state.completed.filter(s => s.startsWith('sec')).length;
+      document.getElementById('phase1-progress').value = phase1Completed;
+      document.getElementById('phase1-text').textContent = `${phase1Completed} / 7`;
 
-      document.getElementById('phase-progress').value = completed;
-      document.getElementById('progress-text').textContent = `${completed} / ${total} 完了`;
+      // Phase 2 (CSS)
+      const phase2Completed = state.completed.filter(s => s.startsWith('css') && !s.includes('-')).length;
+      document.getElementById('phase2-progress').value = phase2Completed;
+      document.getElementById('phase2-text').textContent = `${phase2Completed} / 7`;
 
       document.querySelectorAll('.nav-link').forEach(link => {
         if (state.completed.includes(link.dataset.section)) {
