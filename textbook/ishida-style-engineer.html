@@ -296,6 +296,11 @@
       <progress id="phase2-progress" value="0" max="7"></progress>
       <small id="phase2-text">0 / 7</small>
     </div>
+    <div class="progress-container">
+      <small>Phase 3 (実践)</small>
+      <progress id="phase3-progress" value="0" max="4"></progress>
+      <small id="phase3-text">0 / 4</small>
+    </div>
 
     <div class="nav-section">
       <details class="nav-level" open>
@@ -331,10 +336,15 @@
           </div>
         </details>
 
-        <details class="nav-accordion">
-          <summary>Phase 3: 実践（準備中）</summary>
+        <details class="nav-accordion" open>
+          <summary>Phase 3: 実践</summary>
           <div class="nav-links">
-            <span class="nav-link" style="opacity:0.5;">Coming Soon...</span>
+            <a href="#prac1" class="nav-link" data-section="prac1">15. DevTools入門</a>
+            <a href="#prac2" class="nav-link" data-section="prac2">16. 実サイト読解</a>
+            <a href="#prac3" class="nav-link" data-section="prac3">17. UIパターン認識</a>
+            <a href="#prac4" class="nav-link" data-section="prac4">18. 2026年CSS新機能</a>
+            <a href="#prac-review" class="nav-link" data-section="prac-review">実践復習チェック</a>
+            <a href="#prac-glossary" class="nav-link" data-section="prac-glossary">実践用語集</a>
           </div>
         </details>
       </details>
@@ -2529,6 +2539,729 @@ grid-template-columns: repeat(3, 1fr);
         <dd>Grid専用の単位。余った空間を比率で分配。fraction（分数）の略。</dd>
       </dl>
     </section>
+
+    <!-- ========================================== -->
+    <!-- Phase 3: 実践 -->
+    <!-- ========================================== -->
+
+    <!-- 実践 セクション1: DevTools -->
+    <section id="prac1">
+      <h1>15. DevTools入門</h1>
+
+      <div class="card card-warning">
+        <strong>実務必須スキル</strong>
+        <p>コードを「読む」だけでなく「調べる」力を身につける。DevToolsは最強の武器。</p>
+      </div>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>DevToolsの開き方と基本画面</li>
+          <li>要素の検証（Elements）</li>
+          <li>スタイルの確認と編集</li>
+          <li>レスポンシブ確認</li>
+        </ul>
+      </div>
+
+      <h2>DevToolsの開き方</h2>
+      <div class="card">
+        <table>
+          <tr>
+            <th>方法</th>
+            <th>Windows</th>
+            <th>Mac</th>
+          </tr>
+          <tr>
+            <td>キーボード</td>
+            <td><code>F12</code> または <code>Ctrl + Shift + I</code></td>
+            <td><code>Cmd + Option + I</code></td>
+          </tr>
+          <tr>
+            <td>右クリック</td>
+            <td colspan="2">要素を右クリック → 「検証」</td>
+          </tr>
+          <tr>
+            <td>メニュー</td>
+            <td colspan="2">︙ → その他のツール → デベロッパーツール</td>
+          </tr>
+        </table>
+      </div>
+
+      <h2>Elementsパネル（最重要）</h2>
+      <div class="card">
+        <pre>┌─────────────────────────────────────────┐
+│ Elements │ Console │ Sources │ Network │ ← タブ
+├─────────────────────────────────────────┤
+│ &lt;html&gt;                                  │
+│   &lt;head&gt;...&lt;/head&gt;                      │
+│   &lt;body&gt;                                │
+│     &lt;header class="site-header"&gt;        │ ← DOM構造
+│       &lt;nav&gt;...&lt;/nav&gt;                    │
+│     &lt;/header&gt;                           │
+│     &lt;main&gt;...&lt;/main&gt;                    │
+├─────────────────────────────────────────┤
+│ Styles │ Computed │ Layout │            │
+│ .site-header {                          │ ← 適用されているCSS
+│   background: #fff;                     │
+│   padding: 1rem;                        │
+│ }                                       │
+└─────────────────────────────────────────┘</pre>
+      </div>
+
+      <h3>要素の選択方法</h3>
+      <table>
+        <tr>
+          <th>方法</th>
+          <th>説明</th>
+        </tr>
+        <tr>
+          <td>選択ツール</td>
+          <td>左上の矢印アイコン → ページ上の要素をクリック</td>
+        </tr>
+        <tr>
+          <td>右クリック検証</td>
+          <td>調べたい要素を右クリック → 「検証」</td>
+        </tr>
+        <tr>
+          <td>DOM内検索</td>
+          <td><code>Ctrl/Cmd + F</code> でタグやクラス名を検索</td>
+        </tr>
+      </table>
+
+      <h2>Stylesパネルの読み方</h2>
+      <div class="card">
+        <pre>/* 上から順に優先度が高い */
+element.style {          ← インラインスタイル（最優先）
+  color: red;
+}
+
+.header .title {         ← より詳細なセレクタ
+  color: blue;
+}
+
+.title {                 ← 基本セレクタ
+  color: green;
+  font-size: 24px;       ← 取り消し線 = 上書きされた
+}
+
+user agent stylesheet    ← ブラウザのデフォルト
+h1 { ... }</pre>
+      </div>
+
+      <div class="card card-success">
+        <strong>リアルタイム編集</strong>
+        <p>Stylesパネルで値を直接編集可能。変更は即座に反映される（リロードで消える）。</p>
+        <ul>
+          <li>色をクリック → カラーピッカー</li>
+          <li>数値を上下キー → 1pxずつ増減</li>
+          <li>Shift + 上下 → 10pxずつ増減</li>
+        </ul>
+      </div>
+
+      <h2>レスポンシブモード</h2>
+      <div class="card">
+        <p><strong>起動方法</strong>：<code>Ctrl/Cmd + Shift + M</code> または デバイスアイコンをクリック</p>
+        <ul>
+          <li>画面サイズを自由に変更</li>
+          <li>プリセットデバイス（iPhone, iPad等）を選択</li>
+          <li>ネットワーク速度のシミュレーション</li>
+        </ul>
+      </div>
+
+      <h2>Computedタブ</h2>
+      <div class="card card-info">
+        <p>最終的に適用されている値を確認できる。</p>
+        <ul>
+          <li>ボックスモデルの視覚化（margin/padding/border）</li>
+          <li>継承されたスタイルの確認</li>
+          <li>「なぜこのスタイルが効いているか」の調査</li>
+        </ul>
+      </div>
+
+      <details>
+        <summary>実務Tips：DevToolsデバッグの流れ</summary>
+        <div>
+          <ol>
+            <li><strong>問題の要素を特定</strong>：選択ツールでクリック</li>
+            <li><strong>適用CSSを確認</strong>：Stylesパネルを上から確認</li>
+            <li><strong>取り消し線を探す</strong>：どのルールが上書きしているか</li>
+            <li><strong>Computedで最終値確認</strong>：実際に何が適用されているか</li>
+            <li><strong>リアルタイム編集で試す</strong>：仮説を検証</li>
+          </ol>
+        </div>
+      </details>
+
+      <div class="quiz" data-quiz="prac-q1">
+        <h4>確認クイズ</h4>
+        <p>DevToolsでスタイルが取り消し線で表示されている場合、何を意味する？</p>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="prac-q1" value="a" hidden>
+          A. 文法エラーがある
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="prac-q1" value="b" hidden>
+          B. より優先度の高いスタイルに上書きされている
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="prac-q1" value="c" hidden>
+          C. ブラウザがサポートしていない
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('prac-q1', 'b')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('prac1')">このセクションを完了</button>
+    </section>
+
+    <!-- 実践 セクション2: 実サイト読解 -->
+    <section id="prac2">
+      <h1>16. 実サイト読解</h1>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>シニアのコード読解プロセス</li>
+          <li>構造を素早く把握する方法</li>
+          <li>CSSの設計意図を読み取る</li>
+        </ul>
+      </div>
+
+      <h2>シニアの読み方：4ステップ</h2>
+      <div class="card card-warning">
+        <p>ベテランは「上から順に読む」のではなく「構造から理解する」</p>
+      </div>
+
+      <h3>Step 1: 全体構造を把握</h3>
+      <div class="card">
+        <pre>body
+├── header     ← サイト共通ヘッダー
+├── main       ← メインコンテンツ
+│   ├── article    ← 記事本体
+│   └── aside      ← サイドバー
+└── footer     ← サイト共通フッター
+
+「このサイトは典型的な2カラムレイアウトだな」</pre>
+      </div>
+
+      <h3>Step 2: セマンティックタグで役割を推測</h3>
+      <div class="card">
+        <pre>&lt;nav&gt;        → 「ここはナビゲーションだ」
+&lt;article&gt;    → 「ここが独立した記事コンテンツだ」
+&lt;aside&gt;      → 「ここは補足情報だ」
+&lt;section&gt;    → 「テーマでグループ化された部分だ」</pre>
+      </div>
+
+      <h3>Step 3: クラス名から意図を読む</h3>
+      <div class="card">
+        <pre>.card           → カードコンポーネント
+.card__title    → カードのタイトル（BEM命名）
+.card--featured → 特集カード（バリエーション）
+.is-active      → アクティブ状態
+.u-mt-20        → ユーティリティ（margin-top: 20px）</pre>
+      </div>
+
+      <h3>Step 4: CSSのパターンを認識</h3>
+      <div class="card">
+        <pre>display: flex; justify-content: space-between;
+→ 「両端揃えの横並びだな」
+
+display: grid; grid-template-columns: repeat(3, 1fr);
+→ 「3カラムの等幅グリッドだな」
+
+position: fixed; top: 0;
+→ 「スクロールしても上部に固定されるな」</pre>
+      </div>
+
+      <h2>命名規則（読めると強い）</h2>
+      <table>
+        <tr>
+          <th>命名規則</th>
+          <th>例</th>
+          <th>特徴</th>
+        </tr>
+        <tr>
+          <td>BEM</td>
+          <td><code>.block__element--modifier</code></td>
+          <td>Block, Element, Modifier の略</td>
+        </tr>
+        <tr>
+          <td>SMACSS</td>
+          <td><code>.l-header</code>, <code>.is-active</code></td>
+          <td>レイアウト(l-)、状態(is-)</td>
+        </tr>
+        <tr>
+          <td>Utility-first</td>
+          <td><code>.flex</code>, <code>.mt-4</code></td>
+          <td>Tailwind CSS風</td>
+        </tr>
+      </table>
+
+      <div class="card card-success">
+        <strong>BEM命名の読み方</strong>
+        <pre>.card           → Block（独立したコンポーネント）
+.card__image    → Element（Blockの一部、__で繋ぐ）
+.card__title    → Element
+.card--large    → Modifier（バリエーション、--で繋ぐ）</pre>
+      </div>
+
+      <h2>実践：有名サイトを読む</h2>
+      <div class="card card-info">
+        <strong>おすすめの練習サイト</strong>
+        <ol>
+          <li><strong>Stripe.com</strong> - モダンで美しいCSS</li>
+          <li><strong>GitHub.com</strong> - 大規模サイトの設計</li>
+          <li><strong>MDN Web Docs</strong> - セマンティックHTMLの模範</li>
+        </ol>
+        <p>DevToolsで構造を確認しながら「なぜこう書いたか」を考える。</p>
+      </div>
+
+      <div class="quiz" data-quiz="prac-q2">
+        <h4>確認クイズ</h4>
+        <p>BEM命名で <code>.card__title--highlighted</code> の「__title」は何を表す？</p>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="prac-q2" value="a" hidden>
+          A. Block（独立コンポーネント）
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="prac-q2" value="b" hidden>
+          B. Element（Blockの一部）
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="prac-q2" value="c" hidden>
+          C. Modifier（バリエーション）
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('prac-q2', 'b')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('prac2')">このセクションを完了</button>
+    </section>
+
+    <!-- 実践 セクション3: UIパターン認識 -->
+    <section id="prac3">
+      <h1>17. UIパターン認識</h1>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>よくあるUIコンポーネントのパターン</li>
+          <li>各パターンの典型的な実装</li>
+          <li>レビュー時のチェックポイント</li>
+        </ul>
+      </div>
+
+      <h2>パターン1: ヘッダー</h2>
+      <div class="card">
+        <pre>&lt;header class="header"&gt;
+  &lt;div class="header__logo"&gt;...&lt;/div&gt;
+  &lt;nav class="header__nav"&gt;
+    &lt;ul&gt;...&lt;/ul&gt;
+  &lt;/nav&gt;
+&lt;/header&gt;
+
+.header {
+  display: flex;
+  justify-content: space-between;  /* ロゴとナビを両端に */
+  align-items: center;             /* 縦中央揃え */
+  padding: 1rem 2rem;
+  position: sticky;                /* スクロールで追従（オプション） */
+  top: 0;
+}</pre>
+      </div>
+
+      <h2>パターン2: カード</h2>
+      <div class="card">
+        <pre>&lt;article class="card"&gt;
+  &lt;img class="card__image" src="..." alt="..."&gt;
+  &lt;div class="card__body"&gt;
+    &lt;h3 class="card__title"&gt;...&lt;/h3&gt;
+    &lt;p class="card__text"&gt;...&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/article&gt;
+
+.card {
+  border-radius: 8px;
+  overflow: hidden;         /* 画像の角丸を適用 */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.card__image {
+  width: 100%;
+  aspect-ratio: 16 / 9;     /* アスペクト比固定 */
+  object-fit: cover;        /* はみ出た部分を切り取り */
+}</pre>
+      </div>
+
+      <h2>パターン3: カードグリッド</h2>
+      <div class="card">
+        <pre>&lt;div class="card-grid"&gt;
+  &lt;article class="card"&gt;...&lt;/article&gt;
+  &lt;article class="card"&gt;...&lt;/article&gt;
+  &lt;article class="card"&gt;...&lt;/article&gt;
+&lt;/div&gt;
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+/* → 最小280px、それ以上なら均等に広がる */
+/* → 画面幅に応じて自動的に列数が変わる */</pre>
+      </div>
+
+      <h2>パターン4: フォーム</h2>
+      <div class="card">
+        <pre>&lt;form&gt;
+  &lt;div class="form-group"&gt;
+    &lt;label for="email"&gt;メールアドレス&lt;/label&gt;
+    &lt;input type="email" id="email" name="email" required&gt;
+  &lt;/div&gt;
+  &lt;button type="submit"&gt;送信&lt;/button&gt;
+&lt;/form&gt;
+
+.form-group {
+  margin-bottom: 1rem;
+}
+.form-group label {
+  display: block;           /* ラベルをブロック要素に */
+  margin-bottom: 0.5rem;
+}
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.form-group input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}</pre>
+      </div>
+
+      <h2>パターン5: モーダル</h2>
+      <div class="card">
+        <pre>&lt;div class="modal-overlay"&gt;
+  &lt;div class="modal"&gt;
+    &lt;button class="modal__close"&gt;×&lt;/button&gt;
+    &lt;div class="modal__content"&gt;...&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;                 /* top/right/bottom/left: 0 の省略形 */
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal {
+  background: white;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+}</pre>
+      </div>
+
+      <div class="card card-success">
+        <strong>レビュー観点</strong>
+        <ul>
+          <li>セマンティックなタグを使っているか？（nav, article, button等）</li>
+          <li>アクセシビリティは考慮されているか？（label, alt, focus状態）</li>
+          <li>レスポンシブ対応しているか？（固定px → 相対単位/Grid/Flex）</li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-quiz="prac-q3">
+        <h4>確認クイズ</h4>
+        <p>カードを画面幅に応じて自動的に列数を変えるのに最適なCSSは？</p>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="prac-q3" value="a" hidden>
+          A. display: flex; flex-wrap: wrap;
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="prac-q3" value="b" hidden>
+          B. grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="prac-q3" value="c" hidden>
+          C. float: left; width: 33%;
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('prac-q3', 'b')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('prac3')">このセクションを完了</button>
+    </section>
+
+    <!-- 実践 セクション4: 2026年CSS新機能 -->
+    <section id="prac4">
+      <h1>18. 2026年CSS新機能</h1>
+
+      <div class="card card-warning">
+        <strong>発展知識</strong>
+        <p>「見たら意味がわかる」レベルを目指す。実務で見かけたときに慌てないために。</p>
+      </div>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>:has() セレクタ</li>
+          <li>Container Queries</li>
+          <li>CSS Nesting</li>
+          <li>その他の新機能</li>
+        </ul>
+      </div>
+
+      <h2>:has() セレクタ（親セレクタ）</h2>
+      <div class="card">
+        <p><strong>従来の問題</strong>：CSSは「親→子」の方向にしかスタイルを適用できなかった</p>
+        <p><strong>:has()の登場</strong>：「特定の子を持つ親」を選択できるように！</p>
+        <pre>/* 画像を含むカードだけスタイルを変える */
+.card:has(img) {
+  padding: 0;
+}
+
+/* チェックされたラベルのスタイルを変える */
+label:has(input:checked) {
+  background: lightblue;
+}
+
+/* 空のセクションを非表示 */
+section:has(:empty) {
+  display: none;
+}</pre>
+      </div>
+
+      <h2>Container Queries（コンテナクエリ）</h2>
+      <div class="card">
+        <p><strong>従来の問題</strong>：メディアクエリは「画面幅」基準。コンポーネントの「親要素の幅」基準ではない</p>
+        <p><strong>Container Queriesの登場</strong>：コンテナ（親要素）のサイズに応じてスタイルを変更！</p>
+        <pre>/* コンテナを定義 */
+.card-container {
+  container-type: inline-size;
+  container-name: card;
+}
+
+/* コンテナの幅に応じてスタイル変更 */
+@container card (min-width: 400px) {
+  .card {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+@container card (max-width: 399px) {
+  .card {
+    display: block;
+  }
+}</pre>
+      </div>
+
+      <h2>CSS Nesting（ネスト記法）</h2>
+      <div class="card">
+        <p><strong>従来</strong>：Sass/SCSSでしかネストできなかった</p>
+        <p><strong>CSS Nestingの登場</strong>：ネイティブCSSでネスト可能に！</p>
+        <pre>/* 従来のCSS */
+.card { ... }
+.card .title { ... }
+.card .title:hover { ... }
+.card.featured { ... }
+
+/* CSS Nesting（新機能） */
+.card {
+  ...
+
+  .title {
+    ...
+
+    &:hover {
+      ...
+    }
+  }
+
+  &.featured {
+    ...
+  }
+}</pre>
+      </div>
+
+      <h2>その他の注目機能</h2>
+      <table>
+        <tr>
+          <th>機能</th>
+          <th>説明</th>
+          <th>例</th>
+        </tr>
+        <tr>
+          <td>inset</td>
+          <td>top/right/bottom/leftの一括指定</td>
+          <td><code>inset: 0;</code></td>
+        </tr>
+        <tr>
+          <td>aspect-ratio</td>
+          <td>アスペクト比を維持</td>
+          <td><code>aspect-ratio: 16 / 9;</code></td>
+        </tr>
+        <tr>
+          <td>gap（Flex）</td>
+          <td>Flexboxでもgapが使える</td>
+          <td><code>gap: 20px;</code></td>
+        </tr>
+        <tr>
+          <td>accent-color</td>
+          <td>チェックボックス等の色</td>
+          <td><code>accent-color: #3498db;</code></td>
+        </tr>
+      </table>
+
+      <details>
+        <summary>ブラウザサポート確認方法</summary>
+        <div>
+          <p><strong>Can I Use</strong>（<a href="https://caniuse.com" target="_blank" rel="noopener noreferrer">caniuse.com</a>）でブラウザ対応状況を確認。</p>
+          <p>新機能を使う際は、フォールバック（代替手段）を用意するか、対応ブラウザを確認。</p>
+        </div>
+      </details>
+
+      <div class="quiz" data-quiz="prac-q4">
+        <h4>確認クイズ</h4>
+        <p>「画像を含むカードだけスタイルを変える」ためのセレクタは？</p>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="prac-q4" value="a" hidden>
+          A. .card img { ... }
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="prac-q4" value="b" hidden>
+          B. .card:has(img) { ... }
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="prac-q4" value="c" hidden>
+          C. img .card { ... }
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('prac-q4', 'b')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('prac4')">このセクションを完了</button>
+    </section>
+
+    <!-- 実践 復習チェック -->
+    <section id="prac-review">
+      <h1>実践復習チェックポイント</h1>
+
+      <div class="card card-info">
+        <strong>Phase 3 総合確認</strong>
+        <p>実践スキルを復習しましょう。</p>
+      </div>
+
+      <div class="quiz" data-quiz="prac-review1">
+        <h4>Q1. DevToolsで「最終的に適用されている値」を確認できるタブは？</h4>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="prac-review1" value="a" hidden>
+          A. Styles
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="prac-review1" value="b" hidden>
+          B. Computed
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="prac-review1" value="c" hidden>
+          C. Elements
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('prac-review1', 'b')">回答</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" data-quiz="prac-review2">
+        <h4>Q2. BEM命名の「--」は何を表す？</h4>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="prac-review2" value="a" hidden>
+          A. Block
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="prac-review2" value="b" hidden>
+          B. Element
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="prac-review2" value="c" hidden>
+          C. Modifier
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('prac-review2', 'c')">回答</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" data-quiz="prac-review3">
+        <h4>Q3. Container Queriesは何を基準にスタイルを変更する？</h4>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="prac-review3" value="a" hidden>
+          A. 画面（ビューポート）の幅
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="prac-review3" value="b" hidden>
+          B. コンテナ（親要素）のサイズ
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="prac-review3" value="c" hidden>
+          C. 子要素の数
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('prac-review3', 'b')">回答</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <h2>Level 1 完了チェックリスト</h2>
+      <div class="card card-success">
+        <strong>Level 1で身につけた力</strong>
+        <ul>
+          <li>セマンティックHTMLの違反を指摘できる</li>
+          <li>アクセシビリティの問題を発見できる</li>
+          <li>CSS設計の悪い部分を特定できる</li>
+          <li>DevToolsで問題を調査できる</li>
+          <li>実サイトのコードを読んで構造を理解できる</li>
+          <li>よくあるUIパターンを認識できる</li>
+        </ul>
+        <p><strong>おめでとうございます！Level 2: JavaScriptへ進む準備ができました。</strong></p>
+      </div>
+    </section>
+
+    <!-- 実践 用語集 -->
+    <section id="prac-glossary">
+      <h1>実践用語集</h1>
+
+      <dl>
+        <dt>DevTools（開発者ツール）</dt>
+        <dd>ブラウザに内蔵された開発・デバッグツール。F12またはCtrl+Shift+Iで起動。</dd>
+
+        <dt>Elements パネル</dt>
+        <dd>DOM構造と適用されているCSSを確認・編集できるパネル。</dd>
+
+        <dt>Computed タブ</dt>
+        <dd>最終的に適用されている計算済みの値を確認できるタブ。</dd>
+
+        <dt>BEM</dt>
+        <dd>Block Element Modifier。CSS命名規則の一つ。.block__element--modifier の形式。</dd>
+
+        <dt>SMACSS</dt>
+        <dd>Scalable and Modular Architecture for CSS。CSSの設計手法。</dd>
+
+        <dt>:has() セレクタ</dt>
+        <dd>特定の子要素を持つ親要素を選択できるCSS新機能。「親セレクタ」とも呼ばれる。</dd>
+
+        <dt>Container Queries</dt>
+        <dd>コンテナ（親要素）のサイズに応じてスタイルを変更するCSS機能。</dd>
+
+        <dt>CSS Nesting</dt>
+        <dd>ネイティブCSSでセレクタをネスト（入れ子）にできる新機能。</dd>
+
+        <dt>UIパターン</dt>
+        <dd>よく使われるUI（ヘッダー、カード、モーダル等）の典型的な実装方法。</dd>
+
+        <dt>aspect-ratio</dt>
+        <dd>要素のアスペクト比（縦横比）を指定するCSSプロパティ。</dd>
+
+        <dt>inset</dt>
+        <dd>top, right, bottom, leftを一括指定するCSSプロパティの省略形。</dd>
+      </dl>
+    </section>
   </main>
 
   <script>
@@ -2612,7 +3345,7 @@ grid-template-columns: repeat(3, 1fr);
       }
       updateProgress();
 
-      const nextSections = ['sec1','sec2','sec3','sec4','sec5','sec6','sec7','review','glossary','css1','css2','css3','css4','css5','css6','css7','css-review','css-glossary'];
+      const nextSections = ['sec1','sec2','sec3','sec4','sec5','sec6','sec7','review','glossary','css1','css2','css3','css4','css5','css6','css7','css-review','css-glossary','prac1','prac2','prac3','prac4','prac-review','prac-glossary'];
       const currentIndex = nextSections.indexOf(sectionId);
       if (currentIndex < nextSections.length - 1) {
         showSection(nextSections[currentIndex + 1]);
@@ -2630,6 +3363,11 @@ grid-template-columns: repeat(3, 1fr);
       const phase2Completed = state.completed.filter(s => s.startsWith('css') && !s.includes('-')).length;
       document.getElementById('phase2-progress').value = phase2Completed;
       document.getElementById('phase2-text').textContent = `${phase2Completed} / 7`;
+
+      // Phase 3 (実践)
+      const phase3Completed = state.completed.filter(s => s.startsWith('prac') && !s.includes('-')).length;
+      document.getElementById('phase3-progress').value = phase3Completed;
+      document.getElementById('phase3-text').textContent = `${phase3Completed} / 4`;
 
       document.querySelectorAll('.nav-link').forEach(link => {
         if (state.completed.includes(link.dataset.section)) {
