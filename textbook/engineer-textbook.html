@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>エンジニアへの道 - LD/ディスレクシア対応教科書</title>
+  <style>
+    /* ============================================
+       LD/ディスレクシア対応 ベーススタイル
+
+       参考:
+       - デジタル庁デザインシステム
+       - UDデジタル教科書体ガイドライン
+       - WCAG 2.0 アクセシビリティ基準
+       ============================================ */
+
+    :root {
+      /* 背景色: 真っ白を避けてクリーム色（目に優しい） */
+      --bg-main: #FFFEF5;
+      --bg-card: #FFF9E6;
+      --bg-code: #F5F5F0;
+      --bg-nav: #F8F6F0;
+
+      /* 文字色: 真っ黒を避けて濃いグレー（コントラスト確保） */
+      --text-main: #333333;
+      --text-sub: #666666;
+      --text-light: #888888;
+
+      /* アクセントカラー（見やすい彩度） */
+      --accent-blue: #2563EB;
+      --accent-green: #16A34A;
+      --accent-orange: #EA580C;
+      --accent-red: #DC2626;
+      --accent-purple: #7C3AED;
+
+      /* カード枠線 */
+      --border-light: #E5E5E0;
+      --border-accent: #2563EB;
+
+      /* フォントサイズ（大きめ設定） */
+      --font-size-base: 20px;
+      --font-size-small: 18px;
+      --font-size-code: 17px;
+      --font-size-h1: 32px;
+      --font-size-h2: 26px;
+      --font-size-h3: 22px;
+
+      /* 行間（広め設定: 2.0） */
+      --line-height: 2.0;
+      --line-height-tight: 1.6;
+
+      /* 字間（読みやすさのため少し広め） */
+      --letter-spacing: 0.05em;
+
+      /* レイアウト */
+      --content-width: 720px;
+      --nav-width: 300px;
+      --spacing-unit: 8px;
+    }
+
+    /* リセット */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ============================================
+       フォント設定
+       UDデジタル教科書体 → 游ゴシック → Noto Sans JP
+       ============================================ */
+    body {
+      font-family:
+        "UD デジタル 教科書体 NK-R",
+        "UD Digi Kyokasho NK-R",
+        "游ゴシック体", "Yu Gothic",
+        "Noto Sans JP",
+        "Hiragino Sans",
+        sans-serif;
+      font-size: var(--font-size-base);
+      line-height: var(--line-height);
+      letter-spacing: var(--letter-spacing);
+      color: var(--text-main);
+      background: var(--bg-main);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* コード用フォント */
+    code, pre {
+      font-family:
+        "UD デジタル 教科書体 NK-R",
+        "Source Code Pro",
+        "Consolas",
+        monospace;
+      font-size: var(--font-size-code);
+    }
+
+    /* ============================================
+       ナビゲーション
+       ============================================ */
+    #main-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--nav-width);
+      height: 100vh;
+      background: var(--bg-nav);
+      border-right: 2px solid var(--border-light);
+      overflow-y: auto;
+      padding: calc(var(--spacing-unit) * 3);
+      z-index: 100;
+    }
+
+    .nav-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: var(--accent-blue);
+      text-decoration: none;
+      display: block;
+      padding-bottom: calc(var(--spacing-unit) * 2);
+      border-bottom: 2px solid var(--border-light);
+      margin-bottom: calc(var(--spacing-unit) * 2);
+    }
+
+    .nav-section {
+      margin-bottom: calc(var(--spacing-unit) * 3);
+    }
+
+    .nav-level-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--text-main);
+      padding: calc(var(--spacing-unit) * 1.5) 0;
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: var(--spacing-unit);
+    }
+
+    .nav-phase-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--text-sub);
+      padding: var(--spacing-unit) 0;
+      margin-top: calc(var(--spacing-unit) * 1.5);
+    }
+
+    .nav-link {
+      display: block;
+      padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 2);
+      color: var(--text-main);
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 17px;
+      line-height: 1.6;
+      transition: background 0.2s, color 0.2s;
+      margin: 4px 0;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-card);
+      color: var(--accent-blue);
+    }
+
+    .nav-link.active {
+      background: var(--accent-blue);
+      color: white;
+    }
+
+    .nav-link.completed::before {
+      content: "✓ ";
+      color: var(--accent-green);
+      font-weight: bold;
+    }
+
+    .nav-link.active.completed::before {
+      color: white;
+    }
+
+    /* ============================================
+       メインコンテンツ
+       ============================================ */
+    main {
+      margin-left: var(--nav-width);
+      padding: calc(var(--spacing-unit) * 5);
+      max-width: calc(var(--content-width) + var(--spacing-unit) * 10);
+    }
+
+    section {
+      display: none;
+      padding-bottom: calc(var(--spacing-unit) * 5);
+    }
+
+    section.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============================================
+       見出し
+       ============================================ */
+    h1 {
+      font-size: var(--font-size-h1);
+      color: var(--accent-blue);
+      margin-bottom: calc(var(--spacing-unit) * 4);
+      padding-bottom: calc(var(--spacing-unit) * 2);
+      border-bottom: 3px solid var(--accent-blue);
+      line-height: 1.4;
+    }
+
+    h2 {
+      font-size: var(--font-size-h2);
+      color: var(--text-main);
+      margin: calc(var(--spacing-unit) * 5) 0 calc(var(--spacing-unit) * 3);
+      padding-left: calc(var(--spacing-unit) * 2);
+      border-left: 5px solid var(--accent-blue);
+      line-height: 1.4;
+    }
+
+    h3 {
+      font-size: var(--font-size-h3);
+      color: var(--text-main);
+      margin: calc(var(--spacing-unit) * 4) 0 calc(var(--spacing-unit) * 2);
+      line-height: 1.4;
+    }
+
+    /* ============================================
+       段落・テキスト
+       ============================================ */
+    p {
+      margin-bottom: calc(var(--spacing-unit) * 3);
+      max-width: var(--content-width);
+    }
+
+    /* 強調（太字ではなく色で区別） */
+    strong {
+      color: var(--accent-blue);
+      font-weight: bold;
+    }
+
+    em {
+      color: var(--accent-orange);
+      font-style: normal;
+      font-weight: bold;
+    }
+
+    /* ============================================
+       リスト
+       ============================================ */
+    ul, ol {
+      margin: calc(var(--spacing-unit) * 2) 0 calc(var(--spacing-unit) * 3);
+      padding-left: calc(var(--spacing-unit) * 4);
+    }
+
+    li {
+      margin-bottom: calc(var(--spacing-unit) * 2);
+      line-height: var(--line-height);
+    }
+
+    /* ============================================
+       カード（情報ボックス）
+       ============================================ */
+    .card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: calc(var(--spacing-unit) * 3);
+      margin: calc(var(--spacing-unit) * 3) 0;
+      border: 2px solid var(--border-light);
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: calc(var(--spacing-unit) * 2);
+      display: flex;
+      align-items: center;
+      gap: calc(var(--spacing-unit) * 1.5);
+    }
+
+    /* 情報カード（青） */
+    .card-info {
+      border-left: 6px solid var(--accent-blue);
+      background: #EFF6FF;
+    }
+    .card-info .card-title { color: var(--accent-blue); }
+
+    /* 成功カード（緑） */
+    .card-success {
+      border-left: 6px solid var(--accent-green);
+      background: #F0FDF4;
+    }
+    .card-success .card-title { color: var(--accent-green); }
+
+    /* 警告カード（オレンジ） */
+    .card-warning {
+      border-left: 6px solid var(--accent-orange);
+      background: #FFF7ED;
+    }
+    .card-warning .card-title { color: var(--accent-orange); }
+
+    /* 危険カード（赤） */
+    .card-danger {
+      border-left: 6px solid var(--accent-red);
+      background: #FEF2F2;
+    }
+    .card-danger .card-title { color: var(--accent-red); }
+
+    /* ============================================
+       コードブロック
+       ============================================ */
+    pre {
+      background: var(--bg-code);
+      padding: calc(var(--spacing-unit) * 3);
+      border-radius: 12px;
+      overflow-x: auto;
+      margin: calc(var(--spacing-unit) * 3) 0;
+      border: 2px solid var(--border-light);
+      line-height: 1.8;
+    }
+
+    code {
+      background: var(--bg-code);
+      padding: 4px 8px;
+      border-radius: 6px;
+      color: var(--accent-purple);
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--text-main);
+    }
+
+    /* ============================================
+       比較ボックス（正しい/間違い）
+       ============================================ */
+    .compare-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: calc(var(--spacing-unit) * 3);
+      margin: calc(var(--spacing-unit) * 3) 0;
+    }
+
+    .compare-good {
+      background: #F0FDF4;
+      border: 3px solid var(--accent-green);
+      border-radius: 12px;
+      padding: calc(var(--spacing-unit) * 3);
+    }
+
+    .compare-bad {
+      background: #FEF2F2;
+      border: 3px solid var(--accent-red);
+      border-radius: 12px;
+      padding: calc(var(--spacing-unit) * 3);
+    }
+
+    .compare-label {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: calc(var(--spacing-unit) * 2);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-unit);
+    }
+
+    .compare-good .compare-label { color: var(--accent-green); }
+    .compare-bad .compare-label { color: var(--accent-red); }
+
+    /* ============================================
+       テーブル
+       ============================================ */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: calc(var(--spacing-unit) * 3) 0;
+      font-size: 18px;
+    }
+
+    th, td {
+      padding: calc(var(--spacing-unit) * 2);
+      border: 2px solid var(--border-light);
+      text-align: left;
+      line-height: 1.6;
+    }
+
+    th {
+      background: var(--bg-card);
+      font-weight: bold;
+      color: var(--text-main);
+    }
+
+    tr:nth-child(even) {
+      background: var(--bg-card);
+    }
+
+    /* ============================================
+       クイズ
+       ============================================ */
+    .quiz {
+      background: var(--bg-card);
+      border: 3px solid var(--accent-purple);
+      border-radius: 12px;
+      padding: calc(var(--spacing-unit) * 4);
+      margin: calc(var(--spacing-unit) * 4) 0;
+    }
+
+    .quiz-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: var(--accent-purple);
+      margin-bottom: calc(var(--spacing-unit) * 3);
+      display: flex;
+      align-items: center;
+      gap: calc(var(--spacing-unit) * 1.5);
+    }
+
+    .quiz-option {
+      display: block;
+      padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 3);
+      margin: calc(var(--spacing-unit) * 1.5) 0;
+      background: white;
+      border: 3px solid var(--border-light);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .quiz-option:hover {
+      border-color: var(--accent-purple);
+      background: #FAF5FF;
+    }
+
+    .quiz-option.selected {
+      border-color: var(--accent-purple);
+      background: #FAF5FF;
+    }
+
+    .quiz-option.correct {
+      border-color: var(--accent-green);
+      background: #F0FDF4;
+    }
+
+    .quiz-option.incorrect {
+      border-color: var(--accent-red);
+      background: #FEF2F2;
+    }
+
+    .quiz-btn {
+      background: var(--accent-purple);
+      color: white;
+      border: none;
+      padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 4);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: calc(var(--spacing-unit) * 2);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .quiz-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+    }
+
+    .quiz-feedback {
+      margin-top: calc(var(--spacing-unit) * 3);
+      padding: calc(var(--spacing-unit) * 3);
+      border-radius: 10px;
+      font-size: 18px;
+      display: none;
+    }
+
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.correct { background: #F0FDF4; color: var(--accent-green); border: 2px solid var(--accent-green); }
+    .quiz-feedback.incorrect { background: #FEF2F2; color: var(--accent-red); border: 2px solid var(--accent-red); }
+
+    /* ============================================
+       完了ボタン
+       ============================================ */
+    .complete-btn {
+      background: var(--accent-green);
+      color: white;
+      border: none;
+      padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 5);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: calc(var(--spacing-unit) * 1.5);
+      margin-top: calc(var(--spacing-unit) * 5);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .complete-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+    }
+
+    .complete-btn.completed {
+      background: var(--text-light);
+      cursor: default;
+    }
+
+    .complete-btn.completed:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* ============================================
+       進捗バー
+       ============================================ */
+    .progress-container {
+      background: white;
+      border: 2px solid var(--border-light);
+      border-radius: 10px;
+      padding: calc(var(--spacing-unit) * 2);
+      margin: calc(var(--spacing-unit) * 2) 0;
+    }
+
+    progress {
+      width: 100%;
+      height: 24px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: none;
+    }
+
+    progress::-webkit-progress-bar {
+      background: var(--bg-code);
+      border-radius: 12px;
+    }
+
+    progress::-webkit-progress-value {
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+      border-radius: 12px;
+    }
+
+    /* ============================================
+       SVG図解用スタイル
+       ============================================ */
+    .diagram {
+      width: 100%;
+      max-width: 600px;
+      margin: calc(var(--spacing-unit) * 4) auto;
+      display: block;
+    }
+
+    .diagram-container {
+      background: white;
+      border: 2px solid var(--border-light);
+      border-radius: 12px;
+      padding: calc(var(--spacing-unit) * 3);
+      margin: calc(var(--spacing-unit) * 3) 0;
+      text-align: center;
+    }
+
+    .diagram-caption {
+      font-size: 16px;
+      color: var(--text-sub);
+      margin-top: calc(var(--spacing-unit) * 2);
+      text-align: center;
+    }
+
+    /* ============================================
+       アイコン（絵文字ベース）
+       ============================================ */
+    .icon {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    /* ============================================
+       ダッシュボード
+       ============================================ */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: calc(var(--spacing-unit) * 3);
+      margin: calc(var(--spacing-unit) * 3) 0;
+    }
+
+    .dashboard-card {
+      background: white;
+      border: 3px solid var(--border-light);
+      border-radius: 12px;
+      padding: calc(var(--spacing-unit) * 3);
+    }
+
+    .dashboard-card h3 {
+      font-size: 20px;
+      color: var(--accent-blue);
+      margin: 0 0 calc(var(--spacing-unit) * 2);
+      padding-bottom: calc(var(--spacing-unit) * 1.5);
+      border-bottom: 2px solid var(--border-light);
+    }
+
+    .dashboard-card.disabled {
+      opacity: 0.5;
+      border-color: var(--border-light);
+    }
+
+    /* ============================================
+       レスポンシブ対応
+       ============================================ */
+    @media (max-width: 900px) {
+      :root {
+        --nav-width: 0px;
+        --font-size-base: 18px;
+        --font-size-h1: 28px;
+        --font-size-h2: 24px;
+        --font-size-h3: 20px;
+      }
+
+      #main-nav {
+        width: 100%;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 2px solid var(--border-light);
+      }
+
+      main {
+        margin-left: 0;
+        padding: calc(var(--spacing-unit) * 3);
+      }
+
+      .compare-box {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ============================================
+       印刷用スタイル
+       ============================================ */
+    @media print {
+      #main-nav { display: none; }
+      main { margin-left: 0; }
+      section { display: block !important; page-break-after: always; }
+    }
+  </style>
+</head>
+<body>
+  <nav id="main-nav">
+    <a href="#dashboard" class="nav-title" data-section="dashboard">
+      エンジニアへの道
+    </a>
+
+    <div class="nav-section">
+      <!-- Level 0 -->
+      <div class="nav-level-title">Level 0: はじめに</div>
+      <a href="#level0-intro" class="nav-link" data-section="level0-intro">AI時代のエンジニア</a>
+
+      <!-- Level 1 -->
+      <div class="nav-level-title">Level 1: HTML/CSS</div>
+
+      <div class="nav-phase-title">Phase 1: HTML基礎</div>
+      <a href="#html1" class="nav-link" data-section="html1">1. HTMLとは？</a>
+      <a href="#html2" class="nav-link" data-section="html2">2. タグの基本</a>
+      <a href="#html3" class="nav-link" data-section="html3">3. 文書構造</a>
+      <a href="#html4" class="nav-link" data-section="html4">4. テキスト要素</a>
+      <a href="#html5" class="nav-link" data-section="html5">5. リンク・画像</a>
+      <a href="#html6" class="nav-link" data-section="html6">6. リスト</a>
+      <a href="#html7" class="nav-link" data-section="html7">7. セマンティックHTML</a>
+
+      <div class="nav-phase-title">Phase 2: CSS基礎</div>
+      <a href="#css1" class="nav-link" data-section="css1">8. CSSとは？</a>
+      <a href="#css2" class="nav-link" data-section="css2">9. セレクタ</a>
+      <a href="#css3" class="nav-link" data-section="css3">10. 色・背景</a>
+      <a href="#css4" class="nav-link" data-section="css4">11. テキスト装飾</a>
+      <a href="#css5" class="nav-link" data-section="css5">12. ボックスモデル</a>
+      <a href="#css6" class="nav-link" data-section="css6">13. Flexbox</a>
+      <a href="#css7" class="nav-link" data-section="css7">14. Grid</a>
+
+      <div class="nav-phase-title">Phase 3: 実践</div>
+      <a href="#prac1" class="nav-link" data-section="prac1">15. DevTools</a>
+      <a href="#prac2" class="nav-link" data-section="prac2">16. 実サイト読解</a>
+      <a href="#prac3" class="nav-link" data-section="prac3">17. UIパターン</a>
+      <a href="#prac4" class="nav-link" data-section="prac4">18. CSS新機能</a>
+
+      <!-- Level 2 -->
+      <div class="nav-level-title" style="opacity:0.5;">Level 2: JavaScript（準備中）</div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- ============================================
+         ダッシュボード
+         ============================================ -->
+    <section id="dashboard" class="active">
+      <h1>学習ダッシュボード</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎯</span>
+          この教科書の目標
+        </div>
+        <p style="margin-bottom:0;">
+          <strong>AIが書いたコードの問題を見抜ける</strong>エンジニアになる。
+        </p>
+        <p style="margin-bottom:0;">
+          「書ける」だけでなく「読んで・判断できる」力を身につけます。
+        </p>
+      </div>
+
+      <h2>全体の進み具合</h2>
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h3>Level 0: はじめに</h3>
+          <div class="progress-container">
+            <progress id="level0-progress" value="0" max="1"></progress>
+          </div>
+          <p>AI時代に必要な考え方を学びます。</p>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Level 1: HTML/CSS</h3>
+          <div class="progress-container">
+            <progress id="level1-progress" value="0" max="18"></progress>
+          </div>
+          <p>Webページの「骨組み」と「見た目」を読めるようになります。</p>
+        </div>
+
+        <div class="dashboard-card disabled">
+          <h3>Level 2: JavaScript</h3>
+          <p style="color:var(--text-light);">準備中...</p>
+        </div>
+      </div>
+
+      <h2>学習の進め方</h2>
+      <div class="card">
+        <ol>
+          <li>
+            <strong>左のメニューから順番に</strong>進めてください。
+          </li>
+          <li>
+            各ページの<strong>クイズ</strong>で理解度を確認します。
+          </li>
+          <li>
+            理解したら<strong>「完了」ボタン</strong>を押して次へ。
+          </li>
+          <li>
+            わからないところは<strong>何度でも戻ってOK</strong>です。
+          </li>
+        </ol>
+      </div>
+
+      <h2>次に学ぶこと</h2>
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">👉</span>
+          次のステップ
+        </div>
+        <p style="margin-bottom:0;">
+          左のメニューから「<strong>AI時代のエンジニア</strong>」を開いてください。
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================
+         Level 0: AI時代のエンジニア
+         ============================================ -->
+    <section id="level0-intro">
+      <h1>AI時代のエンジニアとして</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>2026年、エンジニアの仕事はどう変わったか</li>
+          <li>なぜ「読む力」が大事なのか</li>
+          <li>AI時代に必要な考え方</li>
+        </ul>
+      </div>
+
+      <h2>エンジニアの仕事が変わった</h2>
+
+      <p>
+        2026年、エンジニアの仕事は大きく変わりました。
+      </p>
+
+      <p>
+        昔は「自分でコードを書く」のが仕事でした。
+      </p>
+
+      <p>
+        今は「AIが書いたコードをチェックする」のが仕事です。
+      </p>
+
+      <!-- 役割変化の図解 -->
+      <div class="diagram-container">
+        <svg class="diagram" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
+          <!-- 2020年 -->
+          <rect x="20" y="30" width="180" height="140" rx="10" fill="#FEF2F2" stroke="#DC2626" stroke-width="2"/>
+          <text x="110" y="60" text-anchor="middle" font-size="16" font-weight="bold" fill="#DC2626">2020年まで</text>
+          <text x="110" y="95" text-anchor="middle" font-size="14" fill="#333">エンジニア</text>
+          <text x="110" y="115" text-anchor="middle" font-size="14" fill="#333">↓</text>
+          <text x="110" y="135" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">コードを書く</text>
+
+          <!-- 矢印 -->
+          <polygon points="220,100 250,85 250,95 280,95 280,105 250,105 250,115" fill="#2563EB"/>
+
+          <!-- 2026年 -->
+          <rect x="300" y="30" width="180" height="140" rx="10" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+          <text x="390" y="60" text-anchor="middle" font-size="16" font-weight="bold" fill="#16A34A">2026年</text>
+          <text x="390" y="95" text-anchor="middle" font-size="14" fill="#333">エンジニア</text>
+          <text x="390" y="115" text-anchor="middle" font-size="14" fill="#333">↓</text>
+          <text x="390" y="135" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">コードをチェック</text>
+        </svg>
+        <p class="diagram-caption">エンジニアの役割の変化</p>
+      </div>
+
+      <h2>なぜ「読む力」が大事なの？</h2>
+
+      <p>
+        AIはコードを「書く」ことが得意です。
+      </p>
+
+      <p>
+        でも、AIには<strong>苦手なこと</strong>があります。
+      </p>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          AIが苦手なこと
+        </div>
+        <ul>
+          <li>「このコードで本当にいいの？」と判断すること</li>
+          <li>セキュリティの問題を見つけること</li>
+          <li>ビジネスの要件に合っているか確認すること</li>
+        </ul>
+      </div>
+
+      <p>
+        だから、人間が「読んで・判断する」必要があります。
+      </p>
+
+      <p>
+        <strong>読む力がないと、AIのミスに気づけません。</strong>
+      </p>
+
+      <!-- 読む力の図解 -->
+      <div class="diagram-container">
+        <svg class="diagram" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
+          <!-- AIがコード生成 -->
+          <rect x="30" y="20" width="120" height="80" rx="10" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+          <text x="90" y="55" text-anchor="middle" font-size="24">🤖</text>
+          <text x="90" y="80" text-anchor="middle" font-size="14" fill="#333">AIがコード生成</text>
+
+          <!-- 矢印1 -->
+          <line x1="150" y1="60" x2="190" y2="60" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+          <!-- 人間がチェック -->
+          <rect x="190" y="20" width="120" height="80" rx="10" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+          <text x="250" y="55" text-anchor="middle" font-size="24">👤</text>
+          <text x="250" y="80" text-anchor="middle" font-size="14" fill="#333">人間がチェック</text>
+
+          <!-- 矢印2 -->
+          <line x1="310" y1="60" x2="350" y2="60" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+          <!-- 安全なコード -->
+          <rect x="350" y="20" width="120" height="80" rx="10" fill="#FAF5FF" stroke="#7C3AED" stroke-width="2"/>
+          <text x="410" y="55" text-anchor="middle" font-size="24">✅</text>
+          <text x="410" y="80" text-anchor="middle" font-size="14" fill="#333">安全なコード</text>
+
+          <!-- 矢印の定義 -->
+          <defs>
+            <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L0,6 L9,3 z" fill="#333"/>
+            </marker>
+          </defs>
+
+          <!-- 説明 -->
+          <text x="250" y="140" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">必要な3つの力</text>
+
+          <rect x="50" y="160" width="100" height="60" rx="8" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+          <text x="100" y="185" text-anchor="middle" font-size="14" font-weight="bold" fill="#2563EB">読む力</text>
+          <text x="100" y="205" text-anchor="middle" font-size="12" fill="#333">問題を発見</text>
+
+          <rect x="200" y="160" width="100" height="60" rx="8" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+          <text x="250" y="185" text-anchor="middle" font-size="14" font-weight="bold" fill="#16A34A">判断する力</text>
+          <text x="250" y="205" text-anchor="middle" font-size="12" fill="#333">正しいか決める</text>
+
+          <rect x="350" y="160" width="100" height="60" rx="8" fill="#FFF7ED" stroke="#EA580C" stroke-width="2"/>
+          <text x="400" y="185" text-anchor="middle" font-size="14" font-weight="bold" fill="#EA580C">説明する力</text>
+          <text x="400" y="205" text-anchor="middle" font-size="12" fill="#333">なぜダメか伝える</text>
+        </svg>
+        <p class="diagram-caption">AI時代に必要な3つの力</p>
+      </div>
+
+      <h2>AI時代の3つの心がまえ</h2>
+
+      <h3>1. 「書ける」より「見抜ける」</h3>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-label">
+            <span class="icon">❌</span> 古い考え方
+          </div>
+          <p style="margin:0;">「自分でコードを書けます！」</p>
+        </div>
+        <div class="compare-good">
+          <div class="compare-label">
+            <span class="icon">⭕</span> 新しい考え方
+          </div>
+          <p style="margin:0;">「AIのコードの問題を指摘できます！」</p>
+        </div>
+      </div>
+
+      <p>
+        AIは1秒でコードを書けます。
+      </p>
+
+      <p>
+        でも、そのコードには<em>バグ</em>や<em>セキュリティの穴</em>があるかもしれません。
+      </p>
+
+      <p>
+        それを見つけられるのが「シニアエンジニア」です。
+      </p>
+
+      <h3>2. 基礎は変わらない</h3>
+
+      <p>
+        AIが発達しても、<strong>基礎知識は今まで以上に大事</strong>です。
+      </p>
+
+      <p>
+        なぜなら、基礎がわからないとAIのミスに気づけないからです。
+      </p>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">📖</span>
+          変わらない基礎知識
+        </div>
+        <ul>
+          <li>HTML/CSSの構造</li>
+          <li>JavaScriptの動き方</li>
+          <li>セキュリティの基本</li>
+          <li>データベースの仕組み</li>
+        </ul>
+      </div>
+
+      <h3>3. AIは「道具」、判断は「人間」</h3>
+
+      <p>
+        AIは便利な道具です。
+      </p>
+
+      <p>
+        でも、最終的な<strong>判断と責任は人間</strong>が持ちます。
+      </p>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">⚡</span>
+          やってはいけないこと
+        </div>
+        <ul>
+          <li>AIの出力を確認せずに使う</li>
+          <li>「動いたからOK」で終わらせる</li>
+          <li>基礎をスキップしてフレームワークだけ学ぶ</li>
+        </ul>
+      </div>
+
+      <h2>この教科書で身につく力</h2>
+
+      <table>
+        <tr>
+          <th>Level</th>
+          <th>学ぶこと</th>
+          <th>身につく力</th>
+        </tr>
+        <tr>
+          <td>0</td>
+          <td>AI時代の心がまえ</td>
+          <td>正しい学習姿勢</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>HTML/CSS</td>
+          <td>Webページの構造を読める</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>JavaScript</td>
+          <td>動きのコードを読める</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>React/TypeScript</td>
+          <td>モダンな書き方を読める</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>API/データベース</td>
+          <td>サーバー側を読める</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>インフラ</td>
+          <td>環境設定を読める</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>設計</td>
+          <td>全体構造を読める</td>
+        </tr>
+      </table>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li>AIがコードを書く時代、人間は<strong>「チェックする人」</strong>になった</li>
+          <li>「書ける」より<strong>「読んで・見抜ける」</strong>が大事</li>
+          <li>基礎知識は<strong>今まで以上に重要</strong></li>
+          <li>AIは道具、<strong>判断は人間</strong></li>
+        </ol>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-level0">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>2026年のエンジニアに最も求められる力は？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-level0" style="display:none;">
+          A. たくさんのコードを速く書く力
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-level0" style="display:none;">
+          B. AIが書いたコードの問題を見抜く力
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-level0" style="display:none;">
+          C. 最新のフレームワークを使いこなす力
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-level0')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('level0-intro')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         Level 1 Phase 1: HTML基礎
+         ============================================ -->
+    <section id="html1">
+      <h1>1. HTMLとは？</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>HTMLってなに？</li>
+          <li>なぜHTMLが必要なの？</li>
+          <li>HTMLとCSSの違い</li>
+        </ul>
+      </div>
+
+      <h2>HTMLって何だろう？</h2>
+
+      <p>
+        <strong>HTML</strong>は「HyperText Markup Language」の略です。
+      </p>
+
+      <p>
+        難しく聞こえますが、簡単に言うと：
+      </p>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          かんたんな説明
+        </div>
+        <p style="margin:0;font-size:22px;">
+          HTMLは<strong>「Webページの骨組み」</strong>を作る言語です。
+        </p>
+      </div>
+
+      <h2>たとえ話：家を建てること</h2>
+
+      <p>
+        Webページを「家」に例えてみましょう。
+      </p>
+
+      <!-- 家の図解 -->
+      <div class="diagram-container">
+        <svg class="diagram" viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg">
+          <!-- 家の骨組み -->
+          <rect x="50" y="80" width="120" height="180" rx="5" fill="none" stroke="#2563EB" stroke-width="3" stroke-dasharray="8,4"/>
+          <polygon points="110,30 40,80 180,80" fill="none" stroke="#2563EB" stroke-width="3" stroke-dasharray="8,4"/>
+          <rect x="80" y="180" width="30" height="50" fill="none" stroke="#2563EB" stroke-width="2"/>
+          <rect x="120" y="120" width="30" height="30" fill="none" stroke="#2563EB" stroke-width="2"/>
+          <text x="110" y="290" text-anchor="middle" font-size="16" font-weight="bold" fill="#2563EB">HTML</text>
+          <text x="110" y="310" text-anchor="middle" font-size="14" fill="#333">骨組み・構造</text>
+
+          <!-- 装飾された家 -->
+          <rect x="250" y="80" width="120" height="180" rx="5" fill="#FEF3C7" stroke="#EA580C" stroke-width="3"/>
+          <polygon points="310,30 240,80 380,80" fill="#DC2626" stroke="#DC2626" stroke-width="2"/>
+          <rect x="280" y="180" width="30" height="50" fill="#8B4513" stroke="#5D3A1A" stroke-width="2"/>
+          <rect x="320" y="120" width="30" height="30" fill="#87CEEB" stroke="#2563EB" stroke-width="2"/>
+          <text x="310" y="290" text-anchor="middle" font-size="16" font-weight="bold" fill="#EA580C">CSS</text>
+          <text x="310" y="310" text-anchor="middle" font-size="14" fill="#333">見た目・装飾</text>
+
+          <!-- 矢印 -->
+          <path d="M180,160 Q215,160 240,160" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrow2)"/>
+          <text x="210" y="145" text-anchor="middle" font-size="12" fill="#333">＋</text>
+
+          <defs>
+            <marker id="arrow2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L9,3 z" fill="#333"/>
+            </marker>
+          </defs>
+        </svg>
+        <p class="diagram-caption">HTMLは骨組み、CSSは見た目</p>
+      </div>
+
+      <table>
+        <tr>
+          <th>役割</th>
+          <th>家で言うと</th>
+          <th>Webで言うと</th>
+        </tr>
+        <tr>
+          <td><strong>HTML</strong></td>
+          <td>骨組み・柱・壁の位置</td>
+          <td>文字・画像・ボタンの配置</td>
+        </tr>
+        <tr>
+          <td><strong>CSS</strong></td>
+          <td>壁紙・家具・色</td>
+          <td>色・大きさ・フォント</td>
+        </tr>
+        <tr>
+          <td><strong>JavaScript</strong></td>
+          <td>電気・水道・動くもの</td>
+          <td>クリック・アニメーション</td>
+        </tr>
+      </table>
+
+      <h2>なぜHTMLが必要なの？</h2>
+
+      <p>
+        ブラウザ（ChromeやSafari）は、<strong>HTMLを読んで</strong>画面を表示します。
+      </p>
+
+      <p>
+        HTMLがないと、ブラウザは「何を表示すればいいか」わかりません。
+      </p>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-label">
+            <span class="icon">❌</span> HTMLなし
+          </div>
+          <p style="margin:0;">ただの文字の羅列</p>
+          <p style="margin:0;font-family:monospace;font-size:14px;">これは見出しこれは本文これはリンク</p>
+        </div>
+        <div class="compare-good">
+          <div class="compare-label">
+            <span class="icon">⭕</span> HTMLあり
+          </div>
+          <p style="margin:0;"><strong style="font-size:24px;">これは見出し</strong></p>
+          <p style="margin:0;">これは本文</p>
+          <p style="margin:0;"><a href="#" style="color:blue;">これはリンク</a></p>
+        </div>
+      </div>
+
+      <h2>HTMLの正体：「タグ」で囲む</h2>
+
+      <p>
+        HTMLでは、<strong>「タグ」</strong>という印で文字を囲みます。
+      </p>
+
+      <pre><code>&lt;h1&gt;これは見出し&lt;/h1&gt;
+&lt;p&gt;これは本文&lt;/p&gt;
+&lt;a href="..."&gt;これはリンク&lt;/a&gt;</code></pre>
+
+      <p>
+        タグがあることで、ブラウザは「これは見出しだな」「これはリンクだな」と理解します。
+      </p>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🔤</span>
+          用語の意味
+        </div>
+        <ul>
+          <li><strong>h1</strong> = heading 1（見出し1）</li>
+          <li><strong>p</strong> = paragraph（段落）</li>
+          <li><strong>a</strong> = anchor（リンクのこと）</li>
+        </ul>
+      </div>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li>HTMLは<strong>Webページの骨組み</strong>を作る言語</li>
+          <li><strong>タグ</strong>で文字を囲んで、意味を伝える</li>
+          <li>HTMLが構造、CSSが見た目、JavaScriptが動き</li>
+        </ol>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-html1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>HTMLの役割として正しいのは？</p>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-html1" style="display:none;">
+          A. Webページの骨組み・構造を作る
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-html1" style="display:none;">
+          B. Webページの色やフォントを決める
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-html1" style="display:none;">
+          C. Webページに動きをつける
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-html1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('html1')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- 他のセクションは順次追加 -->
+    <section id="html2">
+      <h1>2. タグの基本</h1>
+      <div class="card card-warning">
+        <div class="card-title"><span class="icon">🚧</span>作成中</div>
+        <p>このセクションは現在作成中です。</p>
+      </div>
+    </section>
+
+    <section id="html3"><h1>3. 文書構造</h1><div class="card card-warning"><p>作成中...</p></div></section>
+    <section id="html4"><h1>4. テキスト要素</h1><div class="card card-warning"><p>作成中...</p></div></section>
+    <section id="html5"><h1>5. リンク・画像</h1><div class="card card-warning"><p>作成中...</p></div></section>
+    <section id="html6"><h1>6. リスト</h1><div class="card card-warning"><p>作成中...</p></div></section>
+    <section id="html7"><h1>7. セマンティックHTML</h1><div class="card card-warning"><p>作成中...</p></div></section>
+
+    <section id="css1"><h1>8. CSSとは？</h1><div class="card card-warning"><p>作成中...</p></div></section>
+    <section id="css2"><h1>9. セレクタ</h1><div class="card card-warning"><p>作成中...</p></div></section>
+    <section id="css3"><h1>10. 色・背景</h1><div class="card card-warning"><p>作成中...</p></div></section>
+    <section id="css4"><h1>11. テキスト装飾</h1><div class="card card-warning"><p>作成中...</p></div></section>
+    <section id="css5"><h1>12. ボックスモデル</h1><div class="card card-warning"><p>作成中...</p></div></section>
+    <section id="css6"><h1>13. Flexbox</h1><div class="card card-warning"><p>作成中...</p></div></section>
+    <section id="css7"><h1>14. Grid</h1><div class="card card-warning"><p>作成中...</p></div></section>
+
+    <section id="prac1"><h1>15. DevTools</h1><div class="card card-warning"><p>作成中...</p></div></section>
+    <section id="prac2"><h1>16. 実サイト読解</h1><div class="card card-warning"><p>作成中...</p></div></section>
+    <section id="prac3"><h1>17. UIパターン</h1><div class="card card-warning"><p>作成中...</p></div></section>
+    <section id="prac4"><h1>18. CSS新機能</h1><div class="card card-warning"><p>作成中...</p></div></section>
+
+  </main>
+
+  <script>
+    // ============================================
+    // ナビゲーション制御
+    // ============================================
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const sectionId = link.dataset.section;
+        showSection(sectionId);
+      });
+    });
+
+    function showSection(sectionId) {
+      // すべてのセクションを非表示
+      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+      // 指定セクションを表示
+      const section = document.getElementById(sectionId);
+      if (section) section.classList.add('active');
+
+      // ナビゲーションのアクティブ状態更新
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      const activeLink = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
+      if (activeLink) activeLink.classList.add('active');
+
+      // URLハッシュ更新
+      history.pushState(null, '', `#${sectionId}`);
+
+      // ページトップにスクロール
+      window.scrollTo(0, 0);
+    }
+
+    // 初期表示
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      showSection(hash);
+    }
+
+    // ============================================
+    // クイズ機能
+    // ============================================
+    function checkQuiz(quizId) {
+      const quiz = document.getElementById(quizId);
+      const options = quiz.querySelectorAll('.quiz-option');
+      const feedback = quiz.querySelector('.quiz-feedback');
+      let answered = false;
+      let correct = false;
+
+      options.forEach(opt => {
+        const input = opt.querySelector('input');
+        if (input.checked) {
+          answered = true;
+          correct = opt.dataset.correct === 'true';
+          opt.classList.add(correct ? 'correct' : 'incorrect');
+        }
+      });
+
+      if (!answered) {
+        alert('選択肢を選んでください');
+        return;
+      }
+
+      feedback.classList.add('show');
+      if (correct) {
+        feedback.classList.add('correct');
+        feedback.classList.remove('incorrect');
+        feedback.innerHTML = '<strong>正解！</strong> その通りです。';
+      } else {
+        feedback.classList.add('incorrect');
+        feedback.classList.remove('correct');
+        feedback.innerHTML = '<strong>不正解...</strong> もう一度考えてみましょう。';
+      }
+    }
+
+    // ============================================
+    // 完了機能
+    // ============================================
+    function completeSection(sectionId) {
+      // ローカルストレージに保存
+      const completed = JSON.parse(localStorage.getItem('completedSections') || '[]');
+      if (!completed.includes(sectionId)) {
+        completed.push(sectionId);
+        localStorage.setItem('completedSections', JSON.stringify(completed));
+      }
+
+      // ナビリンクに完了マークを付ける
+      const link = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
+      if (link) link.classList.add('completed');
+
+      // ボタンを無効化
+      const btn = document.querySelector(`#${sectionId} .complete-btn`);
+      if (btn) {
+        btn.classList.add('completed');
+        btn.innerHTML = '<span class="icon">✓</span> 完了済み';
+      }
+
+      // 進捗更新
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const completed = JSON.parse(localStorage.getItem('completedSections') || '[]');
+
+      // Level 0
+      const level0Count = completed.filter(s => s.startsWith('level0')).length;
+      const level0Progress = document.getElementById('level0-progress');
+      if (level0Progress) level0Progress.value = level0Count;
+
+      // Level 1
+      const level1Sections = ['html1','html2','html3','html4','html5','html6','html7',
+                              'css1','css2','css3','css4','css5','css6','css7',
+                              'prac1','prac2','prac3','prac4'];
+      const level1Count = completed.filter(s => level1Sections.includes(s)).length;
+      const level1Progress = document.getElementById('level1-progress');
+      if (level1Progress) level1Progress.value = level1Count;
+    }
+
+    // 初期化
+    document.addEventListener('DOMContentLoaded', () => {
+      const completed = JSON.parse(localStorage.getItem('completedSections') || '[]');
+      completed.forEach(sectionId => {
+        const link = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
+        if (link) link.classList.add('completed');
+
+        const btn = document.querySelector(`#${sectionId} .complete-btn`);
+        if (btn) {
+          btn.classList.add('completed');
+          btn.innerHTML = '<span class="icon">✓</span> 完了済み';
+        }
+      });
+      updateProgress();
+    });
+  </script>
+</body>
+</html>
