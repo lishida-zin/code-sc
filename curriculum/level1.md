@@ -13,6 +13,13 @@
 - [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Learn_web_development) - Mozilla公式、Web標準の権威
 - [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/) - 業界と教育者の知見を統合
 
+## 📜 関連資格
+**[HTML5プロフェッショナル認定試験 レベル1](https://html5exam.jp/outline/)**
+- HTML5、CSS3の基礎知識を問う公式認定
+- 受験料: 15,000円
+- 学習期間目安: 3〜6ヶ月
+- このカリキュラム完了で出題範囲の大部分をカバー
+
 ---
 
 ## Phase 1: HTML基礎（コードを読む力）
