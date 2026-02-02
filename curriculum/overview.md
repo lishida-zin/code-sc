@@ -9,10 +9,7 @@
 - [Software Architecture Guide](https://martinfowler.com/architecture/) - Martin Fowler
 
 ## 教科書
-| ファイル | 内容 | 特徴 |
-|----------|------|------|
-| `textbook/engineer-textbook.html` | Level 0-1（メイン） | LD/ディスレクシア対応、UDフォント |
-| `textbook/ishida-style-engineer.html` | Level 1（旧版） | ダークモード |
+`textbook/engineer-textbook.html`
 
 ### LD/ディスレクシア対応の特徴
 - **UDデジタル教科書体**: 読みやすいフォント

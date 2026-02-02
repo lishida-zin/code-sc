@@ -244,7 +244,6 @@ code-sc/
 │   ├── current.md               # 現在の進捗 ← これを読む
 │   └── archive/                 # 過去の記録（読まない）
 ├── textbook/
-│   ├── engineer-textbook.html   # メイン教科書（LD対応）
-│   └── ishida-style-engineer.html # 旧教科書（参考用）
+│   └── engineer-textbook.html   # 教科書（LD/ディスレクシア対応）
 └── lessons/                     # 教材
 ```

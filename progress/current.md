@@ -17,8 +17,6 @@
 | LD/ディスレクシア対応リニューアル | ✅ 完了 |
 
 ## 教科書の場所
-
-### 新教科書（LD/ディスレクシア対応）
 `textbook/engineer-textbook.html`
 
 | 特徴 | 設定 |
@@ -28,9 +26,6 @@
 | 行間 | 2.0（広め） |
 | 背景色 | クリーム色（目に優しい） |
 | 図解 | SVGで視覚的に説明 |
-
-### 旧教科書（参考用）
-`textbook/ishida-style-engineer.html`
 
 ## 次やること
 - Level 2: JavaScript Phase 1 から学習開始
