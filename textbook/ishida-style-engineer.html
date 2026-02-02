@@ -124,23 +124,59 @@
 
     pre code { background: none; padding: 0; }
 
-    /* アコーディオン */
-    details {
+    /* アコーディオン（本文用） */
+    main details {
       background: var(--bg-card);
       border-radius: 8px;
       margin: 1rem 0;
     }
 
-    summary {
+    main summary {
       padding: 1rem;
       cursor: pointer;
       font-weight: bold;
       list-style: none;
     }
-    summary::before { content: "▶ "; color: var(--accent); }
-    details[open] summary::before { content: "▼ "; }
+    main summary::before { content: "▶ "; color: var(--accent); }
+    main details[open] summary::before { content: "▼ "; }
 
-    details > div { padding: 0 1rem 1rem; }
+    main details > div { padding: 0 1rem 1rem; }
+
+    /* ナビゲーション折りたたみ */
+    .nav-accordion {
+      background: transparent;
+      border: none;
+      margin: 0.5rem 0;
+    }
+    .nav-accordion summary {
+      padding: 0.5rem 0;
+      cursor: pointer;
+      font-weight: bold;
+      list-style: none;
+      font-size: 0.85rem;
+      color: var(--accent-light);
+      user-select: none;
+    }
+    .nav-accordion summary::before { content: "▶ "; color: var(--accent); font-size: 0.7rem; }
+    .nav-accordion[open] summary::before { content: "▼ "; }
+    .nav-accordion .nav-links { padding-left: 0.5rem; }
+
+    .nav-level {
+      background: transparent;
+      border: none;
+      margin: 0;
+    }
+    .nav-level > summary {
+      padding: 0.5rem 0;
+      cursor: pointer;
+      font-weight: bold;
+      list-style: none;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      user-select: none;
+    }
+    .nav-level > summary::before { content: "▶ "; color: var(--accent); font-size: 0.75rem; }
+    .nav-level[open] > summary::before { content: "▼ "; }
 
     /* クイズ */
     .quiz {
@@ -262,28 +298,53 @@
     </div>
 
     <div class="nav-section">
-      <h2>Level 1: HTML/CSS</h2>
-      <h3 style="font-size:0.85rem; color:var(--accent-light); margin:0.5rem 0;">Phase 1: HTML基礎</h3>
-      <a href="#sec1" class="nav-link" data-section="sec1">1. HTMLとは？</a>
-      <a href="#sec2" class="nav-link" data-section="sec2">2. タグの基本構造</a>
-      <a href="#sec3" class="nav-link" data-section="sec3">3. 文書構造</a>
-      <a href="#sec4" class="nav-link" data-section="sec4">4. テキスト要素</a>
-      <a href="#sec5" class="nav-link" data-section="sec5">5. リンク・画像</a>
-      <a href="#sec6" class="nav-link" data-section="sec6">6. リスト</a>
-      <a href="#sec7" class="nav-link" data-section="sec7">7. セマンティックHTML</a>
-      <a href="#review" class="nav-link" data-section="review">復習チェック</a>
-      <a href="#glossary" class="nav-link" data-section="glossary">用語集</a>
+      <details class="nav-level" open>
+        <summary>Level 1: HTML/CSS</summary>
 
-      <h3 style="font-size:0.85rem; color:var(--accent-light); margin:0.5rem 0; margin-top:1rem;">Phase 2: CSS基礎</h3>
-      <a href="#css1" class="nav-link" data-section="css1">8. CSSとは？</a>
-      <a href="#css2" class="nav-link" data-section="css2">9. セレクタ</a>
-      <a href="#css3" class="nav-link" data-section="css3">10. 色・背景</a>
-      <a href="#css4" class="nav-link" data-section="css4">11. テキスト装飾</a>
-      <a href="#css5" class="nav-link" data-section="css5">12. ボックスモデル</a>
-      <a href="#css6" class="nav-link" data-section="css6">13. Flexbox</a>
-      <a href="#css7" class="nav-link" data-section="css7">14. Grid</a>
-      <a href="#css-review" class="nav-link" data-section="css-review">CSS復習チェック</a>
-      <a href="#css-glossary" class="nav-link" data-section="css-glossary">CSS用語集</a>
+        <details class="nav-accordion" open>
+          <summary>Phase 1: HTML基礎</summary>
+          <div class="nav-links">
+            <a href="#sec1" class="nav-link" data-section="sec1">1. HTMLとは？</a>
+            <a href="#sec2" class="nav-link" data-section="sec2">2. タグの基本構造</a>
+            <a href="#sec3" class="nav-link" data-section="sec3">3. 文書構造</a>
+            <a href="#sec4" class="nav-link" data-section="sec4">4. テキスト要素</a>
+            <a href="#sec5" class="nav-link" data-section="sec5">5. リンク・画像</a>
+            <a href="#sec6" class="nav-link" data-section="sec6">6. リスト</a>
+            <a href="#sec7" class="nav-link" data-section="sec7">7. セマンティックHTML</a>
+            <a href="#review" class="nav-link" data-section="review">復習チェック</a>
+            <a href="#glossary" class="nav-link" data-section="glossary">用語集</a>
+          </div>
+        </details>
+
+        <details class="nav-accordion" open>
+          <summary>Phase 2: CSS基礎</summary>
+          <div class="nav-links">
+            <a href="#css1" class="nav-link" data-section="css1">8. CSSとは？</a>
+            <a href="#css2" class="nav-link" data-section="css2">9. セレクタ</a>
+            <a href="#css3" class="nav-link" data-section="css3">10. 色・背景</a>
+            <a href="#css4" class="nav-link" data-section="css4">11. テキスト装飾</a>
+            <a href="#css5" class="nav-link" data-section="css5">12. ボックスモデル</a>
+            <a href="#css6" class="nav-link" data-section="css6">13. Flexbox</a>
+            <a href="#css7" class="nav-link" data-section="css7">14. Grid</a>
+            <a href="#css-review" class="nav-link" data-section="css-review">CSS復習チェック</a>
+            <a href="#css-glossary" class="nav-link" data-section="css-glossary">CSS用語集</a>
+          </div>
+        </details>
+
+        <details class="nav-accordion">
+          <summary>Phase 3: 実践（準備中）</summary>
+          <div class="nav-links">
+            <span class="nav-link" style="opacity:0.5;">Coming Soon...</span>
+          </div>
+        </details>
+      </details>
+
+      <details class="nav-level">
+        <summary>Level 2: JavaScript（準備中）</summary>
+        <div class="nav-links" style="padding-left:0.5rem;">
+          <span class="nav-link" style="opacity:0.5;">Coming Soon...</span>
+        </div>
+      </details>
     </div>
   </nav>
 
