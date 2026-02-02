@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>いしだ式エンジニアへの道 - HTML教科書</title>
+  <style>
+    :root {
+      --bg-primary: #1a1a2e;
+      --bg-secondary: #16213e;
+      --bg-card: #0f3460;
+      --text-primary: #eee;
+      --text-secondary: #aaa;
+      --accent: #e94560;
+      --accent-light: #ff6b6b;
+      --success: #4ade80;
+      --warning: #fbbf24;
+      --info: #60a5fa;
+      --code-bg: #0d1117;
+      --border: #333;
+      --nav-width: 280px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', 'Hiragino Sans', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.8;
+      min-height: 100vh;
+    }
+
+    /* ナビゲーション */
+    #main-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--nav-width);
+      height: 100vh;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 1rem;
+      z-index: 100;
+    }
+
+    #main-nav h1 {
+      font-size: 1.1rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-section { margin-bottom: 1rem; }
+    .nav-section h2 {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 0.5rem 0.75rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+    .nav-link:hover { background: var(--bg-card); }
+    .nav-link.active { background: var(--accent); color: white; }
+    .nav-link.completed::before { content: "✓ "; color: var(--success); }
+
+    /* メインコンテンツ */
+    main {
+      margin-left: var(--nav-width);
+      padding: 2rem 3rem;
+      max-width: 900px;
+    }
+
+    section { display: none; padding-bottom: 3rem; }
+    section.active { display: block; }
+
+    h1 { font-size: 2rem; color: var(--accent); margin-bottom: 1rem; }
+    h2 { font-size: 1.5rem; color: var(--accent-light); margin: 2rem 0 1rem; border-left: 4px solid var(--accent); padding-left: 1rem; }
+    h3 { font-size: 1.2rem; margin: 1.5rem 0 0.75rem; }
+
+    p { margin-bottom: 1rem; }
+
+    /* カード */
+    .card {
+      background: var(--bg-card);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .card-success { border-left: 4px solid var(--success); }
+    .card-warning { border-left: 4px solid var(--warning); }
+    .card-info { border-left: 4px solid var(--info); }
+    .card-danger { border-left: 4px solid var(--accent); }
+
+    /* コードブロック */
+    pre {
+      background: var(--code-bg);
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 1rem 0;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    code {
+      font-family: 'Consolas', 'Monaco', monospace;
+      background: var(--code-bg);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+
+    pre code { background: none; padding: 0; }
+
+    /* アコーディオン */
+    details {
+      background: var(--bg-card);
+      border-radius: 8px;
+      margin: 1rem 0;
+    }
+
+    summary {
+      padding: 1rem;
+      cursor: pointer;
+      font-weight: bold;
+      list-style: none;
+    }
+    summary::before { content: "▶ "; color: var(--accent); }
+    details[open] summary::before { content: "▼ "; }
+
+    details > div { padding: 0 1rem 1rem; }
+
+    /* クイズ */
+    .quiz {
+      background: var(--bg-card);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .quiz h4 { color: var(--info); margin-bottom: 1rem; }
+
+    .quiz-option {
+      display: block;
+      padding: 0.75rem 1rem;
+      margin: 0.5rem 0;
+      background: var(--bg-secondary);
+      border: 2px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .quiz-option:hover { border-color: var(--info); }
+    .quiz-option.selected { border-color: var(--info); background: var(--bg-primary); }
+    .quiz-option.correct { border-color: var(--success); background: rgba(74, 222, 128, 0.1); }
+    .quiz-option.incorrect { border-color: var(--accent); background: rgba(233, 69, 96, 0.1); }
+
+    .quiz-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
+    .quiz-btn:hover { background: var(--accent-light); }
+    .quiz-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .quiz-feedback {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 6px;
+      display: none;
+    }
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.correct { background: rgba(74, 222, 128, 0.2); color: var(--success); }
+    .quiz-feedback.incorrect { background: rgba(233, 69, 96, 0.2); color: var(--accent-light); }
+
+    /* 進捗バー */
+    .progress-container {
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+
+    progress {
+      width: 100%;
+      height: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    progress::-webkit-progress-bar { background: var(--bg-primary); }
+    progress::-webkit-progress-value { background: linear-gradient(90deg, var(--accent), var(--accent-light)); }
+
+    /* テーブル */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+    th { background: var(--bg-card); }
+
+    /* バッジ */
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    .badge-success { background: var(--success); color: #000; }
+    .badge-warning { background: var(--warning); color: #000; }
+    .badge-info { background: var(--info); color: #000; }
+
+    /* レスポンシブ */
+    @media (max-width: 768px) {
+      #main-nav { width: 100%; height: auto; position: relative; }
+      main { margin-left: 0; padding: 1rem; }
+    }
+
+    /* アニメーション */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    section.active { animation: fadeIn 0.3s ease; }
+  </style>
+</head>
+<body>
+  <nav id="main-nav">
+    <h1>いしだ式エンジニアへの道</h1>
+
+    <div class="progress-container">
+      <small>Phase 1 進捗</small>
+      <progress id="phase-progress" value="0" max="7"></progress>
+      <small id="progress-text">0 / 7 完了</small>
+    </div>
+
+    <div class="nav-section">
+      <h2>Level 1: HTML/CSS</h2>
+      <h3 style="font-size:0.85rem; color:var(--accent-light); margin:0.5rem 0;">Phase 1: HTML基礎</h3>
+      <a href="#sec1" class="nav-link" data-section="sec1">1. HTMLとは？</a>
+      <a href="#sec2" class="nav-link" data-section="sec2">2. タグの基本構造</a>
+      <a href="#sec3" class="nav-link" data-section="sec3">3. 文書構造</a>
+      <a href="#sec4" class="nav-link" data-section="sec4">4. テキスト要素</a>
+      <a href="#sec5" class="nav-link" data-section="sec5">5. リンク・画像</a>
+      <a href="#sec6" class="nav-link" data-section="sec6">6. リスト</a>
+      <a href="#sec7" class="nav-link" data-section="sec7">7. セマンティックHTML</a>
+      <a href="#review" class="nav-link" data-section="review">復習チェック</a>
+      <a href="#glossary" class="nav-link" data-section="glossary">用語集</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- セクション1: HTMLとは？ -->
+    <section id="sec1" class="active">
+      <h1>1. HTMLとは？</h1>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>HTMLの正体と役割</li>
+          <li>なぜHTMLが必要なのか</li>
+          <li>HTMLとCSSの違い</li>
+        </ul>
+      </div>
+
+      <h2>たとえ話：家の設計図</h2>
+      <p>Webページを「家」に例えると：</p>
+      <ul>
+        <li><strong>HTML</strong> = 設計図・骨組み（どこに何があるか）</li>
+        <li><strong>CSS</strong> = インテリア・外装（どう見えるか）</li>
+        <li><strong>JavaScript</strong> = 電気・水道（どう動くか）</li>
+      </ul>
+      <p>HTMLだけでは「白い壁にシンプルな家具が並んだ部屋」。見た目は地味でも、<strong>構造がしっかりしている</strong>ことが最も重要です。</p>
+
+      <h2>語源を知る</h2>
+      <div class="card">
+        <p><strong>HTML</strong> = <strong>H</strong>yper<strong>T</strong>ext <strong>M</strong>arkup <strong>L</strong>anguage</p>
+        <ul>
+          <li><strong>HyperText</strong>：リンクで繋がるテキスト（超越したテキスト）</li>
+          <li><strong>Markup</strong>：印をつける（「ここは見出し」「ここは段落」と印をつける）</li>
+          <li><strong>Language</strong>：言語（ブラウザが理解できる言語）</li>
+        </ul>
+      </div>
+
+      <h2>HTMLの本質：「意味」を伝える</h2>
+      <div class="card card-warning">
+        <p><strong>重要な考え方</strong></p>
+        <p>HTMLは「見た目」ではなく「意味」を定義します。</p>
+        <pre>&lt;h1&gt;見出し&lt;/h1&gt;  → ブラウザ「これは一番重要な見出しだ」
+&lt;p&gt;段落&lt;/p&gt;      → ブラウザ「これは本文の段落だ」</pre>
+        <p>見た目を変えるのはCSSの仕事。HTMLは「これが何か」を伝えるだけ。</p>
+      </div>
+
+      <h2>なぜ「意味」が重要？</h2>
+      <table>
+        <tr>
+          <th>対象</th>
+          <th>HTMLの「意味」をどう使うか</th>
+        </tr>
+        <tr>
+          <td>検索エンジン（Google）</td>
+          <td>h1を見て「このページの主題」を理解</td>
+        </tr>
+        <tr>
+          <td>スクリーンリーダー</td>
+          <td>見出しを読み上げて視覚障害者をナビゲート</td>
+        </tr>
+        <tr>
+          <td>他の開発者</td>
+          <td>コードを読んで構造を即座に把握</td>
+        </tr>
+      </table>
+
+      <details>
+        <summary>開発思想：セマンティック（意味論的）</summary>
+        <div>
+          <p><strong>WHY（なぜ）</strong>：機械も人間も、文書の「意味」を理解したい</p>
+          <p><strong>HOW（どうやって）</strong>：タグに意味を持たせる（h1=見出し、p=段落）</p>
+          <p><strong>EFFECT（効果）</strong>：SEO向上、アクセシビリティ向上、保守性向上</p>
+        </div>
+      </details>
+
+      <div class="quiz" data-quiz="q1">
+        <h4>確認クイズ</h4>
+        <p>HTMLの主な役割は何ですか？</p>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="q1" value="a" hidden>
+          A. ページの見た目を装飾する
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="q1" value="b" hidden>
+          B. ページの構造と意味を定義する
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="q1" value="c" hidden>
+          C. ページに動きをつける
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('q1', 'b')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="card card-success">
+        <strong>レビュー観点</strong>
+        <ul>
+          <li>見た目のためにタグを選んでいないか？（例：太字にしたいからh1を使う→NG）</li>
+          <li>適切なタグで「意味」を伝えているか？</li>
+        </ul>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('sec1')">このセクションを完了</button>
+    </section>
+
+    <!-- セクション2: タグの基本構造 -->
+    <section id="sec2">
+      <h1>2. タグの基本構造</h1>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>タグの構造（開始・終了・内容）</li>
+          <li>属性の書き方と役割</li>
+          <li>空要素（閉じタグ不要なタグ）</li>
+          <li>よくある間違いと見分け方</li>
+        </ul>
+      </div>
+
+      <h2>タグの基本形</h2>
+      <div class="card">
+        <pre>&lt;タグ名&gt;内容&lt;/タグ名&gt;
+
+例：
+&lt;p&gt;これは段落です&lt;/p&gt;
+↑開始タグ   ↑内容    ↑終了タグ</pre>
+      </div>
+
+      <p>タグは「箱」のようなもの。<strong>開始タグで箱を開け、終了タグで箱を閉じる</strong>。中に入れた「内容」がブラウザに表示されます。</p>
+
+      <h2>属性：タグに追加情報を与える</h2>
+      <div class="card">
+        <pre>&lt;タグ名 属性名="属性値"&gt;内容&lt;/タグ名&gt;
+
+例：
+&lt;a href="https://example.com"&gt;リンク&lt;/a&gt;
+   ↑属性名  ↑属性値</pre>
+      </div>
+
+      <p><strong>属性</strong>はタグに「追加の説明」を与えます。例えば<code>&lt;a&gt;</code>タグの<code>href</code>属性は「どこにリンクするか」を指定します。</p>
+
+      <h3>属性のルール</h3>
+      <table>
+        <tr>
+          <th>ルール</th>
+          <th>良い例</th>
+          <th>悪い例</th>
+        </tr>
+        <tr>
+          <td>属性名は小文字</td>
+          <td><code>href="..."</code></td>
+          <td><code>HREF="..."</code></td>
+        </tr>
+        <tr>
+          <td>値はダブルクォートで囲む</td>
+          <td><code>class="box"</code></td>
+          <td><code>class=box</code></td>
+        </tr>
+        <tr>
+          <td>開始タグにのみ記述</td>
+          <td><code>&lt;a href="..."&gt;</code></td>
+          <td><code>&lt;/a href="..."&gt;</code></td>
+        </tr>
+      </table>
+
+      <h2>空要素（閉じタグ不要）</h2>
+      <p>一部のタグは「中身」を持たないため、終了タグが不要です。</p>
+      <div class="card">
+        <pre>&lt;br&gt;      改行
+&lt;hr&gt;      水平線
+&lt;img&gt;     画像
+&lt;input&gt;   入力欄
+&lt;meta&gt;    メタ情報
+&lt;link&gt;    外部リソース</pre>
+      </div>
+
+      <details>
+        <summary>なぜ空要素が存在する？</summary>
+        <div>
+          <p>空要素は「内容を囲む」のではなく「何かを挿入・配置する」役割です。</p>
+          <ul>
+            <li><code>&lt;br&gt;</code>：ここに改行を挿入</li>
+            <li><code>&lt;img&gt;</code>：ここに画像を配置</li>
+            <li><code>&lt;input&gt;</code>：ここに入力欄を配置</li>
+          </ul>
+          <p>囲む内容がないので、終了タグは不要というわけです。</p>
+        </div>
+      </details>
+
+      <h2>よくある間違い</h2>
+      <div class="card card-danger">
+        <strong>❌ 終了タグ忘れ</strong>
+        <pre>&lt;p&gt;段落1
+&lt;p&gt;段落2</pre>
+        <p>ブラウザが自動補完するため動くことがあるが、<strong>予期せぬバグの原因</strong>になる。</p>
+      </div>
+
+      <div class="card card-danger">
+        <strong>❌ タグの入れ子が崩れている</strong>
+        <pre>&lt;p&gt;&lt;strong&gt;太字&lt;/p&gt;&lt;/strong&gt;</pre>
+        <p>正しくは：<code>&lt;p&gt;&lt;strong&gt;太字&lt;/strong&gt;&lt;/p&gt;</code></p>
+        <p>「先に開けたら、後に閉じる」（LIFO: Last In, First Out）</p>
+      </div>
+
+      <div class="card card-danger">
+        <strong>❌ 属性値のクォート忘れ</strong>
+        <pre>&lt;a href=https://example.com&gt;リンク&lt;/a&gt;</pre>
+        <p>スペースを含むURLで壊れる。必ずダブルクォートで囲む。</p>
+      </div>
+
+      <div class="quiz" data-quiz="q2">
+        <h4>確認クイズ</h4>
+        <p>次のコードの問題点は？</p>
+        <pre>&lt;p&gt;&lt;a href="test.html"&gt;リンク&lt;/p&gt;&lt;/a&gt;</pre>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="q2" value="a" hidden>
+          A. href属性の値が間違っている
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="q2" value="b" hidden>
+          B. タグの入れ子（ネスト）が崩れている
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="q2" value="c" hidden>
+          C. 終了タグが不要
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('q2', 'b')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="card card-success">
+        <strong>レビュー観点</strong>
+        <ul>
+          <li>すべてのタグが正しく閉じられているか？</li>
+          <li>入れ子の順序は正しいか？（開いた順の逆順で閉じる）</li>
+          <li>属性値はダブルクォートで囲まれているか？</li>
+        </ul>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('sec2')">このセクションを完了</button>
+    </section>
+
+    <!-- セクション3: 文書構造 -->
+    <section id="sec3">
+      <h1>3. 文書構造（html / head / body）</h1>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>HTML文書の必須構造</li>
+          <li>DOCTYPE宣言の意味</li>
+          <li>head要素とbody要素の違い</li>
+          <li>meta要素の役割</li>
+        </ul>
+      </div>
+
+      <h2>HTML文書の全体像</h2>
+      <div class="card">
+        <pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;ページタイトル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  ここに表示する内容
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+      </div>
+
+      <h2>各部分の役割</h2>
+
+      <h3>DOCTYPE宣言</h3>
+      <div class="card">
+        <code>&lt;!DOCTYPE html&gt;</code>
+        <p>「このファイルはHTML5で書かれています」とブラウザに宣言。必ず<strong>1行目</strong>に書く。</p>
+      </div>
+
+      <h3>html要素</h3>
+      <div class="card">
+        <code>&lt;html lang="ja"&gt;...&lt;/html&gt;</code>
+        <p>HTML文書全体を囲む「ルート要素」。<code>lang</code>属性で言語を指定（"ja"=日本語）。</p>
+        <p><strong>なぜlangが必要？</strong></p>
+        <ul>
+          <li>スクリーンリーダーが正しい発音で読み上げる</li>
+          <li>検索エンジンが言語を判別</li>
+          <li>ブラウザの翻訳機能が動作</li>
+        </ul>
+      </div>
+
+      <h3>head要素：見えない情報</h3>
+      <div class="card card-warning">
+        <code>&lt;head&gt;...&lt;/head&gt;</code>
+        <p>ページ自体の「メタ情報」を記述。<strong>ユーザーには直接見えない</strong>。</p>
+        <table>
+          <tr>
+            <th>要素</th>
+            <th>役割</th>
+          </tr>
+          <tr>
+            <td><code>&lt;meta charset="UTF-8"&gt;</code></td>
+            <td>文字コード指定（日本語が文字化けしない）</td>
+          </tr>
+          <tr>
+            <td><code>&lt;meta name="viewport"...&gt;</code></td>
+            <td>スマホ対応（レスポンシブの基盤）</td>
+          </tr>
+          <tr>
+            <td><code>&lt;title&gt;</code></td>
+            <td>ブラウザのタブに表示されるタイトル</td>
+          </tr>
+          <tr>
+            <td><code>&lt;link&gt;</code></td>
+            <td>外部CSSの読み込み</td>
+          </tr>
+          <tr>
+            <td><code>&lt;script&gt;</code></td>
+            <td>外部JSの読み込み</td>
+          </tr>
+        </table>
+      </div>
+
+      <h3>body要素：見える内容</h3>
+      <div class="card card-success">
+        <code>&lt;body&gt;...&lt;/body&gt;</code>
+        <p><strong>ユーザーに見える内容</strong>をすべてここに書く。</p>
+        <p>body = 「体」。Webページの「本体」という意味。</p>
+      </div>
+
+      <details>
+        <summary>開発思想：関心の分離</summary>
+        <div>
+          <p><strong>WHY</strong>：メタ情報と表示内容を混ぜると管理が大変</p>
+          <p><strong>HOW</strong>：head（設定）とbody（内容）を分離</p>
+          <p><strong>EFFECT</strong>：役割が明確、保守しやすい、SEOツールが解析しやすい</p>
+        </div>
+      </details>
+
+      <h2>よくある間違い</h2>
+      <div class="card card-danger">
+        <strong>❌ titleをbodyに書く</strong>
+        <pre>&lt;body&gt;
+  &lt;title&gt;ページタイトル&lt;/title&gt; ← NG！
+&lt;/body&gt;</pre>
+        <p>titleはhead内に書く。bodyに書くとタブに表示されない。</p>
+      </div>
+
+      <div class="card card-danger">
+        <strong>❌ charset指定を忘れる</strong>
+        <p>日本語が「譁�蟄怜喧縺代」のように文字化けする原因。必ず<code>&lt;meta charset="UTF-8"&gt;</code>を入れる。</p>
+      </div>
+
+      <div class="card card-danger">
+        <strong>❌ viewport指定を忘れる</strong>
+        <p>スマホで見たとき、PCサイズのまま縮小表示されてしまう。</p>
+      </div>
+
+      <div class="quiz" data-quiz="q3">
+        <h4>確認クイズ</h4>
+        <p><code>&lt;meta charset="UTF-8"&gt;</code>は何のため？</p>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="q3" value="a" hidden>
+          A. ページの表示速度を上げる
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="q3" value="b" hidden>
+          B. 日本語などの文字を正しく表示する
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="q3" value="c" hidden>
+          C. SEO対策として検索順位を上げる
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('q3', 'b')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="card card-success">
+        <strong>レビュー観点</strong>
+        <ul>
+          <li>DOCTYPE宣言が1行目にあるか？</li>
+          <li>html要素にlang属性があるか？</li>
+          <li>charset、viewport、titleがhead内にあるか？</li>
+          <li>表示コンテンツはすべてbody内か？</li>
+        </ul>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('sec3')">このセクションを完了</button>
+    </section>
+
+    <!-- セクション4: テキスト要素 -->
+    <section id="sec4">
+      <h1>4. テキスト要素</h1>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>見出し（h1〜h6）の使い方</li>
+          <li>段落（p）と改行（br）の違い</li>
+          <li>強調（strong, em）の意味</li>
+        </ul>
+      </div>
+
+      <h2>見出し要素：h1〜h6</h2>
+      <div class="card">
+        <pre>&lt;h1&gt;最重要の見出し&lt;/h1&gt;
+&lt;h2&gt;次に重要な見出し&lt;/h2&gt;
+&lt;h3&gt;その次&lt;/h3&gt;
+...
+&lt;h6&gt;最も細かい見出し&lt;/h6&gt;</pre>
+      </div>
+
+      <p><strong>h = heading（見出し）</strong>。数字が小さいほど重要度が高い。</p>
+
+      <h3>見出しのルール</h3>
+      <table>
+        <tr>
+          <th>ルール</th>
+          <th>理由</th>
+        </tr>
+        <tr>
+          <td>h1は1ページに1つ</td>
+          <td>ページの主題を表す。2つ以上あると混乱</td>
+        </tr>
+        <tr>
+          <td>レベルを飛ばさない</td>
+          <td>h1→h3のように飛ばすと構造が不明瞭</td>
+        </tr>
+        <tr>
+          <td>見た目ではなく意味で選ぶ</td>
+          <td>大きい文字にしたいからh1→NG</td>
+        </tr>
+      </table>
+
+      <div class="card card-danger">
+        <strong>❌ よくある間違い</strong>
+        <pre>&lt;h1&gt;会社名&lt;/h1&gt;
+&lt;h3&gt;サービス紹介&lt;/h3&gt;  ← h2を飛ばしている！</pre>
+      </div>
+
+      <h2>段落と改行</h2>
+      <div class="card">
+        <pre>&lt;p&gt;これは1つの段落です。&lt;/p&gt;
+&lt;p&gt;これは別の段落です。&lt;/p&gt;
+
+&lt;p&gt;1行目&lt;br&gt;2行目&lt;/p&gt;  ← 同じ段落内で改行</pre>
+      </div>
+
+      <table>
+        <tr>
+          <th>要素</th>
+          <th>用途</th>
+        </tr>
+        <tr>
+          <td><code>&lt;p&gt;</code></td>
+          <td>段落（話のまとまり）を作る</td>
+        </tr>
+        <tr>
+          <td><code>&lt;br&gt;</code></td>
+          <td>同じ段落内での改行（住所、詩など）</td>
+        </tr>
+      </table>
+
+      <div class="card card-danger">
+        <strong>❌ br連打でスペースを作る</strong>
+        <pre>&lt;p&gt;内容&lt;/p&gt;
+&lt;br&gt;&lt;br&gt;&lt;br&gt;  ← NG！CSSでmarginを使う</pre>
+      </div>
+
+      <h2>強調要素</h2>
+      <div class="card">
+        <pre>&lt;strong&gt;重要なテキスト&lt;/strong&gt;  → 強い強調（太字）
+&lt;em&gt;強調テキスト&lt;/em&gt;          → 軽い強調（斜体）</pre>
+      </div>
+
+      <p><strong>strong = 強い、em = emphasis（強調）</strong></p>
+
+      <div class="card card-warning">
+        <strong>bタグとstrongタグの違い</strong>
+        <ul>
+          <li><code>&lt;b&gt;</code>：見た目だけ太字（意味なし）</li>
+          <li><code>&lt;strong&gt;</code>：意味的に重要（スクリーンリーダーが強調）</li>
+        </ul>
+        <p>→ 現代のHTMLでは<code>&lt;strong&gt;</code>を使う</p>
+      </div>
+
+      <div class="quiz" data-quiz="q4">
+        <h4>確認クイズ</h4>
+        <p>h1の後にh3を使うのは正しい？</p>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="q4" value="a" hidden>
+          A. 正しい（見た目が良ければOK）
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="q4" value="b" hidden>
+          B. 間違い（レベルを飛ばしてはいけない）
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('q4', 'b')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('sec4')">このセクションを完了</button>
+    </section>
+
+    <!-- セクション5: リンク・画像 -->
+    <section id="sec5">
+      <h1>5. リンクと画像</h1>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>aタグ（リンク）の使い方</li>
+          <li>imgタグ（画像）の使い方</li>
+          <li>必須属性と推奨属性</li>
+          <li>セキュリティとアクセシビリティ</li>
+        </ul>
+      </div>
+
+      <h2>リンク：aタグ</h2>
+      <div class="card">
+        <pre>&lt;a href="https://example.com"&gt;リンクテキスト&lt;/a&gt;</pre>
+        <p><strong>a = anchor（アンカー、錨）</strong>：ページとページを繋ぐ「錨」</p>
+        <p><strong>href = hypertext reference</strong>：参照先のURL</p>
+      </div>
+
+      <h3>リンクの種類</h3>
+      <table>
+        <tr>
+          <th>種類</th>
+          <th>例</th>
+        </tr>
+        <tr>
+          <td>外部リンク</td>
+          <td><code>href="https://example.com"</code></td>
+        </tr>
+        <tr>
+          <td>内部リンク</td>
+          <td><code>href="/about.html"</code></td>
+        </tr>
+        <tr>
+          <td>ページ内リンク</td>
+          <td><code>href="#section1"</code></td>
+        </tr>
+        <tr>
+          <td>メールリンク</td>
+          <td><code>href="mailto:test@example.com"</code></td>
+        </tr>
+      </table>
+
+      <h3>target属性</h3>
+      <div class="card">
+        <pre>&lt;a href="..." target="_blank"&gt;新しいタブで開く&lt;/a&gt;</pre>
+      </div>
+
+      <div class="card card-danger">
+        <strong>セキュリティ注意！</strong>
+        <p><code>target="_blank"</code>を使う場合、必ず<code>rel="noopener noreferrer"</code>を付ける。</p>
+        <pre>&lt;a href="..." target="_blank" rel="noopener noreferrer"&gt;安全&lt;/a&gt;</pre>
+        <p><strong>理由</strong>：リンク先のページがwindow.openerで元ページを操作できてしまう脆弱性を防ぐ。</p>
+      </div>
+
+      <h2>画像：imgタグ</h2>
+      <div class="card">
+        <pre>&lt;img src="image.jpg" alt="画像の説明"&gt;</pre>
+        <p><strong>src = source（ソース）</strong>：画像ファイルのパス</p>
+        <p><strong>alt = alternative（代替）</strong>：画像が表示できないときの代替テキスト</p>
+      </div>
+
+      <div class="card card-warning">
+        <strong>alt属性は必須！</strong>
+        <ul>
+          <li>画像が読み込めないときに表示される</li>
+          <li>スクリーンリーダーが読み上げる</li>
+          <li>SEOに影響する</li>
+        </ul>
+        <p><strong>装飾目的の画像</strong>は<code>alt=""</code>（空）にする。</p>
+      </div>
+
+      <h3>推奨属性</h3>
+      <div class="card">
+        <pre>&lt;img src="photo.jpg" alt="説明" width="800" height="600" loading="lazy"&gt;</pre>
+        <table>
+          <tr>
+            <th>属性</th>
+            <th>効果</th>
+          </tr>
+          <tr>
+            <td>width / height</td>
+            <td>レイアウトシフト防止（表示が安定）</td>
+          </tr>
+          <tr>
+            <td>loading="lazy"</td>
+            <td>遅延読み込み（スクロールするまで読まない）</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="quiz" data-quiz="q5">
+        <h4>確認クイズ</h4>
+        <p><code>target="_blank"</code>を使うとき、セキュリティのために何を追加すべき？</p>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="q5" value="a" hidden>
+          A. alt属性
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="q5" value="b" hidden>
+          B. rel="noopener noreferrer"
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="q5" value="c" hidden>
+          C. loading="lazy"
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('q5', 'b')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('sec5')">このセクションを完了</button>
+    </section>
+
+    <!-- セクション6: リスト -->
+    <section id="sec6">
+      <h1>6. リスト</h1>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>順序なしリスト（ul）</li>
+          <li>順序ありリスト（ol）</li>
+          <li>定義リスト（dl）</li>
+        </ul>
+      </div>
+
+      <h2>順序なしリスト：ul + li</h2>
+      <div class="card">
+        <pre>&lt;ul&gt;
+  &lt;li&gt;項目1&lt;/li&gt;
+  &lt;li&gt;項目2&lt;/li&gt;
+  &lt;li&gt;項目3&lt;/li&gt;
+&lt;/ul&gt;</pre>
+        <p><strong>ul = unordered list</strong>（順序なしリスト）</p>
+        <p><strong>li = list item</strong>（リスト項目）</p>
+      </div>
+      <p>用途：メニュー、タグ一覧、順番が関係ない列挙</p>
+
+      <h2>順序ありリスト：ol + li</h2>
+      <div class="card">
+        <pre>&lt;ol&gt;
+  &lt;li&gt;手順1&lt;/li&gt;
+  &lt;li&gt;手順2&lt;/li&gt;
+  &lt;li&gt;手順3&lt;/li&gt;
+&lt;/ol&gt;</pre>
+        <p><strong>ol = ordered list</strong>（順序ありリスト）</p>
+      </div>
+      <p>用途：手順、ランキング、順番が重要な列挙</p>
+
+      <h2>定義リスト：dl + dt + dd</h2>
+      <div class="card">
+        <pre>&lt;dl&gt;
+  &lt;dt&gt;HTML&lt;/dt&gt;
+  &lt;dd&gt;HyperText Markup Language&lt;/dd&gt;
+
+  &lt;dt&gt;CSS&lt;/dt&gt;
+  &lt;dd&gt;Cascading Style Sheets&lt;/dd&gt;
+&lt;/dl&gt;</pre>
+        <p><strong>dl = description list</strong>（説明リスト）</p>
+        <p><strong>dt = description term</strong>（用語）</p>
+        <p><strong>dd = description details</strong>（説明）</p>
+      </div>
+      <p>用途：用語集、FAQ、キー・バリュー形式</p>
+
+      <div class="card card-danger">
+        <strong>❌ よくある間違い</strong>
+        <pre>&lt;ul&gt;
+  項目1  ← liで囲んでいない！
+  &lt;li&gt;項目2&lt;/li&gt;
+&lt;/ul&gt;</pre>
+        <p>ul/olの直下にはliのみ。テキストを直接書かない。</p>
+      </div>
+
+      <div class="quiz" data-quiz="q6">
+        <h4>確認クイズ</h4>
+        <p>「料理の手順」を表すのに適したリストは？</p>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="q6" value="a" hidden>
+          A. ul（順序なしリスト）
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="q6" value="b" hidden>
+          B. ol（順序ありリスト）
+        </label>
+        <label class="quiz-option" data-value="c">
+          <input type="radio" name="q6" value="c" hidden>
+          C. dl（定義リスト）
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('q6', 'b')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('sec6')">このセクションを完了</button>
+    </section>
+
+    <!-- セクション7: セマンティックHTML -->
+    <section id="sec7">
+      <h1>7. セマンティックHTML</h1>
+
+      <div class="card card-warning">
+        <strong>Phase 1 最重要セクション</strong>
+        <p>このセクションの理解が「プロ」と「初心者」を分ける。</p>
+      </div>
+
+      <div class="card card-info">
+        <strong>このセクションで学ぶこと</strong>
+        <ul>
+          <li>セマンティックHTMLとは何か</li>
+          <li>主要なセマンティック要素</li>
+          <li>divとの違い</li>
+          <li>実務でのレビュー観点</li>
+        </ul>
+      </div>
+
+      <h2>セマンティックとは？</h2>
+      <p><strong>Semantic = 意味論的</strong></p>
+      <p>タグ自体が「これは何か」を示すHTML。</p>
+
+      <div class="card">
+        <pre>❌ 意味のないHTML
+&lt;div class="header"&gt;...&lt;/div&gt;
+&lt;div class="nav"&gt;...&lt;/div&gt;
+&lt;div class="main"&gt;...&lt;/div&gt;
+
+✅ セマンティックHTML
+&lt;header&gt;...&lt;/header&gt;
+&lt;nav&gt;...&lt;/nav&gt;
+&lt;main&gt;...&lt;/main&gt;</pre>
+      </div>
+
+      <h2>なぜセマンティックが重要？</h2>
+      <table>
+        <tr>
+          <th>対象</th>
+          <th>divだと...</th>
+          <th>セマンティックだと...</th>
+        </tr>
+        <tr>
+          <td>検索エンジン</td>
+          <td>構造を理解できない</td>
+          <td>main=本文と理解、SEO向上</td>
+        </tr>
+        <tr>
+          <td>スクリーンリーダー</td>
+          <td>「division」としか読まない</td>
+          <td>「navigation」と案内</td>
+        </tr>
+        <tr>
+          <td>開発者</td>
+          <td>class名を見ないと不明</td>
+          <td>タグ名で構造が一目瞭然</td>
+        </tr>
+      </table>
+
+      <h2>主要なセマンティック要素</h2>
+
+      <h3>ページ構造</h3>
+      <div class="card">
+        <table>
+          <tr>
+            <th>要素</th>
+            <th>意味</th>
+            <th>用途</th>
+          </tr>
+          <tr>
+            <td><code>&lt;header&gt;</code></td>
+            <td>ヘッダー</td>
+            <td>ページやセクションの導入部</td>
+          </tr>
+          <tr>
+            <td><code>&lt;nav&gt;</code></td>
+            <td>ナビゲーション</td>
+            <td>メニュー、リンク集</td>
+          </tr>
+          <tr>
+            <td><code>&lt;main&gt;</code></td>
+            <td>メインコンテンツ</td>
+            <td>ページの主要な内容（1ページに1つ）</td>
+          </tr>
+          <tr>
+            <td><code>&lt;article&gt;</code></td>
+            <td>独立した記事</td>
+            <td>ブログ記事、ニュース記事</td>
+          </tr>
+          <tr>
+            <td><code>&lt;section&gt;</code></td>
+            <td>セクション</td>
+            <td>テーマでグループ化された内容</td>
+          </tr>
+          <tr>
+            <td><code>&lt;aside&gt;</code></td>
+            <td>補足情報</td>
+            <td>サイドバー、関連リンク</td>
+          </tr>
+          <tr>
+            <td><code>&lt;footer&gt;</code></td>
+            <td>フッター</td>
+            <td>著作権、連絡先</td>
+          </tr>
+        </table>
+      </div>
+
+      <h3>典型的なページ構造</h3>
+      <div class="card">
+        <pre>&lt;body&gt;
+  &lt;header&gt;
+    &lt;nav&gt;メニュー&lt;/nav&gt;
+  &lt;/header&gt;
+
+  &lt;main&gt;
+    &lt;article&gt;
+      &lt;h1&gt;記事タイトル&lt;/h1&gt;
+      &lt;section&gt;セクション1&lt;/section&gt;
+      &lt;section&gt;セクション2&lt;/section&gt;
+    &lt;/article&gt;
+  &lt;/main&gt;
+
+  &lt;aside&gt;サイドバー&lt;/aside&gt;
+
+  &lt;footer&gt;コピーライト&lt;/footer&gt;
+&lt;/body&gt;</pre>
+      </div>
+
+      <h2>divを使うべき場面</h2>
+      <div class="card card-success">
+        <p><strong>divは「意味がない」ときに使う</strong></p>
+        <ul>
+          <li>CSSでスタイルを当てるためだけのラッパー</li>
+          <li>JavaScriptで操作するためだけのコンテナ</li>
+        </ul>
+        <p>意味がある場合はセマンティック要素を使う。</p>
+      </div>
+
+      <details>
+        <summary>開発思想：セマンティックWeb</summary>
+        <div>
+          <p><strong>WHY</strong>：機械（検索エンジン、支援技術）が文書の意味を理解したい</p>
+          <p><strong>HOW</strong>：タグに意味を持たせ、構造を明示</p>
+          <p><strong>EFFECT</strong>：SEO向上、アクセシビリティ向上、保守性向上、AI解析精度向上</p>
+        </div>
+      </details>
+
+      <h2>レビュー観点（実務で重要）</h2>
+      <div class="card card-warning">
+        <strong>シニアが見るポイント</strong>
+        <ol>
+          <li><strong>div地獄</strong>：divだらけになっていないか？</li>
+          <li><strong>header/footer</strong>：適切に使われているか？</li>
+          <li><strong>nav</strong>：ナビゲーションに使われているか？</li>
+          <li><strong>main</strong>：1ページに1つだけか？</li>
+          <li><strong>article vs section</strong>：独立記事かセクションか区別できているか？</li>
+        </ol>
+      </div>
+
+      <div class="quiz" data-quiz="q7">
+        <h4>確認クイズ</h4>
+        <p>次のうち、セマンティックHTMLとして正しいのは？</p>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="q7" value="a" hidden>
+          A. &lt;div class="navigation"&gt;メニュー&lt;/div&gt;
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="q7" value="b" hidden>
+          B. &lt;nav&gt;メニュー&lt;/nav&gt;
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('q7', 'b')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="quiz-btn" onclick="completeSection('sec7')">このセクションを完了</button>
+    </section>
+
+    <!-- 復習チェック -->
+    <section id="review">
+      <h1>復習チェックポイント</h1>
+
+      <div class="card card-info">
+        <strong>忘却曲線に基づく復習</strong>
+        <p>学習後 1日、3日、7日、14日、30日 に復習すると定着率UP！</p>
+      </div>
+
+      <h2>Phase 1 総合クイズ</h2>
+
+      <div class="quiz" data-quiz="review1">
+        <h4>Q1. HTMLの主な役割は？</h4>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="review1" value="a" hidden>
+          A. ページの見た目を装飾する
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="review1" value="b" hidden>
+          B. ページの構造と意味を定義する
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('review1', 'b')">回答</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" data-quiz="review2">
+        <h4>Q2. h1の後にh3を使うのは？</h4>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="review2" value="a" hidden>
+          A. 正しい
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="review2" value="b" hidden>
+          B. 間違い（レベルを飛ばしてはいけない）
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('review2', 'b')">回答</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" data-quiz="review3">
+        <h4>Q3. セマンティックHTMLの利点は？</h4>
+        <label class="quiz-option" data-value="a">
+          <input type="radio" name="review3" value="a" hidden>
+          A. 見た目がきれいになる
+        </label>
+        <label class="quiz-option" data-value="b">
+          <input type="radio" name="review3" value="b" hidden>
+          B. 検索エンジンやスクリーンリーダーが構造を理解できる
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('review3', 'b')">回答</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <h2>学習記録</h2>
+      <div id="review-schedule" class="card">
+        <p>完了したセクションと次の復習日が表示されます。</p>
+      </div>
+    </section>
+
+    <!-- 用語集 -->
+    <section id="glossary">
+      <h1>用語集・概念辞典</h1>
+
+      <dl>
+        <dt>HTML</dt>
+        <dd>HyperText Markup Language。Webページの構造と意味を定義する言語。</dd>
+
+        <dt>タグ (Tag)</dt>
+        <dd>HTMLの基本単位。&lt;tagname&gt;内容&lt;/tagname&gt;の形式。</dd>
+
+        <dt>属性 (Attribute)</dt>
+        <dd>タグに追加情報を与える。例：href, src, alt, class</dd>
+
+        <dt>要素 (Element)</dt>
+        <dd>開始タグ + 内容 + 終了タグ全体のこと。</dd>
+
+        <dt>空要素 (Void Element)</dt>
+        <dd>終了タグを持たない要素。例：br, img, input, meta</dd>
+
+        <dt>セマンティック (Semantic)</dt>
+        <dd>「意味論的」。タグに意味を持たせること。</dd>
+
+        <dt>DOCTYPE宣言</dt>
+        <dd>文書がHTML5であることをブラウザに伝える宣言。</dd>
+
+        <dt>head要素</dt>
+        <dd>メタ情報（charset、title、link等）を記述する領域。画面には表示されない。</dd>
+
+        <dt>body要素</dt>
+        <dd>ユーザーに表示される内容を記述する領域。</dd>
+
+        <dt>アクセシビリティ</dt>
+        <dd>障害の有無に関わらず、誰でも利用できること。</dd>
+      </dl>
+    </section>
+  </main>
+
+  <script>
+    // 状態管理
+    const state = {
+      currentSection: 'sec1',
+      completed: JSON.parse(localStorage.getItem('ishida-completed') || '[]'),
+      quizResults: JSON.parse(localStorage.getItem('ishida-quiz') || '{}')
+    };
+
+    // セクション切り替え
+    function showSection(id) {
+      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+
+      const section = document.getElementById(id);
+      const link = document.querySelector(`[data-section="${id}"]`);
+
+      if (section) section.classList.add('active');
+      if (link) link.classList.add('active');
+
+      state.currentSection = id;
+      window.scrollTo(0, 0);
+    }
+
+    // ナビゲーションクリック
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        showSection(link.dataset.section);
+      });
+    });
+
+    // クイズ回答
+    function checkQuiz(quizId, correctAnswer) {
+      const quiz = document.querySelector(`[data-quiz="${quizId}"]`);
+      const selected = quiz.querySelector('.quiz-option.selected');
+      const feedback = quiz.querySelector('.quiz-feedback');
+      const btn = quiz.querySelector('.quiz-btn');
+
+      if (!selected) {
+        alert('選択肢を選んでください');
+        return;
+      }
+
+      const userAnswer = selected.dataset.value;
+      const isCorrect = userAnswer === correctAnswer;
+
+      quiz.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.classList.remove('correct', 'incorrect');
+        if (opt.dataset.value === correctAnswer) {
+          opt.classList.add('correct');
+        } else if (opt === selected && !isCorrect) {
+          opt.classList.add('incorrect');
+        }
+      });
+
+      feedback.textContent = isCorrect ? '正解！' : '不正解。正しい答えを確認してください。';
+      feedback.className = 'quiz-feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+
+      btn.disabled = true;
+
+      state.quizResults[quizId] = isCorrect;
+      localStorage.setItem('ishida-quiz', JSON.stringify(state.quizResults));
+    }
+
+    // 選択肢クリック
+    document.querySelectorAll('.quiz-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        const quiz = opt.closest('.quiz');
+        quiz.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+      });
+    });
+
+    // セクション完了
+    function completeSection(sectionId) {
+      if (!state.completed.includes(sectionId)) {
+        state.completed.push(sectionId);
+        localStorage.setItem('ishida-completed', JSON.stringify(state.completed));
+      }
+      updateProgress();
+
+      const nextSections = ['sec1','sec2','sec3','sec4','sec5','sec6','sec7','review','glossary'];
+      const currentIndex = nextSections.indexOf(sectionId);
+      if (currentIndex < nextSections.length - 1) {
+        showSection(nextSections[currentIndex + 1]);
+      }
+    }
+
+    // 進捗更新
+    function updateProgress() {
+      const total = 7;
+      const completed = state.completed.filter(s => s.startsWith('sec')).length;
+
+      document.getElementById('phase-progress').value = completed;
+      document.getElementById('progress-text').textContent = `${completed} / ${total} 完了`;
+
+      document.querySelectorAll('.nav-link').forEach(link => {
+        if (state.completed.includes(link.dataset.section)) {
+          link.classList.add('completed');
+        }
+      });
+    }
+
+    // 初期化
+    updateProgress();
+
+    // URLハッシュ対応
+    if (window.location.hash) {
+      showSection(window.location.hash.slice(1));
+    }
+  </script>
+</body>
+</html>
