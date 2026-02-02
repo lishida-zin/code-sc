@@ -7575,7 +7575,7 @@ console.log('C');</code></pre>
             <input type="radio" name="async1-q1" value="1">
             <span>A → B → C</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="true">
             <input type="radio" name="async1-q1" value="2">
             <span>A → C → B</span>
           </label>
@@ -7771,7 +7771,7 @@ getUser(userId, (error, user) => {
             <input type="radio" name="async2-q1" value="2">
             <span>メモリを大量に消費する</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="true">
             <input type="radio" name="async2-q1" value="3">
             <span>コードが読みにくく保守困難になる</span>
           </label>
@@ -8043,7 +8043,7 @@ getUser(id)
             <input type="radio" name="async3-q1" value="2">
             <span>fulfilled</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="true">
             <input type="radio" name="async3-q1" value="3">
             <span>cancelled</span>
           </label>
@@ -8211,7 +8211,7 @@ Promise.resolve()
             <input type="radio" name="async4-q1" value="2">
             <span>20</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="true">
             <input type="radio" name="async4-q1" value="3">
             <span>undefined</span>
           </label>
@@ -8486,7 +8486,7 @@ async function processItems(items) {
             <input type="radio" name="async5-q2" value="1">
             <span>items.forEach(async (item) => await process(item))</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="true">
             <input type="radio" name="async5-q2" value="2">
             <span>for (const item of items) await process(item)</span>
           </label>
@@ -8517,7 +8517,7 @@ async function processItems(items) {
             <input type="radio" name="async5-q3" value="1">
             <span>42（数値）</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="true">
             <input type="radio" name="async5-q3" value="2">
             <span>Promise（42で解決される）</span>
           </label>
@@ -8795,7 +8795,7 @@ async function getData() {
             <input type="radio" name="async6-q1" value="2">
             <span>catchが実行された時だけ</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="true">
             <input type="radio" name="async6-q1" value="3">
             <span>成功でも失敗でも必ず</span>
           </label>
@@ -9073,7 +9073,7 @@ async function checkout() {
             <input type="radio" name="async7-q1" value="2">
             <span>try/catchがない</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="true">
             <input type="radio" name="async7-q1" value="3">
             <span>不要な直列実行（Promise.allで並列化すべき）</span>
           </label>
@@ -9341,7 +9341,7 @@ const data = await response.json();</code></pre>
             <input type="radio" name="async8-q1" value="1">
             <span>response.data</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="true">
             <input type="radio" name="async8-q1" value="2">
             <span>await response.json()</span>
           </label>
