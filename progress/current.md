@@ -2,9 +2,9 @@
 > 目標: 実務シニア＆フルスタック
 
 ## 📍 現在地
-- **Level**: 1 - Web基礎
-- **Phase**: 3 - 実践（完了）
-- **状態**: Level 1 教科書作成完了
+- **Level**: 2 - JavaScript
+- **Phase**: 0 - 開始前
+- **状態**: カリキュラム作成完了
 
 ## 完了した作業
 | 作業 | 状態 |
@@ -19,8 +19,7 @@
 `textbook/ishida-style-engineer.html`
 
 ## 次やること
-- Level 2: JavaScript のカリキュラム作成
-- または、学習を開始
+- Phase 1: JavaScript基礎 から学習開始
 
 ## メモ
 - 教科書は単一HTMLファイルに集約
