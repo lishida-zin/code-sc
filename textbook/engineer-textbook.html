@@ -7563,7 +7563,7 @@ console.log('3');        // → コールスタックで即実行
       </div>
 
       <!-- クイズ -->
-      <div class="quiz" data-quiz="async1-q1">
+      <div class="quiz" id="async1-q1">
         <p class="quiz-question">
           <strong>クイズ：</strong>次のコードの出力順は？
         </p>
@@ -7584,7 +7584,7 @@ console.log('C');</code></pre>
             <span>B → A → C</span>
           </label>
         </div>
-        <button class="quiz-btn" onclick="checkQuiz('async1-q1', '2')">答え合わせ</button>
+        <button class="quiz-btn" onclick="checkQuiz('async1-q1')">答え合わせ</button>
         <div class="quiz-feedback"></div>
         <div class="quiz-explanation" data-explanation="async1-q1">
           <strong>解説：</strong>setTimeoutは0ミリ秒でも非同期です。
@@ -7758,7 +7758,7 @@ getUser(userId, (error, user) => {
       </p>
 
       <!-- クイズ -->
-      <div class="quiz" data-quiz="async2-q1">
+      <div class="quiz" id="async2-q1">
         <p class="quiz-question">
           <strong>クイズ：</strong>コールバック地獄の最大の問題点は？
         </p>
@@ -7776,7 +7776,7 @@ getUser(userId, (error, user) => {
             <span>コードが読みにくく保守困難になる</span>
           </label>
         </div>
-        <button class="quiz-btn" onclick="checkQuiz('async2-q1', '3')">答え合わせ</button>
+        <button class="quiz-btn" onclick="checkQuiz('async2-q1')">答え合わせ</button>
         <div class="quiz-feedback"></div>
         <div class="quiz-explanation" data-explanation="async2-q1">
           <strong>解説：</strong>コールバック地獄は実行速度やメモリには影響しません。
@@ -8030,7 +8030,7 @@ getUser(id)
       </div>
 
       <!-- クイズ -->
-      <div class="quiz" data-quiz="async3-q1">
+      <div class="quiz" id="async3-q1">
         <p class="quiz-question">
           <strong>クイズ：</strong>Promiseの状態として<strong>存在しない</strong>のは？
         </p>
@@ -8048,7 +8048,7 @@ getUser(id)
             <span>cancelled</span>
           </label>
         </div>
-        <button class="quiz-btn" onclick="checkQuiz('async3-q1', '3')">答え合わせ</button>
+        <button class="quiz-btn" onclick="checkQuiz('async3-q1')">答え合わせ</button>
         <div class="quiz-feedback"></div>
         <div class="quiz-explanation" data-explanation="async3-q1">
           <strong>解説：</strong>Promiseの状態はpending/fulfilled/rejectedの3つだけ。
@@ -8194,7 +8194,7 @@ Promise.resolve()
       </div>
 
       <!-- クイズ -->
-      <div class="quiz" data-quiz="async4-q1">
+      <div class="quiz" id="async4-q1">
         <p class="quiz-question">
           <strong>クイズ：</strong>次のコードの出力は？
         </p>
@@ -8216,7 +8216,7 @@ Promise.resolve()
             <span>undefined</span>
           </label>
         </div>
-        <button class="quiz-btn" onclick="checkQuiz('async4-q1', '3')">答え合わせ</button>
+        <button class="quiz-btn" onclick="checkQuiz('async4-q1')">答え合わせ</button>
         <div class="quiz-feedback"></div>
         <div class="quiz-explanation" data-explanation="async4-q1">
           <strong>解説：</strong><code>{ x + 5; }</code>は波括弧があるので、
@@ -8443,7 +8443,7 @@ async function processItems(items) {
 }</code></pre>
 
       <!-- クイズ1 -->
-      <div class="quiz" data-quiz="async5-q1">
+      <div class="quiz" id="async5-q1">
         <p class="quiz-question">
           <strong>クイズ1：</strong>次のコードの問題点は？
         </p>
@@ -8457,7 +8457,7 @@ async function processItems(items) {
             <input type="radio" name="async5-q1" value="1">
             <span>問題なし</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="true">
             <input type="radio" name="async5-q1" value="2">
             <span>awaitが2箇所足りない</span>
           </label>
@@ -8466,7 +8466,7 @@ async function processItems(items) {
             <span>asyncが不要</span>
           </label>
         </div>
-        <button class="quiz-btn" onclick="checkQuiz('async5-q1', '2')">答え合わせ</button>
+        <button class="quiz-btn" onclick="checkQuiz('async5-q1')">答え合わせ</button>
         <div class="quiz-feedback"></div>
         <div class="quiz-explanation" data-explanation="async5-q1">
           <strong>解説：</strong><code>fetch()</code>も<code>.json()</code>も
@@ -8477,7 +8477,7 @@ async function processItems(items) {
       </div>
 
       <!-- クイズ2 -->
-      <div class="quiz" data-quiz="async5-q2">
+      <div class="quiz" id="async5-q2">
         <p class="quiz-question">
           <strong>クイズ2：</strong>配列の各要素を順番に処理したい。正しいのは？
         </p>
@@ -8495,7 +8495,7 @@ async function processItems(items) {
             <span>items.map(item => process(item))</span>
           </label>
         </div>
-        <button class="quiz-btn" onclick="checkQuiz('async5-q2', '2')">答え合わせ</button>
+        <button class="quiz-btn" onclick="checkQuiz('async5-q2')">答え合わせ</button>
         <div class="quiz-feedback"></div>
         <div class="quiz-explanation" data-explanation="async5-q2">
           <strong>解説：</strong>forEachはawaitを待ちません（コールバックを同期的に呼ぶだけ）。
@@ -8505,7 +8505,7 @@ async function processItems(items) {
       </div>
 
       <!-- クイズ3 -->
-      <div class="quiz" data-quiz="async5-q3">
+      <div class="quiz" id="async5-q3">
         <p class="quiz-question">
           <strong>クイズ3：</strong>async関数の戻り値は？
         </p>
@@ -8526,7 +8526,7 @@ async function processItems(items) {
             <span>undefined</span>
           </label>
         </div>
-        <button class="quiz-btn" onclick="checkQuiz('async5-q3', '2')">答え合わせ</button>
+        <button class="quiz-btn" onclick="checkQuiz('async5-q3')">答え合わせ</button>
         <div class="quiz-feedback"></div>
         <div class="quiz-explanation" data-explanation="async5-q3">
           <strong>解説：</strong>async関数は<strong>常にPromiseを返します</strong>。
@@ -8782,7 +8782,7 @@ async function getData() {
       </div>
 
       <!-- クイズ -->
-      <div class="quiz" data-quiz="async6-q1">
+      <div class="quiz" id="async6-q1">
         <p class="quiz-question">
           <strong>クイズ：</strong>finallyブロックが実行されるのは？
         </p>
@@ -8800,7 +8800,7 @@ async function getData() {
             <span>成功でも失敗でも必ず</span>
           </label>
         </div>
-        <button class="quiz-btn" onclick="checkQuiz('async6-q1', '3')">答え合わせ</button>
+        <button class="quiz-btn" onclick="checkQuiz('async6-q1')">答え合わせ</button>
         <div class="quiz-feedback"></div>
         <div class="quiz-explanation" data-explanation="async6-q1">
           <strong>解説：</strong>finallyは「最終的に」という意味。
@@ -9054,7 +9054,7 @@ async function checkout() {
       </div>
 
       <!-- クイズ -->
-      <div class="quiz" data-quiz="async7-q1">
+      <div class="quiz" id="async7-q1">
         <p class="quiz-question">
           <strong>クイズ：</strong>次のコードの問題点は？
         </p>
@@ -9078,7 +9078,7 @@ async function checkout() {
             <span>不要な直列実行（Promise.allで並列化すべき）</span>
           </label>
         </div>
-        <button class="quiz-btn" onclick="checkQuiz('async7-q1', '3')">答え合わせ</button>
+        <button class="quiz-btn" onclick="checkQuiz('async7-q1')">答え合わせ</button>
         <div class="quiz-feedback"></div>
         <div class="quiz-explanation" data-explanation="async7-q1">
           <strong>解説：</strong>3つの処理に依存関係がないなら、
@@ -9332,7 +9332,7 @@ const data = await response.json();</code></pre>
 }</code></pre>
 
       <!-- クイズ -->
-      <div class="quiz" data-quiz="async8-q1">
+      <div class="quiz" id="async8-q1">
         <p class="quiz-question">
           <strong>クイズ：</strong>fetch()のレスポンスでJSONを取得するには？
         </p>
@@ -9350,7 +9350,7 @@ const data = await response.json();</code></pre>
             <span>JSON.parse(response)</span>
           </label>
         </div>
-        <button class="quiz-btn" onclick="checkQuiz('async8-q1', '2')">答え合わせ</button>
+        <button class="quiz-btn" onclick="checkQuiz('async8-q1')">答え合わせ</button>
         <div class="quiz-feedback"></div>
         <div class="quiz-explanation" data-explanation="async8-q1">
           <strong>解説：</strong><code>response.json()</code>はPromiseを返すので、
