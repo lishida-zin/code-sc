@@ -6116,6 +6116,11 @@ console.log(config.db?.host);</code></pre>
 
       // ページトップにスクロール
       window.scrollTo(0, 0);
+
+      // ダッシュボード表示時は進捗を更新
+      if (sectionId === 'dashboard') {
+        updateProgress();
+      }
     }
 
     // 初期表示
