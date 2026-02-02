@@ -1261,33 +1261,2543 @@
       </button>
     </section>
 
-    <!-- 他のセクションは順次追加 -->
+    <!-- ============================================
+         HTML 2: タグの基本
+         ============================================ -->
     <section id="html2">
       <h1>2. タグの基本</h1>
-      <div class="card card-warning">
-        <div class="card-title"><span class="icon">🚧</span>作成中</div>
-        <p>このセクションは現在作成中です。</p>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>タグの形（開始タグ・終了タグ）</li>
+          <li>属性ってなに？</li>
+          <li>よくある間違いと直し方</li>
+        </ul>
       </div>
+
+      <h2>タグの基本形</h2>
+
+      <p>
+        HTMLのタグは、<strong>「箱」</strong>のようなものです。
+      </p>
+
+      <p>
+        箱を<em>開けて</em>、中身を入れて、<em>閉じる</em>。
+      </p>
+
+      <!-- タグの図解 -->
+      <div class="diagram-container">
+        <svg class="diagram" viewBox="0 0 500 150" xmlns="http://www.w3.org/2000/svg">
+          <!-- 開始タグ -->
+          <rect x="30" y="40" width="100" height="60" rx="8" fill="#EFF6FF" stroke="#2563EB" stroke-width="3"/>
+          <text x="80" y="75" text-anchor="middle" font-size="16" font-weight="bold" fill="#2563EB">&lt;p&gt;</text>
+          <text x="80" y="120" text-anchor="middle" font-size="14" fill="#333">開始タグ</text>
+          <text x="80" y="138" text-anchor="middle" font-size="12" fill="#666">（箱を開ける）</text>
+
+          <!-- 内容 -->
+          <rect x="150" y="40" width="200" height="60" rx="8" fill="#FFF7ED" stroke="#EA580C" stroke-width="3"/>
+          <text x="250" y="75" text-anchor="middle" font-size="16" fill="#333">これは段落です</text>
+          <text x="250" y="120" text-anchor="middle" font-size="14" fill="#333">内容</text>
+          <text x="250" y="138" text-anchor="middle" font-size="12" fill="#666">（箱の中身）</text>
+
+          <!-- 終了タグ -->
+          <rect x="370" y="40" width="100" height="60" rx="8" fill="#F0FDF4" stroke="#16A34A" stroke-width="3"/>
+          <text x="420" y="75" text-anchor="middle" font-size="16" font-weight="bold" fill="#16A34A">&lt;/p&gt;</text>
+          <text x="420" y="120" text-anchor="middle" font-size="14" fill="#333">終了タグ</text>
+          <text x="420" y="138" text-anchor="middle" font-size="12" fill="#666">（箱を閉じる）</text>
+        </svg>
+        <p class="diagram-caption">タグは「開始」「内容」「終了」の3つでできている</p>
+      </div>
+
+      <pre><code>&lt;p&gt;これは段落です&lt;/p&gt;
+
+↑開始タグ  ↑内容   ↑終了タグ</code></pre>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          ポイント
+        </div>
+        <p style="margin:0;">
+          終了タグには<strong>スラッシュ（/）</strong>がついています。
+        </p>
+        <p style="margin:0;">
+          <code>&lt;p&gt;</code> → <code>&lt;/p&gt;</code>
+        </p>
+      </div>
+
+      <h2>属性：追加の情報を与える</h2>
+
+      <p>
+        <strong>属性</strong>は、タグに「追加の説明」を与えます。
+      </p>
+
+      <p>
+        たとえば「どこにリンクするか」「画像のファイル名は何か」など。
+      </p>
+
+      <pre><code>&lt;a href="https://google.com"&gt;Googleへ&lt;/a&gt;
+
+   ↑属性名  ↑属性値</code></pre>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🔤</span>
+          属性のルール
+        </div>
+        <ul>
+          <li>属性は<strong>開始タグの中</strong>に書く</li>
+          <li>属性名は<strong>小文字</strong>で書く</li>
+          <li>属性値は<strong>ダブルクォート（"）</strong>で囲む</li>
+        </ul>
+      </div>
+
+      <h2>空要素：閉じタグがいらないタグ</h2>
+
+      <p>
+        一部のタグは、<strong>中身を持たない</strong>ので終了タグが不要です。
+      </p>
+
+      <table>
+        <tr>
+          <th>タグ</th>
+          <th>意味</th>
+          <th>使い方</th>
+        </tr>
+        <tr>
+          <td><code>&lt;br&gt;</code></td>
+          <td>改行</td>
+          <td>ここで改行&lt;br&gt;次の行</td>
+        </tr>
+        <tr>
+          <td><code>&lt;hr&gt;</code></td>
+          <td>水平線</td>
+          <td>区切りを入れる</td>
+        </tr>
+        <tr>
+          <td><code>&lt;img&gt;</code></td>
+          <td>画像</td>
+          <td>&lt;img src="photo.jpg"&gt;</td>
+        </tr>
+        <tr>
+          <td><code>&lt;input&gt;</code></td>
+          <td>入力欄</td>
+          <td>フォームの入力欄</td>
+        </tr>
+      </table>
+
+      <h2>よくある間違い</h2>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-label">
+            <span class="icon">❌</span> 間違い
+          </div>
+          <p><strong>終了タグ忘れ</strong></p>
+          <pre><code>&lt;p&gt;段落1
+&lt;p&gt;段落2</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-label">
+            <span class="icon">⭕</span> 正しい
+          </div>
+          <p><strong>ちゃんと閉じる</strong></p>
+          <pre><code>&lt;p&gt;段落1&lt;/p&gt;
+&lt;p&gt;段落2&lt;/p&gt;</code></pre>
+        </div>
+      </div>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-label">
+            <span class="icon">❌</span> 間違い
+          </div>
+          <p><strong>入れ子が崩れている</strong></p>
+          <pre><code>&lt;p&gt;&lt;strong&gt;太字&lt;/p&gt;&lt;/strong&gt;</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-label">
+            <span class="icon">⭕</span> 正しい
+          </div>
+          <p><strong>開いた順の逆で閉じる</strong></p>
+          <pre><code>&lt;p&gt;&lt;strong&gt;太字&lt;/strong&gt;&lt;/p&gt;</code></pre>
+        </div>
+      </div>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          覚え方
+        </div>
+        <p style="margin:0;">
+          <strong>「先に開けたら、後に閉じる」</strong>
+        </p>
+        <p style="margin:0;">
+          お弁当箱と同じ。大きい箱の中に小さい箱を入れたら、小さい箱から先に閉じる。
+        </p>
+      </div>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li>タグは<strong>開始タグ・内容・終了タグ</strong>の3つでできている</li>
+          <li><strong>属性</strong>で追加の情報を与える（href、srcなど）</li>
+          <li>入れ子は<strong>「開いた順の逆で閉じる」</strong></li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-html2">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>次のコードの問題点は？</p>
+        <pre><code>&lt;p&gt;&lt;a href="test.html"&gt;リンク&lt;/p&gt;&lt;/a&gt;</code></pre>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-html2" style="display:none;">
+          A. href属性の値が間違っている
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-html2" style="display:none;">
+          B. タグの入れ子が崩れている
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-html2" style="display:none;">
+          C. 終了タグが不要
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-html2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('html2')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
     </section>
 
-    <section id="html3"><h1>3. 文書構造</h1><div class="card card-warning"><p>作成中...</p></div></section>
-    <section id="html4"><h1>4. テキスト要素</h1><div class="card card-warning"><p>作成中...</p></div></section>
-    <section id="html5"><h1>5. リンク・画像</h1><div class="card card-warning"><p>作成中...</p></div></section>
-    <section id="html6"><h1>6. リスト</h1><div class="card card-warning"><p>作成中...</p></div></section>
-    <section id="html7"><h1>7. セマンティックHTML</h1><div class="card card-warning"><p>作成中...</p></div></section>
+    <!-- ============================================
+         HTML 3: 文書構造
+         ============================================ -->
+    <section id="html3">
+      <h1>3. 文書構造</h1>
 
-    <section id="css1"><h1>8. CSSとは？</h1><div class="card card-warning"><p>作成中...</p></div></section>
-    <section id="css2"><h1>9. セレクタ</h1><div class="card card-warning"><p>作成中...</p></div></section>
-    <section id="css3"><h1>10. 色・背景</h1><div class="card card-warning"><p>作成中...</p></div></section>
-    <section id="css4"><h1>11. テキスト装飾</h1><div class="card card-warning"><p>作成中...</p></div></section>
-    <section id="css5"><h1>12. ボックスモデル</h1><div class="card card-warning"><p>作成中...</p></div></section>
-    <section id="css6"><h1>13. Flexbox</h1><div class="card card-warning"><p>作成中...</p></div></section>
-    <section id="css7"><h1>14. Grid</h1><div class="card card-warning"><p>作成中...</p></div></section>
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>HTMLファイルの基本形</li>
+          <li>head と body の違い</li>
+          <li>必ず書くもの</li>
+        </ul>
+      </div>
 
-    <section id="prac1"><h1>15. DevTools</h1><div class="card card-warning"><p>作成中...</p></div></section>
-    <section id="prac2"><h1>16. 実サイト読解</h1><div class="card card-warning"><p>作成中...</p></div></section>
-    <section id="prac3"><h1>17. UIパターン</h1><div class="card card-warning"><p>作成中...</p></div></section>
-    <section id="prac4"><h1>18. CSS新機能</h1><div class="card card-warning"><p>作成中...</p></div></section>
+      <h2>HTMLファイルの全体像</h2>
+
+      <p>
+        すべてのHTMLファイルは、同じ「形」を持っています。
+      </p>
+
+      <!-- 文書構造の図解 -->
+      <div class="diagram-container">
+        <svg class="diagram" viewBox="0 0 400 350" xmlns="http://www.w3.org/2000/svg">
+          <!-- DOCTYPE -->
+          <rect x="50" y="10" width="300" height="40" rx="5" fill="#FAF5FF" stroke="#7C3AED" stroke-width="2"/>
+          <text x="200" y="35" text-anchor="middle" font-size="14" fill="#333">&lt;!DOCTYPE html&gt;</text>
+
+          <!-- html全体 -->
+          <rect x="50" y="60" width="300" height="280" rx="10" fill="#EFF6FF" stroke="#2563EB" stroke-width="3"/>
+          <text x="70" y="85" font-size="14" font-weight="bold" fill="#2563EB">&lt;html&gt;</text>
+
+          <!-- head -->
+          <rect x="70" y="100" width="260" height="80" rx="8" fill="#FFF7ED" stroke="#EA580C" stroke-width="2"/>
+          <text x="90" y="125" font-size="14" font-weight="bold" fill="#EA580C">&lt;head&gt;</text>
+          <text x="200" y="155" text-anchor="middle" font-size="12" fill="#333">見えない情報</text>
+          <text x="200" y="172" text-anchor="middle" font-size="11" fill="#666">（タイトル、設定など）</text>
+
+          <!-- body -->
+          <rect x="70" y="200" width="260" height="120" rx="8" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+          <text x="90" y="225" font-size="14" font-weight="bold" fill="#16A34A">&lt;body&gt;</text>
+          <text x="200" y="265" text-anchor="middle" font-size="12" fill="#333">見える内容</text>
+          <text x="200" y="282" text-anchor="middle" font-size="11" fill="#666">（文字、画像、ボタンなど）</text>
+
+          <text x="330" y="335" font-size="14" font-weight="bold" fill="#2563EB">&lt;/html&gt;</text>
+        </svg>
+        <p class="diagram-caption">HTMLファイルの構造</p>
+      </div>
+
+      <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;ページタイトル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  ここに表示する内容
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+      <h2>各部分の役割</h2>
+
+      <h3>DOCTYPE宣言</h3>
+
+      <p>
+        <code>&lt;!DOCTYPE html&gt;</code> は「これはHTML5です」という宣言。
+      </p>
+
+      <p>
+        <strong>必ず1行目に書く</strong>。これがないと、古いモードで表示される。
+      </p>
+
+      <h3>head：見えない情報</h3>
+
+      <p>
+        <code>&lt;head&gt;</code>の中には、<strong>ユーザーに見えない設定</strong>を書きます。
+      </p>
+
+      <table>
+        <tr>
+          <th>タグ</th>
+          <th>役割</th>
+        </tr>
+        <tr>
+          <td><code>&lt;meta charset="UTF-8"&gt;</code></td>
+          <td>日本語を正しく表示する</td>
+        </tr>
+        <tr>
+          <td><code>&lt;title&gt;</code></td>
+          <td>ブラウザのタブに表示</td>
+        </tr>
+        <tr>
+          <td><code>&lt;link&gt;</code></td>
+          <td>CSSファイルを読み込む</td>
+        </tr>
+      </table>
+
+      <h3>body：見える内容</h3>
+
+      <p>
+        <code>&lt;body&gt;</code>の中には、<strong>ユーザーに見える内容</strong>を書きます。
+      </p>
+
+      <p>
+        文字、画像、ボタン、リンク...全部ここに入れます。
+      </p>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          よくある間違い
+        </div>
+        <ul>
+          <li><code>&lt;title&gt;</code>をbodyに書く → タブに表示されない</li>
+          <li><code>charset</code>を書き忘れる → 文字化けする</li>
+        </ul>
+      </div>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li><strong>DOCTYPE</strong>は1行目に必ず書く</li>
+          <li><strong>head</strong>は見えない設定（title、charsetなど）</li>
+          <li><strong>body</strong>は見える内容（文字、画像など）</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-html3">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p><code>&lt;meta charset="UTF-8"&gt;</code>は何のため？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-html3" style="display:none;">
+          A. ページの表示速度を上げる
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-html3" style="display:none;">
+          B. 日本語を正しく表示する
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-html3" style="display:none;">
+          C. SEO対策をする
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-html3')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('html3')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         HTML 4: テキスト要素
+         ============================================ -->
+    <section id="html4">
+      <h1>4. テキスト要素</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>見出し（h1〜h6）の使い方</li>
+          <li>段落（p）と改行（br）の違い</li>
+          <li>強調（strong、em）</li>
+        </ul>
+      </div>
+
+      <h2>見出し：h1〜h6</h2>
+
+      <p>
+        見出しは<strong>h1からh6</strong>まであります。
+      </p>
+
+      <p>
+        数字が<strong>小さいほど重要</strong>です。
+      </p>
+
+      <div class="diagram-container">
+        <svg class="diagram" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="10" width="360" height="35" rx="5" fill="#2563EB"/>
+          <text x="200" y="33" text-anchor="middle" font-size="18" font-weight="bold" fill="white">h1: 一番重要な見出し</text>
+
+          <rect x="40" y="55" width="320" height="30" rx="5" fill="#3B82F6"/>
+          <text x="200" y="75" text-anchor="middle" font-size="16" font-weight="bold" fill="white">h2: 次に重要</text>
+
+          <rect x="60" y="95" width="280" height="25" rx="5" fill="#60A5FA"/>
+          <text x="200" y="112" text-anchor="middle" font-size="14" font-weight="bold" fill="white">h3: その次</text>
+
+          <rect x="80" y="130" width="240" height="22" rx="5" fill="#93C5FD"/>
+          <text x="200" y="145" text-anchor="middle" font-size="13" fill="#333">h4: 小見出し</text>
+
+          <rect x="100" y="162" width="200" height="18" rx="5" fill="#BFDBFE"/>
+          <text x="200" y="175" text-anchor="middle" font-size="11" fill="#333">h5, h6: 細かい見出し</text>
+        </svg>
+        <p class="diagram-caption">見出しの大きさと重要度</p>
+      </div>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          大事なルール
+        </div>
+        <ul>
+          <li><strong>h1は1ページに1つだけ</strong>（ページのタイトル）</li>
+          <li><strong>順番を飛ばさない</strong>（h1→h3はNG、h1→h2→h3はOK）</li>
+        </ul>
+      </div>
+
+      <h2>段落と改行</h2>
+
+      <table>
+        <tr>
+          <th>タグ</th>
+          <th>意味</th>
+          <th>使い方</th>
+        </tr>
+        <tr>
+          <td><code>&lt;p&gt;</code></td>
+          <td>段落（paragraph）</td>
+          <td>意味のまとまりごとに使う</td>
+        </tr>
+        <tr>
+          <td><code>&lt;br&gt;</code></td>
+          <td>改行（break）</td>
+          <td>同じ段落内で行を変える</td>
+        </tr>
+      </table>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-label">
+            <span class="icon">❌</span> 悪い例
+          </div>
+          <p>改行のためにbrを連発</p>
+          <pre><code>文章1&lt;br&gt;&lt;br&gt;&lt;br&gt;文章2</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-label">
+            <span class="icon">⭕</span> 良い例
+          </div>
+          <p>意味ごとにpタグで分ける</p>
+          <pre><code>&lt;p&gt;文章1&lt;/p&gt;
+&lt;p&gt;文章2&lt;/p&gt;</code></pre>
+        </div>
+      </div>
+
+      <h2>強調：strong と em</h2>
+
+      <table>
+        <tr>
+          <th>タグ</th>
+          <th>意味</th>
+          <th>見た目</th>
+        </tr>
+        <tr>
+          <td><code>&lt;strong&gt;</code></td>
+          <td>重要（strong = 強い）</td>
+          <td><strong>太字</strong></td>
+        </tr>
+        <tr>
+          <td><code>&lt;em&gt;</code></td>
+          <td>強調（emphasis = 強調）</td>
+          <td><em>斜体</em></td>
+        </tr>
+      </table>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          ポイント
+        </div>
+        <p style="margin:0;">
+          見た目を変えたいだけなら<strong>CSSを使う</strong>。
+        </p>
+        <p style="margin:0;">
+          「意味として重要」なときだけstrongやemを使う。
+        </p>
+      </div>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li>見出しは<strong>h1が最重要</strong>、数字が大きいほど小さい見出し</li>
+          <li><strong>h1は1ページに1つ</strong>、順番は飛ばさない</li>
+          <li>段落は<strong>p</strong>、改行は<strong>br</strong>（使いすぎ注意）</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-html4">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>h1タグの正しい使い方は？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-html4" style="display:none;">
+          A. 大きい文字にしたい場所すべてに使う
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-html4" style="display:none;">
+          B. ページの主題として1ページに1つだけ使う
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-html4" style="display:none;">
+          C. 見出しのスタイルを変えたい場所に使う
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-html4')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('html4')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         HTML 5: リンク・画像
+         ============================================ -->
+    <section id="html5">
+      <h1>5. リンク・画像</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>リンク（aタグ）の書き方</li>
+          <li>画像（imgタグ）の書き方</li>
+          <li>alt属性の重要性</li>
+        </ul>
+      </div>
+
+      <h2>リンク：aタグ</h2>
+
+      <p>
+        <strong>a</strong>はanchor（アンカー＝錨）の略。
+      </p>
+
+      <p>
+        他のページに「つなぐ」役割です。
+      </p>
+
+      <pre><code>&lt;a href="https://google.com"&gt;Googleへ&lt;/a&gt;</code></pre>
+
+      <table>
+        <tr>
+          <th>属性</th>
+          <th>意味</th>
+          <th>例</th>
+        </tr>
+        <tr>
+          <td><code>href</code></td>
+          <td>リンク先のURL</td>
+          <td>"https://google.com"</td>
+        </tr>
+        <tr>
+          <td><code>target</code></td>
+          <td>開き方</td>
+          <td>"_blank"（新しいタブ）</td>
+        </tr>
+      </table>
+
+      <h2>画像：imgタグ</h2>
+
+      <p>
+        <strong>img</strong>はimage（画像）の略。
+      </p>
+
+      <p>
+        <strong>終了タグは不要</strong>です（空要素）。
+      </p>
+
+      <pre><code>&lt;img src="photo.jpg" alt="写真の説明"&gt;</code></pre>
+
+      <table>
+        <tr>
+          <th>属性</th>
+          <th>意味</th>
+          <th>必須？</th>
+        </tr>
+        <tr>
+          <td><code>src</code></td>
+          <td>画像ファイルの場所</td>
+          <td>必須</td>
+        </tr>
+        <tr>
+          <td><code>alt</code></td>
+          <td>画像の説明文</td>
+          <td><strong>必須</strong></td>
+        </tr>
+        <tr>
+          <td><code>width</code></td>
+          <td>横幅</td>
+          <td>任意</td>
+        </tr>
+        <tr>
+          <td><code>height</code></td>
+          <td>高さ</td>
+          <td>任意</td>
+        </tr>
+      </table>
+
+      <h2>alt属性がなぜ重要？</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          alt属性がないと...
+        </div>
+        <ul>
+          <li>目が見えない人が画像の内容を理解できない</li>
+          <li>画像が読み込めなかったとき、何の画像かわからない</li>
+          <li>検索エンジンが画像を理解できない</li>
+        </ul>
+      </div>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-label">
+            <span class="icon">❌</span> ダメな例
+          </div>
+          <pre><code>&lt;img src="cat.jpg"&gt;</code></pre>
+          <p>altがない！</p>
+        </div>
+        <div class="compare-good">
+          <div class="compare-label">
+            <span class="icon">⭕</span> 良い例
+          </div>
+          <pre><code>&lt;img src="cat.jpg" alt="ソファで眠る茶色の猫"&gt;</code></pre>
+          <p>内容がわかる説明</p>
+        </div>
+      </div>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li>リンクは<strong>&lt;a href="..."&gt;</strong>で作る</li>
+          <li>画像は<strong>&lt;img src="..." alt="..."&gt;</strong>で表示</li>
+          <li><strong>alt属性は必須</strong>（アクセシビリティのため）</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-html5">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>imgタグで必須の属性は？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-html5" style="display:none;">
+          A. width と height
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-html5" style="display:none;">
+          B. src と alt
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-html5" style="display:none;">
+          C. class と id
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-html5')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('html5')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         HTML 6: リスト
+         ============================================ -->
+    <section id="html6">
+      <h1>6. リスト</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>順序なしリスト（ul）</li>
+          <li>順序ありリスト（ol）</li>
+          <li>リストの入れ子</li>
+        </ul>
+      </div>
+
+      <h2>2種類のリスト</h2>
+
+      <table>
+        <tr>
+          <th>タグ</th>
+          <th>名前</th>
+          <th>使う場面</th>
+          <th>見た目</th>
+        </tr>
+        <tr>
+          <td><code>&lt;ul&gt;</code></td>
+          <td>Unordered List（順序なし）</td>
+          <td>順番が関係ない項目</td>
+          <td>・で表示</td>
+        </tr>
+        <tr>
+          <td><code>&lt;ol&gt;</code></td>
+          <td>Ordered List（順序あり）</td>
+          <td>順番が大事な項目</td>
+          <td>1. 2. 3. で表示</td>
+        </tr>
+        <tr>
+          <td><code>&lt;li&gt;</code></td>
+          <td>List Item（項目）</td>
+          <td>リストの各項目</td>
+          <td>-</td>
+        </tr>
+      </table>
+
+      <h2>書き方</h2>
+
+      <div class="compare-box">
+        <div class="compare-good">
+          <div class="compare-label">
+            <span class="icon">📋</span> 順序なしリスト
+          </div>
+          <pre><code>&lt;ul&gt;
+  &lt;li&gt;りんご&lt;/li&gt;
+  &lt;li&gt;みかん&lt;/li&gt;
+  &lt;li&gt;バナナ&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+          <p>結果：</p>
+          <ul>
+            <li>りんご</li>
+            <li>みかん</li>
+            <li>バナナ</li>
+          </ul>
+        </div>
+        <div class="compare-good">
+          <div class="compare-label">
+            <span class="icon">🔢</span> 順序ありリスト
+          </div>
+          <pre><code>&lt;ol&gt;
+  &lt;li&gt;材料を準備&lt;/li&gt;
+  &lt;li&gt;混ぜる&lt;/li&gt;
+  &lt;li&gt;焼く&lt;/li&gt;
+&lt;/ol&gt;</code></pre>
+          <p>結果：</p>
+          <ol>
+            <li>材料を準備</li>
+            <li>混ぜる</li>
+            <li>焼く</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          よくある間違い
+        </div>
+        <p>liタグだけ書いてul/olを書き忘れる</p>
+        <pre><code>❌ &lt;li&gt;項目1&lt;/li&gt;&lt;li&gt;項目2&lt;/li&gt;
+⭕ &lt;ul&gt;&lt;li&gt;項目1&lt;/li&gt;&lt;li&gt;項目2&lt;/li&gt;&lt;/ul&gt;</code></pre>
+      </div>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li><strong>ul</strong>は順序なし（・で表示）</li>
+          <li><strong>ol</strong>は順序あり（1.2.3.で表示）</li>
+          <li>項目は<strong>li</strong>タグで書く</li>
+          <li>ul/olの中にliを入れる（liだけはNG）</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-html6">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>レシピの手順を表示するのに適切なタグは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-html6" style="display:none;">
+          A. ul（順序なしリスト）
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-html6" style="display:none;">
+          B. ol（順序ありリスト）
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-html6" style="display:none;">
+          C. div（汎用コンテナ）
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-html6')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('html6')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         HTML 7: セマンティックHTML
+         ============================================ -->
+    <section id="html7">
+      <h1>7. セマンティックHTML</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>セマンティック（意味のある）タグとは</li>
+          <li>header, nav, main, footer などの使い方</li>
+          <li>なぜdivだけではダメなのか</li>
+        </ul>
+      </div>
+
+      <h2>セマンティックって何？</h2>
+
+      <p>
+        <strong>セマンティック</strong>は「意味のある」という意味です。
+      </p>
+
+      <p>
+        タグを見ただけで「ここは何の役割か」がわかるようにします。
+      </p>
+
+      <!-- セマンティックの図解 -->
+      <div class="diagram-container">
+        <svg class="diagram" viewBox="0 0 500 350" xmlns="http://www.w3.org/2000/svg">
+          <!-- 左側：divだらけ -->
+          <text x="125" y="25" text-anchor="middle" font-size="16" font-weight="bold" fill="#DC2626">❌ 悪い例</text>
+          <rect x="25" y="40" width="200" height="290" rx="10" fill="#FEF2F2" stroke="#DC2626" stroke-width="2"/>
+          <rect x="35" y="50" width="180" height="40" rx="5" fill="white" stroke="#999" stroke-width="1"/>
+          <text x="125" y="75" text-anchor="middle" font-size="12" fill="#666">&lt;div&gt; ??? &lt;/div&gt;</text>
+          <rect x="35" y="100" width="180" height="30" rx="5" fill="white" stroke="#999" stroke-width="1"/>
+          <text x="125" y="120" text-anchor="middle" font-size="12" fill="#666">&lt;div&gt; ??? &lt;/div&gt;</text>
+          <rect x="35" y="140" width="180" height="130" rx="5" fill="white" stroke="#999" stroke-width="1"/>
+          <text x="125" y="210" text-anchor="middle" font-size="12" fill="#666">&lt;div&gt; ??? &lt;/div&gt;</text>
+          <rect x="35" y="280" width="180" height="40" rx="5" fill="white" stroke="#999" stroke-width="1"/>
+          <text x="125" y="305" text-anchor="middle" font-size="12" fill="#666">&lt;div&gt; ??? &lt;/div&gt;</text>
+
+          <!-- 右側：セマンティック -->
+          <text x="375" y="25" text-anchor="middle" font-size="16" font-weight="bold" fill="#16A34A">⭕ 良い例</text>
+          <rect x="275" y="40" width="200" height="290" rx="10" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+          <rect x="285" y="50" width="180" height="40" rx="5" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+          <text x="375" y="75" text-anchor="middle" font-size="12" font-weight="bold" fill="#2563EB">&lt;header&gt;</text>
+          <rect x="285" y="100" width="180" height="30" rx="5" fill="#FAF5FF" stroke="#7C3AED" stroke-width="2"/>
+          <text x="375" y="120" text-anchor="middle" font-size="12" font-weight="bold" fill="#7C3AED">&lt;nav&gt;</text>
+          <rect x="285" y="140" width="180" height="130" rx="5" fill="#FFF7ED" stroke="#EA580C" stroke-width="2"/>
+          <text x="375" y="210" text-anchor="middle" font-size="12" font-weight="bold" fill="#EA580C">&lt;main&gt;</text>
+          <rect x="285" y="280" width="180" height="40" rx="5" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+          <text x="375" y="305" text-anchor="middle" font-size="12" font-weight="bold" fill="#16A34A">&lt;footer&gt;</text>
+        </svg>
+        <p class="diagram-caption">divだらけ vs セマンティックタグ</p>
+      </div>
+
+      <h2>主なセマンティックタグ</h2>
+
+      <table>
+        <tr>
+          <th>タグ</th>
+          <th>意味</th>
+          <th>使う場所</th>
+        </tr>
+        <tr>
+          <td><code>&lt;header&gt;</code></td>
+          <td>ヘッダー（頭）</td>
+          <td>ページ上部、ロゴやタイトル</td>
+        </tr>
+        <tr>
+          <td><code>&lt;nav&gt;</code></td>
+          <td>ナビゲーション</td>
+          <td>メニュー、リンク集</td>
+        </tr>
+        <tr>
+          <td><code>&lt;main&gt;</code></td>
+          <td>メインコンテンツ</td>
+          <td>ページの主要な内容</td>
+        </tr>
+        <tr>
+          <td><code>&lt;article&gt;</code></td>
+          <td>記事</td>
+          <td>独立したコンテンツ</td>
+        </tr>
+        <tr>
+          <td><code>&lt;section&gt;</code></td>
+          <td>セクション</td>
+          <td>章、区切り</td>
+        </tr>
+        <tr>
+          <td><code>&lt;aside&gt;</code></td>
+          <td>補足情報</td>
+          <td>サイドバー、関連リンク</td>
+        </tr>
+        <tr>
+          <td><code>&lt;footer&gt;</code></td>
+          <td>フッター（足）</td>
+          <td>ページ下部、著作権情報</td>
+        </tr>
+      </table>
+
+      <h2>なぜセマンティックが大事？</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          3つの理由
+        </div>
+        <ol>
+          <li><strong>アクセシビリティ</strong>：スクリーンリーダーが「ここはナビゲーション」と読み上げられる</li>
+          <li><strong>SEO</strong>：Googleが「ここがメインコンテンツ」と理解できる</li>
+          <li><strong>保守性</strong>：開発者がコードを見てすぐ構造がわかる</li>
+        </ol>
+      </div>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li><strong>セマンティック</strong>＝「意味のある」タグを使う</li>
+          <li><strong>div</strong>だけでなく、header, nav, main, footer を使い分ける</li>
+          <li>アクセシビリティ、SEO、保守性が向上する</li>
+        </ol>
+      </div>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔍</span>
+          レビューで指摘すべきポイント
+        </div>
+        <ul>
+          <li>divだらけになっていないか？</li>
+          <li>navにメニューが入っているか？</li>
+          <li>mainは1ページに1つか？</li>
+        </ul>
+      </div>
+
+      <div class="quiz" id="quiz-html7">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>ナビゲーションメニューに適切なタグは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-html7" style="display:none;">
+          A. &lt;div class="menu"&gt;
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-html7" style="display:none;">
+          B. &lt;nav&gt;
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-html7" style="display:none;">
+          C. &lt;menu&gt;
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-html7')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('html7')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         CSS 1: CSSとは？
+         ============================================ -->
+    <section id="css1">
+      <h1>8. CSSとは？</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>CSSの役割</li>
+          <li>HTMLとCSSの関係</li>
+          <li>CSSの書き方（3つの方法）</li>
+        </ul>
+      </div>
+
+      <h2>CSSってなに？</h2>
+
+      <p>
+        <strong>CSS</strong>は「Cascading Style Sheets」の略です。
+      </p>
+
+      <p>
+        HTMLが「骨組み」なら、CSSは「<strong>見た目</strong>」を決めます。
+      </p>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          かんたんな説明
+        </div>
+        <p style="margin:0;font-size:22px;">
+          CSSは<strong>「色・大きさ・配置」</strong>を決める言語です。
+        </p>
+      </div>
+
+      <!-- 役割の図解 -->
+      <div class="diagram-container">
+        <svg class="diagram" viewBox="0 0 500 180" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="30" width="140" height="120" rx="10" fill="#EFF6FF" stroke="#2563EB" stroke-width="3"/>
+          <text x="100" y="70" text-anchor="middle" font-size="16" font-weight="bold" fill="#2563EB">HTML</text>
+          <text x="100" y="95" text-anchor="middle" font-size="12" fill="#333">構造・骨組み</text>
+          <text x="100" y="115" text-anchor="middle" font-size="11" fill="#666">「何があるか」</text>
+
+          <text x="200" y="95" text-anchor="middle" font-size="24" fill="#333">＋</text>
+
+          <rect x="230" y="30" width="140" height="120" rx="10" fill="#FAF5FF" stroke="#7C3AED" stroke-width="3"/>
+          <text x="300" y="70" text-anchor="middle" font-size="16" font-weight="bold" fill="#7C3AED">CSS</text>
+          <text x="300" y="95" text-anchor="middle" font-size="12" fill="#333">見た目・装飾</text>
+          <text x="300" y="115" text-anchor="middle" font-size="11" fill="#666">「どう見えるか」</text>
+
+          <text x="400" y="95" text-anchor="middle" font-size="24" fill="#333">＝</text>
+
+          <rect x="430" y="50" width="50" height="80" rx="5" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+          <text x="455" y="155" text-anchor="middle" font-size="12" fill="#333">Webページ</text>
+        </svg>
+        <p class="diagram-caption">HTMLとCSSの関係</p>
+      </div>
+
+      <h2>CSSで何ができる？</h2>
+
+      <table>
+        <tr>
+          <th>できること</th>
+          <th>例</th>
+        </tr>
+        <tr>
+          <td>色を変える</td>
+          <td>文字を赤に、背景を青に</td>
+        </tr>
+        <tr>
+          <td>大きさを変える</td>
+          <td>文字を大きく、画像を小さく</td>
+        </tr>
+        <tr>
+          <td>配置を変える</td>
+          <td>中央揃え、横並び</td>
+        </tr>
+        <tr>
+          <td>余白を調整</td>
+          <td>要素の間隔を広げる</td>
+        </tr>
+      </table>
+
+      <h2>CSSの書き方</h2>
+
+      <pre><code>セレクタ {
+  プロパティ: 値;
+}
+
+例：
+p {
+  color: red;
+  font-size: 20px;
+}</code></pre>
+
+      <table>
+        <tr>
+          <th>部分</th>
+          <th>意味</th>
+          <th>例</th>
+        </tr>
+        <tr>
+          <td>セレクタ</td>
+          <td>どの要素に適用するか</td>
+          <td>p（段落に）</td>
+        </tr>
+        <tr>
+          <td>プロパティ</td>
+          <td>何を変えるか</td>
+          <td>color（色を）</td>
+        </tr>
+        <tr>
+          <td>値</td>
+          <td>どう変えるか</td>
+          <td>red（赤に）</td>
+        </tr>
+      </table>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li>CSSは<strong>見た目</strong>を決める言語</li>
+          <li>HTML（構造）＋ CSS（見た目）＝ Webページ</li>
+          <li>「<strong>セレクタ { プロパティ: 値; }</strong>」の形で書く</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-css1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>CSSの役割は？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-css1" style="display:none;">
+          A. ページの構造を作る
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-css1" style="display:none;">
+          B. ページの見た目を決める
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-css1" style="display:none;">
+          C. ページに動きをつける
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-css1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('css1')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         CSS 2: セレクタ
+         ============================================ -->
+    <section id="css2">
+      <h1>9. セレクタ</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>セレクタの種類</li>
+          <li>要素・クラス・IDセレクタ</li>
+          <li>詳細度（どのスタイルが優先されるか）</li>
+        </ul>
+      </div>
+
+      <h2>セレクタ＝「どの要素に適用するか」</h2>
+
+      <p>
+        セレクタは、CSSを<strong>どの要素に適用するか</strong>を指定します。
+      </p>
+
+      <h2>3つの基本セレクタ</h2>
+
+      <table>
+        <tr>
+          <th>種類</th>
+          <th>書き方</th>
+          <th>意味</th>
+        </tr>
+        <tr>
+          <td>要素セレクタ</td>
+          <td><code>p { }</code></td>
+          <td>すべての&lt;p&gt;タグ</td>
+        </tr>
+        <tr>
+          <td>クラスセレクタ</td>
+          <td><code>.box { }</code></td>
+          <td>class="box"の要素</td>
+        </tr>
+        <tr>
+          <td>IDセレクタ</td>
+          <td><code>#header { }</code></td>
+          <td>id="header"の要素</td>
+        </tr>
+      </table>
+
+      <h3>要素セレクタ</h3>
+      <pre><code>p {
+  color: blue;
+}
+/* すべての段落が青くなる */</code></pre>
+
+      <h3>クラスセレクタ（.ドット）</h3>
+      <pre><code>.highlight {
+  background: yellow;
+}
+
+/* HTML側 */
+&lt;p class="highlight"&gt;黄色背景&lt;/p&gt;</code></pre>
+
+      <h3>IDセレクタ（#シャープ）</h3>
+      <pre><code>#main-title {
+  font-size: 32px;
+}
+
+/* HTML側 */
+&lt;h1 id="main-title"&gt;タイトル&lt;/h1&gt;</code></pre>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          クラスとIDの違い
+        </div>
+        <table>
+          <tr>
+            <th></th>
+            <th>class</th>
+            <th>id</th>
+          </tr>
+          <tr>
+            <td>同じページで</td>
+            <td>何度でも使える</td>
+            <td>1回だけ</td>
+          </tr>
+          <tr>
+            <td>用途</td>
+            <td>共通のスタイル</td>
+            <td>唯一の要素</td>
+          </tr>
+          <tr>
+            <td>優先度</td>
+            <td>低い</td>
+            <td>高い</td>
+          </tr>
+        </table>
+      </div>
+
+      <h2>詳細度（優先順位）</h2>
+
+      <p>
+        同じ要素に複数のスタイルがあると、<strong>詳細度が高い方</strong>が勝ちます。
+      </p>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🏆</span>
+          優先順位（高い順）
+        </div>
+        <ol>
+          <li><strong>!important</strong>（最強、でも使わない方がいい）</li>
+          <li><strong>IDセレクタ</strong>（#header）</li>
+          <li><strong>クラスセレクタ</strong>（.box）</li>
+          <li><strong>要素セレクタ</strong>（p, div）</li>
+        </ol>
+      </div>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li>要素セレクタ：<code>p</code>（タグ名そのまま）</li>
+          <li>クラスセレクタ：<code>.名前</code>（ドット＋名前）</li>
+          <li>IDセレクタ：<code>#名前</code>（シャープ＋名前）</li>
+          <li>優先度：ID ＞ クラス ＞ 要素</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-css2">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>クラスセレクタの正しい書き方は？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-css2" style="display:none;">
+          A. #box { }
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-css2" style="display:none;">
+          B. .box { }
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-css2" style="display:none;">
+          C. box { }
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-css2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('css2')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         CSS 3: 色・背景
+         ============================================ -->
+    <section id="css3">
+      <h1>10. 色・背景</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>色の指定方法（名前、HEX、RGB）</li>
+          <li>背景色と背景画像</li>
+        </ul>
+      </div>
+
+      <h2>色の指定方法</h2>
+
+      <table>
+        <tr>
+          <th>方法</th>
+          <th>例</th>
+          <th>説明</th>
+        </tr>
+        <tr>
+          <td>色の名前</td>
+          <td><code>red</code></td>
+          <td>英語の色名</td>
+        </tr>
+        <tr>
+          <td>HEX（16進数）</td>
+          <td><code>#FF0000</code></td>
+          <td>#RRGGBB形式</td>
+        </tr>
+        <tr>
+          <td>RGB</td>
+          <td><code>rgb(255,0,0)</code></td>
+          <td>赤・緑・青を0-255で</td>
+        </tr>
+        <tr>
+          <td>RGBA</td>
+          <td><code>rgba(255,0,0,0.5)</code></td>
+          <td>RGB＋透明度</td>
+        </tr>
+      </table>
+
+      <pre><code>/* すべて同じ赤色 */
+color: red;
+color: #FF0000;
+color: #F00;         /* 短縮形 */
+color: rgb(255, 0, 0);</code></pre>
+
+      <h2>文字色と背景色</h2>
+
+      <pre><code>p {
+  color: #333;              /* 文字色 */
+  background-color: #FFF;   /* 背景色 */
+}</code></pre>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          コントラストに注意
+        </div>
+        <p style="margin:0;">
+          文字色と背景色の<strong>コントラスト比は4.5:1以上</strong>が推奨。
+        </p>
+        <p style="margin:0;">
+          薄い灰色の文字は読みにくい！
+        </p>
+      </div>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li>色は<strong>名前、HEX、RGB</strong>で指定できる</li>
+          <li><code>color</code>は文字色、<code>background-color</code>は背景色</li>
+          <li>コントラスト比に注意（読みやすさのため）</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-css3">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>#FF0000 は何色？</p>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-css3" style="display:none;">
+          A. 赤
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-css3" style="display:none;">
+          B. 緑
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-css3" style="display:none;">
+          C. 青
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-css3')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('css3')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         CSS 4: テキスト装飾
+         ============================================ -->
+    <section id="css4">
+      <h1>11. テキスト装飾</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>フォントの設定</li>
+          <li>文字サイズ、太さ、行間</li>
+          <li>テキストの配置</li>
+        </ul>
+      </div>
+
+      <h2>よく使うプロパティ</h2>
+
+      <table>
+        <tr>
+          <th>プロパティ</th>
+          <th>意味</th>
+          <th>例</th>
+        </tr>
+        <tr>
+          <td><code>font-size</code></td>
+          <td>文字サイズ</td>
+          <td>20px, 1.5rem</td>
+        </tr>
+        <tr>
+          <td><code>font-weight</code></td>
+          <td>太さ</td>
+          <td>normal, bold, 700</td>
+        </tr>
+        <tr>
+          <td><code>font-family</code></td>
+          <td>フォント種類</td>
+          <td>sans-serif, serif</td>
+        </tr>
+        <tr>
+          <td><code>line-height</code></td>
+          <td>行間</td>
+          <td>1.5, 2.0</td>
+        </tr>
+        <tr>
+          <td><code>text-align</code></td>
+          <td>揃え方</td>
+          <td>left, center, right</td>
+        </tr>
+      </table>
+
+      <pre><code>p {
+  font-size: 18px;
+  font-weight: normal;
+  line-height: 1.8;
+  text-align: left;
+}</code></pre>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          読みやすさのコツ
+        </div>
+        <ul>
+          <li>フォントサイズ：<strong>16px以上</strong></li>
+          <li>行間（line-height）：<strong>1.5〜2.0</strong></li>
+          <li>一行の長さ：<strong>全角40文字程度</strong></li>
+        </ul>
+      </div>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li><code>font-size</code>で文字サイズを変える</li>
+          <li><code>line-height</code>で行間を広げる（読みやすさUP）</li>
+          <li><code>text-align</code>で揃え方を変える</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-css4">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>行間を広げるプロパティは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-css4" style="display:none;">
+          A. font-size
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-css4" style="display:none;">
+          B. line-height
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-css4" style="display:none;">
+          C. text-align
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-css4')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('css4')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         CSS 5: ボックスモデル
+         ============================================ -->
+    <section id="css5">
+      <h1>12. ボックスモデル</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>ボックスモデルとは</li>
+          <li>margin, padding, border の違い</li>
+          <li>box-sizing の重要性</li>
+        </ul>
+      </div>
+
+      <h2>すべての要素は「箱」</h2>
+
+      <p>
+        HTMLの要素は、すべて<strong>四角い箱</strong>です。
+      </p>
+
+      <p>
+        その箱には4つの層があります。
+      </p>
+
+      <!-- ボックスモデルの図解 -->
+      <div class="diagram-container">
+        <svg class="diagram" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+          <!-- margin -->
+          <rect x="20" y="20" width="360" height="260" rx="5" fill="#FEF2F2" stroke="#DC2626" stroke-width="2"/>
+          <text x="200" y="45" text-anchor="middle" font-size="14" font-weight="bold" fill="#DC2626">margin（外側の余白）</text>
+
+          <!-- border -->
+          <rect x="50" y="60" width="300" height="200" rx="5" fill="#FFF7ED" stroke="#EA580C" stroke-width="4"/>
+          <text x="200" y="85" text-anchor="middle" font-size="14" font-weight="bold" fill="#EA580C">border（枠線）</text>
+
+          <!-- padding -->
+          <rect x="80" y="110" width="240" height="130" rx="5" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+          <text x="200" y="135" text-anchor="middle" font-size="14" font-weight="bold" fill="#2563EB">padding（内側の余白）</text>
+
+          <!-- content -->
+          <rect x="110" y="155" width="180" height="60" rx="5" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+          <text x="200" y="190" text-anchor="middle" font-size="14" font-weight="bold" fill="#16A34A">content（内容）</text>
+        </svg>
+        <p class="diagram-caption">ボックスモデルの4つの層</p>
+      </div>
+
+      <table>
+        <tr>
+          <th>層</th>
+          <th>プロパティ</th>
+          <th>意味</th>
+        </tr>
+        <tr>
+          <td>内容</td>
+          <td>width, height</td>
+          <td>中身の大きさ</td>
+        </tr>
+        <tr>
+          <td>内側の余白</td>
+          <td>padding</td>
+          <td>枠線と中身の間</td>
+        </tr>
+        <tr>
+          <td>枠線</td>
+          <td>border</td>
+          <td>箱の線</td>
+        </tr>
+        <tr>
+          <td>外側の余白</td>
+          <td>margin</td>
+          <td>他の要素との間</td>
+        </tr>
+      </table>
+
+      <h2>padding と margin の違い</h2>
+
+      <div class="compare-box">
+        <div class="compare-good">
+          <div class="compare-label">
+            <span class="icon">📦</span> padding
+          </div>
+          <p><strong>内側</strong>の余白</p>
+          <p>背景色がつく領域</p>
+          <pre><code>padding: 20px;</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-label">
+            <span class="icon">↔️</span> margin
+          </div>
+          <p><strong>外側</strong>の余白</p>
+          <p>他の要素との距離</p>
+          <pre><code>margin: 20px;</code></pre>
+        </div>
+      </div>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li>すべての要素は<strong>箱（ボックス）</strong></li>
+          <li><strong>padding</strong>は内側、<strong>margin</strong>は外側の余白</li>
+          <li>content → padding → border → margin の順</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-css5">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>要素の「内側」の余白を設定するプロパティは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-css5" style="display:none;">
+          A. margin
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-css5" style="display:none;">
+          B. padding
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-css5" style="display:none;">
+          C. border
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-css5')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('css5')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         CSS 6: Flexbox
+         ============================================ -->
+    <section id="css6">
+      <h1>13. Flexbox</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>Flexboxとは</li>
+          <li>横並び・縦並びの作り方</li>
+          <li>中央揃えの方法</li>
+        </ul>
+      </div>
+
+      <h2>Flexboxってなに？</h2>
+
+      <p>
+        <strong>Flexbox</strong>は、要素を<strong>簡単に並べる</strong>ための仕組みです。
+      </p>
+
+      <p>
+        「横並び」「中央揃え」がとても簡単にできます。
+      </p>
+
+      <h2>基本の使い方</h2>
+
+      <pre><code>.container {
+  display: flex;  /* これだけで横並び！ */
+}</code></pre>
+
+      <!-- Flexboxの図解 -->
+      <div class="diagram-container">
+        <svg class="diagram" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
+          <!-- 通常 -->
+          <text x="125" y="25" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">通常（縦に並ぶ）</text>
+          <rect x="25" y="40" width="200" height="150" rx="5" fill="#F5F5F5" stroke="#999" stroke-width="1"/>
+          <rect x="45" y="55" width="160" height="35" rx="5" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+          <text x="125" y="78" text-anchor="middle" font-size="12" fill="#333">Box 1</text>
+          <rect x="45" y="100" width="160" height="35" rx="5" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+          <text x="125" y="123" text-anchor="middle" font-size="12" fill="#333">Box 2</text>
+          <rect x="45" y="145" width="160" height="35" rx="5" fill="#FAF5FF" stroke="#7C3AED" stroke-width="2"/>
+          <text x="125" y="168" text-anchor="middle" font-size="12" fill="#333">Box 3</text>
+
+          <!-- Flex -->
+          <text x="375" y="25" text-anchor="middle" font-size="14" font-weight="bold" fill="#2563EB">display: flex（横に並ぶ）</text>
+          <rect x="275" y="40" width="200" height="150" rx="5" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+          <rect x="285" y="75" width="55" height="80" rx="5" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+          <text x="312" y="120" text-anchor="middle" font-size="11" fill="#333">Box 1</text>
+          <rect x="350" y="75" width="55" height="80" rx="5" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+          <text x="377" y="120" text-anchor="middle" font-size="11" fill="#333">Box 2</text>
+          <rect x="415" y="75" width="55" height="80" rx="5" fill="#FAF5FF" stroke="#7C3AED" stroke-width="2"/>
+          <text x="442" y="120" text-anchor="middle" font-size="11" fill="#333">Box 3</text>
+        </svg>
+        <p class="diagram-caption">display: flex で横並びに</p>
+      </div>
+
+      <h2>よく使うプロパティ</h2>
+
+      <table>
+        <tr>
+          <th>プロパティ</th>
+          <th>意味</th>
+          <th>値の例</th>
+        </tr>
+        <tr>
+          <td><code>justify-content</code></td>
+          <td>横方向の揃え</td>
+          <td>center, space-between</td>
+        </tr>
+        <tr>
+          <td><code>align-items</code></td>
+          <td>縦方向の揃え</td>
+          <td>center, flex-start</td>
+        </tr>
+        <tr>
+          <td><code>flex-direction</code></td>
+          <td>並ぶ方向</td>
+          <td>row（横）, column（縦）</td>
+        </tr>
+        <tr>
+          <td><code>gap</code></td>
+          <td>要素間の隙間</td>
+          <td>20px, 1rem</td>
+        </tr>
+      </table>
+
+      <h2>中央揃えの魔法</h2>
+
+      <pre><code>.container {
+  display: flex;
+  justify-content: center;  /* 横方向：中央 */
+  align-items: center;      /* 縦方向：中央 */
+}</code></pre>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          これだけ覚えれば大丈夫
+        </div>
+        <p style="margin:0;">
+          中央揃えは<strong>display: flex + justify-content: center + align-items: center</strong>
+        </p>
+      </div>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li><code>display: flex</code>で横並びになる</li>
+          <li><code>justify-content</code>は横方向の揃え</li>
+          <li><code>align-items</code>は縦方向の揃え</li>
+          <li><code>gap</code>で要素間の隙間を作る</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-css6">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>Flexboxで横方向の中央揃えをするプロパティは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-css6" style="display:none;">
+          A. align-items: center
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-css6" style="display:none;">
+          B. justify-content: center
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-css6" style="display:none;">
+          C. text-align: center
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-css6')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('css6')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         CSS 7: Grid
+         ============================================ -->
+    <section id="css7">
+      <h1>14. Grid</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>CSS Gridとは</li>
+          <li>Flexboxとの違い</li>
+          <li>グリッドレイアウトの作り方</li>
+        </ul>
+      </div>
+
+      <h2>Gridってなに？</h2>
+
+      <p>
+        <strong>Grid</strong>は、<strong>格子状（グリッド）</strong>に要素を並べる仕組みです。
+      </p>
+
+      <p>
+        Flexboxは「一列」、Gridは「複数行×複数列」が得意です。
+      </p>
+
+      <!-- GridとFlexboxの比較図解 -->
+      <div class="diagram-container">
+        <svg class="diagram" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
+          <!-- Flexbox -->
+          <text x="125" y="25" text-anchor="middle" font-size="14" font-weight="bold" fill="#7C3AED">Flexbox（一列）</text>
+          <rect x="25" y="40" width="200" height="150" rx="5" fill="#FAF5FF" stroke="#7C3AED" stroke-width="2"/>
+          <rect x="35" y="80" width="40" height="70" rx="3" fill="white" stroke="#7C3AED" stroke-width="1"/>
+          <rect x="85" y="80" width="40" height="70" rx="3" fill="white" stroke="#7C3AED" stroke-width="1"/>
+          <rect x="135" y="80" width="40" height="70" rx="3" fill="white" stroke="#7C3AED" stroke-width="1"/>
+          <rect x="185" y="80" width="30" height="70" rx="3" fill="white" stroke="#7C3AED" stroke-width="1"/>
+
+          <!-- Grid -->
+          <text x="375" y="25" text-anchor="middle" font-size="14" font-weight="bold" fill="#2563EB">Grid（格子状）</text>
+          <rect x="275" y="40" width="200" height="150" rx="5" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+          <rect x="285" y="50" width="60" height="60" rx="3" fill="white" stroke="#2563EB" stroke-width="1"/>
+          <rect x="355" y="50" width="60" height="60" rx="3" fill="white" stroke="#2563EB" stroke-width="1"/>
+          <rect x="425" y="50" width="40" height="60" rx="3" fill="white" stroke="#2563EB" stroke-width="1"/>
+          <rect x="285" y="120" width="60" height="60" rx="3" fill="white" stroke="#2563EB" stroke-width="1"/>
+          <rect x="355" y="120" width="60" height="60" rx="3" fill="white" stroke="#2563EB" stroke-width="1"/>
+          <rect x="425" y="120" width="40" height="60" rx="3" fill="white" stroke="#2563EB" stroke-width="1"/>
+        </svg>
+        <p class="diagram-caption">Flexboxは一列、Gridは格子状</p>
+      </div>
+
+      <h2>基本の使い方</h2>
+
+      <pre><code>.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;  /* 3列 */
+  gap: 20px;                            /* 隙間 */
+}</code></pre>
+
+      <table>
+        <tr>
+          <th>プロパティ</th>
+          <th>意味</th>
+          <th>値の例</th>
+        </tr>
+        <tr>
+          <td><code>grid-template-columns</code></td>
+          <td>列の幅</td>
+          <td>1fr 1fr 1fr（3等分）</td>
+        </tr>
+        <tr>
+          <td><code>grid-template-rows</code></td>
+          <td>行の高さ</td>
+          <td>100px auto</td>
+        </tr>
+        <tr>
+          <td><code>gap</code></td>
+          <td>隙間</td>
+          <td>20px</td>
+        </tr>
+      </table>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          frって何？
+        </div>
+        <p style="margin:0;">
+          <strong>fr</strong>は「fraction（分数）」の略。
+        </p>
+        <p style="margin:0;">
+          1fr 1fr 1frなら「1:1:1で3等分」という意味です。
+        </p>
+      </div>
+
+      <h2>FlexboxとGridの使い分け</h2>
+
+      <table>
+        <tr>
+          <th></th>
+          <th>Flexbox</th>
+          <th>Grid</th>
+        </tr>
+        <tr>
+          <td>得意なこと</td>
+          <td>一列に並べる</td>
+          <td>格子状に並べる</td>
+        </tr>
+        <tr>
+          <td>使う場面</td>
+          <td>ナビ、ボタン並び</td>
+          <td>カード一覧、全体レイアウト</td>
+        </tr>
+      </table>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li><code>display: grid</code>で格子状レイアウト</li>
+          <li><code>grid-template-columns</code>で列数を決める</li>
+          <li>一列ならFlexbox、格子状ならGrid</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-css7">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>カード一覧（複数行×複数列）に適したレイアウト方法は？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-css7" style="display:none;">
+          A. Flexbox
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-css7" style="display:none;">
+          B. Grid
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-css7" style="display:none;">
+          C. float
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-css7')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('css7')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         実践 1: DevTools
+         ============================================ -->
+    <section id="prac1">
+      <h1>15. DevTools入門</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>DevToolsの開き方</li>
+          <li>要素の検証方法</li>
+          <li>CSSの確認・編集方法</li>
+        </ul>
+      </div>
+
+      <h2>DevToolsってなに？</h2>
+
+      <p>
+        <strong>DevTools</strong>（開発者ツール）は、ブラウザに内蔵された「調査ツール」です。
+      </p>
+
+      <p>
+        Webページの<strong>HTML</strong>や<strong>CSS</strong>を見たり、一時的に変更したりできます。
+      </p>
+
+      <h2>開き方</h2>
+
+      <table>
+        <tr>
+          <th>方法</th>
+          <th>操作</th>
+        </tr>
+        <tr>
+          <td>キーボード</td>
+          <td><strong>F12</strong> または <strong>Ctrl+Shift+I</strong>（Macは Command+Option+I）</td>
+        </tr>
+        <tr>
+          <td>右クリック</td>
+          <td>ページ上で右クリック → 「検証」</td>
+        </tr>
+      </table>
+
+      <h2>Elementsタブ</h2>
+
+      <p>
+        <strong>Elements</strong>タブでは、ページのHTML構造を見ることができます。
+      </p>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">🔍</span>
+          できること
+        </div>
+        <ul>
+          <li>HTMLの構造を確認</li>
+          <li>要素にどのCSSが適用されているか確認</li>
+          <li>CSSを一時的に変更して試す</li>
+        </ul>
+      </div>
+
+      <h2>要素を検証する手順</h2>
+
+      <ol>
+        <li>DevToolsを開く</li>
+        <li>左上の「矢印アイコン」をクリック</li>
+        <li>ページ上の調べたい要素をクリック</li>
+        <li>右側にCSSが表示される</li>
+      </ol>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          注意点
+        </div>
+        <p style="margin:0;">
+          DevToolsでの変更は<strong>一時的</strong>です。
+        </p>
+        <p style="margin:0;">
+          ページをリロードすると元に戻ります。
+        </p>
+      </div>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li><strong>F12</strong>でDevToolsを開く</li>
+          <li><strong>Elements</strong>タブでHTML/CSSを確認</li>
+          <li>CSSを<strong>一時的に変更</strong>して試せる</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-prac1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>DevToolsを開くショートカットキーは？</p>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-prac1" style="display:none;">
+          A. F12
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac1" style="display:none;">
+          B. F5
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac1" style="display:none;">
+          C. Ctrl+S
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-prac1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('prac1')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         実践 2: 実サイト読解
+         ============================================ -->
+    <section id="prac2">
+      <h1>16. 実サイト読解</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>実際のWebサイトのコードを読む方法</li>
+          <li>構造を把握するコツ</li>
+          <li>シニアエンジニアの読み方</li>
+        </ul>
+      </div>
+
+      <h2>なぜ実サイトを読むのか？</h2>
+
+      <p>
+        教科書で学んだことを、<strong>実際のコード</strong>で確認することが大切です。
+      </p>
+
+      <p>
+        プロが書いたコードには、<strong>良いパターン</strong>がたくさんあります。
+      </p>
+
+      <h2>読み方の手順</h2>
+
+      <ol>
+        <li><strong>全体構造</strong>を把握する（header, main, footer）</li>
+        <li><strong>セマンティックタグ</strong>を確認する（nav, article など）</li>
+        <li><strong>クラス名</strong>から意図を読み取る</li>
+        <li><strong>CSS</strong>でどうスタイルが当たっているか確認</li>
+      </ol>
+
+      <h2>シニアエンジニアの読み方</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">👀</span>
+          見るポイント
+        </div>
+        <ul>
+          <li>「このレイアウトはFlexbox？Grid？」</li>
+          <li>「クラス名の命名規則は何？」</li>
+          <li>「セマンティックタグは適切に使われている？」</li>
+          <li>「アクセシビリティは考慮されている？」</li>
+        </ul>
+      </div>
+
+      <h2>練習方法</h2>
+
+      <ol>
+        <li>好きなWebサイトを開く</li>
+        <li>DevToolsを開く（F12）</li>
+        <li>header, nav, main, footer を探す</li>
+        <li>Flexbox/Gridがどこで使われているか確認</li>
+      </ol>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li>実サイトのコードを読む練習をする</li>
+          <li><strong>全体構造</strong>から把握する</li>
+          <li><strong>クラス名</strong>から意図を読み取る</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-prac2">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>実サイトを読むとき、最初に確認すべきは？</p>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-prac2" style="display:none;">
+          A. 全体構造（header, main, footer）
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac2" style="display:none;">
+          B. 文字の色
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac2" style="display:none;">
+          C. 画像のサイズ
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-prac2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('prac2')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         実践 3: UIパターン
+         ============================================ -->
+    <section id="prac3">
+      <h1>17. UIパターン認識</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>よくあるUIパターン</li>
+          <li>パターンの名前と構造</li>
+          <li>見た瞬間にわかるようになる</li>
+        </ul>
+      </div>
+
+      <h2>UIパターンを知る意味</h2>
+
+      <p>
+        Webサイトには「<strong>よくある形</strong>」があります。
+      </p>
+
+      <p>
+        パターンを知っていると、コードを見た瞬間に「これはカードだな」とわかります。
+      </p>
+
+      <h2>代表的なUIパターン</h2>
+
+      <table>
+        <tr>
+          <th>パターン名</th>
+          <th>特徴</th>
+          <th>よくある場所</th>
+        </tr>
+        <tr>
+          <td><strong>ヘッダー</strong></td>
+          <td>ロゴ、ナビ、検索</td>
+          <td>ページ上部</td>
+        </tr>
+        <tr>
+          <td><strong>ナビゲーション</strong></td>
+          <td>リンクの並び</td>
+          <td>ヘッダー内、サイドバー</td>
+        </tr>
+        <tr>
+          <td><strong>カード</strong></td>
+          <td>画像＋タイトル＋説明</td>
+          <td>商品一覧、記事一覧</td>
+        </tr>
+        <tr>
+          <td><strong>フォーム</strong></td>
+          <td>入力欄＋ボタン</td>
+          <td>ログイン、検索</td>
+        </tr>
+        <tr>
+          <td><strong>フッター</strong></td>
+          <td>著作権、リンク集</td>
+          <td>ページ下部</td>
+        </tr>
+      </table>
+
+      <h2>カードパターンの例</h2>
+
+      <pre><code>&lt;article class="card"&gt;
+  &lt;img src="thumbnail.jpg" alt="..."&gt;
+  &lt;h3&gt;記事タイトル&lt;/h3&gt;
+  &lt;p&gt;記事の説明文...&lt;/p&gt;
+  &lt;a href="..."&gt;もっと読む&lt;/a&gt;
+&lt;/article&gt;</code></pre>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          見分けるコツ
+        </div>
+        <ul>
+          <li>クラス名に<code>card</code>が含まれる</li>
+          <li><code>article</code>タグで囲まれている</li>
+          <li>Gridで複数並んでいる</li>
+        </ul>
+      </div>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li>UIには<strong>よくあるパターン</strong>がある</li>
+          <li>パターン名を知っていると<strong>コードが読みやすくなる</strong></li>
+          <li>ヘッダー、ナビ、カード、フォーム、フッターが基本</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-prac3">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>「画像＋タイトル＋説明文」の組み合わせで一覧表示されるUIパターンは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac3" style="display:none;">
+          A. ヘッダー
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-prac3" style="display:none;">
+          B. カード
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac3" style="display:none;">
+          C. フォーム
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-prac3')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('prac3')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         実践 4: CSS新機能
+         ============================================ -->
+    <section id="prac4">
+      <h1>18. 2026年のCSS新機能</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>CSS変数</li>
+          <li>:has()セレクタ</li>
+          <li>Container Queries</li>
+        </ul>
+      </div>
+
+      <h2>知っておくべき新機能</h2>
+
+      <p>
+        CSSは進化し続けています。
+      </p>
+
+      <p>
+        最新の機能を知っておくと、<strong>モダンなコードが読める</strong>ようになります。
+      </p>
+
+      <h2>CSS変数（カスタムプロパティ）</h2>
+
+      <p>
+        色やサイズを<strong>変数</strong>として定義できます。
+      </p>
+
+      <pre><code>:root {
+  --primary-color: #2563EB;
+  --spacing: 20px;
+}
+
+.button {
+  background: var(--primary-color);
+  padding: var(--spacing);
+}</code></pre>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          メリット
+        </div>
+        <ul>
+          <li>色を一箇所で管理できる</li>
+          <li>テーマ切り替えが簡単</li>
+          <li>コードの意味がわかりやすい</li>
+        </ul>
+      </div>
+
+      <h2>:has()セレクタ</h2>
+
+      <p>
+        「子要素を持つ親」を選べる、革命的なセレクタです。
+      </p>
+
+      <pre><code>/* 画像を持つカードだけ背景色を変える */
+.card:has(img) {
+  background: #f0f0f0;
+}</code></pre>
+
+      <h2>Container Queries</h2>
+
+      <p>
+        画面サイズではなく、<strong>コンテナのサイズ</strong>に応じてスタイルを変えます。
+      </p>
+
+      <pre><code>.card-container {
+  container-type: inline-size;
+}
+
+@container (min-width: 400px) {
+  .card {
+    flex-direction: row;
+  }
+}</code></pre>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li><strong>CSS変数</strong>で色やサイズを一元管理</li>
+          <li><strong>:has()</strong>で子要素を条件に親を選択</li>
+          <li><strong>Container Queries</strong>でコンポーネント単位のレスポンシブ</li>
+        </ol>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📖</span>
+          今は「読めればOK」
+        </div>
+        <p style="margin:0;">
+          これらの機能は、コードで見かけたときに「何をしているか」わかればOKです。
+        </p>
+        <p style="margin:0;">
+          実際に使うのは、もっと慣れてからで大丈夫。
+        </p>
+      </div>
+
+      <div class="quiz" id="quiz-prac4">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>CSS変数を使うときの記法は？</p>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-prac4" style="display:none;">
+          A. var(--変数名)
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac4" style="display:none;">
+          B. $変数名
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac4" style="display:none;">
+          C. @変数名
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-prac4')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('prac4')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+
+      <div class="card card-success" style="margin-top:40px;">
+        <div class="card-title">
+          <span class="icon">🎉</span>
+          Level 1 完了！
+        </div>
+        <p style="margin:0;">
+          おめでとうございます！HTML/CSSの基礎を学び終えました。
+        </p>
+        <p style="margin:0;">
+          次は<strong>Level 2: JavaScript</strong>に進みましょう。
+        </p>
+      </div>
+    </section>
 
   </main>
 
