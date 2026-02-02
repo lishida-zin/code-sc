@@ -237,10 +237,14 @@ code-sc/
 ├── CLAUDE.md                    # ルール（このファイル）
 ├── curriculum/
 │   ├── overview.md              # 全体ロードマップ
-│   └── level1.md                # 現在のLevel ← これを読む
+│   ├── level0.md                # AI時代のエンジニア
+│   ├── level1.md                # HTML/CSS
+│   └── level2.md                # JavaScript ← 現在のLevel
 ├── progress/
 │   ├── current.md               # 現在の進捗 ← これを読む
 │   └── archive/                 # 過去の記録（読まない）
-├── textbook/                    # 作成した教科書
+├── textbook/
+│   ├── engineer-textbook.html   # メイン教科書（LD対応）
+│   └── ishida-style-engineer.html # 旧教科書（参考用）
 └── lessons/                     # 教材
 ```

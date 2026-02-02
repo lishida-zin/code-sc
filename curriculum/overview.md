@@ -8,6 +8,19 @@
 - [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/) - Mozilla公式
 - [Software Architecture Guide](https://martinfowler.com/architecture/) - Martin Fowler
 
+## 教科書
+| ファイル | 内容 | 特徴 |
+|----------|------|------|
+| `textbook/engineer-textbook.html` | Level 0-1（メイン） | LD/ディスレクシア対応、UDフォント |
+| `textbook/ishida-style-engineer.html` | Level 1（旧版） | ダークモード |
+
+### LD/ディスレクシア対応の特徴
+- **UDデジタル教科書体**: 読みやすいフォント
+- **大きめ文字**: 本文20px
+- **広い行間**: 2.0（通常の1.5倍）
+- **クリーム色背景**: 目に優しい
+- **SVG図解**: 視覚的な説明
+
 ## 全体像
 
 | Level | 内容 | レビューで指摘できること | 状態 |
