@@ -7350,6 +7350,46 @@ console.log('3番目');
         </tbody>
       </table>
 
+      <h2>イベントループ（超重要）</h2>
+
+      <p>
+        JavaScriptが非同期処理を実現する仕組みが<strong>イベントループ</strong>です。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🔄</span>
+          イベントループの動き（簡略版）
+        </div>
+        <ol style="margin-bottom:0;">
+          <li><strong>コールスタック</strong>で同期処理を実行</li>
+          <li>非同期処理は<strong>タスクキュー</strong>に登録される</li>
+          <li>コールスタックが<strong>空になったら</strong>キューから取り出して実行</li>
+        </ol>
+      </div>
+
+      <pre><code>console.log('1');        // → コールスタックで即実行
+
+setTimeout(() => {
+  console.log('2');      // → タスクキューに登録
+}, 0);
+
+console.log('3');        // → コールスタックで即実行
+
+// 結果: 1 → 3 → 2
+// 理由: 同期処理(1,3)が全部終わってからキュー(2)を実行</code></pre>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          覚えておくこと
+        </div>
+        <p style="margin:0;">
+          <strong>「同期処理が全部終わってから、非同期処理が実行される」</strong><br>
+          これがJavaScript非同期処理の基本原則です。
+        </p>
+      </div>
+
       <!-- クイズ -->
       <div class="quiz" data-quiz="async1-q1">
         <p class="quiz-question">
@@ -7379,6 +7419,19 @@ console.log('C');</code></pre>
           JavaScriptは「同期処理をすべて終えてから非同期処理を実行」します。
           だからA→C（同期）が先に出て、B（非同期）が最後になります。
         </div>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><strong>同期</strong> = 上から順番に、1つずつ実行</li>
+          <li><strong>非同期</strong> = 待っている間に別の処理を進める</li>
+          <li>イベントループが「同期→非同期」の順序を管理</li>
+          <li>UIをブロックしないために非同期処理は必須</li>
+        </ul>
       </div>
 
       <h2>レビューで指摘すべきポイント</h2>
@@ -7560,6 +7613,19 @@ getUser(userId, (error, user) => {
         </div>
       </div>
 
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><strong>コールバック</strong> = 「あとで呼んでね」と渡す関数</li>
+          <li>非同期処理の結果を受け取る古い方法</li>
+          <li>ネストが深くなると<strong>コールバック地獄</strong></li>
+          <li>この問題を解決するために<strong>Promise</strong>が生まれた</li>
+        </ul>
+      </div>
+
       <h2>レビューで指摘すべきポイント</h2>
 
       <div class="card card-danger">
@@ -7715,6 +7781,24 @@ promise
     console.log('ローディング終了');
   });</code></pre>
 
+      <h2>すぐにPromiseを作るショートカット</h2>
+
+      <p>
+        テストやシンプルな処理では、すぐに解決/拒否するPromiseが便利です。
+      </p>
+
+      <pre><code>// すぐに成功するPromise
+const success = Promise.resolve('成功！');
+success.then(msg => console.log(msg));  // '成功！'
+
+// すぐに失敗するPromise
+const fail = Promise.reject('失敗...');
+fail.catch(err => console.log(err));  // '失敗...'
+
+// new Promiseを使わなくてOK
+// これと同じ:
+// new Promise(resolve => resolve('成功！'))</code></pre>
+
       <h2>コールバック地獄との比較</h2>
 
       <pre><code>// ❌ コールバック地獄
@@ -7732,6 +7816,19 @@ getUser(id)
   .then(orders => getDetails(orders[0].id))
   .then(details => console.log(details))
   .catch(error => console.error(error));</code></pre>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>Promiseは「あとで結果を返す約束」</li>
+          <li>状態は <code>pending</code> → <code>fulfilled</code> or <code>rejected</code></li>
+          <li><code>.then()</code>で成功、<code>.catch()</code>で失敗を処理</li>
+          <li><code>.finally()</code>は成功でも失敗でも実行</li>
+        </ul>
+      </div>
 
       <!-- クイズ -->
       <div class="quiz" data-quiz="async3-q1">
@@ -7928,6 +8025,19 @@ Promise.resolve()
           <code>x => x + 5</code>（括弧なし）なら25ですが、
           <code>x => { x + 5; }</code>（波括弧あり）は明示的なreturnが必要です。
         </div>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><code>.then()</code>は新しいPromiseを返す → チェーン可能</li>
+          <li>前の<code>.then()</code>の戻り値が次の引数になる</li>
+          <li><strong>returnを忘れるとundefinedが伝わる</strong>（超重要）</li>
+          <li>エラーは<code>.catch()</code>までスキップして伝播</li>
+        </ul>
       </div>
 
       <h2>レビューで指摘すべきポイント</h2>
@@ -8198,6 +8308,19 @@ async function processItems(items) {
         </div>
       </div>
 
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><code>async</code>関数は常にPromiseを返す</li>
+          <li><code>await</code>はPromiseが解決するまで待つ</li>
+          <li><strong>await忘れ</strong> = Promiseオブジェクトがそのまま使われる（最頻出バグ）</li>
+          <li><strong>forEach + async</strong> = 待たない（for...ofを使う）</li>
+        </ul>
+      </div>
+
       <h2>レビューで指摘すべきポイント</h2>
 
       <div class="card card-danger">
@@ -8376,6 +8499,60 @@ async function getData() {
     throw error;  // 呼び出し元でも処理できる
   }
 }</code></pre>
+
+      <h2>errorオブジェクトの構造</h2>
+
+      <p>
+        catchで受け取る<code>error</code>には便利なプロパティがあります。
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>プロパティ</th>
+            <th>内容</th>
+            <th>例</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>error.message</code></td>
+            <td>エラーメッセージ</td>
+            <td>"Failed to fetch"</td>
+          </tr>
+          <tr>
+            <td><code>error.name</code></td>
+            <td>エラーの種類</td>
+            <td>"TypeError"</td>
+          </tr>
+          <tr>
+            <td><code>error.stack</code></td>
+            <td>発生場所の追跡情報</td>
+            <td>デバッグ用</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <pre><code>try {
+  await fetch('/api/data');
+} catch (error) {
+  console.log(error.name);     // "TypeError"
+  console.log(error.message);  // "Failed to fetch"
+  console.log(error.stack);    // 詳細なスタックトレース
+}</code></pre>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><code>try</code>で危険な処理を囲む</li>
+          <li><code>catch</code>でエラーを適切に処理（握り潰さない）</li>
+          <li><code>finally</code>でクリーンアップ（ローディング解除など）</li>
+          <li>必要に応じて<code>throw</code>で再スロー</li>
+        </ul>
+      </div>
 
       <!-- クイズ -->
       <div class="quiz" data-quiz="async6-q1">
@@ -8573,6 +8750,49 @@ const result = await Promise.race([
         </tbody>
       </table>
 
+      <h2>直列が正しい場合もある</h2>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          注意：何でも並列化すればいいわけではない
+        </div>
+        <p style="margin:0;">
+          <strong>依存関係がある場合</strong>は直列が正しい選択です。
+        </p>
+      </div>
+
+      <pre><code>// ⭕ 直列が正しい例（依存関係あり）
+async function checkout() {
+  // 1. まずユーザー情報を取得
+  const user = await getUser();
+
+  // 2. ユーザーIDを使って注文を作成（依存！）
+  const order = await createOrder(user.id);
+
+  // 3. 注文IDを使って支払い処理（依存！）
+  const payment = await processPayment(order.id);
+
+  return payment;
+}
+
+// ❌ 間違い：依存関係があるのに並列化
+// createOrderにはuser.idが必要なので、
+// Promise.allにはできない！</code></pre>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>依存関係がない → <code>Promise.all</code>で並列化</li>
+          <li>依存関係がある → 直列（await を連続）</li>
+          <li>失敗しても続けたい → <code>Promise.allSettled</code></li>
+          <li>最速の1つでOK → <code>Promise.race</code></li>
+        </ul>
+      </div>
+
       <!-- クイズ -->
       <div class="quiz" data-quiz="async7-q1">
         <p class="quiz-question">
@@ -8758,9 +8978,29 @@ const result = await response.json();</code></pre>
 
       <h2>レスポンスのチェック</h2>
 
-      <pre><code>const response = await fetch('/api/users');
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          超重要：fetchはHTTPエラーでスローしない！
+        </div>
+        <p style="margin:0;">
+          <code>fetch()</code>は<strong>404や500でもエラーを投げません</strong>。<br>
+          エラーになるのは<strong>ネットワーク障害</strong>の時だけです。
+        </p>
+      </div>
 
-// ステータスコードをチェック
+      <pre><code>// ❌ これだけでは不十分！
+try {
+  const response = await fetch('/api/not-found');
+  const data = await response.json();  // 404でもここに来る！
+} catch (error) {
+  // ネットワークエラーのみキャッチ
+  // 404, 500などはキャッチされない！
+}
+
+// ⭕ 正しいエラーチェック
+const response = await fetch('/api/users');
+
 if (!response.ok) {
   // 400番台、500番台のエラー
   throw new Error(`HTTP error: ${response.status}`);
@@ -8775,7 +9015,7 @@ const data = await response.json();</code></pre>
         </div>
         <p style="margin:0;">
           <code>response.ok</code>は、ステータスコードが<strong>200-299</strong>の場合にtrue。<br>
-          404や500の場合はfalseなので、エラーチェックに使います。
+          404や500の場合はfalseなので、<strong>必ずチェック</strong>しましょう。
         </p>
       </div>
 
@@ -8831,6 +9071,19 @@ const data = await response.json();</code></pre>
         </div>
       </div>
 
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><code>fetch()</code>はPromiseを返す（2回awaitが必要）</li>
+          <li><strong>HTTPエラー(404,500)ではスローしない</strong> → <code>response.ok</code>をチェック</li>
+          <li>ネットワークエラーはtry/catchでキャッチ</li>
+          <li>POSTは<code>method</code>, <code>headers</code>, <code>body</code>を指定</li>
+        </ul>
+      </div>
+
       <h2>レビューで指摘すべきポイント</h2>
 
       <div class="card card-danger">
@@ -8848,7 +9101,7 @@ const data = await response.json();</code></pre>
           <tbody>
             <tr>
               <td>response.okのチェックなし</td>
-              <td>「HTTPエラーのチェックが必要」</td>
+              <td>「fetchはHTTPエラーでスローしない。okチェック必須」</td>
             </tr>
             <tr>
               <td>.json()のawait忘れ</td>
