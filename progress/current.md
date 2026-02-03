@@ -1,13 +1,15 @@
 # 現在の進捗状況
 > 目標: 実務シニア＆フルスタック
 
-## 📍 現在地
+## 現在地
 - **Level**: 3 - React/TypeScript
-- **Phase**: 教科書品質改善完了
-- **状態**: ✅ Level 3 教科書に図解・改善を追加完了
+- **Phase**: 教科書完成、学習開始待ち
+- **状態**: Level 4 カリキュラム作成完了
 
-## 🎯 次やること
-**Level 3 の学習を開始**
+## 次やること
+**Level 3 の学習を開始** または **Level 4 教科書作成**
+
+### Level 3 学習開始の場合
 - Phase 1: TypeScript基礎（ts1-ts8）から開始
 - 教科書: `textbook/index.html` をローカルサーバーで開く
 
@@ -16,24 +18,26 @@ cd textbook && python -m http.server 8080
 # → http://localhost:8080/index.html
 ```
 
-## ✅ 今回完了した作業
+### Level 4 教科書作成の場合
+- カリキュラム: `curriculum/level4.md` 完成済み
+- 5 Phase構成（node/api/db/sec/test）
 
-### Level 3 教科書品質改善
-| 改善項目 | 内容 | 対象ファイル |
-|---------|------|-------------|
-| クイズアイコン修正 | `?` → `❓` に統一 | phase4.html |
-| useEffectライフサイクル図 | SVGで視覚化 | phase3.html (hooks1) |
-| コンポーネントツリー図 | Props流れを視覚化 | phase2.html (react3) |
-| 仮想DOM差分検出図 | 差分検出の仕組みを視覚化 | phase2.html (react1) |
-| Server/Client境界図 | 境界の概念を視覚化 | phase4.html (advanced1) |
-| 状態管理フローチャート | テキスト→SVG図に変換 | phase4.html (advanced3) |
+## 今回完了した作業
 
-### 追加したSVG図（6個）
-1. **useEffectライフサイクル図** - マウント→レンダリング→Effect→クリーンアップ→アンマウントの流れ
-2. **コンポーネントツリー/Props図** - App→Header/Content/Footer→PostList→PostItemの階層とPropsの流れ
-3. **仮想DOM差分検出図** - 前の仮想DOM・新しい仮想DOM・実際のDOMの比較と差分適用
-4. **Server/Client境界図** - Server ComponentsとClient Componentsの境界線
-5. **状態管理選択フローチャート** - グローバル状態？→サーバー状態？→TanStack Query/Zustand/Jotai
+### Level 4 カリキュラム作成
+| Phase | 内容 | レッスン数 |
+|-------|------|-----------|
+| Phase 1 | Node.js基礎（ESM, フレームワーク） | node1-node8 |
+| Phase 2 | API設計（REST, OpenAPI, GraphQL） | api1-api8 |
+| Phase 3 | データベース（正規化, インデックス, ORM） | db1-db10 |
+| Phase 4 | 認証・セキュリティ（JWT, OWASP） | sec1-sec10 |
+| Phase 5 | テスト・品質（Vitest, CI/CD） | test1-test8 |
+
+**特徴**:
+- 2026年のベストプラクティスを反映
+- Prisma vs Drizzle 比較
+- OWASP Top 10（2025年版）対応
+- コードレビュー観点を全レッスンに記載
 
 ## 完了した作業（累計）
 | 作業 | 状態 |
@@ -43,16 +47,16 @@ cd textbook && python -m http.server 8080
 | Level 2 Phase 1-4: JavaScript | ✅ 完了 |
 | Level 3 カリキュラム作成 | ✅ 完了 |
 | Level 3 教科書HTML作成 | ✅ 完了 |
-| Level 3 教科書品質改善 | ✅ 完了（NEW）|
-| HTML分割管理移行 | ✅ 完了 |
+| Level 3 教科書品質改善 | ✅ 完了 |
+| **Level 4 カリキュラム作成** | ✅ 完了（NEW）|
 
 ## 参照ファイル
-- カリキュラム: `curriculum/level3.md`
-- 教科書: `textbook/index.html`（新）
-- バックアップ: `textbook/engineer-textbook.html`（旧一体型）
+- Level 3 カリキュラム: `curriculum/level3.md`
+- Level 4 カリキュラム: `curriculum/level4.md`
+- 教科書: `textbook/index.html`
 - ルール: `CLAUDE.md`
 
 ## 次回セッションでやること（候補）
 1. **Level 3 学習開始** - ts1から順に進める
-2. **Level 4 カリキュラム作成** - API/DB（Node.js、SQL）
-3. **教科書の動作確認** - ブラウザでSVG図の表示確認
+2. **Level 4 教科書作成** - カリキュラムに基づきHTML作成
+3. **教科書の動作確認** - ブラウザでLevel 3確認
