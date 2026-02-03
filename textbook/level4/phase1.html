@@ -1,0 +1,1905 @@
+<!-- ============================================
+     Level 4 Phase 1: Node.js基礎
+     node1-node8
+     ============================================ -->
+
+<!-- node1: Node.jsとは -->
+<section id="node1">
+  <h1>Node.jsとは？</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Node.jsの正体</li>
+      <li>V8エンジンとは</li>
+      <li>ノンブロッキングI/Oの意味</li>
+    </ul>
+  </div>
+
+  <h2>Node.jsはブラウザの外でJSを動かす</h2>
+
+  <p>
+    JavaScriptは元々<strong>ブラウザ専用</strong>でした。
+  </p>
+
+  <p>
+    Node.jsのおかげで、<strong>サーバー側</strong>でもJSが動きます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p>
+      JavaScript = 料理のレシピ<br>
+      ブラウザ = 家庭のキッチン<br>
+      Node.js = <strong>プロの厨房</strong>
+    </p>
+    <p style="margin:0;">
+      同じレシピ（JS）を、違う場所でも使えるようになりました。
+    </p>
+  </div>
+
+  <h2>V8エンジンとは</h2>
+
+  <p>
+    Node.jsは<strong>Google Chrome</strong>のJSエンジンを使っています。
+  </p>
+
+  <p>
+    このエンジンの名前が<strong>V8</strong>です。
+  </p>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      V8エンジンの特徴
+    </div>
+    <ul>
+      <li><strong>高速</strong>: JIT（Just-In-Time）コンパイル</li>
+      <li><strong>信頼性</strong>: Googleが継続的に改良</li>
+      <li><strong>最新ES対応</strong>: 新しいJS機能をすぐサポート</li>
+    </ul>
+  </div>
+
+  <h2>語源：なぜ「Node」？</h2>
+
+  <p>
+    「Node」は「結び目・接点」という意味です。
+  </p>
+
+  <p>
+    ネットワーク上の<strong>接点</strong>として機能することから名付けられました。
+  </p>
+
+  <h2>ノンブロッキングI/Oとは</h2>
+
+  <p>
+    I/Oとは<strong>Input/Output</strong>（入出力）のことです。
+  </p>
+
+  <ul>
+    <li>ファイルの読み書き</li>
+    <li>データベースへのアクセス</li>
+    <li>ネットワーク通信</li>
+  </ul>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">ブロッキング（同期）</div>
+<pre><code>// 待っている間、何もできない
+const data = readFileSync('big.txt');
+// ↑ 読み込み完了まで止まる
+console.log('次の処理');
+// 1秒後にやっと実行</code></pre>
+      <p>レストランで注文後、料理が来るまで立ち尽くす</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">ノンブロッキング（非同期）</div>
+<pre><code>// 待たずに次へ進む
+readFile('big.txt', (data) => {
+  // 読み込み完了時に実行
+});
+console.log('次の処理');
+// すぐ実行される</code></pre>
+      <p>注文後、席で待ちながら他のことができる</p>
+    </div>
+  </div>
+
+  <h2>Node.jsが得意なこと・苦手なこと</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      得意
+    </div>
+    <ul>
+      <li><strong>I/O多め</strong>: API、リアルタイム通信</li>
+      <li><strong>同時接続</strong>: チャット、通知</li>
+      <li><strong>マイクロサービス</strong>: 軽量サーバー</li>
+    </ul>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      苦手
+    </div>
+    <ul>
+      <li><strong>CPU負荷の高い処理</strong>: 画像処理、機械学習</li>
+      <li><strong>重い計算</strong>: 大量データの計算</li>
+    </ul>
+    <p style="margin:0;">
+      シングルスレッドなので、重い計算中は他の処理がブロックされます。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-node1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Node.jsの特徴として正しいのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node1" style="display:none;">
+      A. ブラウザでのみ動作する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-node1" style="display:none;">
+      B. ノンブロッキングI/Oでサーバーを構築できる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node1" style="display:none;">
+      C. CPUを多用する処理が得意
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-node1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('node1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- node2: ESM vs CommonJS -->
+<section id="node2">
+  <h1>ESM vs CommonJS</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>CommonJS（CJS）とは</li>
+      <li>ES Modules（ESM）とは</li>
+      <li>2026年の推奨はどちらか</li>
+    </ul>
+  </div>
+
+  <h2>モジュールシステムとは</h2>
+
+  <p>
+    コードを<strong>ファイルに分割</strong>して管理する仕組みです。
+  </p>
+
+  <p>
+    Node.jsには<strong>2つの方式</strong>があります。
+  </p>
+
+  <h2>CommonJS（CJS）- 古い方式</h2>
+
+  <p>
+    Node.js誕生時から使われてきた方式です。
+  </p>
+
+  <div class="card">
+<pre><code class="language-javascript">// エクスポート（公開）
+// math.js
+function add(a, b) {
+  return a + b;
+}
+module.exports = { add };
+
+// インポート（読み込み）
+// main.js
+const { add } = require('./math');
+console.log(add(1, 2)); // 3</code></pre>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      CommonJSの特徴
+    </div>
+    <ul>
+      <li><code>require()</code>でインポート</li>
+      <li><code>module.exports</code>でエクスポート</li>
+      <li>同期的に読み込み</li>
+      <li>Node.js専用（ブラウザでは動かない）</li>
+    </ul>
+  </div>
+
+  <h2>ES Modules（ESM）- 新しい方式</h2>
+
+  <p>
+    JavaScriptの<strong>標準仕様</strong>として策定されました。
+  </p>
+
+  <div class="card card-success">
+<pre><code class="language-javascript">// エクスポート（公開）
+// math.js
+export function add(a, b) {
+  return a + b;
+}
+
+// インポート（読み込み）
+// main.js
+import { add } from './math.js';
+console.log(add(1, 2)); // 3</code></pre>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      ESMの特徴
+    </div>
+    <ul>
+      <li><code>import</code>でインポート</li>
+      <li><code>export</code>でエクスポート</li>
+      <li>非同期的に読み込み可能</li>
+      <li>ブラウザでもNode.jsでも動く</li>
+      <li><strong>2026年の標準</strong></li>
+    </ul>
+  </div>
+
+  <h2>比較まとめ</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">❌ CommonJS（古い）</div>
+<pre><code>// インポート
+const express = require('express');
+const { Router } = require('express');
+
+// エクスポート
+module.exports = router;
+module.exports = { add, subtract };</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">⭕ ESM（推奨）</div>
+<pre><code>// インポート
+import express from 'express';
+import { Router } from 'express';
+
+// エクスポート
+export default router;
+export { add, subtract };</code></pre>
+    </div>
+  </div>
+
+  <h2>default export vs named export</h2>
+
+  <div class="card">
+<pre><code class="language-javascript">// named export（名前付き）
+export function add(a, b) { return a + b; }
+export function subtract(a, b) { return a - b; }
+
+// 使う側
+import { add, subtract } from './math.js';
+
+// default export（デフォルト）
+export default function main() { ... }
+
+// 使う側（名前は自由）
+import myMain from './main.js';
+import anyName from './main.js';</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューで見抜くべき問題
+    </div>
+    <p><strong>CJSの使用は古い</strong></p>
+<pre><code>// ❌ レビューで指摘すべき
+const express = require('express');
+module.exports = router;
+
+// ⭕ こう直すべき
+import express from 'express';
+export default router;</code></pre>
+    <p style="margin:0;">
+      2026年の新規プロジェクトでCJSは非推奨です。<br>
+      レガシーコードの保守以外では避けましょう。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-node2-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>2026年のNode.jsで推奨されるモジュール形式は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node2-1" style="display:none;">
+      A. CommonJS（require/module.exports）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-node2-1" style="display:none;">
+      B. ES Modules（import/export）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node2-1" style="display:none;">
+      C. AMD
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-node2-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-node2-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>このコードの問題点は？</p>
+<pre><code>const { Router } = require('express');</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-node2-2" style="display:none;">
+      A. CommonJS形式で古い
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node2-2" style="display:none;">
+      B. 分割代入が間違っている
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node2-2" style="display:none;">
+      C. 問題はない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-node2-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('node2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- node3: package.json -->
+<section id="node3">
+  <h1>package.json</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>package.jsonの役割</li>
+      <li>"type": "module" の意味</li>
+      <li>scripts と dependencies</li>
+    </ul>
+  </div>
+
+  <h2>package.jsonとは</h2>
+
+  <p>
+    プロジェクトの<strong>設計図</strong>です。
+  </p>
+
+  <p>
+    プロジェクト名、依存パッケージ、実行コマンドなどを記録します。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      package.json = 料理の<strong>材料リスト＋作り方メモ</strong><br>
+      誰が見ても同じ環境を再現できます。
+    </p>
+  </div>
+
+  <h2>基本構造</h2>
+
+  <div class="card">
+<pre><code class="language-javascript">{
+  "name": "my-app",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "express": "^5.0.0"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.0"
+  }
+}</code></pre>
+  </div>
+
+  <h2>"type": "module" - 重要！</h2>
+
+  <p>
+    この設定が<strong>ESMを有効</strong>にします。
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">❌ 設定なし（または "type": "commonjs"）</div>
+<pre><code>// デフォルトはCommonJS
+// import文はエラーになる
+import express from 'express';
+// SyntaxError: Cannot use import</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">⭕ "type": "module"</div>
+<pre><code>// ESMが有効
+// import文が使える
+import express from 'express';
+// OK!</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューで見抜くべき問題
+    </div>
+    <p><strong>"type" 未設定</strong></p>
+<pre><code>// ❌ package.jsonに"type"がない
+{
+  "name": "my-app",
+  "dependencies": { ... }
+}
+
+// ⭕ "type": "module" を追加
+{
+  "name": "my-app",
+  "type": "module",
+  "dependencies": { ... }
+}</code></pre>
+    <p style="margin:0;">
+      新規プロジェクトでは必ず<code>"type": "module"</code>を設定しましょう。
+    </p>
+  </div>
+
+  <h2>scripts - コマンドの定義</h2>
+
+  <p>
+    よく使うコマンドに<strong>名前を付けて</strong>登録できます。
+  </p>
+
+  <div class="card">
+<pre><code class="language-javascript">"scripts": {
+  "start": "node index.js",        // npm start
+  "dev": "node --watch index.js",  // npm run dev
+  "build": "tsc",                  // npm run build
+  "test": "vitest",                // npm test
+  "lint": "eslint ."               // npm run lint
+}</code></pre>
+  </div>
+
+  <p>
+    <code>start</code>と<code>test</code>は<code>run</code>なしで実行できます。
+  </p>
+
+  <h2>dependencies vs devDependencies</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">dependencies（本番で必要）</div>
+<pre><code>"dependencies": {
+  "express": "^5.0.0",
+  "prisma": "^6.0.0"
+}
+// npm install express</code></pre>
+      <p>アプリの実行に必要なパッケージ</p>
+    </div>
+    <div class="compare-orange">
+      <div class="compare-title">devDependencies（開発時のみ）</div>
+<pre><code>"devDependencies": {
+  "vitest": "^3.0.0",
+  "eslint": "^9.0.0"
+}
+// npm install -D vitest</code></pre>
+      <p>テストやビルドに必要なパッケージ</p>
+    </div>
+  </div>
+
+  <h2>バージョン指定の記号</h2>
+
+  <div class="card">
+    <ul>
+      <li><code>"express": "5.0.0"</code> - 完全一致</li>
+      <li><code>"express": "^5.0.0"</code> - 5.x.x（メジャー固定）</li>
+      <li><code>"express": "~5.0.0"</code> - 5.0.x（マイナー固定）</li>
+      <li><code>"express": "*"</code> - 最新（危険！）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-node3-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>ESMを有効にするpackage.jsonの設定は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node3-1" style="display:none;">
+      A. "esm": true
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-node3-1" style="display:none;">
+      B. "type": "module"
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node3-1" style="display:none;">
+      C. "module": "esm"
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-node3-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-node3-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>テストライブラリはどちらに入れるべき？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node3-2" style="display:none;">
+      A. dependencies
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-node3-2" style="display:none;">
+      B. devDependencies
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node3-2" style="display:none;">
+      C. peerDependencies
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-node3-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('node3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- node4: イベントループ -->
+<section id="node4">
+  <h1>イベントループ</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>イベントループの仕組み</li>
+      <li>コールスタック</li>
+      <li>タスクキューとマイクロタスク</li>
+    </ul>
+  </div>
+
+  <h2>イベントループとは</h2>
+
+  <p>
+    Node.jsが<strong>非同期処理</strong>を実現する仕組みです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p>
+      イベントループ = <strong>レストランのウェイター</strong>
+    </p>
+    <ul style="margin:0;">
+      <li>注文を受ける（タスクを受け取る）</li>
+      <li>厨房に伝える（バックグラウンドで処理）</li>
+      <li>料理ができたら運ぶ（コールバック実行）</li>
+      <li>常に複数テーブルを巡回（ループ）</li>
+    </ul>
+  </div>
+
+  <h2>コールスタック</h2>
+
+  <p>
+    「今実行中の関数」を積み上げる<strong>スタック</strong>です。
+  </p>
+
+  <div class="card">
+<pre><code class="language-javascript">function first() {
+  console.log('1');
+  second();
+  console.log('3');
+}
+
+function second() {
+  console.log('2');
+}
+
+first();
+// 出力: 1, 2, 3
+
+// コールスタックの変化:
+// [first] → [first, second] → [first] → []</code></pre>
+  </div>
+
+  <p>
+    スタック = 後入れ先出し（LIFO）のデータ構造です。
+  </p>
+
+  <h2>タスクキュー（マクロタスク）</h2>
+
+  <p>
+    <code>setTimeout</code>などの<strong>コールバック</strong>が並ぶ列です。
+  </p>
+
+  <div class="card">
+<pre><code class="language-javascript">console.log('1');
+
+setTimeout(() => {
+  console.log('2'); // タスクキューに入る
+}, 0);
+
+console.log('3');
+
+// 出力: 1, 3, 2
+// setTimeoutは0msでも「後回し」になる</code></pre>
+  </div>
+
+  <h2>マイクロタスク</h2>
+
+  <p>
+    Promiseの<code>.then()</code>はマイクロタスクキューに入ります。
+  </p>
+
+  <p>
+    <strong>マイクロタスクはタスクより優先</strong>されます。
+  </p>
+
+  <div class="card">
+<pre><code class="language-javascript">console.log('1');
+
+setTimeout(() => {
+  console.log('timeout'); // タスクキュー
+}, 0);
+
+Promise.resolve().then(() => {
+  console.log('promise'); // マイクロタスク
+});
+
+console.log('2');
+
+// 出力: 1, 2, promise, timeout
+// マイクロタスク → タスク の順で実行</code></pre>
+  </div>
+
+  <h2>実行順序まとめ</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      イベントループの優先順位
+    </div>
+    <ol>
+      <li><strong>コールスタック</strong>: 同期コードを実行</li>
+      <li><strong>マイクロタスク</strong>: Promise.then, queueMicrotask</li>
+      <li><strong>タスクキュー</strong>: setTimeout, setInterval, I/O</li>
+    </ol>
+  </div>
+
+  <!-- SVG図解：イベントループ -->
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      イベントループの流れ
+    </div>
+    <svg viewBox="0 0 600 320" style="width:100%;max-width:600px;display:block;margin:0 auto;">
+      <!-- コールスタック -->
+      <rect x="30" y="40" width="120" height="140" fill="#e3f2fd" stroke="#1976d2" stroke-width="2" rx="8"/>
+      <text x="90" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#1976d2">コールスタック</text>
+      <rect x="40" y="130" width="100" height="40" fill="#bbdefb" stroke="#1976d2" rx="4"/>
+      <text x="90" y="155" text-anchor="middle" font-size="12">main()</text>
+
+      <!-- 矢印：コールスタック → イベントループ -->
+      <path d="M150 110 L200 110" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+      <!-- イベントループ（円） -->
+      <circle cx="300" cy="140" r="80" fill="none" stroke="#4caf50" stroke-width="3"/>
+      <path d="M300 60 A80 80 0 1 1 299 60" fill="none" stroke="#4caf50" stroke-width="3" marker-end="url(#arrowGreen)"/>
+      <text x="300" y="135" text-anchor="middle" font-size="14" font-weight="bold" fill="#2e7d32">イベント</text>
+      <text x="300" y="155" text-anchor="middle" font-size="14" font-weight="bold" fill="#2e7d32">ループ</text>
+
+      <!-- マイクロタスクキュー -->
+      <rect x="430" y="40" width="140" height="80" fill="#fff3e0" stroke="#f57c00" stroke-width="2" rx="8"/>
+      <text x="500" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#e65100">マイクロタスク</text>
+      <rect x="440" y="55" width="55" height="25" fill="#ffe0b2" stroke="#f57c00" rx="3"/>
+      <text x="467" y="72" text-anchor="middle" font-size="10">.then()</text>
+      <rect x="505" y="55" width="55" height="25" fill="#ffe0b2" stroke="#f57c00" rx="3"/>
+      <text x="532" y="72" text-anchor="middle" font-size="10">async</text>
+      <text x="500" y="105" text-anchor="middle" font-size="11" fill="#666">優先度: 高</text>
+
+      <!-- タスクキュー -->
+      <rect x="430" y="160" width="140" height="80" fill="#fce4ec" stroke="#c2185b" stroke-width="2" rx="8"/>
+      <text x="500" y="150" text-anchor="middle" font-size="12" font-weight="bold" fill="#880e4f">タスクキュー</text>
+      <rect x="440" y="175" width="55" height="25" fill="#f8bbd0" stroke="#c2185b" rx="3"/>
+      <text x="467" y="192" text-anchor="middle" font-size="10">setTimeout</text>
+      <rect x="505" y="175" width="55" height="25" fill="#f8bbd0" stroke="#c2185b" rx="3"/>
+      <text x="532" y="192" text-anchor="middle" font-size="10">I/O</text>
+      <text x="500" y="225" text-anchor="middle" font-size="11" fill="#666">優先度: 低</text>
+
+      <!-- 矢印 -->
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#666"/>
+        </marker>
+        <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#4caf50"/>
+        </marker>
+      </defs>
+      <path d="M380 110 L430 80" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+      <path d="M380 170 L430 190" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+      <!-- 説明テキスト -->
+      <text x="300" y="280" text-anchor="middle" font-size="12" fill="#333">1. 同期コード実行 → 2. マイクロタスク → 3. タスク → (ループ)</text>
+      <text x="300" y="300" text-anchor="middle" font-size="11" fill="#666">※ マイクロタスクが空になるまでタスクは実行されない</text>
+    </svg>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューで見抜くべき問題
+    </div>
+    <p><strong>同期的ブロッキング</strong></p>
+<pre><code>// ❌ 重い同期処理（イベントループをブロック）
+function processData() {
+  for (let i = 0; i < 10000000000; i++) {
+    // 重い計算...
+  }
+}
+// この間、他のリクエストが処理できない！
+
+// ⭕ 非同期に分割
+async function processData() {
+  for (let i = 0; i < chunks.length; i++) {
+    await processChunk(chunks[i]);
+    // 各チャンク処理後、他のタスクが実行できる
+  }
+}</code></pre>
+    <p style="margin:0;">
+      イベントループをブロックすると全体が止まります。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-node4-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>この出力順序は？</p>
+<pre><code>console.log('A');
+setTimeout(() => console.log('B'), 0);
+Promise.resolve().then(() => console.log('C'));
+console.log('D');</code></pre>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node4-1" style="display:none;">
+      A. A, B, C, D
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node4-1" style="display:none;">
+      B. A, D, B, C
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-node4-1" style="display:none;">
+      C. A, D, C, B
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-node4-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-node4-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>マイクロタスクとタスク、どちらが先に実行される？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-node4-2" style="display:none;">
+      A. マイクロタスク
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node4-2" style="display:none;">
+      B. タスク（マクロタスク）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node4-2" style="display:none;">
+      C. 登録順
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-node4-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('node4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- node5: 非同期パターン -->
+<section id="node5">
+  <h1>非同期パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>コールバック地獄とは</li>
+      <li>Promiseの使い方</li>
+      <li>async/awaitの使い方</li>
+      <li>エラーハンドリング</li>
+    </ul>
+  </div>
+
+  <h2>非同期処理の歴史</h2>
+
+  <p>
+    Node.jsの非同期処理は<strong>3世代</strong>あります。
+  </p>
+
+  <ol>
+    <li><strong>コールバック</strong>（古い）</li>
+    <li><strong>Promise</strong>（ES2015）</li>
+    <li><strong>async/await</strong>（ES2017、現在の標準）</li>
+  </ol>
+
+  <h2>コールバック地獄</h2>
+
+  <p>
+    コールバックをネストすると読みにくくなります。
+  </p>
+
+  <div class="card card-warning">
+    <div class="compare-title">❌ コールバック地獄</div>
+<pre><code class="language-javascript">readFile('a.txt', (err, a) => {
+  if (err) return handleError(err);
+  readFile('b.txt', (err, b) => {
+    if (err) return handleError(err);
+    readFile('c.txt', (err, c) => {
+      if (err) return handleError(err);
+      // どんどんネストが深くなる...
+    });
+  });
+});</code></pre>
+  </div>
+
+  <h2>Promiseで解決</h2>
+
+  <p>
+    Promiseは非同期処理を<strong>チェーン</strong>できます。
+  </p>
+
+  <div class="card">
+<pre><code class="language-javascript">readFilePromise('a.txt')
+  .then(a => readFilePromise('b.txt'))
+  .then(b => readFilePromise('c.txt'))
+  .then(c => {
+    // すべて完了
+  })
+  .catch(err => {
+    // エラー処理を一箇所にまとめられる
+  });</code></pre>
+  </div>
+
+  <h2>async/awaitでさらに読みやすく</h2>
+
+  <p>
+    <strong>async/await</strong>は同期コードのように書けます。
+  </p>
+
+  <div class="card card-success">
+    <div class="compare-title">⭕ async/await（2026年推奨）</div>
+<pre><code class="language-javascript">async function readAllFiles() {
+  try {
+    const a = await readFilePromise('a.txt');
+    const b = await readFilePromise('b.txt');
+    const c = await readFilePromise('c.txt');
+    // すべて完了
+  } catch (err) {
+    // エラー処理
+  }
+}</code></pre>
+  </div>
+
+  <h2>エラーハンドリング</h2>
+
+  <p>
+    async/awaitでは<code>try-catch</code>を使います。
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">❌ try-catch漏れ</div>
+<pre><code>async function getUser(id) {
+  // エラーが起きたら
+  // 呼び出し元に伝播する
+  const user = await db.findUser(id);
+  return user;
+}
+
+// 呼び出し側でも未処理なら
+// プログラムがクラッシュ！</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">⭕ 適切なエラー処理</div>
+<pre><code>async function getUser(id) {
+  try {
+    const user = await db.findUser(id);
+    return user;
+  } catch (err) {
+    console.error('DB error:', err);
+    throw new Error('User not found');
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>並列実行：Promise.all</h2>
+
+  <p>
+    複数の非同期処理を<strong>並列</strong>に実行できます。
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">❌ 直列実行（遅い）</div>
+<pre><code>// 3秒 + 3秒 = 6秒かかる
+const user = await fetchUser();
+const posts = await fetchPosts();
+const comments = await fetchComments();</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">⭕ 並列実行（速い）</div>
+<pre><code>// 最も遅い処理の時間（3秒）で完了
+const [user, posts, comments] =
+  await Promise.all([
+    fetchUser(),
+    fetchPosts(),
+    fetchComments()
+  ]);</code></pre>
+    </div>
+  </div>
+
+  <h2>Promise.allSettled</h2>
+
+  <p>
+    一部が失敗しても<strong>全結果</strong>を取得できます。
+  </p>
+
+  <div class="card">
+<pre><code class="language-javascript">const results = await Promise.allSettled([
+  fetchUser(),     // 成功
+  fetchPosts(),    // 失敗
+  fetchComments()  // 成功
+]);
+
+results.forEach(result => {
+  if (result.status === 'fulfilled') {
+    console.log('成功:', result.value);
+  } else {
+    console.log('失敗:', result.reason);
+  }
+});</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューで見抜くべき問題
+    </div>
+    <p><strong>try-catch漏れ</strong></p>
+<pre><code>// ❌ エラー処理なし
+async function handleRequest(req, res) {
+  const data = await fetchData(req.id);
+  res.json(data);
+}
+// fetchDataが失敗すると
+// Unhandled Promise rejection
+
+// ⭕ エラー処理あり
+async function handleRequest(req, res) {
+  try {
+    const data = await fetchData(req.id);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+}</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-node5-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>async/awaitのエラー処理に使うのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node5-1" style="display:none;">
+      A. .catch()
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-node5-1" style="display:none;">
+      B. try-catch
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node5-1" style="display:none;">
+      C. if (err)
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-node5-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-node5-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>複数の非同期処理を並列実行するには？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node5-2" style="display:none;">
+      A. Promise.race
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-node5-2" style="display:none;">
+      B. Promise.all
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node5-2" style="display:none;">
+      C. Promise.any
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-node5-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('node5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- node6: ファイル操作 -->
+<section id="node6">
+  <h1>ファイル操作</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>fs/promises（非同期ファイル操作）</li>
+      <li>同期APIの危険性</li>
+      <li>ストリームの基礎</li>
+    </ul>
+  </div>
+
+  <h2>fsモジュールとは</h2>
+
+  <p>
+    Node.jsの<strong>ファイルシステム</strong>モジュールです。
+  </p>
+
+  <p>
+    fs = File System の略です。
+  </p>
+
+  <h2>3つのAPI形式</h2>
+
+  <div class="card">
+    <ul>
+      <li><code>fs</code> - コールバック形式（古い）</li>
+      <li><code>fs/promises</code> - Promise形式（推奨）</li>
+      <li><code>fs...Sync</code> - 同期形式（危険）</li>
+    </ul>
+  </div>
+
+  <h2>fs/promises（推奨）</h2>
+
+  <p>
+    <strong>async/await</strong>で使える形式です。
+  </p>
+
+  <div class="card card-success">
+<pre><code class="language-javascript">import { readFile, writeFile } from 'fs/promises';
+
+// ファイル読み込み
+const content = await readFile('data.txt', 'utf8');
+console.log(content);
+
+// ファイル書き込み
+await writeFile('output.txt', 'Hello, World!');
+
+// JSONファイル読み込み
+const json = JSON.parse(
+  await readFile('config.json', 'utf8')
+);</code></pre>
+  </div>
+
+  <h2>同期APIの危険性</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">❌ 同期API（ブロッキング）</div>
+<pre><code>import { readFileSync } from 'fs';
+
+// この間、他の処理が止まる！
+const data = readFileSync('big-file.txt');
+// 全リクエストが待たされる</code></pre>
+      <p>サーバーで使うと全体がフリーズ</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">⭕ 非同期API</div>
+<pre><code>import { readFile } from 'fs/promises';
+
+// 他の処理をブロックしない
+const data = await readFile('big-file.txt');
+// 待っている間も他のリクエストを処理</code></pre>
+      <p>サーバーが応答し続けられる</p>
+    </div>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューで見抜くべき問題
+    </div>
+    <p><strong>同期API使用</strong></p>
+<pre><code>// ❌ 同期API（Sync）を見つけたら指摘
+const data = fs.readFileSync('file.txt');
+const exists = fs.existsSync('file.txt');
+fs.writeFileSync('file.txt', data);
+
+// ⭕ 非同期APIを使う
+const data = await fs.promises.readFile('file.txt');
+// または
+import { readFile } from 'fs/promises';
+const data = await readFile('file.txt');</code></pre>
+    <p style="margin:0;">
+      例外：CLIツールの初期化など、<strong>起動時の1回のみ</strong>なら許容。<br>
+      サーバーのリクエスト処理中は絶対NG。
+    </p>
+  </div>
+
+  <h2>よく使うfs操作</h2>
+
+  <div class="card">
+<pre><code class="language-javascript">import {
+  readFile, writeFile,
+  readdir, mkdir, rm,
+  stat, access
+} from 'fs/promises';
+
+// ディレクトリ一覧
+const files = await readdir('./data');
+
+// ディレクトリ作成
+await mkdir('./output', { recursive: true });
+
+// ファイル削除
+await rm('./temp.txt');
+
+// ファイル情報取得
+const info = await stat('./data.txt');
+console.log(info.size, info.mtime);
+
+// ファイル存在確認
+try {
+  await access('./config.json');
+  console.log('存在する');
+} catch {
+  console.log('存在しない');
+}</code></pre>
+  </div>
+
+  <h2>ストリーム</h2>
+
+  <p>
+    大きなファイルを<strong>少しずつ</strong>処理する仕組みです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      バケツで一気に水を運ぶ（メモリに全部読み込み）<br>
+      vs<br>
+      ホースで少しずつ流す（ストリーム）<br>
+      <br>
+      大量の水（データ）はホースが効率的。
+    </p>
+  </div>
+
+  <div class="card">
+<pre><code class="language-javascript">import { createReadStream, createWriteStream } from 'fs';
+
+// 大きなファイルを少しずつ読む
+const readStream = createReadStream('huge-file.txt');
+const writeStream = createWriteStream('output.txt');
+
+// パイプで繋ぐ（コピー）
+readStream.pipe(writeStream);
+
+// イベントで処理
+readStream.on('data', (chunk) => {
+  console.log('読み込み中:', chunk.length, 'bytes');
+});
+
+readStream.on('end', () => {
+  console.log('完了');
+});</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-node6-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>サーバーでファイル読み込みに推奨されるのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node6-1" style="display:none;">
+      A. fs.readFileSync
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-node6-1" style="display:none;">
+      B. fs/promises の readFile
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node6-1" style="display:none;">
+      C. どちらでも同じ
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-node6-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-node6-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>1GBのファイルを処理するのに適切な方法は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node6-2" style="display:none;">
+      A. readFile で全部読み込む
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-node6-2" style="display:none;">
+      B. ストリームで少しずつ処理
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node6-2" style="display:none;">
+      C. readFileSync で同期読み込み
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-node6-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('node6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- node7: 環境変数 -->
+<section id="node7">
+  <h1>環境変数</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>環境変数とは</li>
+      <li>process.env の使い方</li>
+      <li>dotenv による管理</li>
+      <li>機密情報の扱い</li>
+    </ul>
+  </div>
+
+  <h2>環境変数とは</h2>
+
+  <p>
+    プログラムの<strong>外部から</strong>設定値を渡す仕組みです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      環境変数 = レシピの<strong>調味料の量</strong><br>
+      同じレシピでも、環境（家庭/レストラン）で量を変える。<br>
+      コードを変えずに設定だけ変更できる。
+    </p>
+  </div>
+
+  <h2>process.env</h2>
+
+  <p>
+    Node.jsでは<code>process.env</code>でアクセスします。
+  </p>
+
+  <div class="card">
+<pre><code class="language-javascript">// 環境変数を読み取る
+const port = process.env.PORT || 3000;
+const dbUrl = process.env.DATABASE_URL;
+const apiKey = process.env.API_KEY;
+
+// 使用例
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});</code></pre>
+  </div>
+
+  <h2>なぜ環境変数を使う？</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      メリット
+    </div>
+    <ul>
+      <li><strong>機密情報を隠す</strong>: コードに直接書かない</li>
+      <li><strong>環境ごとに変更</strong>: 開発/本番で値を変える</li>
+      <li><strong>設定の一元管理</strong>: 変更が簡単</li>
+    </ul>
+  </div>
+
+  <h2>dotenv</h2>
+
+  <p>
+    <code>.env</code>ファイルから環境変数を読み込むライブラリです。
+  </p>
+
+  <div class="card">
+<pre><code class="language-javascript">// .env ファイル
+PORT=3000
+DATABASE_URL=postgres://localhost/mydb
+JWT_SECRET=super-secret-key
+
+// index.js
+import 'dotenv/config';
+// これで process.env に読み込まれる
+
+console.log(process.env.PORT); // "3000"</code></pre>
+  </div>
+
+  <h2>.envファイルの管理</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      .envは絶対にGitにコミットしない！
+    </div>
+<pre><code># .gitignore に必ず追加
+.env
+.env.local
+.env.production</code></pre>
+    <p style="margin:0;">
+      代わりに<code>.env.example</code>をコミットします。
+    </p>
+  </div>
+
+  <div class="card">
+<pre><code class="language-javascript">// .env.example（コミットする）
+PORT=3000
+DATABASE_URL=your-database-url-here
+JWT_SECRET=your-secret-here
+
+// .env（コミットしない）
+PORT=3000
+DATABASE_URL=postgres://user:pass@localhost/mydb
+JWT_SECRET=abc123xyz</code></pre>
+  </div>
+
+  <h2>必須環境変数のチェック</h2>
+
+  <div class="card">
+<pre><code class="language-javascript">// 起動時にチェック
+const required = ['DATABASE_URL', 'JWT_SECRET'];
+
+for (const key of required) {
+  if (!process.env[key]) {
+    console.error(`Missing required env: ${key}`);
+    process.exit(1);
+  }
+}</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューで見抜くべき問題
+    </div>
+    <p><strong>機密情報のハードコード</strong></p>
+<pre><code>// ❌ 絶対にダメ！
+const apiKey = 'sk-abc123xyz';
+const dbPassword = 'mypassword';
+const jwtSecret = 'secret';
+
+// ⭕ 環境変数から取得
+const apiKey = process.env.API_KEY;
+const dbPassword = process.env.DB_PASSWORD;
+const jwtSecret = process.env.JWT_SECRET;</code></pre>
+    <p style="margin:0;">
+      ハードコードされた機密情報は<strong>最重要指摘事項</strong>です。<br>
+      漏洩すると大事故になります。
+    </p>
+  </div>
+
+  <h2>環境ごとの設定</h2>
+
+  <div class="card">
+<pre><code class="language-javascript">// NODE_ENV による分岐
+const isDev = process.env.NODE_ENV === 'development';
+const isProd = process.env.NODE_ENV === 'production';
+
+if (isDev) {
+  // 開発環境のみの設定
+  app.use(morgan('dev'));
+}
+
+if (isProd) {
+  // 本番環境のみの設定
+  app.use(helmet());
+}</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-node7-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>.envファイルはどう管理すべき？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node7-1" style="display:none;">
+      A. Gitにコミットする
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-node7-1" style="display:none;">
+      B. .gitignoreに追加してコミットしない
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node7-1" style="display:none;">
+      C. パブリックリポジトリで共有する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-node7-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-node7-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>このコードの問題点は？</p>
+<pre><code>const secret = 'my-jwt-secret-123';</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-node7-2" style="display:none;">
+      A. 機密情報がハードコードされている
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node7-2" style="display:none;">
+      B. 変数名が不適切
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node7-2" style="display:none;">
+      C. 問題はない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-node7-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-node7-3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 3
+    </div>
+    <p>他の開発者に.envの設定項目を伝えるには？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node7-3" style="display:none;">
+      A. .envをコミットする
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-node7-3" style="display:none;">
+      B. .env.exampleをコミットする
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node7-3" style="display:none;">
+      C. Slackで値を共有する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-node7-3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('node7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- node8: フレームワーク比較 -->
+<section id="node8">
+  <h1>フレームワーク比較</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>4大フレームワークの特徴</li>
+      <li>用途別の選び方</li>
+      <li>コードの違い</li>
+    </ul>
+  </div>
+
+  <h2>2026年の主要フレームワーク</h2>
+
+  <p>
+    Node.jsには多くのWebフレームワークがあります。
+  </p>
+
+  <p>
+    代表的な4つを比較します。
+  </p>
+
+  <h2>Express - 王道・安定</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📦</span>
+      Express
+    </div>
+    <ul>
+      <li><strong>特徴</strong>: 最も人気、巨大エコシステム</li>
+      <li><strong>強み</strong>: 情報が多い、学習しやすい</li>
+      <li><strong>弱み</strong>: 古い設計、TypeScript対応が後付け</li>
+      <li><strong>推奨</strong>: 学習用、レガシー保守</li>
+    </ul>
+<pre><code class="language-javascript">import express from 'express';
+const app = express();
+
+app.get('/users/:id', (req, res) => {
+  res.json({ id: req.params.id });
+});
+
+app.listen(3000);</code></pre>
+  </div>
+
+  <h2>Fastify - 高性能</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">🚀</span>
+      Fastify
+    </div>
+    <ul>
+      <li><strong>特徴</strong>: Express互換で高速</li>
+      <li><strong>強み</strong>: JSON最適化、スキーマ検証内蔵</li>
+      <li><strong>弱み</strong>: Expressより情報が少ない</li>
+      <li><strong>推奨</strong>: 本番API、パフォーマンス重視</li>
+    </ul>
+<pre><code class="language-javascript">import Fastify from 'fastify';
+const fastify = Fastify();
+
+fastify.get('/users/:id', async (request) => {
+  return { id: request.params.id };
+});
+
+await fastify.listen({ port: 3000 });</code></pre>
+  </div>
+
+  <h2>Hono - 超軽量・Edge対応</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      Hono
+    </div>
+    <ul>
+      <li><strong>特徴</strong>: 超軽量（〜14KB）、マルチランタイム</li>
+      <li><strong>強み</strong>: Edge対応、TypeScript設計</li>
+      <li><strong>弱み</strong>: 新しい、エコシステムが小さい</li>
+      <li><strong>推奨</strong>: Cloudflare Workers、Serverless</li>
+    </ul>
+<pre><code class="language-javascript">import { Hono } from 'hono';
+const app = new Hono();
+
+app.get('/users/:id', (c) => {
+  return c.json({ id: c.req.param('id') });
+});
+
+export default app;</code></pre>
+  </div>
+
+  <h2>NestJS - エンタープライズ</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏢</span>
+      NestJS
+    </div>
+    <ul>
+      <li><strong>特徴</strong>: Angular風の構造化、DI内蔵</li>
+      <li><strong>強み</strong>: 大規模開発、TypeScript完全対応</li>
+      <li><strong>弱み</strong>: 学習曲線が高い、オーバーヘッド</li>
+      <li><strong>推奨</strong>: 大規模TypeScript、チーム開発</li>
+    </ul>
+<pre><code class="language-javascript">import { Controller, Get, Param } from '@nestjs/common';
+
+@Controller('users')
+export class UsersController {
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return { id };
+  }
+}</code></pre>
+  </div>
+
+  <h2>比較表</h2>
+
+  <div class="card">
+    <table style="width:100%;border-collapse:collapse;font-size:14px;">
+      <thead>
+        <tr style="background:#f5f5f5;">
+          <th style="padding:8px;border:1px solid #ddd;">項目</th>
+          <th style="padding:8px;border:1px solid #ddd;">Express</th>
+          <th style="padding:8px;border:1px solid #ddd;">Fastify</th>
+          <th style="padding:8px;border:1px solid #ddd;">Hono</th>
+          <th style="padding:8px;border:1px solid #ddd;">NestJS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:8px;border:1px solid #ddd;">速度</td>
+          <td style="padding:8px;border:1px solid #ddd;">普通</td>
+          <td style="padding:8px;border:1px solid #ddd;">高速</td>
+          <td style="padding:8px;border:1px solid #ddd;">超高速</td>
+          <td style="padding:8px;border:1px solid #ddd;">普通</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;border:1px solid #ddd;">サイズ</td>
+          <td style="padding:8px;border:1px solid #ddd;">小</td>
+          <td style="padding:8px;border:1px solid #ddd;">中</td>
+          <td style="padding:8px;border:1px solid #ddd;">極小</td>
+          <td style="padding:8px;border:1px solid #ddd;">大</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;border:1px solid #ddd;">TypeScript</td>
+          <td style="padding:8px;border:1px solid #ddd;">後付け</td>
+          <td style="padding:8px;border:1px solid #ddd;">良好</td>
+          <td style="padding:8px;border:1px solid #ddd;">最高</td>
+          <td style="padding:8px;border:1px solid #ddd;">最高</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;border:1px solid #ddd;">学習曲線</td>
+          <td style="padding:8px;border:1px solid #ddd;">低い</td>
+          <td style="padding:8px;border:1px solid #ddd;">低い</td>
+          <td style="padding:8px;border:1px solid #ddd;">低い</td>
+          <td style="padding:8px;border:1px solid #ddd;">高い</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;border:1px solid #ddd;">Edge対応</td>
+          <td style="padding:8px;border:1px solid #ddd;">×</td>
+          <td style="padding:8px;border:1px solid #ddd;">△</td>
+          <td style="padding:8px;border:1px solid #ddd;">◎</td>
+          <td style="padding:8px;border:1px solid #ddd;">×</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>選び方のガイド</h2>
+
+  <!-- SVG図解：フレームワーク選択フローチャート -->
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      フレームワーク選択ガイド
+    </div>
+    <svg viewBox="0 0 600 400" style="width:100%;max-width:600px;display:block;margin:0 auto;">
+      <!-- スタート -->
+      <ellipse cx="300" cy="30" rx="60" ry="25" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+      <text x="300" y="35" text-anchor="middle" font-size="14" font-weight="bold">START</text>
+
+      <!-- 質問1: Edge/Serverless? -->
+      <rect x="200" y="80" width="200" height="50" fill="#fff3e0" stroke="#f57c00" stroke-width="2" rx="8"/>
+      <text x="300" y="100" text-anchor="middle" font-size="12">Edge/Serverlessで</text>
+      <text x="300" y="118" text-anchor="middle" font-size="12">動かす？</text>
+
+      <!-- Yes → Hono -->
+      <rect x="450" y="90" width="100" height="40" fill="#c8e6c9" stroke="#4caf50" stroke-width="2" rx="8"/>
+      <text x="500" y="115" text-anchor="middle" font-size="14" font-weight="bold" fill="#2e7d32">Hono</text>
+
+      <!-- 質問2: 大規模チーム? -->
+      <rect x="200" y="170" width="200" height="50" fill="#fff3e0" stroke="#f57c00" stroke-width="2" rx="8"/>
+      <text x="300" y="190" text-anchor="middle" font-size="12">大規模チーム？</text>
+      <text x="300" y="208" text-anchor="middle" font-size="12">構造化が必要？</text>
+
+      <!-- Yes → NestJS -->
+      <rect x="450" y="180" width="100" height="40" fill="#e1bee7" stroke="#9c27b0" stroke-width="2" rx="8"/>
+      <text x="500" y="205" text-anchor="middle" font-size="14" font-weight="bold" fill="#7b1fa2">NestJS</text>
+
+      <!-- 質問3: パフォーマンス重視? -->
+      <rect x="200" y="260" width="200" height="50" fill="#fff3e0" stroke="#f57c00" stroke-width="2" rx="8"/>
+      <text x="300" y="280" text-anchor="middle" font-size="12">パフォーマンス</text>
+      <text x="300" y="298" text-anchor="middle" font-size="12">重視？</text>
+
+      <!-- Yes → Fastify -->
+      <rect x="450" y="270" width="100" height="40" fill="#bbdefb" stroke="#1976d2" stroke-width="2" rx="8"/>
+      <text x="500" y="295" text-anchor="middle" font-size="14" font-weight="bold" fill="#1565c0">Fastify</text>
+
+      <!-- No → Express -->
+      <rect x="200" y="340" width="200" height="40" fill="#ffcdd2" stroke="#d32f2f" stroke-width="2" rx="8"/>
+      <text x="300" y="365" text-anchor="middle" font-size="14" font-weight="bold" fill="#c62828">Express</text>
+
+      <!-- 矢印 -->
+      <defs>
+        <marker id="arrowBlack" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#666"/>
+        </marker>
+      </defs>
+
+      <!-- START → 質問1 -->
+      <line x1="300" y1="55" x2="300" y2="80" stroke="#666" stroke-width="2" marker-end="url(#arrowBlack)"/>
+
+      <!-- 質問1 → Hono -->
+      <line x1="400" y1="105" x2="450" y2="105" stroke="#666" stroke-width="2" marker-end="url(#arrowBlack)"/>
+      <text x="420" y="95" font-size="12" fill="#4caf50">Yes</text>
+
+      <!-- 質問1 → 質問2 -->
+      <line x1="300" y1="130" x2="300" y2="170" stroke="#666" stroke-width="2" marker-end="url(#arrowBlack)"/>
+      <text x="310" y="155" font-size="12" fill="#666">No</text>
+
+      <!-- 質問2 → NestJS -->
+      <line x1="400" y1="195" x2="450" y2="195" stroke="#666" stroke-width="2" marker-end="url(#arrowBlack)"/>
+      <text x="420" y="185" font-size="12" fill="#4caf50">Yes</text>
+
+      <!-- 質問2 → 質問3 -->
+      <line x1="300" y1="220" x2="300" y2="260" stroke="#666" stroke-width="2" marker-end="url(#arrowBlack)"/>
+      <text x="310" y="245" font-size="12" fill="#666">No</text>
+
+      <!-- 質問3 → Fastify -->
+      <line x1="400" y1="285" x2="450" y2="285" stroke="#666" stroke-width="2" marker-end="url(#arrowBlack)"/>
+      <text x="420" y="275" font-size="12" fill="#4caf50">Yes</text>
+
+      <!-- 質問3 → Express -->
+      <line x1="300" y1="310" x2="300" y2="340" stroke="#666" stroke-width="2" marker-end="url(#arrowBlack)"/>
+      <text x="310" y="330" font-size="12" fill="#666">No</text>
+
+      <!-- ラベル -->
+      <text x="500" y="140" text-anchor="middle" font-size="10" fill="#666">軽量・Edge最適</text>
+      <text x="500" y="230" text-anchor="middle" font-size="10" fill="#666">構造化・DI</text>
+      <text x="500" y="320" text-anchor="middle" font-size="10" fill="#666">高速・JSON最適化</text>
+      <text x="300" y="390" text-anchor="middle" font-size="10" fill="#666">学習・情報量</text>
+    </svg>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューで見抜くべき問題
+    </div>
+    <p><strong>用途不一致</strong></p>
+<pre><code>// ❌ Edge環境でExpressを使おうとする
+// Cloudflare Workersでは動かない
+
+// ❌ 小規模プロジェクトでNestJS
+// オーバーエンジニアリング
+
+// ⭕ 用途に合ったフレームワーク選択
+// Edge → Hono
+// 高速API → Fastify
+// 大規模 → NestJS
+// 学習/小規模 → Express or Hono</code></pre>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      2026年の推奨
+    </div>
+    <p style="margin:0;">
+      <strong>新規プロジェクト</strong>なら：<br>
+      - 通常のAPI → <strong>Fastify</strong> または <strong>Hono</strong><br>
+      - Edge/Serverless → <strong>Hono</strong><br>
+      - 大規模チーム → <strong>NestJS</strong><br>
+      - 学習目的 → <strong>Express</strong>（情報が多い）
+    </p>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">🎉</span>
+      Phase 1 完了！
+    </div>
+    <p style="margin:0;">
+      Node.jsの基礎を学びました。<br>
+      次のPhase 2では<strong>API設計</strong>を学びます。<br>
+      REST、HTTPステータスコード、OpenAPIなどを習得します。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-node8-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>Cloudflare Workersで動かすのに最適なフレームワークは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node8-1" style="display:none;">
+      A. Express
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node8-1" style="display:none;">
+      B. NestJS
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-node8-1" style="display:none;">
+      C. Hono
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-node8-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-node8-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>大規模チームでTypeScript完全対応が必要な場合は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node8-2" style="display:none;">
+      A. Express
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-node8-2" style="display:none;">
+      B. NestJS
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node8-2" style="display:none;">
+      C. Hono
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-node8-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('node8')">
+    <span class="icon">✓</span>
+    Phase 1を完了
+  </button>
+</section>

@@ -1,0 +1,1769 @@
+<!-- ============================================
+     Level 4 Phase 5: テスト・品質
+     ============================================ -->
+
+<section id="test1">
+  <h1>テストピラミッド</h1>
+
+  <p class="lead">
+    テストには「ピラミッド」という考え方があります。
+    建物と同じで、<strong>土台がしっかりしていれば安定する</strong>のです。
+  </p>
+
+  <!-- ピラミッドの比喩 -->
+  <div class="card">
+    <h2>なぜ「ピラミッド」と呼ぶ？</h2>
+
+    <p><strong>ピラミッド = 底辺が広く、頂上が狭い</strong></p>
+
+    <ul>
+      <li><strong>底辺（ユニットテスト）</strong>：たくさん書く。速い。安定。</li>
+      <li><strong>中間（統合テスト）</strong>：適度に書く。やや遅い。</li>
+      <li><strong>頂上（E2Eテスト）</strong>：少なく書く。遅い。不安定になりやすい。</li>
+    </ul>
+
+    <p>エジプトのピラミッドを想像してください。</p>
+    <p>底辺が狭くて頂上が広いと、倒れますよね？</p>
+    <p>テストも同じです。<strong>E2Eばかりだと不安定になります。</strong></p>
+  </div>
+
+  <!-- SVG図解 -->
+  <div class="card">
+    <h2>テストピラミッド（図解）</h2>
+
+    <svg viewBox="0 0 400 300" style="width:100%; max-width:400px; margin:20px auto; display:block;">
+      <!-- 背景 -->
+      <rect x="0" y="0" width="400" height="300" fill="#f8f9fa" rx="10"/>
+
+      <!-- ピラミッド本体 -->
+      <!-- E2E（頂上） -->
+      <polygon points="200,30 150,90 250,90" fill="#f44336" stroke="#c62828" stroke-width="2"/>
+      <text x="200" y="70" text-anchor="middle" fill="white" font-weight="bold" font-size="11">E2E</text>
+      <text x="200" y="82" text-anchor="middle" fill="white" font-size="9">5-10%</text>
+
+      <!-- 統合テスト（中間） -->
+      <polygon points="150,90 100,170 300,170 250,90" fill="#FF9800" stroke="#E65100" stroke-width="2"/>
+      <text x="200" y="135" text-anchor="middle" fill="white" font-weight="bold" font-size="12">統合テスト</text>
+      <text x="200" y="155" text-anchor="middle" fill="white" font-size="10">15-25%</text>
+
+      <!-- ユニットテスト（底辺） -->
+      <polygon points="100,170 50,270 350,270 300,170" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/>
+      <text x="200" y="215" text-anchor="middle" fill="white" font-weight="bold" font-size="14">ユニットテスト</text>
+      <text x="200" y="240" text-anchor="middle" fill="white" font-size="11">70-80%</text>
+
+      <!-- 右側の説明 -->
+      <rect x="320" y="50" width="12" height="12" fill="#f44336" rx="2"/>
+      <text x="338" y="60" fill="#333" font-size="9">遅い・不安定</text>
+
+      <rect x="320" y="120" width="12" height="12" fill="#FF9800" rx="2"/>
+      <text x="338" y="130" fill="#333" font-size="9">中程度</text>
+
+      <rect x="320" y="200" width="12" height="12" fill="#4CAF50" rx="2"/>
+      <text x="338" y="210" fill="#333" font-size="9">速い・安定</text>
+
+      <!-- 左側の矢印 -->
+      <text x="30" y="70" fill="#f44336" font-size="9">少ない</text>
+      <path d="M45 85 L45 250" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+      <text x="30" y="265" fill="#4CAF50" font-size="9">多い</text>
+
+      <!-- 矢印マーカー -->
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- 各テストの特徴 -->
+  <div class="card">
+    <h2>3種類のテストを比較</h2>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>種類</th>
+          <th>テスト対象</th>
+          <th>実行速度</th>
+          <th>安定性</th>
+          <th>比率</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ユニットテスト</strong></td>
+          <td>関数、クラス単体</td>
+          <td>ミリ秒</td>
+          <td>高い</td>
+          <td>70-80%</td>
+        </tr>
+        <tr>
+          <td><strong>統合テスト</strong></td>
+          <td>API + DB連携</td>
+          <td>秒</td>
+          <td>中</td>
+          <td>15-25%</td>
+        </tr>
+        <tr>
+          <td><strong>E2Eテスト</strong></td>
+          <td>画面操作（Playwright等）</td>
+          <td>数十秒</td>
+          <td>低い</td>
+          <td>5-10%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- レビュー観点 -->
+  <div class="card card-danger">
+    <h2>レビューで指摘すべきポイント</h2>
+
+    <ul>
+      <li><strong>E2E過多</strong>：「テストピラミッドが逆転している。ユニットテストを増やすべき」</li>
+      <li><strong>ユニットテストがゼロ</strong>：「ビジネスロジックにユニットテストを追加すべき」</li>
+      <li><strong>E2Eだけで全てをカバー</strong>：「実行時間が長くなりCIが遅くなる」</li>
+    </ul>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h4>逆ピラミッド（アンチパターン）</h4>
+        <pre><code>E2Eテスト: 50件（80%）
+統合テスト: 10件（15%）
+ユニット: 3件（5%）
+// CI実行時間: 30分
+// 頻繁にFlakyテスト発生</code></pre>
+      </div>
+      <div class="compare-good">
+        <h4>正しいピラミッド</h4>
+        <pre><code>E2Eテスト: 5件（5%）
+統合テスト: 20件（20%）
+ユニット: 75件（75%）
+// CI実行時間: 3分
+// 安定してパス</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- クイズ -->
+  <div class="quiz" id="quiz-test1">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ
+    </div>
+    <p>テストピラミッドで最も多く書くべきテストは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-test1" style="display:none;">
+      A. ユニットテスト（70-80%）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test1" style="display:none;">
+      B. 統合テスト（50%）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test1" style="display:none;">
+      C. E2Eテスト（全部カバー）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-test1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('test1')">
+    <span class="icon">&#10003;</span>
+    このセクションを完了
+  </button>
+</section>
+
+<!-- ============================================ -->
+<section id="test2">
+  <h1>Vitest基礎</h1>
+
+  <p class="lead">
+    <strong>Vitest</strong>は、2026年のNode.jsテストの標準ツールです。
+    Jestより高速で、ESMにネイティブ対応しています。
+  </p>
+
+  <!-- Vitestとは -->
+  <div class="card">
+    <h2>Vitestとは？</h2>
+
+    <p><strong>Vitest</strong> = Vite + Test</p>
+    <p>Vite（ヴィート）の高速さをテストにも活かしたツールです。</p>
+
+    <ul>
+      <li><strong>高速</strong>：Jestの約1.5-2倍速い</li>
+      <li><strong>ESMネイティブ</strong>：import/exportがそのまま使える</li>
+      <li><strong>Jest互換</strong>：既存のJestテストがほぼそのまま動く</li>
+      <li><strong>設定不要</strong>：ゼロコンフィグで始められる</li>
+    </ul>
+  </div>
+
+  <!-- 基本構文 -->
+  <div class="card">
+    <h2>基本構文：describe / it / expect</h2>
+
+    <p><strong>3つの基本構文</strong>を覚えましょう。</p>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>構文</th>
+          <th>意味</th>
+          <th>由来</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>describe</code></td>
+          <td>テストをグループ化</td>
+          <td>「説明する」</td>
+        </tr>
+        <tr>
+          <td><code>it</code> / <code>test</code></td>
+          <td>1つのテストケース</td>
+          <td>「それは〜する」</td>
+        </tr>
+        <tr>
+          <td><code>expect</code></td>
+          <td>期待する結果を検証</td>
+          <td>「期待する」</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="code-block">
+      <div class="code-header">基本的なテストの書き方</div>
+      <pre><code class="language-typescript">import { describe, it, expect } from 'vitest';
+import { add, multiply } from './math';
+
+// describeでグループ化
+describe('math関数', () => {
+  // itで1つのテスト
+  it('addは2つの数を足す', () => {
+    // expectで結果を検証
+    expect(add(1, 2)).toBe(3);
+    expect(add(-1, 1)).toBe(0);
+  });
+
+  it('multiplyは2つの数を掛ける', () => {
+    expect(multiply(2, 3)).toBe(6);
+    expect(multiply(0, 5)).toBe(0);
+  });
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- よく使うマッチャー -->
+  <div class="card">
+    <h2>よく使うマッチャー</h2>
+
+    <p><strong>マッチャー</strong> = 「どう比較するか」を指定するメソッド</p>
+
+    <div class="code-block">
+      <div class="code-header">マッチャーの例</div>
+      <pre><code class="language-typescript">// 等価比較
+expect(value).toBe(3);              // 厳密等価 (===)
+expect(obj).toEqual({ a: 1 });      // オブジェクト比較
+
+// 真偽値
+expect(value).toBeTruthy();         // truthyな値
+expect(value).toBeFalsy();          // falsyな値
+expect(value).toBeNull();           // null
+expect(value).toBeUndefined();      // undefined
+
+// 数値
+expect(value).toBeGreaterThan(3);   // > 3
+expect(value).toBeLessThan(10);     // < 10
+expect(value).toBeCloseTo(0.3, 5);  // 浮動小数点
+
+// 文字列
+expect(str).toContain('hello');     // 含む
+expect(str).toMatch(/regex/);       // 正規表現
+
+// 配列
+expect(arr).toContain(item);        // 含む
+expect(arr).toHaveLength(3);        // 長さ
+
+// 例外
+expect(() => fn()).toThrow();       // エラーを投げる
+expect(() => fn()).toThrow('msg');  // 特定のエラー</code></pre>
+    </div>
+  </div>
+
+  <!-- セットアップ -->
+  <div class="card">
+    <h2>セットアップ：beforeEach / afterEach</h2>
+
+    <p>テストの前後で処理を実行できます。</p>
+
+    <div class="code-block">
+      <div class="code-header">セットアップとクリーンアップ</div>
+      <pre><code class="language-typescript">import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+describe('UserService', () => {
+  let userService: UserService;
+
+  // 各テストの前に実行
+  beforeEach(() => {
+    userService = new UserService();
+  });
+
+  // 各テストの後に実行
+  afterEach(() => {
+    userService.cleanup();
+  });
+
+  it('ユーザーを作成できる', () => {
+    const user = userService.create({ name: 'Alice' });
+    expect(user.name).toBe('Alice');
+  });
+});
+
+// 全体で1回だけ実行する場合
+// beforeAll() / afterAll()</code></pre>
+    </div>
+  </div>
+
+  <!-- 設定ファイル -->
+  <div class="card card-info">
+    <h2>vitest.config.ts</h2>
+
+    <div class="code-block">
+      <div class="code-header">基本的な設定</div>
+      <pre><code class="language-typescript">// vitest.config.ts
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    // グローバルにdescribe/it/expectを使う
+    globals: true,
+    // 環境（node or jsdom）
+    environment: 'node',
+    // テストファイルのパターン
+    include: ['**/*.test.ts', '**/*.spec.ts'],
+    // カバレッジ設定
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html'],
+    },
+  },
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- レビュー観点 -->
+  <div class="card card-danger">
+    <h2>レビューで指摘すべきポイント</h2>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h4>Jest記法の混在</h4>
+        <pre><code class="language-typescript">// VitestなのにJestのモック記法
+jest.fn()  // Vitestでは vi.fn()
+jest.mock() // Vitestでは vi.mock()</code></pre>
+      </div>
+      <div class="compare-good">
+        <h4>Vitest統一</h4>
+        <pre><code class="language-typescript">import { vi } from 'vitest';
+
+vi.fn()
+vi.mock()</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- クイズ -->
+  <div class="quiz" id="quiz-test2">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ
+    </div>
+    <p>Vitestで「各テストの前に実行する処理」を定義するのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test2" style="display:none;">
+      A. beforeAll
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-test2" style="display:none;">
+      B. beforeEach
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test2" style="display:none;">
+      C. setup
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-test2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('test2')">
+    <span class="icon">&#10003;</span>
+    このセクションを完了
+  </button>
+</section>
+
+<!-- ============================================ -->
+<section id="test3">
+  <h1>モックとスタブ</h1>
+
+  <p class="lead">
+    <strong>モック</strong>と<strong>スタブ</strong>は、テストで「偽物」を使う技術です。
+    外部依存（API、DB）を切り離してテストできます。
+  </p>
+
+  <!-- モックとは -->
+  <div class="card">
+    <h2>モックとスタブの違い</h2>
+
+    <p><strong>たとえ話</strong>：映画の撮影を想像してください。</p>
+
+    <ul>
+      <li><strong>スタブ</strong> = 背景セット。見た目だけ用意する。</li>
+      <li><strong>モック</strong> = スタントマン。動きを真似して、どう使われたか記録する。</li>
+    </ul>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>種類</th>
+          <th>役割</th>
+          <th>検証できること</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>スタブ</strong></td>
+          <td>決まった値を返す</td>
+          <td>戻り値のみ</td>
+        </tr>
+        <tr>
+          <td><strong>モック</strong></td>
+          <td>呼び出しを記録</td>
+          <td>呼び出し回数、引数、順序</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- vi.fn() -->
+  <div class="card">
+    <h2>vi.fn() - モック関数</h2>
+
+    <p><strong>vi.fn()</strong>は、呼び出しを記録する「偽の関数」を作ります。</p>
+
+    <div class="code-block">
+      <div class="code-header">vi.fn()の使い方</div>
+      <pre><code class="language-typescript">import { vi, describe, it, expect } from 'vitest';
+
+describe('vi.fn()', () => {
+  it('呼び出しを記録する', () => {
+    // モック関数を作成
+    const mockFn = vi.fn();
+
+    // 呼び出す
+    mockFn('hello', 123);
+
+    // 検証：呼ばれたか？
+    expect(mockFn).toHaveBeenCalled();
+
+    // 検証：何回呼ばれた？
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    // 検証：どんな引数で呼ばれた？
+    expect(mockFn).toHaveBeenCalledWith('hello', 123);
+  });
+
+  it('戻り値を指定する', () => {
+    const mockFn = vi.fn().mockReturnValue(42);
+    expect(mockFn()).toBe(42);
+  });
+
+  it('非同期の戻り値を指定する', async () => {
+    const mockFn = vi.fn().mockResolvedValue({ id: 1 });
+    const result = await mockFn();
+    expect(result).toEqual({ id: 1 });
+  });
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- vi.mock() -->
+  <div class="card">
+    <h2>vi.mock() - モジュール全体をモック</h2>
+
+    <p><strong>vi.mock()</strong>は、モジュール全体を偽物に置き換えます。</p>
+
+    <div class="code-block">
+      <div class="code-header">vi.mock()の使い方</div>
+      <pre><code class="language-typescript">import { vi, describe, it, expect } from 'vitest';
+import { sendEmail } from './emailService';
+import { createUser } from './userService';
+
+// モジュール全体をモック
+vi.mock('./emailService', () => ({
+  sendEmail: vi.fn().mockResolvedValue({ success: true }),
+}));
+
+describe('UserService', () => {
+  it('ユーザー作成後にメールを送信する', async () => {
+    await createUser({ email: 'test@example.com' });
+
+    // sendEmailが呼ばれたことを検証
+    expect(sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({ to: 'test@example.com' })
+    );
+  });
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- vi.spyOn() -->
+  <div class="card">
+    <h2>vi.spyOn() - 既存関数を監視</h2>
+
+    <p><strong>vi.spyOn()</strong>は、既存の関数を「監視」します。</p>
+    <p>元の動作を保ちつつ、呼び出しを記録できます。</p>
+
+    <div class="code-block">
+      <div class="code-header">vi.spyOn()の使い方</div>
+      <pre><code class="language-typescript">import { vi, describe, it, expect } from 'vitest';
+
+describe('vi.spyOn()', () => {
+  it('console.logを監視する', () => {
+    // console.logを監視
+    const spy = vi.spyOn(console, 'log');
+
+    console.log('hello');
+
+    expect(spy).toHaveBeenCalledWith('hello');
+
+    // 監視を解除
+    spy.mockRestore();
+  });
+
+  it('戻り値を上書きする', () => {
+    const obj = {
+      getValue: () => 'original',
+    };
+
+    // spyOnで上書き
+    vi.spyOn(obj, 'getValue').mockReturnValue('mocked');
+
+    expect(obj.getValue()).toBe('mocked');
+  });
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- 使い分け -->
+  <div class="card card-info">
+    <h2>モックの使い分け</h2>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>方法</th>
+          <th>用途</th>
+          <th>例</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>vi.fn()</code></td>
+          <td>コールバック関数をモック</td>
+          <td>onClick, onSubmit</td>
+        </tr>
+        <tr>
+          <td><code>vi.mock()</code></td>
+          <td>モジュール全体を置換</td>
+          <td>API呼び出し、DB操作</td>
+        </tr>
+        <tr>
+          <td><code>vi.spyOn()</code></td>
+          <td>既存関数を監視</td>
+          <td>console.log, Date.now</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- レビュー観点 -->
+  <div class="card card-danger">
+    <h2>レビューで指摘すべきポイント</h2>
+
+    <p><strong>過剰モック</strong>：モックしすぎると実際の動作をテストしていない</p>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h4>過剰モック</h4>
+        <pre><code class="language-typescript">// 全部モックしている
+vi.mock('./db');
+vi.mock('./validator');
+vi.mock('./formatter');
+vi.mock('./logger');
+
+// テスト対象以外も全てモック
+// 実際の連携をテストしていない</code></pre>
+      </div>
+      <div class="compare-good">
+        <h4>適切なモック</h4>
+        <pre><code class="language-typescript">// 外部依存のみモック
+vi.mock('./emailService');  // 外部API
+vi.mock('./db');            // データベース
+
+// 内部ロジックはモックしない
+// validator, formatterは実際のコード</code></pre>
+      </div>
+    </div>
+
+    <p><strong>モック漏れ</strong>：外部依存をモックしていない</p>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h4>モック漏れ</h4>
+        <pre><code class="language-typescript">// 実際のAPIを叩いている
+it('should fetch user', async () => {
+  const user = await fetchUser(1);
+  // テストが外部APIに依存
+});</code></pre>
+      </div>
+      <div class="compare-good">
+        <h4>正しいモック</h4>
+        <pre><code class="language-typescript">vi.mock('./api');
+
+it('should fetch user', async () => {
+  vi.mocked(fetchUser).mockResolvedValue({
+    id: 1, name: 'Test'
+  });
+  const user = await fetchUser(1);
+  expect(user.name).toBe('Test');
+});</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- クイズ1 -->
+  <div class="quiz" id="quiz-test3-1">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 1
+    </div>
+    <p>「呼び出し回数と引数を記録する偽の関数」を作るのは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-test3-1" style="display:none;">
+      A. vi.fn()
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test3-1" style="display:none;">
+      B. vi.mock()
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test3-1" style="display:none;">
+      C. vi.spyOn()
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-test3-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <!-- クイズ2 -->
+  <div class="quiz" id="quiz-test3-2">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 2
+    </div>
+    <p>モックすべきでないものは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test3-2" style="display:none;">
+      A. 外部APIの呼び出し
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test3-2" style="display:none;">
+      B. データベース操作
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-test3-2" style="display:none;">
+      C. テスト対象の内部ロジック
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-test3-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('test3')">
+    <span class="icon">&#10003;</span>
+    このセクションを完了
+  </button>
+</section>
+
+<!-- ============================================ -->
+<section id="test4">
+  <h1>APIテスト</h1>
+
+  <p class="lead">
+    <strong>APIテスト</strong>は、HTTPエンドポイントをテストします。
+    <strong>Supertest</strong>を使って、リクエスト/レスポンスを検証しましょう。
+  </p>
+
+  <!-- Supertestとは -->
+  <div class="card">
+    <h2>Supertestとは？</h2>
+
+    <p><strong>Supertest</strong> = HTTPリクエストをシミュレートするライブラリ</p>
+
+    <ul>
+      <li>サーバーを起動せずにテスト可能</li>
+      <li>GET/POST/PUT/DELETEをシミュレート</li>
+      <li>ステータスコード、レスポンスボディを検証</li>
+    </ul>
+
+    <div class="code-block">
+      <div class="code-header">インストール</div>
+      <pre><code class="language-bash">npm install -D supertest @types/supertest</code></pre>
+    </div>
+  </div>
+
+  <!-- 基本的な使い方 -->
+  <div class="card">
+    <h2>基本的な使い方</h2>
+
+    <div class="code-block">
+      <div class="code-header">GETリクエストのテスト</div>
+      <pre><code class="language-typescript">import { describe, it, expect } from 'vitest';
+import request from 'supertest';
+import app from '../app';  // Expressアプリ
+
+describe('GET /users', () => {
+  it('ユーザー一覧を取得できる', async () => {
+    const response = await request(app)
+      .get('/users')
+      .expect(200)                          // ステータスコード
+      .expect('Content-Type', /json/);      // ヘッダー
+
+    // レスポンスボディを検証
+    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body.length).toBeGreaterThan(0);
+  });
+
+  it('存在しないエンドポイントは404', async () => {
+    await request(app)
+      .get('/unknown')
+      .expect(404);
+  });
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- POST/PUT/DELETE -->
+  <div class="card">
+    <h2>POST/PUT/DELETEのテスト</h2>
+
+    <div class="code-block">
+      <div class="code-header">POSTリクエストのテスト</div>
+      <pre><code class="language-typescript">describe('POST /users', () => {
+  it('ユーザーを作成できる', async () => {
+    const newUser = { name: 'Alice', email: 'alice@example.com' };
+
+    const response = await request(app)
+      .post('/users')
+      .send(newUser)                        // リクエストボディ
+      .set('Content-Type', 'application/json')
+      .expect(201);
+
+    expect(response.body).toMatchObject({
+      name: 'Alice',
+      email: 'alice@example.com',
+    });
+    expect(response.body.id).toBeDefined();
+  });
+
+  it('不正なデータは400エラー', async () => {
+    const response = await request(app)
+      .post('/users')
+      .send({ name: '' })                   // 不正なデータ
+      .expect(400);
+
+    expect(response.body.error).toBeDefined();
+  });
+});</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">認証が必要なAPIのテスト</div>
+      <pre><code class="language-typescript">describe('認証が必要なAPI', () => {
+  let authToken: string;
+
+  // テスト前にログインしてトークン取得
+  beforeAll(async () => {
+    const res = await request(app)
+      .post('/auth/login')
+      .send({ email: 'test@example.com', password: 'password' });
+    authToken = res.body.token;
+  });
+
+  it('認証済みでデータ取得', async () => {
+    await request(app)
+      .get('/profile')
+      .set('Authorization', `Bearer ${authToken}`)
+      .expect(200);
+  });
+
+  it('未認証は401エラー', async () => {
+    await request(app)
+      .get('/profile')
+      .expect(401);
+  });
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- レビュー観点 -->
+  <div class="card card-danger">
+    <h2>レビューで指摘すべきポイント</h2>
+
+    <p><strong>外部依存のモック漏れ</strong></p>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h4>外部APIを直接呼んでいる</h4>
+        <pre><code class="language-typescript">// 外部決済APIを実際に呼んでいる
+it('決済を処理する', async () => {
+  await request(app)
+    .post('/payment')
+    .send({ amount: 1000 });
+  // 本番の決済APIに接続してしまう！
+});</code></pre>
+      </div>
+      <div class="compare-good">
+        <h4>外部APIをモック</h4>
+        <pre><code class="language-typescript">vi.mock('./paymentService');
+
+it('決済を処理する', async () => {
+  vi.mocked(processPayment).mockResolvedValue({
+    success: true
+  });
+
+  await request(app)
+    .post('/payment')
+    .send({ amount: 1000 })
+    .expect(200);
+});</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- クイズ -->
+  <div class="quiz" id="quiz-test4">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ
+    </div>
+    <p>SupertestでPOSTリクエストのボディを送る方法は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test4" style="display:none;">
+      A. .body({ data })
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-test4" style="display:none;">
+      B. .send({ data })
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test4" style="display:none;">
+      C. .data({ data })
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-test4')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('test4')">
+    <span class="icon">&#10003;</span>
+    このセクションを完了
+  </button>
+</section>
+
+<!-- ============================================ -->
+<section id="test5">
+  <h1>DBテスト</h1>
+
+  <p class="lead">
+    データベースのテストは<strong>本番DBを使わない</strong>のが鉄則です。
+    テスト用DBとトランザクションを活用しましょう。
+  </p>
+
+  <!-- 本番DB使用の危険性 -->
+  <div class="card card-danger">
+    <h2>絶対NG：本番DBでテスト</h2>
+
+    <p><strong>本番DBでテストすると...</strong></p>
+
+    <ul>
+      <li>テストデータが本番に混入</li>
+      <li>本番データが削除される可能性</li>
+      <li>顧客情報の漏洩リスク</li>
+      <li>テストの並列実行で競合</li>
+    </ul>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h4>絶対NG</h4>
+        <pre><code class="language-typescript">// .envの本番DB接続情報をそのまま使う
+const db = new Pool({
+  connectionString: process.env.DATABASE_URL
+  // 本番DBに接続してしまう！
+});</code></pre>
+      </div>
+      <div class="compare-good">
+        <h4>正しい方法</h4>
+        <pre><code class="language-typescript">// テスト用の環境変数を使う
+const db = new Pool({
+  connectionString: process.env.TEST_DATABASE_URL
+  // テスト専用DBに接続
+});</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- テスト用DB -->
+  <div class="card">
+    <h2>テスト用DBの準備</h2>
+
+    <p><strong>方法1：専用のテストDB</strong></p>
+
+    <div class="code-block">
+      <div class="code-header">.env.test</div>
+      <pre><code class="language-bash"># テスト専用の接続文字列
+DATABASE_URL=postgresql://user:pass@localhost:5432/myapp_test</code></pre>
+    </div>
+
+    <p><strong>方法2：Docker Compose</strong></p>
+
+    <div class="code-block">
+      <div class="code-header">docker-compose.test.yml</div>
+      <pre><code class="language-yaml">services:
+  db-test:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: myapp_test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+    ports:
+      - "5433:5432"</code></pre>
+    </div>
+
+    <p><strong>方法3：インメモリDB（SQLite）</strong></p>
+    <p>軽量なテスト向け。ただしPostgreSQL特有の機能はテストできない。</p>
+  </div>
+
+  <!-- トランザクションロールバック -->
+  <div class="card">
+    <h2>トランザクションでロールバック</h2>
+
+    <p><strong>パターン：テストごとにロールバック</strong></p>
+    <p>テスト開始時にトランザクション開始、終了時にロールバック。</p>
+    <p>データが残らないので、テストが独立する。</p>
+
+    <div class="code-block">
+      <div class="code-header">トランザクションを使ったテスト</div>
+      <pre><code class="language-typescript">import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { db } from '../db';
+
+describe('UserRepository', () => {
+  let trx: Transaction;
+
+  // 各テスト前にトランザクション開始
+  beforeEach(async () => {
+    trx = await db.transaction();
+  });
+
+  // 各テスト後にロールバック
+  afterEach(async () => {
+    await trx.rollback();
+  });
+
+  it('ユーザーを作成できる', async () => {
+    const user = await createUser(trx, { name: 'Alice' });
+    expect(user.name).toBe('Alice');
+    // ロールバックされるのでDBに残らない
+  });
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- Prismaのテスト -->
+  <div class="card">
+    <h2>Prismaでのテスト</h2>
+
+    <div class="code-block">
+      <div class="code-header">Prismaのセットアップ</div>
+      <pre><code class="language-typescript">// tests/setup.ts
+import { PrismaClient } from '@prisma/client';
+import { beforeAll, afterAll, beforeEach } from 'vitest';
+
+export const prisma = new PrismaClient();
+
+beforeAll(async () => {
+  // テストDB接続
+  await prisma.$connect();
+});
+
+afterAll(async () => {
+  await prisma.$disconnect();
+});
+
+// 各テスト後にデータをクリーンアップ
+beforeEach(async () => {
+  // 依存関係の順序に注意
+  await prisma.post.deleteMany();
+  await prisma.user.deleteMany();
+});</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">テストの書き方</div>
+      <pre><code class="language-typescript">import { describe, it, expect } from 'vitest';
+import { prisma } from './setup';
+
+describe('UserRepository', () => {
+  it('ユーザーを作成できる', async () => {
+    const user = await prisma.user.create({
+      data: { name: 'Alice', email: 'alice@example.com' },
+    });
+
+    expect(user.id).toBeDefined();
+    expect(user.name).toBe('Alice');
+  });
+
+  it('関連データを含めて取得できる', async () => {
+    // テストデータ作成
+    const user = await prisma.user.create({
+      data: {
+        name: 'Bob',
+        email: 'bob@example.com',
+        posts: {
+          create: [{ title: 'Post 1' }, { title: 'Post 2' }],
+        },
+      },
+      include: { posts: true },
+    });
+
+    expect(user.posts).toHaveLength(2);
+  });
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- クイズ -->
+  <div class="quiz" id="quiz-test5">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ
+    </div>
+    <p>DBテストで最も重要な原則は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-test5" style="display:none;">
+      A. 本番DBを使わない
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test5" style="display:none;">
+      B. テストを高速化する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test5" style="display:none;">
+      C. 全てのテーブルをテストする
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-test5')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('test5')">
+    <span class="icon">&#10003;</span>
+    このセクションを完了
+  </button>
+</section>
+
+<!-- ============================================ -->
+<section id="test6">
+  <h1>エラーケース</h1>
+
+  <p class="lead">
+    <strong>正常系だけテストするのはNG</strong>です。
+    境界値、異常系、エッジケースもテストしましょう。
+  </p>
+
+  <!-- 正常系だけの問題 -->
+  <div class="card card-danger">
+    <h2>正常系のみテストの問題</h2>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h4>正常系のみ</h4>
+        <pre><code class="language-typescript">describe('divide', () => {
+  it('10 / 2 = 5', () => {
+    expect(divide(10, 2)).toBe(5);
+  });
+  // これだけでは不十分
+});</code></pre>
+      </div>
+      <div class="compare-good">
+        <h4>異常系も含む</h4>
+        <pre><code class="language-typescript">describe('divide', () => {
+  it('10 / 2 = 5', () => {
+    expect(divide(10, 2)).toBe(5);
+  });
+
+  it('0で割るとエラー', () => {
+    expect(() => divide(10, 0)).toThrow();
+  });
+
+  it('負の数も計算できる', () => {
+    expect(divide(-10, 2)).toBe(-5);
+  });
+});</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 境界値テスト -->
+  <div class="card">
+    <h2>境界値テスト</h2>
+
+    <p><strong>境界値</strong> = 条件の境目にある値</p>
+    <p>バグは境界付近で発生しやすい。</p>
+
+    <div class="code-block">
+      <div class="code-header">境界値テストの例</div>
+      <pre><code class="language-typescript">// 関数: 1-100の範囲チェック
+function isValidScore(score: number): boolean {
+  return score >= 1 && score <= 100;
+}
+
+describe('isValidScore - 境界値', () => {
+  // 有効な境界値
+  it('1は有効（下限）', () => {
+    expect(isValidScore(1)).toBe(true);
+  });
+
+  it('100は有効（上限）', () => {
+    expect(isValidScore(100)).toBe(true);
+  });
+
+  // 無効な境界値
+  it('0は無効（下限-1）', () => {
+    expect(isValidScore(0)).toBe(false);
+  });
+
+  it('101は無効（上限+1）', () => {
+    expect(isValidScore(101)).toBe(false);
+  });
+
+  // 中間値
+  it('50は有効（中間）', () => {
+    expect(isValidScore(50)).toBe(true);
+  });
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- エッジケース -->
+  <div class="card">
+    <h2>エッジケース（特殊な入力）</h2>
+
+    <p><strong>エッジケース</strong> = 極端な状況、特殊な入力</p>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>データ型</th>
+          <th>テストすべきエッジケース</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>文字列</td>
+          <td>空文字 <code>""</code>、空白のみ <code>"   "</code>、非常に長い文字列</td>
+        </tr>
+        <tr>
+          <td>配列</td>
+          <td>空配列 <code>[]</code>、1要素、大量の要素</td>
+        </tr>
+        <tr>
+          <td>数値</td>
+          <td><code>0</code>、負数、<code>NaN</code>、<code>Infinity</code></td>
+        </tr>
+        <tr>
+          <td>オブジェクト</td>
+          <td><code>null</code>、<code>undefined</code>、空オブジェクト <code>{}</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="code-block">
+      <div class="code-header">エッジケースのテスト例</div>
+      <pre><code class="language-typescript">describe('getUserName', () => {
+  it('正常なユーザー', () => {
+    expect(getUserName({ name: 'Alice' })).toBe('Alice');
+  });
+
+  // エッジケース
+  it('nullを渡した場合', () => {
+    expect(getUserName(null)).toBe('Unknown');
+  });
+
+  it('undefinedを渡した場合', () => {
+    expect(getUserName(undefined)).toBe('Unknown');
+  });
+
+  it('空オブジェクトを渡した場合', () => {
+    expect(getUserName({})).toBe('Unknown');
+  });
+
+  it('nameが空文字の場合', () => {
+    expect(getUserName({ name: '' })).toBe('Unknown');
+  });
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- 異常系（エラーハンドリング） -->
+  <div class="card">
+    <h2>異常系（エラーハンドリング）</h2>
+
+    <div class="code-block">
+      <div class="code-header">例外のテスト</div>
+      <pre><code class="language-typescript">describe('parseJSON', () => {
+  it('有効なJSONをパースできる', () => {
+    expect(parseJSON('{"a":1}')).toEqual({ a: 1 });
+  });
+
+  it('不正なJSONはエラー', () => {
+    expect(() => parseJSON('invalid')).toThrow();
+  });
+
+  it('特定のエラーメッセージを確認', () => {
+    expect(() => parseJSON('invalid')).toThrow('Invalid JSON');
+  });
+});
+
+// 非同期のエラー
+describe('fetchUser', () => {
+  it('存在しないユーザーは404エラー', async () => {
+    await expect(fetchUser(999)).rejects.toThrow('Not found');
+  });
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- レビュー観点 -->
+  <div class="card card-warning">
+    <h2>レビューで指摘すべきポイント</h2>
+
+    <ul>
+      <li><strong>正常系のみ</strong>：「エラーケースのテストを追加すべき」</li>
+      <li><strong>境界値がない</strong>：「0、null、空配列のケースをテストすべき」</li>
+      <li><strong>入力バリデーションテストなし</strong>：「不正な入力への対応をテストすべき」</li>
+    </ul>
+  </div>
+
+  <!-- クイズ1 -->
+  <div class="quiz" id="quiz-test6-1">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 1
+    </div>
+    <p>1-100の範囲チェックで、境界値として最もテストすべきなのは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-test6-1" style="display:none;">
+      A. 0, 1, 100, 101
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test6-1" style="display:none;">
+      B. 50, 75
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test6-1" style="display:none;">
+      C. -100, 200
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-test6-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <!-- クイズ2 -->
+  <div class="quiz" id="quiz-test6-2">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 2
+    </div>
+    <p>配列を扱う関数でテストすべきエッジケースは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test6-2" style="display:none;">
+      A. 3要素の配列
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-test6-2" style="display:none;">
+      B. 空配列 []
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test6-2" style="display:none;">
+      C. 5要素の配列
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-test6-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('test6')">
+    <span class="icon">&#10003;</span>
+    このセクションを完了
+  </button>
+</section>
+
+<!-- ============================================ -->
+<section id="test7">
+  <h1>テストカバレッジ</h1>
+
+  <p class="lead">
+    <strong>カバレッジ</strong>は「コードの何%がテストされているか」を示す指標です。
+    ただし、<strong>数値だけを追うのはNG</strong>です。
+  </p>
+
+  <!-- カバレッジとは -->
+  <div class="card">
+    <h2>カバレッジとは？</h2>
+
+    <p><strong>たとえ話</strong>：テスト = 健康診断</p>
+
+    <ul>
+      <li><strong>カバレッジ100%</strong> = 全身を検査した</li>
+      <li>でも「検査した」と「異常を見つけた」は別</li>
+      <li>カバレッジが高くても、テストの質が低いと意味がない</li>
+    </ul>
+
+    <p><strong>カバレッジの種類</strong></p>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>種類</th>
+          <th>意味</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>行カバレッジ</td>
+          <td>何行が実行されたか</td>
+        </tr>
+        <tr>
+          <td>分岐カバレッジ</td>
+          <td>if/elseの両方が実行されたか</td>
+        </tr>
+        <tr>
+          <td>関数カバレッジ</td>
+          <td>何関数が呼ばれたか</td>
+        </tr>
+        <tr>
+          <td>文カバレッジ</td>
+          <td>何文が実行されたか</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- c8の使い方 -->
+  <div class="card">
+    <h2>c8でカバレッジを計測</h2>
+
+    <p><strong>c8</strong> = Node.js V8エンジン組み込みのカバレッジツール</p>
+    <p>Vitestでは設定するだけで使えます。</p>
+
+    <div class="code-block">
+      <div class="code-header">vitest.config.ts</div>
+      <pre><code class="language-typescript">import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    coverage: {
+      provider: 'v8',           // c8を使う
+      reporter: ['text', 'html'], // レポート形式
+      exclude: [
+        'node_modules',
+        'tests',
+        '**/*.d.ts',
+      ],
+      // カバレッジ閾値
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 80,
+        statements: 80,
+      },
+    },
+  },
+});</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">カバレッジ計測の実行</div>
+      <pre><code class="language-bash"># カバレッジ付きでテスト実行
+npx vitest run --coverage
+
+# 出力例
+# ----------|---------|----------|---------|---------|
+# File      | % Stmts | % Branch | % Funcs | % Lines |
+# ----------|---------|----------|---------|---------|
+# All files |   85.71 |    66.67 |     100 |   85.71 |
+#  math.ts  |   85.71 |    66.67 |     100 |   85.71 |
+# ----------|---------|----------|---------|---------|</code></pre>
+    </div>
+  </div>
+
+  <!-- 目標値 -->
+  <div class="card card-info">
+    <h2>カバレッジ目標の目安</h2>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>レベル</th>
+          <th>目標</th>
+          <th>説明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>最低ライン</td>
+          <td>60%</td>
+          <td>主要なロジックはカバー</td>
+        </tr>
+        <tr>
+          <td>推奨</td>
+          <td>80%</td>
+          <td>バランスが良い目標</td>
+        </tr>
+        <tr>
+          <td>高品質</td>
+          <td>90%+</td>
+          <td>重要なライブラリ、金融系</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>注意：100%を目指さない</strong></p>
+    <ul>
+      <li>100%達成のコストが高すぎる</li>
+      <li>テストのためだけの無意味なコードが増える</li>
+      <li>80%で十分なケースが多い</li>
+    </ul>
+  </div>
+
+  <!-- レビュー観点 -->
+  <div class="card card-danger">
+    <h2>レビューで指摘すべきポイント</h2>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h4>数値だけを追う</h4>
+        <pre><code class="language-typescript">// カバレッジ100%だが意味がない
+it('adds numbers', () => {
+  add(1, 2);  // 戻り値を検証していない
+});
+// 行は実行されるがバグを見つけられない</code></pre>
+      </div>
+      <div class="compare-good">
+        <h4>質を重視</h4>
+        <pre><code class="language-typescript">it('adds numbers correctly', () => {
+  expect(add(1, 2)).toBe(3);
+  expect(add(-1, 1)).toBe(0);
+  expect(add(0, 0)).toBe(0);
+});
+// 結果を検証しているので意味がある</code></pre>
+      </div>
+    </div>
+
+    <p><strong>指摘例</strong></p>
+    <ul>
+      <li>「カバレッジは高いがexpectがない」</li>
+      <li>「重要なビジネスロジックがカバーされていない」</li>
+      <li>「分岐カバレッジが低い（elseが通っていない）」</li>
+    </ul>
+  </div>
+
+  <!-- クイズ -->
+  <div class="quiz" id="quiz-test7">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ
+    </div>
+    <p>カバレッジについて正しいのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test7" style="display:none;">
+      A. 100%を目指すべき
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-test7" style="display:none;">
+      B. 数値だけでなく、テストの質も重要
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test7" style="display:none;">
+      C. カバレッジが低くても問題ない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-test7')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('test7')">
+    <span class="icon">&#10003;</span>
+    このセクションを完了
+  </button>
+</section>
+
+<!-- ============================================ -->
+<section id="test8">
+  <h1>CI/CD統合</h1>
+
+  <p class="lead">
+    テストは<strong>自動で実行</strong>されるべきです。
+    <strong>GitHub Actions</strong>でCI/CDパイプラインを構築しましょう。
+  </p>
+
+  <!-- CI/CDとは -->
+  <div class="card">
+    <h2>CI/CDとは？</h2>
+
+    <p><strong>CI（Continuous Integration）</strong> = 継続的インテグレーション</p>
+    <ul>
+      <li>コードの変更を頻繁にマージ</li>
+      <li>自動テストで品質を担保</li>
+    </ul>
+
+    <p><strong>CD（Continuous Delivery/Deployment）</strong> = 継続的デリバリー/デプロイ</p>
+    <ul>
+      <li>いつでもリリースできる状態を維持</li>
+      <li>自動デプロイ</li>
+    </ul>
+
+    <p><strong>たとえ話</strong>：工場の品質管理</p>
+    <ul>
+      <li>手動検査 = 人がいないと検査できない</li>
+      <li>自動検査 = 24時間機械が検査してくれる</li>
+    </ul>
+  </div>
+
+  <!-- GitHub Actions -->
+  <div class="card">
+    <h2>GitHub Actionsの基本</h2>
+
+    <p><strong>GitHub Actions</strong> = GitHubに組み込まれたCI/CDツール</p>
+
+    <div class="code-block">
+      <div class="code-header">.github/workflows/test.yml</div>
+      <pre><code class="language-yaml">name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # リポジトリをチェックアウト
+      - uses: actions/checkout@v4
+
+      # Node.jsをセットアップ
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      # 依存関係インストール
+      - run: npm ci
+
+      # リント
+      - run: npm run lint
+
+      # 型チェック
+      - run: npm run typecheck
+
+      # テスト実行
+      - run: npm run test
+
+      # カバレッジ（オプション）
+      - run: npm run test:coverage</code></pre>
+    </div>
+  </div>
+
+  <!-- DBテストの設定 -->
+  <div class="card">
+    <h2>DBテストを含むCI設定</h2>
+
+    <div class="code-block">
+      <div class="code-header">PostgreSQLを使うCI設定</div>
+      <pre><code class="language-yaml">name: Test with DB
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: myapp_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://test:test@localhost:5432/myapp_test
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+
+      # マイグレーション実行
+      - run: npx prisma migrate deploy
+
+      # テスト実行
+      - run: npm run test</code></pre>
+    </div>
+  </div>
+
+  <!-- ブランチ保護 -->
+  <div class="card card-info">
+    <h2>ブランチ保護ルール</h2>
+
+    <p><strong>mainブランチを保護</strong>してテストを必須にしましょう。</p>
+
+    <p><strong>設定方法：</strong></p>
+    <ol>
+      <li>GitHub リポジトリ → Settings → Branches</li>
+      <li>Add branch protection rule</li>
+      <li>Branch name pattern: <code>main</code></li>
+      <li>「Require status checks to pass before merging」にチェック</li>
+      <li>必須のチェックに「test」を追加</li>
+    </ol>
+
+    <p><strong>効果：</strong></p>
+    <ul>
+      <li>テストが通らないとマージできない</li>
+      <li>壊れたコードがmainに入らない</li>
+    </ul>
+  </div>
+
+  <!-- レビュー観点 -->
+  <div class="card card-danger">
+    <h2>レビューで指摘すべきポイント</h2>
+
+    <ul>
+      <li><strong>CIがない</strong>：「GitHub Actionsでテストを自動化すべき」</li>
+      <li><strong>手動実行のみ</strong>：「PRにCI必須を設定すべき」</li>
+      <li><strong>テストがスキップされている</strong>：「skip/onlyを削除すべき」</li>
+    </ul>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h4>手動実行のみ</h4>
+        <pre><code># ローカルでしかテストしない
+npm run test
+# PRをマージ
+# テストが壊れていることに後で気づく</code></pre>
+      </div>
+      <div class="compare-good">
+        <h4>CI必須</h4>
+        <pre><code># PRを作成
+# → 自動でCIが実行
+# → テスト失敗でマージブロック
+# → 修正してからマージ</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- クイズ1 -->
+  <div class="quiz" id="quiz-test8-1">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 1
+    </div>
+    <p>CIの目的として最も適切なのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test8-1" style="display:none;">
+      A. 開発者の手間を増やす
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-test8-1" style="display:none;">
+      B. コード変更のたびに自動でテストを実行する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test8-1" style="display:none;">
+      C. 本番環境にデプロイする
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-test8-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <!-- クイズ2 -->
+  <div class="quiz" id="quiz-test8-2">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 2
+    </div>
+    <p>GitHub Actionsのワークフローファイルの配置場所は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test8-2" style="display:none;">
+      A. .github/test.yml
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-test8-2" style="display:none;">
+      B. .github/workflows/test.yml
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-test8-2" style="display:none;">
+      C. workflows/test.yml
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-test8-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <!-- Phase 5 完了メッセージ -->
+  <div class="card card-success">
+    <h2>Phase 5 完了！</h2>
+    <p>テスト・品質の学習を完了しました。以下を習得しました：</p>
+
+    <ul>
+      <li><strong>テストピラミッド</strong>：ユニット/統合/E2Eの比率</li>
+      <li><strong>Vitest</strong>：describe/it/expect、セットアップ</li>
+      <li><strong>モック</strong>：vi.fn()、vi.mock()、vi.spyOn()</li>
+      <li><strong>APIテスト</strong>：Supertestの使い方</li>
+      <li><strong>DBテスト</strong>：テスト用DB、トランザクション</li>
+      <li><strong>エラーケース</strong>：境界値、異常系、エッジケース</li>
+      <li><strong>カバレッジ</strong>：c8、目標値の考え方</li>
+      <li><strong>CI/CD</strong>：GitHub Actions、自動テスト</li>
+    </ul>
+
+    <p><strong>レビューで見抜くべきポイント</strong></p>
+    <ul>
+      <li>E2E過多（逆ピラミッド）</li>
+      <li>外部依存のモック漏れ</li>
+      <li>本番DB使用</li>
+      <li>正常系のみテスト</li>
+      <li>CIなし/手動実行のみ</li>
+    </ul>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('test8')">
+    <span class="icon">&#10003;</span>
+    Phase 5を完了
+  </button>
+</section>

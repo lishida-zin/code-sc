@@ -1,0 +1,2084 @@
+<!-- ============================================
+     Level 4 Phase 4: 認証・セキュリティ
+     sec1-sec10: 認証/認可、JWT、OAuth2、脆弱性対策
+     ============================================ -->
+
+<section id="sec1">
+  <h1>認証 vs 認可</h1>
+
+  <p class="lead">
+    <strong>認証（Authentication）</strong>と<strong>認可（Authorization）</strong>は、
+    セキュリティの基本です。この2つを混同すると、重大な脆弱性を生みます。
+  </p>
+
+  <!-- たとえ話 -->
+  <div class="card card-info">
+    <h2>たとえ話で理解する</h2>
+
+    <p><strong>認証 = 身分証明書の確認</strong></p>
+    <ul>
+      <li>「あなたは誰ですか？」を確認</li>
+      <li>例：パスポートで本人確認</li>
+      <li>英語：Authentication（オーセンティケーション）</li>
+      <li>語源：authentic（本物の）</li>
+    </ul>
+
+    <p><strong>認可 = 入館許可証の確認</strong></p>
+    <ul>
+      <li>「あなたは何ができますか？」を確認</li>
+      <li>例：社員証で入れるフロアが決まる</li>
+      <li>英語：Authorization（オーソライゼーション）</li>
+      <li>語源：authorize（権限を与える）</li>
+    </ul>
+
+    <pre><code>建物に入るとき：
+1. 認証：受付で身分証を見せる（本人確認）
+2. 認可：入館証をもらう（どこに行けるか決まる）
+
+Webアプリでも同じ流れ：
+1. 認証：ログインする（ユーザーを特定）
+2. 認可：権限をチェック（何ができるか判定）</code></pre>
+  </div>
+
+  <!-- 技術的な違い -->
+  <div class="card">
+    <h2>技術的な違い</h2>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>項目</th>
+          <th>認証（Authentication）</th>
+          <th>認可（Authorization）</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>目的</td>
+          <td>「誰か」を確認</td>
+          <td>「何ができるか」を判定</td>
+        </tr>
+        <tr>
+          <td>質問</td>
+          <td>Who are you?</td>
+          <td>What can you do?</td>
+        </tr>
+        <tr>
+          <td>手段</td>
+          <td>ID/PW、生体認証、Passkey</td>
+          <td>ロール、権限、ACL</td>
+        </tr>
+        <tr>
+          <td>タイミング</td>
+          <td>最初に実行</td>
+          <td>認証後に実行</td>
+        </tr>
+        <tr>
+          <td>略称</td>
+          <td>AuthN</td>
+          <td>AuthZ</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- コード例 -->
+  <div class="card">
+    <h2>コードで見る認証と認可</h2>
+
+    <div class="code-block">
+      <div class="code-header">認証：ログイン処理</div>
+      <pre><code class="language-typescript">// 認証：ユーザーが誰かを確認
+async function login(email: string, password: string) {
+  // 1. ユーザーを検索
+  const user = await db.user.findUnique({ where: { email } });
+
+  // 2. パスワードを検証（認証の本体）
+  const isValid = await bcrypt.compare(password, user.passwordHash);
+
+  if (!isValid) {
+    throw new Error('認証失敗');  // 本人ではない
+  }
+
+  // 3. 認証成功 → トークン発行
+  return generateToken(user.id);
+}</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">認可：権限チェック</div>
+      <pre><code class="language-typescript">// 認可：何ができるかを判定
+async function deleteUser(requesterId: string, targetUserId: string) {
+  // 1. リクエスト者の情報を取得
+  const requester = await db.user.findUnique({
+    where: { id: requesterId }
+  });
+
+  // 2. 権限をチェック（認可の本体）
+  if (requester.role !== 'admin') {
+    throw new Error('権限がありません');  // 認可失敗
+  }
+
+  // 3. 認可成功 → 処理を実行
+  await db.user.delete({ where: { id: targetUserId } });
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- よくある間違い -->
+  <div class="card card-danger">
+    <h2>レビューで見抜くべき問題</h2>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h3>NG: 認可チェックなし</h3>
+        <pre><code class="language-typescript">// 認証だけで認可を忘れている
+app.delete('/users/:id', authMiddleware, async (req, res) => {
+  // 誰でも他人を削除できてしまう！
+  await db.user.delete({ where: { id: req.params.id } });
+  res.json({ success: true });
+});</code></pre>
+      </div>
+      <div class="compare-good">
+        <h3>OK: 認可チェックあり</h3>
+        <pre><code class="language-typescript">// 認証 + 認可の両方をチェック
+app.delete('/users/:id', authMiddleware, async (req, res) => {
+  // 自分自身 or 管理者のみ削除可能
+  if (req.user.id !== req.params.id && req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+  await db.user.delete({ where: { id: req.params.id } });
+  res.json({ success: true });
+});</code></pre>
+      </div>
+    </div>
+
+    <p><strong>指摘例：</strong></p>
+    <ul>
+      <li>「認証は通っていますが、認可チェックがありません」</li>
+      <li>「ログインユーザーなら誰でもアクセスできる状態です」</li>
+      <li>「IDOR（Insecure Direct Object Reference）脆弱性があります」</li>
+    </ul>
+  </div>
+
+  <!-- クイズ1 -->
+  <div class="quiz" id="quiz-sec1-1">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 1
+    </div>
+    <p>「このユーザーは管理者か一般ユーザーか」を判定する処理は何ですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec1-1" style="display:none;">
+      A. 認証（Authentication）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec1-2" style="display:none;">
+      B. 認可（Authorization）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec1-3" style="display:none;">
+      C. 暗号化（Encryption）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec1-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <!-- クイズ2 -->
+  <div class="quiz" id="quiz-sec1-2">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 2
+    </div>
+    <p>以下のコードの問題点は何ですか？</p>
+    <div class="code-block">
+      <pre><code>app.get('/users/:id/profile', authMiddleware, async (req, res) => {
+  const user = await db.user.findUnique({ where: { id: req.params.id } });
+  res.json(user);
+});</code></pre>
+    </div>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec1-2a" style="display:none;">
+      A. 認証がない
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec1-2b" style="display:none;">
+      B. 認可がない（他人の情報を見れる）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec1-2c" style="display:none;">
+      C. 問題なし
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec1-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sec1')">
+    <span class="icon">✓</span>
+    このセクションを完了
+  </button>
+</section>
+
+<!-- sec2: パスワード管理 -->
+<section id="sec2">
+  <h1>パスワード管理</h1>
+
+  <p class="lead">
+    パスワードを<strong>平文で保存</strong>するのは最悪のセキュリティ違反です。
+    <strong>bcrypt</strong>でハッシュ化し、安全に保存しましょう。
+  </p>
+
+  <!-- なぜハッシュ化が必要か -->
+  <div class="card card-warning">
+    <h2>なぜハッシュ化が必要か？</h2>
+
+    <p><strong>DBが流出した場合：</strong></p>
+    <ul>
+      <li>平文保存 → 全ユーザーのパスワードが漏洩</li>
+      <li>ハッシュ保存 → パスワード自体は漏洩しない</li>
+    </ul>
+
+    <pre><code>// 平文保存（絶対NG）
+| id | email          | password    |
+|----|----------------|-------------|
+| 1  | alice@mail.com | password123 |  ← 丸見え！
+
+// ハッシュ保存（OK）
+| id | email          | password_hash                          |
+|----|----------------|----------------------------------------|
+| 1  | alice@mail.com | $2b$10$X7z... (元に戻せない)          |</code></pre>
+  </div>
+
+  <!-- ハッシュ vs 暗号化 -->
+  <div class="card">
+    <h2>ハッシュ vs 暗号化</h2>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>項目</th>
+          <th>ハッシュ</th>
+          <th>暗号化</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>復元</td>
+          <td>不可能（一方向）</td>
+          <td>可能（双方向）</td>
+        </tr>
+        <tr>
+          <td>用途</td>
+          <td>パスワード保存</td>
+          <td>データ保護（復元が必要）</td>
+        </tr>
+        <tr>
+          <td>例</td>
+          <td>bcrypt, Argon2</td>
+          <td>AES, RSA</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>なぜパスワードにはハッシュ？</strong></p>
+    <p>→ 検証時に「元のパスワード」を知る必要がないから</p>
+    <pre><code>ログイン時：
+1. 入力されたパスワードをハッシュ化
+2. DBに保存されたハッシュと比較
+3. 一致すれば認証成功
+
+→ 元のパスワードを復元する必要がない！</code></pre>
+  </div>
+
+  <!-- bcryptの仕組み -->
+  <div class="card">
+    <h2>bcryptの仕組み</h2>
+
+    <p><strong>bcrypt</strong>は、パスワードハッシュに特化したアルゴリズムです。</p>
+
+    <p><strong>3つの重要な特徴：</strong></p>
+    <ol>
+      <li><strong>ソルト（Salt）</strong>：ランダムな文字列を追加</li>
+      <li><strong>ストレッチング</strong>：計算を意図的に遅くする</li>
+      <li><strong>コストファクター</strong>：計算回数を調整可能</li>
+    </ol>
+
+    <div class="code-block">
+      <div class="code-header">bcryptの使い方</div>
+      <pre><code class="language-typescript">import bcrypt from 'bcrypt';
+
+// パスワードのハッシュ化（登録時）
+const saltRounds = 10;  // コストファクター
+const passwordHash = await bcrypt.hash('password123', saltRounds);
+// → '$2b$10$X7z...' のような文字列
+
+// パスワードの検証（ログイン時）
+const isValid = await bcrypt.compare('password123', passwordHash);
+// → true または false</code></pre>
+    </div>
+  </div>
+
+  <!-- ソルトとは -->
+  <div class="card card-info">
+    <h2>ソルト（Salt）とは？</h2>
+
+    <p><strong>たとえ話：</strong>料理の「塩」のように、味を変えるもの</p>
+
+    <p><strong>問題：</strong>同じパスワードは同じハッシュになる</p>
+    <pre><code>// ソルトなしの場合
+"password" → "5f4dcc3b5aa..."  // 常に同じ
+"password" → "5f4dcc3b5aa..."  // 常に同じ
+
+→ レインボーテーブル攻撃で解読される！</code></pre>
+
+    <p><strong>解決：</strong>ソルトを追加すると、毎回異なるハッシュに</p>
+    <pre><code>// ソルトありの場合
+"password" + "abc123" → "7f9e2a1b..."  // ソルトごとに異なる
+"password" + "xyz789" → "3d8c4e5f..."  // ソルトごとに異なる
+
+→ レインボーテーブルが使えない！</code></pre>
+
+    <p><strong>bcryptのメリット：</strong>ソルトを自動生成・保存してくれる</p>
+  </div>
+
+  <!-- よくある間違い -->
+  <div class="card card-danger">
+    <h2>レビューで見抜くべき問題</h2>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h3>NG: 平文保存</h3>
+        <pre><code class="language-typescript">// 絶対にやってはいけない
+await db.user.create({
+  data: {
+    email,
+    password: password  // 平文！
+  }
+});</code></pre>
+      </div>
+      <div class="compare-good">
+        <h3>OK: ハッシュ保存</h3>
+        <pre><code class="language-typescript">// bcryptでハッシュ化してから保存
+const passwordHash = await bcrypt.hash(password, 10);
+await db.user.create({
+  data: {
+    email,
+    passwordHash  // ハッシュ
+  }
+});</code></pre>
+      </div>
+    </div>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h3>NG: MD5/SHA1を使用</h3>
+        <pre><code class="language-typescript">// 古い・高速すぎる
+import crypto from 'crypto';
+const hash = crypto.createHash('md5')
+  .update(password).digest('hex');</code></pre>
+      </div>
+      <div class="compare-good">
+        <h3>OK: bcryptを使用</h3>
+        <pre><code class="language-typescript">// パスワード専用アルゴリズム
+import bcrypt from 'bcrypt';
+const hash = await bcrypt.hash(password, 10);</code></pre>
+      </div>
+    </div>
+
+    <p><strong>指摘例：</strong></p>
+    <ul>
+      <li>「パスワードが平文で保存されています」</li>
+      <li>「MD5は高速すぎてブルートフォースに弱いです」</li>
+      <li>「bcryptまたはArgon2を使用してください」</li>
+    </ul>
+  </div>
+
+  <!-- クイズ1 -->
+  <div class="quiz" id="quiz-sec2-1">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 1
+    </div>
+    <p>パスワードのハッシュ化に適したアルゴリズムは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec2-1a" style="display:none;">
+      A. MD5
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec2-1b" style="display:none;">
+      B. SHA-256
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec2-1c" style="display:none;">
+      C. bcrypt
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec2-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <!-- クイズ2 -->
+  <div class="quiz" id="quiz-sec2-2">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 2
+    </div>
+    <p>ソルト（Salt）の目的は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec2-2a" style="display:none;">
+      A. パスワードを暗号化する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec2-2b" style="display:none;">
+      B. 同じパスワードでも異なるハッシュにする
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec2-2c" style="display:none;">
+      C. ハッシュを高速化する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec2-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sec2')">
+    <span class="icon">✓</span>
+    このセクションを完了
+  </button>
+</section>
+
+<!-- sec3: JWT基礎 -->
+<section id="sec3">
+  <h1>JWT基礎</h1>
+
+  <p class="lead">
+    <strong>JWT（JSON Web Token）</strong>は、認証情報を安全にやり取りするための標準規格です。
+    読み方は「ジョット」です。
+  </p>
+
+  <!-- JWTとは -->
+  <div class="card card-info">
+    <h2>JWTとは？</h2>
+
+    <p><strong>たとえ話：</strong>JWTは「改ざん検知機能付きの名札」</p>
+
+    <ul>
+      <li>名前や役職が書いてある（情報を持つ）</li>
+      <li>会社の印鑑が押してある（署名で改ざん検知）</li>
+      <li>有効期限がある（期限切れ無効）</li>
+    </ul>
+
+    <p><strong>語源：</strong></p>
+    <ul>
+      <li>JSON：データ形式</li>
+      <li>Web：Web用途</li>
+      <li>Token：認証トークン</li>
+    </ul>
+  </div>
+
+  <!-- JWTの構造 -->
+  <div class="card">
+    <h2>JWTの構造（3つのパート）</h2>
+
+    <p>JWTは3つの部分を<strong>ドット（.）</strong>で繋いだ文字列です。</p>
+
+    <pre><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMjMiLCJleHAiOjE3MDk0NTM2MDB9.X7z4Q...
+|___________________________________|.___________________________________|._______|
+           ヘッダー                              ペイロード                  署名</code></pre>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>パート</th>
+          <th>内容</th>
+          <th>Base64デコード後</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ヘッダー</td>
+          <td>アルゴリズム、トークン種別</td>
+          <td><code>{"alg":"HS256","typ":"JWT"}</code></td>
+        </tr>
+        <tr>
+          <td>ペイロード</td>
+          <td>ユーザー情報、有効期限</td>
+          <td><code>{"userId":"123","exp":1709453600}</code></td>
+        </tr>
+        <tr>
+          <td>署名</td>
+          <td>改ざん検知用のハッシュ</td>
+          <td>（デコード不可）</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>重要：</strong>ペイロードはBase64でエンコードされているだけ</p>
+    <p>→ 誰でも読める！機密情報を入れてはいけない</p>
+  </div>
+
+  <!-- 署名と検証 -->
+  <div class="card">
+    <h2>署名と検証の仕組み</h2>
+
+    <div class="code-block">
+      <div class="code-header">JWTの生成（署名）</div>
+      <pre><code class="language-typescript">import jwt from 'jsonwebtoken';
+
+// JWTを生成（署名する）
+const token = jwt.sign(
+  { userId: '123' },           // ペイロード
+  process.env.JWT_SECRET,      // 秘密鍵
+  { expiresIn: '1h' }          // 有効期限
+);
+// → eyJhbGciOiJIUzI1NiIs...</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">JWTの検証</div>
+      <pre><code class="language-typescript">// JWTを検証（署名を確認）
+try {
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  console.log(decoded.userId);  // "123"
+} catch (error) {
+  // 署名が不正 or 期限切れ
+  console.log('無効なトークン');
+}</code></pre>
+    </div>
+
+    <p><strong>検証の流れ：</strong></p>
+    <ol>
+      <li>ヘッダーとペイロードを取り出す</li>
+      <li>秘密鍵で署名を再計算</li>
+      <li>トークンの署名と一致するか確認</li>
+      <li>有効期限を確認</li>
+    </ol>
+  </div>
+
+  <!-- よくある間違い -->
+  <div class="card card-danger">
+    <h2>レビューで見抜くべき問題</h2>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h3>NG: decodeで検証したつもり</h3>
+        <pre><code class="language-typescript">// decodeは署名を検証しない！
+const decoded = jwt.decode(token);
+// 改ざんされたトークンでも読めてしまう
+const userId = decoded.userId;  // 危険！</code></pre>
+      </div>
+      <div class="compare-good">
+        <h3>OK: verifyで検証</h3>
+        <pre><code class="language-typescript">// verifyは署名を検証する
+const decoded = jwt.verify(token, process.env.JWT_SECRET);
+// 改ざんされていれば例外が発生
+const userId = decoded.userId;  // 安全</code></pre>
+      </div>
+    </div>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h3>NG: ペイロードに機密情報</h3>
+        <pre><code class="language-typescript">jwt.sign({
+  userId: '123',
+  password: 'secret123',  // NG！
+  creditCard: '4111...'   // NG！
+}, secret);</code></pre>
+      </div>
+      <div class="compare-good">
+        <h3>OK: 最小限の情報のみ</h3>
+        <pre><code class="language-typescript">jwt.sign({
+  userId: '123',  // IDのみ
+  role: 'user'    // 必要最小限
+}, secret);</code></pre>
+      </div>
+    </div>
+
+    <p><strong>指摘例：</strong></p>
+    <ul>
+      <li>「jwt.decode()は署名を検証しません。jwt.verify()を使ってください」</li>
+      <li>「JWTペイロードに機密情報が含まれています」</li>
+      <li>「秘密鍵がハードコードされています」</li>
+    </ul>
+  </div>
+
+  <!-- クイズ1 -->
+  <div class="quiz" id="quiz-sec3-1">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 1
+    </div>
+    <p>JWTの署名を検証するメソッドはどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec3-1a" style="display:none;">
+      A. jwt.decode()
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec3-1b" style="display:none;">
+      B. jwt.verify()
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec3-1c" style="display:none;">
+      C. jwt.sign()
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec3-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <!-- クイズ2 -->
+  <div class="quiz" id="quiz-sec3-2">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 2
+    </div>
+    <p>JWTのペイロードに入れてはいけないものは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec3-2a" style="display:none;">
+      A. ユーザーID
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec3-2b" style="display:none;">
+      B. ユーザーのロール
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec3-2c" style="display:none;">
+      C. パスワードやクレジットカード情報
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec3-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sec3')">
+    <span class="icon">✓</span>
+    このセクションを完了
+  </button>
+</section>
+
+<!-- sec4: JWTベストプラクティス -->
+<section id="sec4">
+  <h1>JWTベストプラクティス</h1>
+
+  <p class="lead">
+    JWTの使い方を間違えると、セキュリティホールになります。
+    <strong>有効期限、保存場所、Refresh Token</strong>の設計が重要です。
+  </p>
+
+  <!-- 有効期限 -->
+  <div class="card">
+    <h2>有効期限の設計</h2>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>トークン種別</th>
+          <th>推奨期限</th>
+          <th>用途</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Access Token</td>
+          <td>15分〜1時間</td>
+          <td>API認証</td>
+        </tr>
+        <tr>
+          <td>Refresh Token</td>
+          <td>7日〜30日</td>
+          <td>Access Token再発行</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>なぜAccess Tokenを短くするか？</strong></p>
+    <ul>
+      <li>漏洩時の被害を最小化</li>
+      <li>権限変更を素早く反映</li>
+      <li>Refresh Tokenで再発行すれば不便なし</li>
+    </ul>
+  </div>
+
+  <!-- 保存場所 -->
+  <div class="card card-danger">
+    <h2>トークンの保存場所</h2>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>保存場所</th>
+          <th>XSS</th>
+          <th>CSRF</th>
+          <th>推奨</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>localStorage</td>
+          <td>脆弱</td>
+          <td>安全</td>
+          <td>非推奨</td>
+        </tr>
+        <tr>
+          <td>sessionStorage</td>
+          <td>脆弱</td>
+          <td>安全</td>
+          <td>非推奨</td>
+        </tr>
+        <tr>
+          <td>HttpOnly Cookie</td>
+          <td>安全</td>
+          <td>対策必要</td>
+          <td>推奨</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h3>NG: localStorageに保存</h3>
+        <pre><code class="language-typescript">// XSSで盗まれる可能性がある
+localStorage.setItem('token', token);
+
+// JavaScriptから読み取り可能
+const token = localStorage.getItem('token');</code></pre>
+      </div>
+      <div class="compare-good">
+        <h3>OK: HttpOnly Cookieに保存</h3>
+        <pre><code class="language-typescript">// サーバー側でCookieを設定
+res.cookie('token', token, {
+  httpOnly: true,   // JSからアクセス不可
+  secure: true,     // HTTPS必須
+  sameSite: 'strict' // CSRF対策
+});
+
+// ブラウザが自動でCookieを送信</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Refresh Token フロー -->
+  <div class="card">
+    <h2>Refresh Token フロー</h2>
+
+    <pre><code>1. ログイン
+   Client → Server: メール＋パスワード
+   Server → Client: Access Token + Refresh Token
+
+2. API呼び出し
+   Client → Server: Access Token（Authorizationヘッダー）
+   Server → Client: データ
+
+3. Access Token期限切れ
+   Client → Server: Access Token（期限切れ）
+   Server → Client: 401 Unauthorized
+
+4. トークン更新
+   Client → Server: Refresh Token
+   Server → Client: 新しいAccess Token
+
+5. 再度API呼び出し
+   Client → Server: 新しいAccess Token
+   Server → Client: データ</code></pre>
+
+    <div class="code-block">
+      <div class="code-header">トークン更新の実装</div>
+      <pre><code class="language-typescript">// トークン更新エンドポイント
+app.post('/auth/refresh', async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  try {
+    // Refresh Tokenを検証
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
+
+    // 新しいAccess Tokenを発行
+    const newAccessToken = jwt.sign(
+      { userId: decoded.userId },
+      process.env.JWT_SECRET,
+      { expiresIn: '15m' }
+    );
+
+    res.json({ accessToken: newAccessToken });
+  } catch {
+    res.status(401).json({ error: 'Invalid refresh token' });
+  }
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- アルゴリズム選択 -->
+  <div class="card card-info">
+    <h2>署名アルゴリズムの選択</h2>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>アルゴリズム</th>
+          <th>種類</th>
+          <th>推奨</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>none</td>
+          <td>なし</td>
+          <td>絶対禁止</td>
+        </tr>
+        <tr>
+          <td>HS256</td>
+          <td>対称鍵</td>
+          <td>小規模向け</td>
+        </tr>
+        <tr>
+          <td>RS256</td>
+          <td>非対称鍵</td>
+          <td>推奨（特にマイクロサービス）</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>RS256の利点：</strong></p>
+    <ul>
+      <li>秘密鍵は発行サーバーのみが持つ</li>
+      <li>公開鍵で誰でも検証できる</li>
+      <li>秘密鍵の共有が不要</li>
+    </ul>
+  </div>
+
+  <!-- クイズ1 -->
+  <div class="quiz" id="quiz-sec4-1">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 1
+    </div>
+    <p>Access Tokenの推奨有効期限は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec4-1a" style="display:none;">
+      A. 無期限
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec4-1b" style="display:none;">
+      B. 15分〜1時間
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec4-1c" style="display:none;">
+      C. 1年
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec4-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <!-- クイズ2 -->
+  <div class="quiz" id="quiz-sec4-2">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 2
+    </div>
+    <p>JWTの推奨保存場所は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec4-2a" style="display:none;">
+      A. localStorage
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec4-2b" style="display:none;">
+      B. sessionStorage
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec4-2c" style="display:none;">
+      C. HttpOnly Cookie
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec4-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <!-- クイズ3 -->
+  <div class="quiz" id="quiz-sec4-3">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 3
+    </div>
+    <p>以下のコードの問題点は？</p>
+    <div class="code-block">
+      <pre><code>const token = jwt.sign({ userId: '123' }, 'secret', { expiresIn: '365d' });
+localStorage.setItem('authToken', token);</code></pre>
+    </div>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec4-3a" style="display:none;">
+      A. jwt.signの使い方が間違っている
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec4-3b" style="display:none;">
+      B. 有効期限が長すぎる＆localStorageに保存している
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec4-3c" style="display:none;">
+      C. 問題なし
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec4-3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sec4')">
+    <span class="icon">✓</span>
+    このセクションを完了
+  </button>
+</section>
+
+<!-- sec5: OAuth2/OIDC -->
+<section id="sec5">
+  <h1>OAuth2/OIDC</h1>
+
+  <p class="lead">
+    <strong>OAuth2</strong>は認可の標準規格、<strong>OIDC</strong>は認証の標準規格です。
+    「Googleでログイン」はこれらを使っています。
+  </p>
+
+  <!-- OAuth2とは -->
+  <div class="card card-info">
+    <h2>OAuth2とは？</h2>
+
+    <p><strong>たとえ話：</strong>「代理人への権限委譲」</p>
+
+    <pre><code>あなたが家（Googleアカウント）を持っている
+→ 清掃業者（サードパーティアプリ）に掃除を頼みたい
+→ 合鍵（アクセストークン）を渡す
+→ 清掃業者は掃除だけできる（限定的な権限）
+→ 金庫は開けられない（パスワードは渡さない）</code></pre>
+
+    <p><strong>メリット：</strong></p>
+    <ul>
+      <li>パスワードを第三者に渡さない</li>
+      <li>必要な権限だけ委譲できる</li>
+      <li>いつでも権限を取り消せる</li>
+    </ul>
+  </div>
+
+  <!-- 認可コードフロー -->
+  <div class="card">
+    <h2>認可コードフロー（最も安全）</h2>
+
+    <pre><code>1. ユーザーが「Googleでログイン」をクリック
+   アプリ → Google: 「認可をください」
+
+2. Googleがログイン画面を表示
+   ユーザー → Google: 「ログインします」
+
+3. 同意画面
+   Google → ユーザー: 「このアプリに許可しますか？」
+   ユーザー → Google: 「許可します」
+
+4. 認可コードを発行
+   Google → アプリ: 認可コード（一時的な引換券）
+
+5. アクセストークンと交換
+   アプリ（バックエンド） → Google: 認可コード + クライアントシークレット
+   Google → アプリ: アクセストークン + IDトークン
+
+6. ユーザー情報を取得
+   アプリ → Google: アクセストークン
+   Google → アプリ: ユーザー情報</code></pre>
+
+    <p><strong>なぜバックエンドで交換するか？</strong></p>
+    <ul>
+      <li>クライアントシークレットを隠すため</li>
+      <li>フロントエンドに秘密鍵を置いてはいけない</li>
+    </ul>
+  </div>
+
+  <!-- OIDCとは -->
+  <div class="card">
+    <h2>OIDC（OpenID Connect）とは？</h2>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>項目</th>
+          <th>OAuth2</th>
+          <th>OIDC</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>目的</td>
+          <td>認可（Authorization）</td>
+          <td>認証（Authentication）</td>
+        </tr>
+        <tr>
+          <td>得られるもの</td>
+          <td>アクセストークン</td>
+          <td>IDトークン（JWT）</td>
+        </tr>
+        <tr>
+          <td>わかること</td>
+          <td>何ができるか</td>
+          <td>誰であるか</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>OIDCはOAuth2の拡張</strong></p>
+    <p>OAuth2 + ユーザー認証機能 = OIDC</p>
+  </div>
+
+  <!-- IDaaS -->
+  <div class="card card-info">
+    <h2>IDaaS（Identity as a Service）</h2>
+
+    <p><strong>認証は自前実装しない！</strong>IDaaSを使いましょう。</p>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>サービス</th>
+          <th>特徴</th>
+          <th>無料枠</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Auth0</td>
+          <td>最大手、豊富な機能</td>
+          <td>7,500MAU</td>
+        </tr>
+        <tr>
+          <td>Clerk</td>
+          <td>DX重視、React向け</td>
+          <td>10,000MAU</td>
+        </tr>
+        <tr>
+          <td>Supabase Auth</td>
+          <td>Supabase統合</td>
+          <td>50,000MAU</td>
+        </tr>
+        <tr>
+          <td>Firebase Auth</td>
+          <td>Google製、安定</td>
+          <td>無制限</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>IDaaSを使う理由：</strong></p>
+    <ul>
+      <li>セキュリティの専門家が開発・運用</li>
+      <li>脆弱性対応が迅速</li>
+      <li>多要素認証、Passkey対応</li>
+      <li>自前実装はバグを生みやすい</li>
+    </ul>
+  </div>
+
+  <!-- よくある間違い -->
+  <div class="card card-danger">
+    <h2>レビューで見抜くべき問題</h2>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h3>NG: 認証を自前実装</h3>
+        <pre><code class="language-typescript">// 独自の認証ロジック（危険！）
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  // 脆弱性が潜む可能性大...
+});</code></pre>
+      </div>
+      <div class="compare-good">
+        <h3>OK: IDaaSを使用</h3>
+        <pre><code class="language-typescript">// Clerkを使用（例）
+import { clerkMiddleware } from '@clerk/express';
+app.use(clerkMiddleware());
+
+// 認証済みユーザーの取得
+app.get('/profile', (req, res) => {
+  const user = req.auth.userId;
+});</code></pre>
+      </div>
+    </div>
+
+    <p><strong>指摘例：</strong></p>
+    <ul>
+      <li>「認証の自前実装は避け、IDaaSを検討してください」</li>
+      <li>「クライアントシークレットがフロントエンドにあります」</li>
+      <li>「Implicit Flowは非推奨です。認可コードフローを使用してください」</li>
+    </ul>
+  </div>
+
+  <!-- クイズ -->
+  <div class="quiz" id="quiz-sec5-1">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ
+    </div>
+    <p>OAuth2の認可コードフローで、なぜアクセストークンの交換をバックエンドで行うのですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec5-1a" style="display:none;">
+      A. フロントエンドでは処理が遅いから
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec5-1b" style="display:none;">
+      B. クライアントシークレットをフロントエンドに置けないから
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec5-1c" style="display:none;">
+      C. GoogleのAPIがバックエンドからしか呼べないから
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec5-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sec5')">
+    <span class="icon">✓</span>
+    このセクションを完了
+  </button>
+</section>
+
+<!-- sec6: Passkey概要 -->
+<section id="sec6">
+  <h1>Passkey概要</h1>
+
+  <p class="lead">
+    <strong>Passkey</strong>は「パスワードなし認証」の新しい標準です。
+    指紋や顔認証でログインでき、フィッシングに強い設計です。
+  </p>
+
+  <!-- Passkeyとは -->
+  <div class="card card-info">
+    <h2>Passkeyとは？</h2>
+
+    <p><strong>たとえ話：</strong>「デジタルな鍵と錠前」</p>
+
+    <ul>
+      <li>秘密鍵（鍵）：デバイスに安全に保存</li>
+      <li>公開鍵（錠前）：サーバーに登録</li>
+      <li>生体認証で秘密鍵を使用</li>
+      <li>パスワードを覚える必要なし</li>
+    </ul>
+
+    <p><strong>Passkeyの利点：</strong></p>
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>項目</th>
+          <th>パスワード</th>
+          <th>Passkey</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>フィッシング</td>
+          <td>脆弱</td>
+          <td>耐性あり</td>
+        </tr>
+        <tr>
+          <td>使い回し</td>
+          <td>よくある</td>
+          <td>不可能</td>
+        </tr>
+        <tr>
+          <td>漏洩リスク</td>
+          <td>サーバー攻撃で漏洩</td>
+          <td>秘密鍵はデバイス内</td>
+        </tr>
+        <tr>
+          <td>利便性</td>
+          <td>覚える必要</td>
+          <td>指紋/顔だけ</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- WebAuthn -->
+  <div class="card">
+    <h2>WebAuthn（ウェブオーセン）</h2>
+
+    <p><strong>WebAuthn</strong>は、Passkeyを実現するWeb標準APIです。</p>
+
+    <div class="code-block">
+      <div class="code-header">Passkey登録（簡略化）</div>
+      <pre><code class="language-typescript">// 1. サーバーからチャレンジを取得
+const options = await fetch('/webauthn/register-options').then(r => r.json());
+
+// 2. ブラウザAPIで認証情報を作成
+const credential = await navigator.credentials.create({
+  publicKey: options
+});
+
+// 3. 公開鍵をサーバーに登録
+await fetch('/webauthn/register', {
+  method: 'POST',
+  body: JSON.stringify(credential)
+});</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">Passkeyログイン（簡略化）</div>
+      <pre><code class="language-typescript">// 1. サーバーからチャレンジを取得
+const options = await fetch('/webauthn/login-options').then(r => r.json());
+
+// 2. ブラウザAPIで認証
+const assertion = await navigator.credentials.get({
+  publicKey: options
+});
+
+// 3. サーバーで検証
+await fetch('/webauthn/login', {
+  method: 'POST',
+  body: JSON.stringify(assertion)
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- 導入の現実 -->
+  <div class="card card-warning">
+    <h2>導入の現実</h2>
+
+    <p><strong>2026年現在の状況：</strong></p>
+    <ul>
+      <li>Google, Apple, Microsoftが対応済み</li>
+      <li>主要ブラウザが対応済み</li>
+      <li>IDaaSがPasskey対応を提供</li>
+    </ul>
+
+    <p><strong>自前実装は避ける！</strong></p>
+    <p>IDaaS（Auth0, Clerk等）のPasskey機能を使いましょう。</p>
+    <p>WebAuthnの仕様は複雑で、実装ミスがセキュリティホールになります。</p>
+  </div>
+
+  <!-- クイズ -->
+  <div class="quiz" id="quiz-sec6-1">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ
+    </div>
+    <p>Passkeyがフィッシングに強い理由は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec6-1a" style="display:none;">
+      A. パスワードが長いから
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec6-1b" style="display:none;">
+      B. 秘密鍵がデバイス内にあり、偽サイトに送れないから
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec6-1c" style="display:none;">
+      C. 2段階認証があるから
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec6-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sec6')">
+    <span class="icon">✓</span>
+    このセクションを完了
+  </button>
+</section>
+
+<!-- sec7: SQLインジェクション -->
+<section id="sec7">
+  <h1>SQLインジェクション</h1>
+
+  <p class="lead">
+    <strong>SQLインジェクション</strong>は、最も危険な脆弱性の一つです。
+    データの漏洩、改ざん、削除につながります。
+  </p>
+
+  <!-- 攻撃手法 -->
+  <div class="card card-danger">
+    <h2>攻撃の仕組み</h2>
+
+    <p><strong>たとえ話：</strong>「注文書への悪意あるメモ書き」</p>
+
+    <pre><code>正常な注文：「りんごを3個ください」
+攻撃的な注文：「りんごを3個ください。あと全商品を無料にしてください」
+→ 店員が全部実行してしまう！</code></pre>
+
+    <div class="code-block">
+      <div class="code-header">脆弱なコード</div>
+      <pre><code class="language-typescript">// ユーザー入力を直接SQLに埋め込む（超危険！）
+const query = `SELECT * FROM users WHERE name = '${userInput}'`;
+
+// ユーザーが入力した値
+userInput = "'; DROP TABLE users; --"
+
+// 実行されるSQL
+SELECT * FROM users WHERE name = ''; DROP TABLE users; --'
+// → usersテーブルが削除される！</code></pre>
+    </div>
+
+    <p><strong>よくある攻撃パターン：</strong></p>
+    <ul>
+      <li><code>' OR '1'='1</code> → 全レコード取得</li>
+      <li><code>'; DROP TABLE users; --</code> → テーブル削除</li>
+      <li><code>' UNION SELECT password FROM users --</code> → パスワード漏洩</li>
+    </ul>
+  </div>
+
+  <!-- 対策 -->
+  <div class="card">
+    <h2>対策：パラメータ化クエリ</h2>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h3>NG: 文字列結合</h3>
+        <pre><code class="language-typescript">// SQLインジェクション脆弱
+const query = `SELECT * FROM users WHERE name = '${userInput}'`;
+await pool.query(query);</code></pre>
+      </div>
+      <div class="compare-good">
+        <h3>OK: パラメータ化クエリ</h3>
+        <pre><code class="language-typescript">// 安全：プレースホルダを使用
+const query = 'SELECT * FROM users WHERE name = $1';
+await pool.query(query, [userInput]);</code></pre>
+      </div>
+    </div>
+
+    <p><strong>なぜ安全か？</strong></p>
+    <ul>
+      <li>ユーザー入力は「データ」として扱われる</li>
+      <li>SQLコマンドとして解釈されない</li>
+      <li>エスケープ処理が自動で行われる</li>
+    </ul>
+  </div>
+
+  <!-- ORMの使用 -->
+  <div class="card card-info">
+    <h2>ORM使用時の注意</h2>
+
+    <p>Prisma/DrizzleなどのORMは基本的に安全です。</p>
+    <p><strong>ただし、生SQL機能に注意！</strong></p>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h3>NG: 生SQLで文字列結合</h3>
+        <pre><code class="language-typescript">// Prismaでも生SQLは危険
+const users = await prisma.$queryRawUnsafe(
+  `SELECT * FROM users WHERE name = '${userInput}'`
+);</code></pre>
+      </div>
+      <div class="compare-good">
+        <h3>OK: タグ付きテンプレート</h3>
+        <pre><code class="language-typescript">// Prismaの安全な生SQL
+const users = await prisma.$queryRaw`
+  SELECT * FROM users WHERE name = ${userInput}
+`;</code></pre>
+      </div>
+    </div>
+
+    <div class="compare">
+      <div class="compare-good">
+        <h3>OK: ORMのメソッドを使用</h3>
+        <pre><code class="language-typescript">// Prismaの標準メソッド（安全）
+const users = await prisma.user.findMany({
+  where: { name: userInput }
+});</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- レビューポイント -->
+  <div class="card card-danger">
+    <h2>レビューで見抜くべきポイント</h2>
+
+    <p><strong>危険なパターンを検索：</strong></p>
+    <ul>
+      <li><code>${</code> や <code>+</code> がSQL文字列内にある</li>
+      <li><code>$queryRawUnsafe</code>、<code>raw()</code> の使用</li>
+      <li>テンプレートリテラルでのSQL構築</li>
+    </ul>
+
+    <p><strong>指摘例：</strong></p>
+    <ul>
+      <li>「SQLインジェクション脆弱性があります」</li>
+      <li>「パラメータ化クエリを使用してください」</li>
+      <li>「ORMのメソッドを使用すれば安全です」</li>
+    </ul>
+  </div>
+
+  <!-- クイズ1 -->
+  <div class="quiz" id="quiz-sec7-1">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 1
+    </div>
+    <p>以下のコードの問題点は？</p>
+    <div class="code-block">
+      <pre><code>const query = `SELECT * FROM products WHERE category = '${category}'`;
+await db.query(query);</code></pre>
+    </div>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec7-1a" style="display:none;">
+      A. SQLインジェクション脆弱性がある
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec7-1b" style="display:none;">
+      B. 構文エラーがある
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec7-1c" style="display:none;">
+      C. 問題なし
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec7-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <!-- クイズ2 -->
+  <div class="quiz" id="quiz-sec7-2">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 2
+    </div>
+    <p>SQLインジェクション対策として正しいのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec7-2a" style="display:none;">
+      A. 入力値を文字列として結合する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec7-2b" style="display:none;">
+      B. パラメータ化クエリ（プレースホルダ）を使う
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec7-2c" style="display:none;">
+      C. 入力値を大文字に変換する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec7-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sec7')">
+    <span class="icon">✓</span>
+    このセクションを完了
+  </button>
+</section>
+
+<!-- sec8: XSS対策 -->
+<section id="sec8">
+  <h1>XSS対策</h1>
+
+  <p class="lead">
+    <strong>XSS（クロスサイトスクリプティング）</strong>は、
+    悪意のあるスクリプトをWebページに注入する攻撃です。
+  </p>
+
+  <!-- XSSとは -->
+  <div class="card card-danger">
+    <h2>XSSとは？</h2>
+
+    <p><strong>たとえ話：</strong>「掲示板への悪意ある落書き」</p>
+
+    <pre><code>正常な投稿：「こんにちは！」
+攻撃的な投稿：「&lt;script&gt;document.cookie&lt;/script&gt;」
+→ 見た人のブラウザでスクリプトが実行される！</code></pre>
+
+    <p><strong>被害例：</strong></p>
+    <ul>
+      <li>Cookie（認証トークン）の窃取</li>
+      <li>偽のログインフォーム表示</li>
+      <li>ユーザーの操作を勝手に実行</li>
+    </ul>
+  </div>
+
+  <!-- 攻撃パターン -->
+  <div class="card">
+    <h2>XSSの種類</h2>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>種類</th>
+          <th>説明</th>
+          <th>例</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>反射型</td>
+          <td>URLパラメータ経由</td>
+          <td><code>?q=&lt;script&gt;...</code></td>
+        </tr>
+        <tr>
+          <td>格納型</td>
+          <td>DBに保存されて実行</td>
+          <td>掲示板への投稿</td>
+        </tr>
+        <tr>
+          <td>DOM型</td>
+          <td>JSでDOMを操作時</td>
+          <td><code>innerHTML = userInput</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 対策 -->
+  <div class="card">
+    <h2>対策1：出力エスケープ</h2>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h3>NG: innerHTML直接代入</h3>
+        <pre><code class="language-typescript">// スクリプトが実行される！
+element.innerHTML = userInput;
+
+// Reactでも同様に危険
+&lt;div dangerouslySetInnerHTML={{ __html: userInput }} /&gt;</code></pre>
+      </div>
+      <div class="compare-good">
+        <h3>OK: textContentを使用</h3>
+        <pre><code class="language-typescript">// テキストとして扱われる（安全）
+element.textContent = userInput;
+
+// Reactはデフォルトでエスケープ
+&lt;div&gt;{userInput}&lt;/div&gt;  // 安全</code></pre>
+      </div>
+    </div>
+
+    <p><strong>エスケープとは？</strong></p>
+    <pre><code>入力: &lt;script&gt;alert('XSS')&lt;/script&gt;
+↓ エスケープ
+出力: &amp;lt;script&amp;gt;alert('XSS')&amp;lt;/script&amp;gt;
+→ HTMLタグとして解釈されず、文字として表示される</code></pre>
+  </div>
+
+  <!-- CSP -->
+  <div class="card card-info">
+    <h2>対策2：CSP（Content Security Policy）</h2>
+
+    <p><strong>CSP</strong>は、許可されたスクリプトのみ実行を許可するヘッダーです。</p>
+
+    <div class="code-block">
+      <div class="code-header">CSPヘッダーの設定</div>
+      <pre><code class="language-typescript">// Expressでの設定
+app.use((req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self'"
+  );
+  next();
+});
+
+// または helmet を使用（推奨）
+import helmet from 'helmet';
+app.use(helmet());</code></pre>
+    </div>
+
+    <p><strong>CSPの効果：</strong></p>
+    <ul>
+      <li>インラインスクリプトを禁止</li>
+      <li>外部スクリプトの読み込みを制限</li>
+      <li>eval()の実行を禁止</li>
+    </ul>
+  </div>
+
+  <!-- レビューポイント -->
+  <div class="card card-danger">
+    <h2>レビューで見抜くべきポイント</h2>
+
+    <p><strong>危険なパターン：</strong></p>
+    <ul>
+      <li><code>innerHTML = ...</code></li>
+      <li><code>document.write(...)</code></li>
+      <li><code>dangerouslySetInnerHTML</code></li>
+      <li><code>eval(userInput)</code></li>
+    </ul>
+
+    <p><strong>指摘例：</strong></p>
+    <ul>
+      <li>「innerHTMLの使用はXSS脆弱性を生みます」</li>
+      <li>「textContentを使用してください」</li>
+      <li>「CSPヘッダーの設定を検討してください」</li>
+    </ul>
+  </div>
+
+  <!-- クイズ1 -->
+  <div class="quiz" id="quiz-sec8-1">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 1
+    </div>
+    <p>以下のコードの問題点は？</p>
+    <div class="code-block">
+      <pre><code>document.getElementById('content').innerHTML = userComment;</code></pre>
+    </div>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec8-1a" style="display:none;">
+      A. XSS脆弱性がある
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec8-1b" style="display:none;">
+      B. SQLインジェクション脆弱性がある
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec8-1c" style="display:none;">
+      C. 問題なし
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec8-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <!-- クイズ2 -->
+  <div class="quiz" id="quiz-sec8-2">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 2
+    </div>
+    <p>ReactでXSS脆弱性を生む可能性があるのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec8-2a" style="display:none;">
+      A. <code>&lt;div&gt;{userInput}&lt;/div&gt;</code>
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec8-2b" style="display:none;">
+      B. <code>&lt;div dangerouslySetInnerHTML={{ __html: userInput }} /&gt;</code>
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec8-2c" style="display:none;">
+      C. <code>&lt;input value={userInput} /&gt;</code>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec8-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sec8')">
+    <span class="icon">✓</span>
+    このセクションを完了
+  </button>
+</section>
+
+<!-- sec9: CSRF対策 -->
+<section id="sec9">
+  <h1>CSRF対策</h1>
+
+  <p class="lead">
+    <strong>CSRF（クロスサイトリクエストフォージェリ）</strong>は、
+    ユーザーの意図しない操作を実行させる攻撃です。
+  </p>
+
+  <!-- CSRFとは -->
+  <div class="card card-danger">
+    <h2>CSRFとは？</h2>
+
+    <p><strong>たとえ話：</strong>「偽の申込書への署名」</p>
+
+    <pre><code>1. 被害者がネットバンクにログイン中
+2. 攻撃者が悪意あるサイトへ誘導
+3. 悪意あるサイトにこんなフォームが：
+   &lt;form action="https://bank.com/transfer" method="POST"&gt;
+     &lt;input name="to" value="attacker" /&gt;
+     &lt;input name="amount" value="1000000" /&gt;
+   &lt;/form&gt;
+   &lt;script&gt;document.forms[0].submit();&lt;/script&gt;
+4. 被害者のブラウザが自動的にリクエスト送信
+5. Cookieも一緒に送られ、銀行は正規のリクエストと判断
+6. 100万円が攻撃者に送金される！</code></pre>
+
+    <p><strong>ポイント：</strong></p>
+    <ul>
+      <li>被害者は悪意あるサイトを見ただけ</li>
+      <li>認証Cookieが自動送信される</li>
+      <li>サーバーは正規リクエストと区別できない</li>
+    </ul>
+  </div>
+
+  <!-- 対策 -->
+  <div class="card">
+    <h2>対策1：CSRFトークン</h2>
+
+    <p>サーバーが発行した<strong>秘密のトークン</strong>をフォームに埋め込みます。</p>
+
+    <div class="code-block">
+      <div class="code-header">CSRFトークンの仕組み</div>
+      <pre><code class="language-typescript">// サーバー側：トークン生成
+import crypto from 'crypto';
+
+app.get('/form', (req, res) => {
+  const csrfToken = crypto.randomBytes(32).toString('hex');
+  req.session.csrfToken = csrfToken;
+
+  res.send(`
+    &lt;form action="/transfer" method="POST"&gt;
+      &lt;input type="hidden" name="_csrf" value="${csrfToken}" /&gt;
+      &lt;input name="amount" /&gt;
+      &lt;button&gt;送金&lt;/button&gt;
+    &lt;/form&gt;
+  `);
+});
+
+// サーバー側：トークン検証
+app.post('/transfer', (req, res) => {
+  if (req.body._csrf !== req.session.csrfToken) {
+    return res.status(403).json({ error: 'Invalid CSRF token' });
+  }
+  // 処理を続行
+});</code></pre>
+    </div>
+
+    <p><strong>なぜ効果的か？</strong></p>
+    <ul>
+      <li>攻撃者はトークンを知らない</li>
+      <li>トークンなしのリクエストは拒否される</li>
+    </ul>
+  </div>
+
+  <!-- SameSite Cookie -->
+  <div class="card card-info">
+    <h2>対策2：SameSite Cookie</h2>
+
+    <p><strong>SameSite属性</strong>は、Cookieを同一サイトからのみ送信する設定です。</p>
+
+    <div class="code-block">
+      <div class="code-header">SameSite Cookieの設定</div>
+      <pre><code class="language-typescript">res.cookie('sessionId', sessionId, {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'strict'  // または 'lax'
+});</code></pre>
+    </div>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>値</th>
+          <th>動作</th>
+          <th>推奨</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>strict</td>
+          <td>同一サイトからのみ送信</td>
+          <td>最も安全</td>
+        </tr>
+        <tr>
+          <td>lax</td>
+          <td>トップレベルナビ時は送信</td>
+          <td>バランス良い（デフォルト）</td>
+        </tr>
+        <tr>
+          <td>none</td>
+          <td>常に送信</td>
+          <td>非推奨（CSRF脆弱）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- レビューポイント -->
+  <div class="card card-danger">
+    <h2>レビューで見抜くべきポイント</h2>
+
+    <p><strong>危険なパターン：</strong></p>
+    <ul>
+      <li>フォームにCSRFトークンがない</li>
+      <li>SameSite属性が未設定</li>
+      <li>重要な操作にGETを使用</li>
+    </ul>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h3>NG: GETで重要操作</h3>
+        <pre><code class="language-typescript">// GETでデータ変更（CSRF脆弱）
+app.get('/delete-account', (req, res) => {
+  deleteAccount(req.user.id);
+});</code></pre>
+      </div>
+      <div class="compare-good">
+        <h3>OK: POSTで重要操作</h3>
+        <pre><code class="language-typescript">// POSTでデータ変更 + CSRFトークン
+app.post('/delete-account', csrfProtection, (req, res) => {
+  deleteAccount(req.user.id);
+});</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- クイズ -->
+  <div class="quiz" id="quiz-sec9-1">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ
+    </div>
+    <p>CSRF対策として効果的なのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec9-1a" style="display:none;">
+      A. パスワードを長くする
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec9-1b" style="display:none;">
+      B. CSRFトークンとSameSite Cookieを使う
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec9-1c" style="display:none;">
+      C. HTTPSを使う
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec9-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sec9')">
+    <span class="icon">✓</span>
+    このセクションを完了
+  </button>
+</section>
+
+<!-- sec10: セキュリティヘッダー -->
+<section id="sec10">
+  <h1>セキュリティヘッダー</h1>
+
+  <p class="lead">
+    HTTPヘッダーでセキュリティを強化できます。
+    <strong>helmet</strong>ライブラリで簡単に設定しましょう。
+  </p>
+
+  <!-- helmet -->
+  <div class="card">
+    <h2>helmet（ヘルメット）</h2>
+
+    <p><strong>helmet</strong>は、セキュリティヘッダーを一括設定するExpressミドルウェアです。</p>
+
+    <div class="code-block">
+      <div class="code-header">helmetの使い方</div>
+      <pre><code class="language-typescript">import express from 'express';
+import helmet from 'helmet';
+
+const app = express();
+
+// 1行で複数のセキュリティヘッダーを設定
+app.use(helmet());
+
+// カスタマイズも可能
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "trusted-cdn.com"],
+    }
+  }
+}));</code></pre>
+    </div>
+  </div>
+
+  <!-- 主要なヘッダー -->
+  <div class="card">
+    <h2>主要なセキュリティヘッダー</h2>
+
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>ヘッダー</th>
+          <th>効果</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Content-Security-Policy</td>
+          <td>XSS対策、許可するリソースを制限</td>
+        </tr>
+        <tr>
+          <td>X-Content-Type-Options</td>
+          <td>MIMEタイプのスニッフィング防止</td>
+        </tr>
+        <tr>
+          <td>X-Frame-Options</td>
+          <td>クリックジャッキング防止</td>
+        </tr>
+        <tr>
+          <td>Strict-Transport-Security</td>
+          <td>HTTPS強制</td>
+        </tr>
+        <tr>
+          <td>X-XSS-Protection</td>
+          <td>ブラウザのXSSフィルター有効化</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CORS -->
+  <div class="card card-info">
+    <h2>CORS（Cross-Origin Resource Sharing）</h2>
+
+    <p><strong>CORS</strong>は、異なるオリジンからのリクエストを制御する仕組みです。</p>
+
+    <div class="code-block">
+      <div class="code-header">CORSの設定</div>
+      <pre><code class="language-typescript">import cors from 'cors';
+
+// 特定のオリジンのみ許可（推奨）
+app.use(cors({
+  origin: 'https://myapp.com',
+  credentials: true  // Cookieを含める場合
+}));
+
+// すべてのオリジンを許可（開発用、本番は非推奨）
+app.use(cors({
+  origin: '*'
+}));</code></pre>
+    </div>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h3>NG: 本番で全オリジン許可</h3>
+        <pre><code class="language-typescript">// 誰でもAPIを叩ける
+app.use(cors({ origin: '*' }));</code></pre>
+      </div>
+      <div class="compare-good">
+        <h3>OK: 特定オリジンのみ</h3>
+        <pre><code class="language-typescript">// 自社サイトからのみ
+app.use(cors({
+  origin: ['https://myapp.com', 'https://admin.myapp.com']
+}));</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- HTTPS -->
+  <div class="card">
+    <h2>HTTPS必須化</h2>
+
+    <p><strong>本番環境では必ずHTTPSを使用してください。</strong></p>
+
+    <p><strong>HTTPSの効果：</strong></p>
+    <ul>
+      <li>通信の暗号化</li>
+      <li>改ざん検知</li>
+      <li>サーバー認証</li>
+    </ul>
+
+    <div class="code-block">
+      <div class="code-header">HTTPSリダイレクト</div>
+      <pre><code class="language-typescript">// HTTPをHTTPSにリダイレクト
+app.use((req, res, next) => {
+  if (req.header('x-forwarded-proto') !== 'https') {
+    return res.redirect(`https://${req.header('host')}${req.url}`);
+  }
+  next();
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- レビューポイント -->
+  <div class="card card-danger">
+    <h2>レビューで見抜くべきポイント</h2>
+
+    <p><strong>チェックリスト：</strong></p>
+    <ul>
+      <li>helmetが使われているか</li>
+      <li>CORSが適切に設定されているか（origin: '*' は危険）</li>
+      <li>本番でHTTPSが強制されているか</li>
+      <li>Cookieにsecure/httpOnly/sameSiteがあるか</li>
+    </ul>
+
+    <div class="compare">
+      <div class="compare-bad">
+        <h3>NG: セキュリティヘッダーなし</h3>
+        <pre><code class="language-typescript">const app = express();
+app.listen(3000);
+// ヘッダーが何も設定されていない</code></pre>
+      </div>
+      <div class="compare-good">
+        <h3>OK: helmet使用</h3>
+        <pre><code class="language-typescript">import helmet from 'helmet';
+import cors from 'cors';
+
+const app = express();
+app.use(helmet());
+app.use(cors({ origin: 'https://myapp.com' }));</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 総合チェックリスト -->
+  <div class="card card-info">
+    <h2>Phase 4 セキュリティチェックリスト</h2>
+
+    <p><strong>認証・認可</strong></p>
+    <ul>
+      <li>認証と認可を両方実装しているか</li>
+      <li>パスワードはbcryptでハッシュ化しているか</li>
+      <li>JWTは検証（verify）しているか（decodeではない）</li>
+      <li>トークンはHttpOnly Cookieに保存しているか</li>
+    </ul>
+
+    <p><strong>脆弱性対策</strong></p>
+    <ul>
+      <li>SQLインジェクション対策（パラメータ化クエリ）</li>
+      <li>XSS対策（エスケープ、CSP）</li>
+      <li>CSRF対策（トークン、SameSite）</li>
+    </ul>
+
+    <p><strong>インフラ</strong></p>
+    <ul>
+      <li>helmetを使用しているか</li>
+      <li>CORSが適切に設定されているか</li>
+      <li>HTTPSを使用しているか</li>
+      <li>機密情報は環境変数に保存しているか</li>
+    </ul>
+  </div>
+
+  <!-- クイズ1 -->
+  <div class="quiz" id="quiz-sec10-1">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 1
+    </div>
+    <p>helmetライブラリの役割は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec10-1a" style="display:none;">
+      A. セキュリティヘッダーを一括設定する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec10-1b" style="display:none;">
+      B. パスワードをハッシュ化する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec10-1c" style="display:none;">
+      C. JWTを生成する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec10-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <!-- クイズ2 -->
+  <div class="quiz" id="quiz-sec10-2">
+    <div class="quiz-title">
+      <span class="icon">?</span>
+      確認クイズ 2
+    </div>
+    <p>本番環境のCORS設定として適切なのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec10-2a" style="display:none;">
+      A. <code>origin: '*'</code>（全オリジン許可）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sec10-2b" style="display:none;">
+      B. <code>origin: 'https://myapp.com'</code>（特定オリジンのみ）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sec10-2c" style="display:none;">
+      C. CORSは設定しない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sec10-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <!-- Phase 4 完了 -->
+  <div class="card card-success">
+    <h2>Phase 4 完了！</h2>
+
+    <p>認証・セキュリティの学習を完了しました。以下を習得しました：</p>
+
+    <ul>
+      <li><strong>認証 vs 認可</strong>：混同しない、両方実装する</li>
+      <li><strong>パスワード管理</strong>：bcryptでハッシュ化</li>
+      <li><strong>JWT</strong>：verifyで検証、HttpOnly Cookieに保存</li>
+      <li><strong>OAuth2/OIDC</strong>：IDaaSを活用</li>
+      <li><strong>Passkey</strong>：パスワードレスの未来</li>
+      <li><strong>SQLインジェクション</strong>：パラメータ化クエリ</li>
+      <li><strong>XSS</strong>：エスケープ、CSP</li>
+      <li><strong>CSRF</strong>：トークン、SameSite</li>
+      <li><strong>セキュリティヘッダー</strong>：helmet、CORS</li>
+    </ul>
+
+    <p><strong>次のステップ → Phase 5: テスト・品質</strong></p>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sec10')">
+    <span class="icon">✓</span>
+    Phase 4を完了
+  </button>
+</section>

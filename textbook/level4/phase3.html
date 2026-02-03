@@ -1,0 +1,2279 @@
+<!-- ============================================
+     Level 4 Phase 3: データベース
+     ============================================ -->
+
+<!-- db1: RDBの基本 -->
+<section id="db1">
+  <h1>RDBの基本</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>RDB（リレーショナルデータベース）とは</li>
+      <li>テーブル、行、列の概念</li>
+      <li>主キー（PK）と外部キー（FK）</li>
+    </ul>
+  </div>
+
+  <h2>RDBとは何か</h2>
+
+  <p>
+    <strong>RDB</strong>は「Relational Database」の略です。
+  </p>
+
+  <p>
+    日本語では「関係データベース」と呼びます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      たとえ話：図書館
+    </div>
+    <p>
+      RDBは「<strong>図書館の本棚</strong>」に似ています。
+    </p>
+    <ul>
+      <li><strong>テーブル</strong> = 本棚（ジャンル別に分類）</li>
+      <li><strong>行（レコード）</strong> = 1冊の本</li>
+      <li><strong>列（カラム）</strong> = 本の情報（タイトル、著者、ISBN）</li>
+    </ul>
+  </div>
+
+  <h2>テーブル、行、列</h2>
+
+  <p>
+    RDBはデータを「<strong>表形式</strong>」で管理します。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      usersテーブルの例
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-top:8px;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border-light);background:var(--bg-secondary);">
+          <th style="padding:12px;text-align:left;">id</th>
+          <th style="padding:12px;text-align:left;">name</th>
+          <th style="padding:12px;text-align:left;">email</th>
+          <th style="padding:12px;text-align:left;">age</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">1</td>
+          <td style="padding:12px;">田中太郎</td>
+          <td style="padding:12px;">tanaka@example.com</td>
+          <td style="padding:12px;">25</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">2</td>
+          <td style="padding:12px;">山田花子</td>
+          <td style="padding:12px;">yamada@example.com</td>
+          <td style="padding:12px;">30</td>
+        </tr>
+        <tr>
+          <td style="padding:12px;">3</td>
+          <td style="padding:12px;">佐藤次郎</td>
+          <td style="padding:12px;">sato@example.com</td>
+          <td style="padding:12px;">22</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:12px;margin-bottom:0;">
+      <strong>行（Row/Record）</strong>: 横方向。1人分のデータ。<br>
+      <strong>列（Column/Field）</strong>: 縦方向。データの種類。
+    </p>
+  </div>
+
+  <h2>主キー（Primary Key）</h2>
+
+  <p>
+    <strong>主キー</strong>は「各行を一意に識別する」列です。
+  </p>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">🔑</span>
+      主キーのルール
+    </div>
+    <ul>
+      <li><strong>一意</strong>: 重複しない</li>
+      <li><strong>NOT NULL</strong>: 空にできない</li>
+      <li><strong>変更しない</strong>: 一度決めたら変えない</li>
+    </ul>
+    <p style="margin:0;">
+      例: ユーザーID、注文番号、商品コード
+    </p>
+  </div>
+
+  <pre><code class="language-sql">-- 主キーの定義
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,  -- 主キー（自動採番）
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL
+);</code></pre>
+
+  <h2>外部キー（Foreign Key）</h2>
+
+  <p>
+    <strong>外部キー</strong>は「他のテーブルを参照する」列です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔗</span>
+      テーブル間の関係
+    </div>
+    <p style="margin-bottom:12px;">
+      「投稿」は「ユーザー」に属する関係を表現します。
+    </p>
+<pre><code class="language-sql">-- postsテーブル
+CREATE TABLE posts (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  user_id INT REFERENCES users(id),  -- 外部キー
+  created_at TIMESTAMP DEFAULT NOW()
+);</code></pre>
+    <p style="margin:0;">
+      <code>user_id</code>は<code>users.id</code>を参照しています。
+    </p>
+  </div>
+
+  <h2>見抜くべき問題</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <div class="compare-box">
+      <div class="compare-bad">
+        <div class="compare-title">❌ 外部キー制約なし</div>
+<pre><code class="language-sql">-- 参照整合性が保証されない
+CREATE TABLE posts (
+  id SERIAL PRIMARY KEY,
+  user_id INT  -- REFERENCESがない！
+);</code></pre>
+        <p>存在しないユーザーを参照できてしまう</p>
+      </div>
+      <div class="compare-good">
+        <div class="compare-title">⭕ 外部キー制約あり</div>
+<pre><code class="language-sql">-- 参照整合性が保証される
+CREATE TABLE posts (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id)
+    ON DELETE CASCADE
+);</code></pre>
+        <p>存在しないユーザーは参照できない</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-db1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>主キー（Primary Key）の条件として正しくないものは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db1" style="display:none;">
+      A. 一意（重複しない）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db1" style="display:none;">
+      B. NULLを許可しない
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db1" style="display:none;">
+      C. 後から自由に変更できる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('db1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- db2: SQL基礎 -->
+<section id="db2">
+  <h1>SQL基礎</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>CRUD操作（SELECT/INSERT/UPDATE/DELETE）</li>
+      <li>JOIN（テーブル結合）</li>
+      <li>よくある間違いと対策</li>
+    </ul>
+  </div>
+
+  <h2>SQLとは</h2>
+
+  <p>
+    <strong>SQL</strong>は「Structured Query Language」の略です。
+  </p>
+
+  <p>
+    データベースに「問い合わせ」をする言語です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💬</span>
+      SQLの語源
+    </div>
+    <p style="margin:0;">
+      「Query（クエリ）」は「質問」という意味です。<br>
+      データベースに質問して、答えをもらうイメージです。
+    </p>
+  </div>
+
+  <h2>CRUD操作</h2>
+
+  <p>
+    データ操作の基本は「CRUD」です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📝</span>
+      CRUD = 4つの基本操作
+    </div>
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border-light);">
+          <th style="padding:12px;text-align:left;">操作</th>
+          <th style="padding:12px;text-align:left;">SQL</th>
+          <th style="padding:12px;text-align:left;">意味</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;"><strong>C</strong>reate</td>
+          <td style="padding:12px;">INSERT</td>
+          <td style="padding:12px;">作成</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;"><strong>R</strong>ead</td>
+          <td style="padding:12px;">SELECT</td>
+          <td style="padding:12px;">読み取り</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;"><strong>U</strong>pdate</td>
+          <td style="padding:12px;">UPDATE</td>
+          <td style="padding:12px;">更新</td>
+        </tr>
+        <tr>
+          <td style="padding:12px;"><strong>D</strong>elete</td>
+          <td style="padding:12px;">DELETE</td>
+          <td style="padding:12px;">削除</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>SELECT（読み取り）</h3>
+
+<pre><code class="language-sql">-- 全件取得
+SELECT * FROM users;
+
+-- 列を指定
+SELECT name, email FROM users;
+
+-- 条件を指定
+SELECT * FROM users WHERE age >= 20;
+
+-- 並び替え
+SELECT * FROM users ORDER BY created_at DESC;
+
+-- 件数制限
+SELECT * FROM users LIMIT 10;</code></pre>
+
+  <h3>INSERT（作成）</h3>
+
+<pre><code class="language-sql">-- 1件挿入
+INSERT INTO users (name, email, age)
+VALUES ('田中太郎', 'tanaka@example.com', 25);
+
+-- 複数件挿入
+INSERT INTO users (name, email, age) VALUES
+  ('山田花子', 'yamada@example.com', 30),
+  ('佐藤次郎', 'sato@example.com', 22);</code></pre>
+
+  <h3>UPDATE（更新）</h3>
+
+<pre><code class="language-sql">-- 条件に合う行を更新
+UPDATE users
+SET email = 'new@example.com'
+WHERE id = 1;</code></pre>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      WHERE忘れは致命的！
+    </div>
+<pre><code class="language-sql">-- ❌ WHEREがないと全行が更新される！
+UPDATE users SET email = 'oops@example.com';
+-- 全ユーザーのメールが書き換わる</code></pre>
+  </div>
+
+  <h3>DELETE（削除）</h3>
+
+<pre><code class="language-sql">-- 条件に合う行を削除
+DELETE FROM users WHERE id = 1;</code></pre>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      WHERE忘れは致命的！
+    </div>
+<pre><code class="language-sql">-- ❌ WHEREがないと全行が削除される！
+DELETE FROM users;
+-- 全ユーザーが消える</code></pre>
+  </div>
+
+  <h2>JOIN（テーブル結合）</h2>
+
+  <p>
+    複数のテーブルを「結合」してデータを取得します。
+  </p>
+
+<pre><code class="language-sql">-- INNER JOIN: 両方に存在するデータのみ
+SELECT users.name, posts.title
+FROM users
+INNER JOIN posts ON users.id = posts.user_id;
+
+-- LEFT JOIN: 左テーブルは全て、右は一致するもの
+SELECT users.name, posts.title
+FROM users
+LEFT JOIN posts ON users.id = posts.user_id;</code></pre>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      JOINの種類
+    </div>
+    <ul style="margin:0;">
+      <li><strong>INNER JOIN</strong>: 両方に存在するものだけ</li>
+      <li><strong>LEFT JOIN</strong>: 左は全部、右は一致のみ</li>
+      <li><strong>RIGHT JOIN</strong>: 右は全部、左は一致のみ</li>
+      <li><strong>FULL OUTER JOIN</strong>: 両方全部</li>
+    </ul>
+  </div>
+
+  <h2>見抜くべき問題</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <div class="compare-box">
+      <div class="compare-bad">
+        <div class="compare-title">❌ SELECT * の乱用</div>
+<pre><code class="language-sql">-- 不要なカラムまで取得
+SELECT * FROM users;</code></pre>
+        <p>パフォーマンス低下、機密情報漏洩リスク</p>
+      </div>
+      <div class="compare-good">
+        <div class="compare-title">⭕ 必要なカラムのみ</div>
+<pre><code class="language-sql">-- 必要なカラムだけ指定
+SELECT id, name FROM users;</code></pre>
+        <p>効率的、安全</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-db2-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>以下のSQLの問題点は？</p>
+<pre><code class="language-sql">DELETE FROM orders;</code></pre>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db2-1" style="display:none;">
+      A. 文法エラーがある
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db2-1" style="display:none;">
+      B. WHERE句がなく全行が削除される
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db2-1" style="display:none;">
+      C. 問題はない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db2-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-db2-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>CRUDの「R」に対応するSQLは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db2-2" style="display:none;">
+      A. INSERT
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db2-2" style="display:none;">
+      B. SELECT
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db2-2" style="display:none;">
+      C. UPDATE
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db2-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('db2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- db3: 正規化（1NF） -->
+<section id="db3">
+  <h1>正規化（1NF）</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>正規化とは何か</li>
+      <li>第1正規形（1NF）のルール</li>
+      <li>原子値と繰り返しグループ</li>
+    </ul>
+  </div>
+
+  <h2>正規化とは</h2>
+
+  <p>
+    <strong>正規化</strong>は、データの重複や矛盾を減らすための設計技法です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：整理整頓
+    </div>
+    <p style="margin:0;">
+      正規化は「<strong>部屋の整理整頓</strong>」に似ています。<br>
+      同じものを複数の場所に置かない。<br>
+      物の置き場所を決めて、探しやすくする。
+    </p>
+  </div>
+
+  <h2>なぜ正規化が必要？</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      正規化しないと起きる問題
+    </div>
+    <ul>
+      <li><strong>更新異常</strong>: 1箇所を直し忘れてデータ不整合</li>
+      <li><strong>挿入異常</strong>: 不要なデータも一緒に入れる必要</li>
+      <li><strong>削除異常</strong>: 意図しないデータも消える</li>
+    </ul>
+  </div>
+
+  <h2>第1正規形（1NF）のルール</h2>
+
+  <p>
+    <strong>1NF</strong>は最も基本的な正規形です。
+  </p>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      1NFの条件
+    </div>
+    <ol style="margin:0;">
+      <li><strong>原子値</strong>: 1つのセルに1つの値</li>
+      <li><strong>繰り返しグループなし</strong>: 同じ種類の列を複数持たない</li>
+    </ol>
+  </div>
+
+  <h2>原子値の違反例</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      ❌ 1NF違反：カンマ区切り
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-top:8px;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border-light);background:var(--bg-secondary);">
+          <th style="padding:12px;text-align:left;">order_id</th>
+          <th style="padding:12px;text-align:left;">products</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">1</td>
+          <td style="padding:12px;color:var(--accent-red);">りんご, バナナ, オレンジ</td>
+        </tr>
+        <tr>
+          <td style="padding:12px;">2</td>
+          <td style="padding:12px;color:var(--accent-red);">みかん, ぶどう</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:12px;margin-bottom:0;">
+      1つのセルに複数の値が入っている！<br>
+      「りんごだけ検索」が難しくなる。
+    </p>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      ⭕ 1NF準拠：中間テーブル
+    </div>
+    <p>ordersテーブル:</p>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border-light);background:var(--bg-secondary);">
+          <th style="padding:12px;text-align:left;">order_id</th>
+          <th style="padding:12px;text-align:left;">customer_id</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">1</td>
+          <td style="padding:12px;">101</td>
+        </tr>
+        <tr>
+          <td style="padding:12px;">2</td>
+          <td style="padding:12px;">102</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>order_itemsテーブル（中間テーブル）:</p>
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border-light);background:var(--bg-secondary);">
+          <th style="padding:12px;text-align:left;">order_id</th>
+          <th style="padding:12px;text-align:left;">product_id</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">1</td>
+          <td style="padding:12px;">1 (りんご)</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">1</td>
+          <td style="padding:12px;">2 (バナナ)</td>
+        </tr>
+        <tr>
+          <td style="padding:12px;">1</td>
+          <td style="padding:12px;">3 (オレンジ)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>繰り返しグループの違反例</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      ❌ 1NF違反：繰り返しカラム
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-top:8px;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border-light);background:var(--bg-secondary);">
+          <th style="padding:8px;text-align:left;">id</th>
+          <th style="padding:8px;text-align:left;color:var(--accent-red);">phone1</th>
+          <th style="padding:8px;text-align:left;color:var(--accent-red);">phone2</th>
+          <th style="padding:8px;text-align:left;color:var(--accent-red);">phone3</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:8px;">1</td>
+          <td style="padding:8px;">090-xxxx</td>
+          <td style="padding:8px;">080-xxxx</td>
+          <td style="padding:8px;">NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:12px;margin-bottom:0;">
+      phone1, phone2, phone3... と増やすのは設計ミス。<br>
+      4つ目の電話番号が必要になったら？
+    </p>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      ⭕ 1NF準拠：別テーブル
+    </div>
+<pre><code class="language-sql">-- 電話番号を別テーブルに
+CREATE TABLE user_phones (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id),
+  phone VARCHAR(20) NOT NULL
+);
+
+-- 何件でも登録可能
+INSERT INTO user_phones (user_id, phone) VALUES
+  (1, '090-xxxx-xxxx'),
+  (1, '080-xxxx-xxxx');</code></pre>
+  </div>
+
+  <h2>見抜くべき問題</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li>カンマ区切り（CSV形式）でデータを格納していないか</li>
+      <li>phone1, phone2, phone3 のような連番カラムがないか</li>
+      <li>JSONカラムに配列を無計画に入れていないか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-db3-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>以下のテーブル設計の問題は？</p>
+<pre><code class="language-sql">CREATE TABLE orders (
+  id SERIAL PRIMARY KEY,
+  products TEXT  -- "apple,banana,orange"
+);</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db3-1" style="display:none;">
+      A. 1NF違反（原子値でない）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db3-1" style="display:none;">
+      B. 主キーがない
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db3-1" style="display:none;">
+      C. 問題はない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db3-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-db3-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>「原子値」の正しい説明は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db3-2" style="display:none;">
+      A. 1つのセルに1つの値だけ入れる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db3-2" style="display:none;">
+      B. 数値型だけを使う
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db3-2" style="display:none;">
+      C. NULLを許可しない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db3-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('db3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- db4: 正規化（2NF/3NF） -->
+<section id="db4">
+  <h1>正規化（2NF/3NF）</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>第2正規形（2NF）：部分関数従属の排除</li>
+      <li>第3正規形（3NF）：推移的関数従属の排除</li>
+      <li>実務でよく見る違反パターン</li>
+    </ul>
+  </div>
+
+  <h2>第2正規形（2NF）</h2>
+
+  <p>
+    <strong>2NF</strong>は「部分関数従属」を排除します。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📖</span>
+      部分関数従属とは
+    </div>
+    <p style="margin:0;">
+      複合主キー（2つ以上の列）の<strong>一部だけ</strong>に<br>
+      依存しているカラムがある状態です。
+    </p>
+  </div>
+
+  <h3>2NF違反の例</h3>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      ❌ 2NF違反
+    </div>
+    <p>複合主キー: (order_id, product_id)</p>
+    <table style="width:100%;border-collapse:collapse;margin-top:8px;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border-light);background:var(--bg-secondary);">
+          <th style="padding:8px;text-align:left;">order_id</th>
+          <th style="padding:8px;text-align:left;">product_id</th>
+          <th style="padding:8px;text-align:left;">quantity</th>
+          <th style="padding:8px;text-align:left;color:var(--accent-red);">product_name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:8px;">1</td>
+          <td style="padding:8px;">101</td>
+          <td style="padding:8px;">2</td>
+          <td style="padding:8px;color:var(--accent-red);">りんご</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;">2</td>
+          <td style="padding:8px;">101</td>
+          <td style="padding:8px;">3</td>
+          <td style="padding:8px;color:var(--accent-red);">りんご</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:12px;margin-bottom:0;">
+      <code>product_name</code>は<code>product_id</code>だけで決まる。<br>
+      複合キー全体に依存していない = 部分関数従属
+    </p>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      ⭕ 2NF準拠
+    </div>
+<pre><code class="language-sql">-- 注文明細テーブル
+CREATE TABLE order_items (
+  order_id INT REFERENCES orders(id),
+  product_id INT REFERENCES products(id),
+  quantity INT NOT NULL,
+  PRIMARY KEY (order_id, product_id)
+);
+
+-- 商品テーブル（別に分離）
+CREATE TABLE products (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL
+);</code></pre>
+  </div>
+
+  <h2>第3正規形（3NF）</h2>
+
+  <p>
+    <strong>3NF</strong>は「推移的関数従属」を排除します。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📖</span>
+      推移的関数従属とは
+    </div>
+    <p style="margin:0;">
+      A → B → C という「間接的な依存」がある状態です。<br>
+      主キーに直接依存していないカラムがある。
+    </p>
+  </div>
+
+  <h3>3NF違反の例</h3>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      ❌ 3NF違反
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-top:8px;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border-light);background:var(--bg-secondary);">
+          <th style="padding:8px;text-align:left;">user_id</th>
+          <th style="padding:8px;text-align:left;">name</th>
+          <th style="padding:8px;text-align:left;">dept_id</th>
+          <th style="padding:8px;text-align:left;color:var(--accent-red);">dept_name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:8px;">1</td>
+          <td style="padding:8px;">田中</td>
+          <td style="padding:8px;">10</td>
+          <td style="padding:8px;color:var(--accent-red);">営業部</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;">2</td>
+          <td style="padding:8px;">山田</td>
+          <td style="padding:8px;">10</td>
+          <td style="padding:8px;color:var(--accent-red);">営業部</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:12px;margin-bottom:0;">
+      user_id → dept_id → dept_name<br>
+      <code>dept_name</code>は<code>dept_id</code>に依存（推移的関数従属）
+    </p>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      ⭕ 3NF準拠
+    </div>
+<pre><code class="language-sql">-- ユーザーテーブル
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  dept_id INT REFERENCES departments(id)
+);
+
+-- 部門テーブル（別に分離）
+CREATE TABLE departments (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL
+);</code></pre>
+  </div>
+
+  <h2>正規形のまとめ</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      正規化の段階
+    </div>
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border-light);">
+          <th style="padding:12px;text-align:left;">正規形</th>
+          <th style="padding:12px;text-align:left;">ルール</th>
+          <th style="padding:12px;text-align:left;">違反例</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">1NF</td>
+          <td style="padding:12px;">原子値のみ</td>
+          <td style="padding:12px;">"a,b,c" カンマ区切り</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">2NF</td>
+          <td style="padding:12px;">部分関数従属なし</td>
+          <td style="padding:12px;">複合キーの一部に依存</td>
+        </tr>
+        <tr>
+          <td style="padding:12px;">3NF</td>
+          <td style="padding:12px;">推移的関数従属なし</td>
+          <td style="padding:12px;">A→B→C 間接依存</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      実務でのポイント
+    </div>
+    <p style="margin:0;">
+      通常は<strong>3NFまで正規化</strong>すれば十分です。<br>
+      ただしパフォーマンスのため、意図的に非正規化することもあります。<br>
+      「なぜ非正規化したか」をコメントで残しましょう。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-db4-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>「部分関数従属」が発生するのはどんな時？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db4-1" style="display:none;">
+      A. 主キーが1つのカラムの時
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db4-1" style="display:none;">
+      B. 複合主キーの一部にだけ依存するカラムがある時
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db4-1" style="display:none;">
+      C. NULLを許可している時
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db4-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-db4-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>usersテーブルに dept_name（部門名）を持たせるのは何違反？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db4-2" style="display:none;">
+      A. 1NF違反
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db4-2" style="display:none;">
+      B. 2NF違反
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db4-2" style="display:none;">
+      C. 3NF違反（推移的関数従属）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db4-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('db4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- db5: インデックス基礎 -->
+<section id="db5">
+  <h1>インデックス基礎</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>インデックスとは何か</li>
+      <li>B-treeインデックスの仕組み</li>
+      <li>EXPLAINでクエリを分析</li>
+    </ul>
+  </div>
+
+  <h2>インデックスとは</h2>
+
+  <p>
+    <strong>インデックス</strong>は「索引」という意味です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      たとえ話：本の索引
+    </div>
+    <p style="margin:0;">
+      分厚い本で「JavaScript」という単語を探すとき、<br>
+      1ページ目から順に探すのは大変ですよね。<br>
+      <strong>索引（インデックス）</strong>があれば、すぐにページ番号がわかります。
+    </p>
+  </div>
+
+  <p>
+    データベースのインデックスも同じです。<br>
+    データを素早く見つけるための「目印」です。
+  </p>
+
+  <h2>B-treeインデックス</h2>
+
+  <p>
+    PostgreSQLで最も一般的なインデックスは<strong>B-tree</strong>です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🌳</span>
+      B-treeの仕組み
+    </div>
+    <p>
+      B-tree = Balanced Tree（平衡木）
+    </p>
+    <ul style="margin:0;">
+      <li>データが<strong>ソートされた状態</strong>で保存される</li>
+      <li>検索が<strong>O(log n)</strong>で高速</li>
+      <li><code>=</code>, <code>&lt;</code>, <code>&gt;</code>, <code>BETWEEN</code> に有効</li>
+    </ul>
+  </div>
+
+  <h2>インデックスの作成と削除</h2>
+
+<pre><code class="language-sql">-- インデックスの作成
+CREATE INDEX idx_users_email ON users(email);
+
+-- ユニークインデックス（重複禁止）
+CREATE UNIQUE INDEX idx_users_email_unique ON users(email);
+
+-- インデックスの削除
+DROP INDEX idx_users_email;</code></pre>
+
+  <h2>インデックスが有効な場面</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      インデックスを作るべきカラム
+    </div>
+    <ul style="margin:0;">
+      <li><strong>WHERE句</strong>で頻繁に使うカラム</li>
+      <li><strong>JOIN</strong>の結合条件に使うカラム</li>
+      <li><strong>ORDER BY</strong>でソートするカラム</li>
+      <li><strong>外部キー</strong>（必須！）</li>
+    </ul>
+  </div>
+
+  <h2>EXPLAIN（実行計画）</h2>
+
+  <p>
+    <strong>EXPLAIN</strong>でクエリの実行計画を確認できます。
+  </p>
+
+<pre><code class="language-sql">-- 実行計画を確認
+EXPLAIN SELECT * FROM users WHERE email = 'test@example.com';
+
+-- より詳細な情報（実際に実行）
+EXPLAIN ANALYZE SELECT * FROM users WHERE email = 'test@example.com';</code></pre>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      EXPLAINの読み方
+    </div>
+<pre><code>-- インデックスがない場合
+Seq Scan on users  (cost=0.00..25.00 rows=1000)
+↑ 全件スキャン（遅い）
+
+-- インデックスがある場合
+Index Scan using idx_users_email on users  (cost=0.00..8.27 rows=1)
+↑ インデックススキャン（速い）</code></pre>
+    <p style="margin:0;">
+      <strong>Seq Scan</strong>（Sequential Scan）が出たら要注意！<br>
+      インデックスを追加すべきか検討しましょう。
+    </p>
+  </div>
+
+  <h2>見抜くべき問題</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <div class="compare-box">
+      <div class="compare-bad">
+        <div class="compare-title">❌ 外部キーにインデックスなし</div>
+<pre><code class="language-sql">-- 外部キーを追加
+ALTER TABLE posts
+ADD COLUMN user_id INT REFERENCES users(id);
+-- インデックスがない！JOINが遅くなる</code></pre>
+      </div>
+      <div class="compare-good">
+        <div class="compare-title">⭕ 外部キーにインデックスあり</div>
+<pre><code class="language-sql">-- 外部キーを追加
+ALTER TABLE posts
+ADD COLUMN user_id INT REFERENCES users(id);
+
+-- インデックスも追加
+CREATE INDEX idx_posts_user_id ON posts(user_id);</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-db5-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>EXPLAINで「Seq Scan」と表示されたら何を意味する？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db5-1" style="display:none;">
+      A. テーブル全体をスキャンしている（遅い可能性）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db5-1" style="display:none;">
+      B. インデックスを使っている（速い）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db5-1" style="display:none;">
+      C. エラーが発生している
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db5-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-db5-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>インデックスを必ず作るべきカラムは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db5-2" style="display:none;">
+      A. TEXTカラム（長い文章）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db5-2" style="display:none;">
+      B. 外部キー（FK）カラム
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db5-2" style="display:none;">
+      C. すべてのカラム
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db5-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('db5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- db6: インデックス戦略 -->
+<section id="db6">
+  <h1>インデックス戦略</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>複合インデックス（Composite Index）</li>
+      <li>部分インデックス（Partial Index）</li>
+      <li>GINインデックス（全文検索、配列）</li>
+    </ul>
+  </div>
+
+  <h2>複合インデックス</h2>
+
+  <p>
+    <strong>複合インデックス</strong>は、複数のカラムを組み合わせたインデックスです。
+  </p>
+
+<pre><code class="language-sql">-- 複合インデックスの作成
+CREATE INDEX idx_orders_user_status
+ON orders(user_id, status);
+
+-- このクエリで有効
+SELECT * FROM orders
+WHERE user_id = 1 AND status = 'pending';</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      カラムの順序が重要！
+    </div>
+    <p>
+      複合インデックスは<strong>左から順に</strong>使われます。
+    </p>
+<pre><code class="language-sql">-- インデックス: (user_id, status, created_at)
+
+-- ⭕ user_id のみ → 使われる
+WHERE user_id = 1
+
+-- ⭕ user_id + status → 使われる
+WHERE user_id = 1 AND status = 'pending'
+
+-- ❌ status のみ → 使われない！
+WHERE status = 'pending'
+
+-- ❌ created_at のみ → 使われない！
+WHERE created_at > '2024-01-01'</code></pre>
+  </div>
+
+  <h2>部分インデックス</h2>
+
+  <p>
+    <strong>部分インデックス</strong>は、条件に合う行だけにインデックスを作ります。
+  </p>
+
+<pre><code class="language-sql">-- アクティブユーザーだけにインデックス
+CREATE INDEX idx_users_active_email
+ON users(email)
+WHERE is_active = true;
+
+-- 未完了の注文だけにインデックス
+CREATE INDEX idx_orders_pending
+ON orders(created_at)
+WHERE status = 'pending';</code></pre>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      部分インデックスのメリット
+    </div>
+    <ul style="margin:0;">
+      <li>インデックスサイズが小さくなる</li>
+      <li>更新時のオーバーヘッドが減る</li>
+      <li>特定のクエリパターンに最適化できる</li>
+    </ul>
+  </div>
+
+  <h2>GINインデックス</h2>
+
+  <p>
+    <strong>GIN</strong>（Generalized Inverted Index）は特殊なインデックスです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📖</span>
+      GINが有効な場面
+    </div>
+    <ul style="margin:0;">
+      <li><strong>配列</strong>の検索</li>
+      <li><strong>全文検索</strong></li>
+      <li><strong>JSONB</strong>の検索</li>
+    </ul>
+  </div>
+
+<pre><code class="language-sql">-- 配列カラムへのGINインデックス
+CREATE INDEX idx_posts_tags ON posts USING GIN(tags);
+
+-- 配列の検索
+SELECT * FROM posts WHERE tags @> ARRAY['javascript'];
+
+-- JSONBへのGINインデックス
+CREATE INDEX idx_users_metadata ON users USING GIN(metadata);
+
+-- JSONBの検索
+SELECT * FROM users WHERE metadata @> '{"role": "admin"}';</code></pre>
+
+  <h2>インデックスの注意点</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      過剰なインデックスは逆効果
+    </div>
+    <ul>
+      <li><strong>INSERT/UPDATE/DELETE</strong>が遅くなる</li>
+      <li><strong>ストレージ</strong>を消費する</li>
+      <li><strong>メンテナンス</strong>のコストが増える</li>
+    </ul>
+    <p style="margin:0;">
+      「念のため」で作りすぎないこと！
+    </p>
+  </div>
+
+  <h2>見抜くべき問題</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <div class="compare-box">
+      <div class="compare-bad">
+        <div class="compare-title">❌ 全カラムにインデックス</div>
+<pre><code class="language-sql">-- やりすぎ！
+CREATE INDEX idx1 ON users(name);
+CREATE INDEX idx2 ON users(email);
+CREATE INDEX idx3 ON users(age);
+CREATE INDEX idx4 ON users(created_at);
+-- 全部作るのはNG</code></pre>
+      </div>
+      <div class="compare-good">
+        <div class="compare-title">⭕ 必要なものだけ</div>
+<pre><code class="language-sql">-- クエリパターンに基づいて選択
+CREATE INDEX idx_users_email ON users(email);
+-- emailはログインで使うから必要
+
+-- 複合インデックスで対応
+CREATE INDEX idx_orders_user_status
+ON orders(user_id, status);</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-db6-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>複合インデックス (a, b, c) で、WHERE b = 1 だけのクエリに使えるか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db6-1" style="display:none;">
+      A. 使える（どのカラムでも有効）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db6-1" style="display:none;">
+      B. 使えない（左端から順に必要）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db6-1" style="display:none;">
+      C. エラーになる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db6-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-db6-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>GINインデックスが有効なデータ型は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db6-2" style="display:none;">
+      A. INTEGER
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db6-2" style="display:none;">
+      B. 配列、JSONB
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db6-2" style="display:none;">
+      C. TIMESTAMP
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db6-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('db6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- db7: トランザクション -->
+<section id="db7">
+  <h1>トランザクション</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>トランザクションとACID特性</li>
+      <li>分離レベル</li>
+      <li>デッドロックと対策</li>
+    </ul>
+  </div>
+
+  <h2>トランザクションとは</h2>
+
+  <p>
+    <strong>トランザクション</strong>は「一連の処理をまとめる」仕組みです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💰</span>
+      たとえ話：銀行振込
+    </div>
+    <p style="margin:0;">
+      AさんからBさんに1万円を振り込む場合：<br>
+      1. Aさんの口座から1万円を引く<br>
+      2. Bさんの口座に1万円を足す<br>
+      <br>
+      この2つの処理は<strong>両方成功するか、両方失敗する</strong>べき。<br>
+      途中で止まると、お金が消えてしまいます。
+    </p>
+  </div>
+
+  <h2>ACID特性</h2>
+
+  <p>
+    トランザクションが満たすべき4つの特性です。
+  </p>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      ACID
+    </div>
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border-light);">
+          <th style="padding:12px;text-align:left;">特性</th>
+          <th style="padding:12px;text-align:left;">意味</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;"><strong>A</strong>tomicity（原子性）</td>
+          <td style="padding:12px;">全て成功 or 全て失敗</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;"><strong>C</strong>onsistency（一貫性）</td>
+          <td style="padding:12px;">整合性を保つ</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;"><strong>I</strong>solation（分離性）</td>
+          <td style="padding:12px;">他の処理から独立</td>
+        </tr>
+        <tr>
+          <td style="padding:12px;"><strong>D</strong>urability（永続性）</td>
+          <td style="padding:12px;">確定したら消えない</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>トランザクションの基本操作</h2>
+
+<pre><code class="language-sql">-- トランザクション開始
+BEGIN;
+
+-- 処理を実行
+UPDATE accounts SET balance = balance - 10000 WHERE id = 1;
+UPDATE accounts SET balance = balance + 10000 WHERE id = 2;
+
+-- 成功したらコミット
+COMMIT;
+
+-- 失敗したらロールバック
+ROLLBACK;</code></pre>
+
+  <h2>分離レベル</h2>
+
+  <p>
+    <strong>分離レベル</strong>は、トランザクション間の「見え方」を決めます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      分離レベル一覧
+    </div>
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border-light);">
+          <th style="padding:8px;text-align:left;">レベル</th>
+          <th style="padding:8px;text-align:left;">特徴</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:8px;">READ UNCOMMITTED</td>
+          <td style="padding:8px;">他の未コミットを読める（危険）</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:8px;">READ COMMITTED</td>
+          <td style="padding:8px;">コミット済みだけ読める（PostgreSQL標準）</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:8px;">REPEATABLE READ</td>
+          <td style="padding:8px;">同じクエリで同じ結果</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;">SERIALIZABLE</td>
+          <td style="padding:8px;">完全分離（最も安全、最も遅い）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>デッドロック</h2>
+
+  <p>
+    <strong>デッドロック</strong>は「お互いにロックを待ち合う」状態です。
+  </p>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      デッドロックの例
+    </div>
+<pre><code>トランザクションA:
+  1. テーブル1をロック
+  2. テーブル2をロックしようとする → 待ち
+
+トランザクションB:
+  1. テーブル2をロック
+  2. テーブル1をロックしようとする → 待ち
+
+→ 永遠に終わらない！</code></pre>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      デッドロックの対策
+    </div>
+    <ul style="margin:0;">
+      <li>ロックの<strong>順序を統一</strong>する（常にテーブル1→2の順）</li>
+      <li>トランザクションを<strong>短く</strong>する</li>
+      <li><strong>タイムアウト</strong>を設定する</li>
+    </ul>
+  </div>
+
+  <h2>見抜くべき問題</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <div class="compare-box">
+      <div class="compare-bad">
+        <div class="compare-title">❌ トランザクションなし</div>
+<pre><code class="language-typescript">// 途中で失敗するとデータ不整合
+await db.execute('UPDATE accounts SET ...');
+await db.execute('UPDATE accounts SET ...');
+// 2つ目が失敗しても1つ目は戻らない</code></pre>
+      </div>
+      <div class="compare-good">
+        <div class="compare-title">⭕ トランザクションあり</div>
+<pre><code class="language-typescript">await db.transaction(async (tx) => {
+  await tx.execute('UPDATE accounts SET ...');
+  await tx.execute('UPDATE accounts SET ...');
+  // どちらか失敗したら両方ロールバック
+});</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-db7-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>ACIDの「A」（Atomicity）の意味は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db7-1" style="display:none;">
+      A. 全て成功するか、全て失敗する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db7-1" style="display:none;">
+      B. 処理が高速である
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db7-1" style="display:none;">
+      C. 自動的にバックアップされる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db7-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-db7-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>デッドロックを防ぐ方法として正しいのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db7-2" style="display:none;">
+      A. トランザクションを使わない
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db7-2" style="display:none;">
+      B. ロックの順序を統一する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db7-2" style="display:none;">
+      C. すべてのテーブルを同時にロックする
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db7-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('db7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- db8: ORM概要 -->
+<section id="db8">
+  <h1>ORM概要</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ORMとは何か</li>
+      <li>Prisma vs Drizzle（2026年比較）</li>
+      <li>選択基準</li>
+    </ul>
+  </div>
+
+  <h2>ORMとは</h2>
+
+  <p>
+    <strong>ORM</strong>は「Object-Relational Mapping」の略です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔗</span>
+      ORMの役割
+    </div>
+    <p style="margin:0;">
+      データベースの<strong>テーブル</strong>と<br>
+      プログラムの<strong>オブジェクト</strong>を対応させます。<br>
+      SQLを直接書かなくても、データを操作できます。
+    </p>
+  </div>
+
+<pre><code class="language-typescript">// ORMなし（生SQL）
+const result = await db.query(
+  'SELECT * FROM users WHERE id = $1',
+  [userId]
+);
+
+// ORMあり（Prisma）
+const user = await prisma.user.findUnique({
+  where: { id: userId }
+});</code></pre>
+
+  <h2>Prisma vs Drizzle（2026年版）</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      比較表
+    </div>
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border-light);">
+          <th style="padding:12px;text-align:left;">項目</th>
+          <th style="padding:12px;text-align:left;">Prisma</th>
+          <th style="padding:12px;text-align:left;">Drizzle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">アプローチ</td>
+          <td style="padding:12px;">Schema-first</td>
+          <td style="padding:12px;">Code-first</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">バンドルサイズ</td>
+          <td style="padding:12px;">重い（Rustエンジン）</td>
+          <td style="padding:12px;">超軽量（約7KB）</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">学習曲線</td>
+          <td style="padding:12px;">低い</td>
+          <td style="padding:12px;">高い（SQL知識必要）</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">Serverless</td>
+          <td style="padding:12px;">改善中</td>
+          <td style="padding:12px;">最適</td>
+        </tr>
+        <tr>
+          <td style="padding:12px;">型安全性</td>
+          <td style="padding:12px;">高い</td>
+          <td style="padding:12px;">高い</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>選択基準</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">Prismaを選ぶ場合</div>
+      <ul style="margin:0;">
+        <li>チームにSQLが苦手な人がいる</li>
+        <li>MVPを素早く作りたい</li>
+        <li>マイグレーション管理を任せたい</li>
+        <li>データブラウザ（Prisma Studio）が欲しい</li>
+      </ul>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">Drizzleを選ぶ場合</div>
+      <ul style="margin:0;">
+        <li>SQLを自分で書きたい</li>
+        <li>Edge/Serverless環境で動かす</li>
+        <li>バンドルサイズを最小化したい</li>
+        <li>パフォーマンスを最優先</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>ORMの注意点</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      ORMで起きやすい問題
+    </div>
+    <ul style="margin:0;">
+      <li><strong>N+1問題</strong>: 関連データを1件ずつ取得</li>
+      <li><strong>非効率なクエリ</strong>: 意図しないSQLが生成される</li>
+      <li><strong>マジック</strong>: 裏で何が起きているか分からない</li>
+    </ul>
+    <p style="margin:0;margin-top:12px;">
+      → 生成されるSQLを<strong>必ず確認</strong>しましょう。
+    </p>
+  </div>
+
+  <h2>見抜くべき問題</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li>ORM任せにしすぎて、SQLを理解していないコード</li>
+      <li>ログにSQLを出力する設定が本番で有効</li>
+      <li>プロジェクトの要件に合わないORM選択</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-db8-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>ORMの主な役割は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db8-1" style="display:none;">
+      A. データベースをバックアップする
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db8-1" style="display:none;">
+      B. テーブルとオブジェクトを対応させる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db8-1" style="display:none;">
+      C. SQLの文法エラーをチェックする
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db8-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-db8-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>Serverless/Edge環境に最適なORMは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db8-2" style="display:none;">
+      A. Prisma（バンドルサイズが大きい）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db8-2" style="display:none;">
+      B. Drizzle（超軽量）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db8-2" style="display:none;">
+      C. どちらも同じ
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db8-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('db8')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- db9: Prisma実践 -->
+<section id="db9">
+  <h1>Prisma実践</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Prismaスキーマの定義</li>
+      <li>マイグレーション</li>
+      <li>クエリの書き方とN+1対策</li>
+    </ul>
+  </div>
+
+  <h2>Prismaスキーマ</h2>
+
+  <p>
+    Prismaでは<code>schema.prisma</code>ファイルでモデルを定義します。
+  </p>
+
+<pre><code class="language-typescript">// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  posts     Post[]   // リレーション
+  createdAt DateTime @default(now())
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+}</code></pre>
+
+  <h2>マイグレーション</h2>
+
+<pre><code class="language-bash"># マイグレーション作成と適用
+npx prisma migrate dev --name init
+
+# 本番環境でのマイグレーション
+npx prisma migrate deploy
+
+# クライアント生成
+npx prisma generate</code></pre>
+
+  <h2>基本的なクエリ</h2>
+
+<pre><code class="language-typescript">import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+// 作成
+const user = await prisma.user.create({
+  data: {
+    email: 'test@example.com',
+    name: '田中太郎'
+  }
+});
+
+// 読み取り
+const users = await prisma.user.findMany();
+const user = await prisma.user.findUnique({
+  where: { id: 1 }
+});
+
+// 更新
+const updated = await prisma.user.update({
+  where: { id: 1 },
+  data: { name: '山田花子' }
+});
+
+// 削除
+const deleted = await prisma.user.delete({
+  where: { id: 1 }
+});</code></pre>
+
+  <h2>N+1問題と対策</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      ❌ N+1問題
+    </div>
+<pre><code class="language-typescript">// ユーザー一覧を取得（1クエリ）
+const users = await prisma.user.findMany();
+
+// 各ユーザーの投稿を取得（Nクエリ）
+for (const user of users) {
+  const posts = await prisma.post.findMany({
+    where: { authorId: user.id }
+  });
+  // ユーザーが100人いたら100回クエリが走る！
+}</code></pre>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      ⭕ Eager Loading（includeで解決）
+    </div>
+<pre><code class="language-typescript">// 1クエリで全て取得
+const users = await prisma.user.findMany({
+  include: {
+    posts: true  // リレーションを一緒に取得
+  }
+});
+
+// users[0].posts でアクセス可能</code></pre>
+  </div>
+
+  <h2>selectで必要なカラムのみ取得</h2>
+
+<pre><code class="language-typescript">// ❌ 全カラム取得
+const users = await prisma.user.findMany();
+
+// ⭕ 必要なカラムのみ
+const users = await prisma.user.findMany({
+  select: {
+    id: true,
+    name: true
+    // emailは不要なので取得しない
+  }
+});</code></pre>
+
+  <h2>見抜くべき問題</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <div class="compare-box">
+      <div class="compare-bad">
+        <div class="compare-title">❌ N+1問題</div>
+<pre><code class="language-typescript">const users = await prisma.user.findMany();
+for (const user of users) {
+  // ループ内でクエリ！
+  const posts = await prisma.post.findMany({
+    where: { authorId: user.id }
+  });
+}</code></pre>
+      </div>
+      <div class="compare-good">
+        <div class="compare-title">⭕ include/selectで解決</div>
+<pre><code class="language-typescript">const users = await prisma.user.findMany({
+  include: { posts: true }
+});
+// 1クエリで完了</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-db9-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>N+1問題とは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db9-1" style="display:none;">
+      A. ループ内で1件ずつクエリを発行する問題
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db9-1" style="display:none;">
+      B. N個のテーブルを1つに結合する問題
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db9-1" style="display:none;">
+      C. 1つのクエリでN件取得する問題
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db9-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-db9-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>PrismaでN+1問題を解決するには？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db9-2" style="display:none;">
+      A. forループを使う
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db9-2" style="display:none;">
+      B. includeでリレーションを一緒に取得
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db9-2" style="display:none;">
+      C. findManyを使わない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db9-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-db9-3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 3（コードレビュー）
+    </div>
+    <p>このコードの問題点は？</p>
+<pre><code class="language-typescript">const orders = await prisma.order.findMany();
+for (const order of orders) {
+  const items = await prisma.orderItem.findMany({
+    where: { orderId: order.id }
+  });
+}</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db9-3" style="display:none;">
+      A. N+1問題が発生している
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db9-3" style="display:none;">
+      B. 変数名が不適切
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db9-3" style="display:none;">
+      C. 問題はない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db9-3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('db9')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- db10: パフォーマンス -->
+<section id="db10">
+  <h1>パフォーマンス</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>クエリ最適化の基本</li>
+      <li>コネクションプール</li>
+      <li>よくあるボトルネックと対策</li>
+    </ul>
+  </div>
+
+  <h2>クエリ最適化の基本</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      最適化のチェックリスト
+    </div>
+    <ul style="margin:0;">
+      <li>必要なカラムだけSELECT（SELECT * を避ける）</li>
+      <li>WHERE句で絞り込む</li>
+      <li>適切なインデックスを作成</li>
+      <li>EXPLAINで実行計画を確認</li>
+      <li>N+1問題を解消</li>
+    </ul>
+  </div>
+
+  <h2>スロークエリの発見</h2>
+
+<pre><code class="language-sql">-- PostgreSQL: 実行時間が長いクエリを記録
+-- postgresql.conf で設定
+log_min_duration_statement = 1000  -- 1秒以上のクエリをログ
+
+-- 実行計画で確認
+EXPLAIN ANALYZE
+SELECT * FROM orders
+WHERE user_id = 1 AND status = 'pending';</code></pre>
+
+  <h2>コネクションプール</h2>
+
+  <p>
+    <strong>コネクションプール</strong>は、DB接続を再利用する仕組みです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏊</span>
+      たとえ話：プール
+    </div>
+    <p style="margin:0;">
+      毎回新しいプールを作るのではなく、<br>
+      既存のプールを<strong>共有して使い回す</strong>イメージです。<br>
+      接続の作成コストを削減できます。
+    </p>
+  </div>
+
+<pre><code class="language-typescript">// Prismaのコネクションプール設定
+// schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // ?connection_limit=10 をURLに追加
+}
+
+// Node.js pg-pool
+import { Pool } from 'pg';
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  max: 10,  // 最大接続数
+  idleTimeoutMillis: 30000  // アイドルタイムアウト
+});</code></pre>
+
+  <h2>よくあるボトルネック</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      パフォーマンスを下げる要因
+    </div>
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border-light);">
+          <th style="padding:12px;text-align:left;">問題</th>
+          <th style="padding:12px;text-align:left;">対策</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">N+1問題</td>
+          <td style="padding:12px;">JOINまたはEager Loading</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">インデックス不足</td>
+          <td style="padding:12px;">EXPLAINで確認して追加</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">SELECT *</td>
+          <td style="padding:12px;">必要なカラムのみ指定</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">接続の作り過ぎ</td>
+          <td style="padding:12px;">コネクションプール</td>
+        </tr>
+        <tr>
+          <td style="padding:12px;">ロック競合</td>
+          <td style="padding:12px;">トランザクションを短く</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>見抜くべき問題</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <div class="compare-box">
+      <div class="compare-bad">
+        <div class="compare-title">❌ 毎回接続を作成</div>
+<pre><code class="language-typescript">async function getUser(id: number) {
+  // 毎回新しい接続を作成
+  const prisma = new PrismaClient();
+  const user = await prisma.user.findUnique({
+    where: { id }
+  });
+  await prisma.$disconnect();
+  return user;
+}</code></pre>
+      </div>
+      <div class="compare-good">
+        <div class="compare-title">⭕ シングルトンで再利用</div>
+<pre><code class="language-typescript">// グローバルで1つのインスタンス
+const prisma = new PrismaClient();
+
+async function getUser(id: number) {
+  return prisma.user.findUnique({
+    where: { id }
+  });
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <h2>Phase 3 完了！</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">🎉</span>
+      データベースの基礎を学び終えました
+    </div>
+    <p>
+      以下の力が身につきました：
+    </p>
+    <ul style="margin:0;">
+      <li>正規化違反（カンマ区切り、冗長データ）を発見できる</li>
+      <li>インデックス不足を指摘できる</li>
+      <li>N+1問題を検出し、解決策を提案できる</li>
+      <li>トランザクションの必要性を判断できる</li>
+    </ul>
+    <p style="margin:0;margin-top:12px;">
+      次のPhase 4では<strong>認証・セキュリティ</strong>を学びます。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-db10-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>コネクションプールの目的は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db10-1" style="display:none;">
+      A. DB接続を再利用してコストを削減する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db10-1" style="display:none;">
+      B. データをキャッシュする
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db10-1" style="display:none;">
+      C. SQLを高速化する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db10-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-db10-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2（総復習）
+    </div>
+    <p>以下のコードで起きる問題は？（複数選択で考えてください）</p>
+<pre><code class="language-typescript">const orders = await prisma.order.findMany();  // SELECT *
+for (const order of orders) {
+  const user = await prisma.user.findUnique({
+    where: { id: order.userId }
+  });
+}</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db10-2" style="display:none;">
+      A. N+1問題 + SELECT *
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db10-2" style="display:none;">
+      B. トランザクション漏れ
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db10-2" style="display:none;">
+      C. 正規化違反
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db10-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('db10')">
+    <span class="icon">✓</span>
+    Phase 3を完了
+  </button>
+</section>

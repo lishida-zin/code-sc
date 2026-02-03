@@ -251,6 +251,111 @@
 
         </div>
       </div>
+
+      <!-- Level 4 -->
+      <div class="nav-accordion" data-accordion="level4">
+        <div class="nav-accordion-header level" onclick="toggleAccordion('level4')">
+          <span>Level 4: Node.js/API/DB</span>
+          <span class="nav-accordion-icon">▶</span>
+        </div>
+        <div class="nav-accordion-content">
+
+          <!-- Phase 1: Node.js基礎 -->
+          <div class="nav-accordion" data-accordion="node-phase1">
+            <div class="nav-accordion-header" onclick="toggleAccordion('node-phase1')">
+              <span>Phase 1: Node.js基礎</span>
+              <span class="nav-accordion-icon">▶</span>
+            </div>
+            <div class="nav-accordion-content">
+              <a href="#node1" class="nav-link" data-section="node1">1. Node.jsとは</a>
+              <a href="#node2" class="nav-link" data-section="node2">2. ESM vs CommonJS</a>
+              <a href="#node3" class="nav-link" data-section="node3">3. package.json</a>
+              <a href="#node4" class="nav-link" data-section="node4">4. イベントループ</a>
+              <a href="#node5" class="nav-link" data-section="node5">5. 非同期パターン</a>
+              <a href="#node6" class="nav-link" data-section="node6">6. ファイル操作</a>
+              <a href="#node7" class="nav-link" data-section="node7">7. 環境変数</a>
+              <a href="#node8" class="nav-link" data-section="node8">8. フレームワーク比較</a>
+            </div>
+          </div>
+
+          <!-- Phase 2: API設計 -->
+          <div class="nav-accordion" data-accordion="api-phase2">
+            <div class="nav-accordion-header" onclick="toggleAccordion('api-phase2')">
+              <span>Phase 2: API設計</span>
+              <span class="nav-accordion-icon">▶</span>
+            </div>
+            <div class="nav-accordion-content">
+              <a href="#api1" class="nav-link" data-section="api1">9. REST原則</a>
+              <a href="#api2" class="nav-link" data-section="api2">10. URL設計</a>
+              <a href="#api3" class="nav-link" data-section="api3">11. ステータスコード</a>
+              <a href="#api4" class="nav-link" data-section="api4">12. リクエスト/レスポンス</a>
+              <a href="#api5" class="nav-link" data-section="api5">13. APIバージョニング</a>
+              <a href="#api6" class="nav-link" data-section="api6">14. OpenAPI/Swagger</a>
+              <a href="#api7" class="nav-link" data-section="api7">15. GraphQL概要</a>
+              <a href="#api8" class="nav-link" data-section="api8">16. tRPC概要</a>
+            </div>
+          </div>
+
+          <!-- Phase 3: データベース -->
+          <div class="nav-accordion" data-accordion="db-phase3">
+            <div class="nav-accordion-header" onclick="toggleAccordion('db-phase3')">
+              <span>Phase 3: データベース</span>
+              <span class="nav-accordion-icon">▶</span>
+            </div>
+            <div class="nav-accordion-content">
+              <a href="#db1" class="nav-link" data-section="db1">17. RDBの基本</a>
+              <a href="#db2" class="nav-link" data-section="db2">18. SQL基礎</a>
+              <a href="#db3" class="nav-link" data-section="db3">19. 正規化（1NF）</a>
+              <a href="#db4" class="nav-link" data-section="db4">20. 正規化（2NF/3NF）</a>
+              <a href="#db5" class="nav-link" data-section="db5">21. インデックス基礎</a>
+              <a href="#db6" class="nav-link" data-section="db6">22. インデックス戦略</a>
+              <a href="#db7" class="nav-link" data-section="db7">23. トランザクション</a>
+              <a href="#db8" class="nav-link" data-section="db8">24. ORM概要</a>
+              <a href="#db9" class="nav-link" data-section="db9">25. Prisma実践</a>
+              <a href="#db10" class="nav-link" data-section="db10">26. パフォーマンス</a>
+            </div>
+          </div>
+
+          <!-- Phase 4: 認証・セキュリティ -->
+          <div class="nav-accordion" data-accordion="sec-phase4">
+            <div class="nav-accordion-header" onclick="toggleAccordion('sec-phase4')">
+              <span>Phase 4: 認証・セキュリティ</span>
+              <span class="nav-accordion-icon">▶</span>
+            </div>
+            <div class="nav-accordion-content">
+              <a href="#sec1" class="nav-link" data-section="sec1">27. 認証 vs 認可</a>
+              <a href="#sec2" class="nav-link" data-section="sec2">28. パスワード管理</a>
+              <a href="#sec3" class="nav-link" data-section="sec3">29. JWT基礎</a>
+              <a href="#sec4" class="nav-link" data-section="sec4">30. JWTベストプラクティス</a>
+              <a href="#sec5" class="nav-link" data-section="sec5">31. OAuth2/OIDC</a>
+              <a href="#sec6" class="nav-link" data-section="sec6">32. Passkey概要</a>
+              <a href="#sec7" class="nav-link" data-section="sec7">33. SQLインジェクション</a>
+              <a href="#sec8" class="nav-link" data-section="sec8">34. XSS対策</a>
+              <a href="#sec9" class="nav-link" data-section="sec9">35. CSRF対策</a>
+              <a href="#sec10" class="nav-link" data-section="sec10">36. セキュリティヘッダー</a>
+            </div>
+          </div>
+
+          <!-- Phase 5: テスト・品質 -->
+          <div class="nav-accordion" data-accordion="test-phase5">
+            <div class="nav-accordion-header" onclick="toggleAccordion('test-phase5')">
+              <span>Phase 5: テスト・品質</span>
+              <span class="nav-accordion-icon">▶</span>
+            </div>
+            <div class="nav-accordion-content">
+              <a href="#test1" class="nav-link" data-section="test1">37. テストピラミッド</a>
+              <a href="#test2" class="nav-link" data-section="test2">38. Vitest基礎</a>
+              <a href="#test3" class="nav-link" data-section="test3">39. モックとスタブ</a>
+              <a href="#test4" class="nav-link" data-section="test4">40. APIテスト</a>
+              <a href="#test5" class="nav-link" data-section="test5">41. DBテスト</a>
+              <a href="#test6" class="nav-link" data-section="test6">42. エラーケース</a>
+              <a href="#test7" class="nav-link" data-section="test7">43. テストカバレッジ</a>
+              <a href="#test8" class="nav-link" data-section="test8">44. CI/CD統合</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   </nav>
 
@@ -304,6 +409,14 @@
             <progress id="level3-progress" value="0" max="24"></progress>
           </div>
           <p>フロントエンドUIフレームワークを読めるようになります。</p>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Level 4: Node.js/API/DB</h3>
+          <div class="progress-container">
+            <progress id="level4-progress" value="0" max="44"></progress>
+          </div>
+          <p>バックエンドAPI、データベース、セキュリティを読めるようになります。</p>
         </div>
       </div>
 

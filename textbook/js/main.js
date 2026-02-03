@@ -105,7 +105,61 @@ const sectionMapping = {
   'advanced5': 'level3/phase4.html',
   'advanced6': 'level3/phase4.html',
   'advanced7': 'level3/phase4.html',
-  'advanced8': 'level3/phase4.html'
+  'advanced8': 'level3/phase4.html',
+
+  // Level 4 - Phase 1: Node.js基礎
+  'node1': 'level4/phase1.html',
+  'node2': 'level4/phase1.html',
+  'node3': 'level4/phase1.html',
+  'node4': 'level4/phase1.html',
+  'node5': 'level4/phase1.html',
+  'node6': 'level4/phase1.html',
+  'node7': 'level4/phase1.html',
+  'node8': 'level4/phase1.html',
+
+  // Level 4 - Phase 2: API設計
+  'api1': 'level4/phase2.html',
+  'api2': 'level4/phase2.html',
+  'api3': 'level4/phase2.html',
+  'api4': 'level4/phase2.html',
+  'api5': 'level4/phase2.html',
+  'api6': 'level4/phase2.html',
+  'api7': 'level4/phase2.html',
+  'api8': 'level4/phase2.html',
+
+  // Level 4 - Phase 3: データベース
+  'db1': 'level4/phase3.html',
+  'db2': 'level4/phase3.html',
+  'db3': 'level4/phase3.html',
+  'db4': 'level4/phase3.html',
+  'db5': 'level4/phase3.html',
+  'db6': 'level4/phase3.html',
+  'db7': 'level4/phase3.html',
+  'db8': 'level4/phase3.html',
+  'db9': 'level4/phase3.html',
+  'db10': 'level4/phase3.html',
+
+  // Level 4 - Phase 4: 認証・セキュリティ
+  'sec1': 'level4/phase4.html',
+  'sec2': 'level4/phase4.html',
+  'sec3': 'level4/phase4.html',
+  'sec4': 'level4/phase4.html',
+  'sec5': 'level4/phase4.html',
+  'sec6': 'level4/phase4.html',
+  'sec7': 'level4/phase4.html',
+  'sec8': 'level4/phase4.html',
+  'sec9': 'level4/phase4.html',
+  'sec10': 'level4/phase4.html',
+
+  // Level 4 - Phase 5: テスト・品質
+  'test1': 'level4/phase5.html',
+  'test2': 'level4/phase5.html',
+  'test3': 'level4/phase5.html',
+  'test4': 'level4/phase5.html',
+  'test5': 'level4/phase5.html',
+  'test6': 'level4/phase5.html',
+  'test7': 'level4/phase5.html',
+  'test8': 'level4/phase5.html'
 };
 
 // 読み込み済みファイルを追跡
@@ -435,6 +489,16 @@ function updateProgress() {
   const level3Count = completed.filter(s => level3Sections.includes(s)).length;
   const level3Progress = document.getElementById('level3-progress');
   if (level3Progress) level3Progress.value = level3Count;
+
+  // Level 4
+  const level4Sections = ['node1','node2','node3','node4','node5','node6','node7','node8',
+                          'api1','api2','api3','api4','api5','api6','api7','api8',
+                          'db1','db2','db3','db4','db5','db6','db7','db8','db9','db10',
+                          'sec1','sec2','sec3','sec4','sec5','sec6','sec7','sec8','sec9','sec10',
+                          'test1','test2','test3','test4','test5','test6','test7','test8'];
+  const level4Count = completed.filter(s => level4Sections.includes(s)).length;
+  const level4Progress = document.getElementById('level4-progress');
+  if (level4Progress) level4Progress.value = level4Count;
 }
 
 // 初期化

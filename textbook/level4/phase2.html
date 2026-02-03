@@ -1,0 +1,2029 @@
+<!-- ============================================
+     Level 4 Phase 2: API設計
+     ============================================ -->
+
+<section id="api1">
+  <h1>REST原則</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>RESTとは何か</li>
+      <li>リソース指向の考え方</li>
+      <li>HTTPメソッドの正しい使い方</li>
+      <li>ステートレスの意味</li>
+    </ul>
+  </div>
+
+  <h2>RESTとは</h2>
+
+  <p>
+    <strong>REST</strong>（Representational State Transfer）は、<strong>Web APIの設計スタイル</strong>です。
+  </p>
+
+  <p>
+    2000年にRoy Fieldingが提唱しました。<br>
+    「Web」が成功した設計原則をAPI設計に応用したものです。
+  </p>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      語源
+    </div>
+    <p style="margin:0;">
+      <strong>Representational</strong> = 表現<br>
+      <strong>State</strong> = 状態<br>
+      <strong>Transfer</strong> = 転送<br>
+      → 「リソースの状態を表現として転送する」という意味です。
+    </p>
+  </div>
+
+  <h2>リソース指向</h2>
+
+  <p>
+    RESTの最も重要な考え方が<strong>リソース指向</strong>です。
+  </p>
+
+  <p>
+    <strong>リソース</strong> = 名詞で表せる「もの」<br>
+    例: ユーザー、投稿、商品、注文
+  </p>
+
+  <div class="compare">
+    <div class="compare-bad">
+      <h4>❌ 動詞ベース（古い設計）</h4>
+<pre><code>GET /getUserById?id=1
+POST /createUser
+POST /updateUserName
+DELETE /removeUser</code></pre>
+      <p>「何をするか」を動詞で表現</p>
+    </div>
+    <div class="compare-good">
+      <h4>⭕ リソース指向（RESTful）</h4>
+<pre><code>GET /users/1
+POST /users
+PATCH /users/1
+DELETE /users/1</code></pre>
+      <p>「何に対して」を名詞で表現</p>
+    </div>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">🍽️</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      レストランのメニューに例えると:<br>
+      <strong>動詞ベース</strong>: 「ステーキを焼いて」「サラダを作って」「ドリンクを注いで」<br>
+      <strong>リソース指向</strong>: 「ステーキ1つ」「サラダ1つ」「ドリンク1つ」<br>
+      → リソース（料理）を指定するだけで十分！
+    </p>
+  </div>
+
+  <h2>HTTPメソッド</h2>
+
+  <p>
+    リソースに対する<strong>操作</strong>はHTTPメソッドで表現します。
+  </p>
+
+  <div class="card">
+    <div class="card-title">HTTPメソッドとCRUD対応</div>
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#f0f0f0;">
+        <th style="padding:8px; border:1px solid #ddd;">メソッド</th>
+        <th style="padding:8px; border:1px solid #ddd;">操作</th>
+        <th style="padding:8px; border:1px solid #ddd;">例</th>
+        <th style="padding:8px; border:1px solid #ddd;">冪等性</th>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>GET</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">取得（Read）</td>
+        <td style="padding:8px; border:1px solid #ddd;">GET /users/1</td>
+        <td style="padding:8px; border:1px solid #ddd;">⭕</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>POST</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">作成（Create）</td>
+        <td style="padding:8px; border:1px solid #ddd;">POST /users</td>
+        <td style="padding:8px; border:1px solid #ddd;">❌</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>PUT</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">全体更新（Replace）</td>
+        <td style="padding:8px; border:1px solid #ddd;">PUT /users/1</td>
+        <td style="padding:8px; border:1px solid #ddd;">⭕</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>PATCH</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">部分更新（Modify）</td>
+        <td style="padding:8px; border:1px solid #ddd;">PATCH /users/1</td>
+        <td style="padding:8px; border:1px solid #ddd;">⭕</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>DELETE</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">削除（Delete）</td>
+        <td style="padding:8px; border:1px solid #ddd;">DELETE /users/1</td>
+        <td style="padding:8px; border:1px solid #ddd;">⭕</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📝</span>
+      冪等性（べきとうせい）とは
+    </div>
+    <p style="margin:0;">
+      「何度実行しても結果が同じ」という性質です。<br>
+      <strong>GET</strong>: 何度取得しても同じデータ（冪等）<br>
+      <strong>DELETE</strong>: 2回削除しても「削除された状態」は同じ（冪等）<br>
+      <strong>POST</strong>: 2回実行すると2つ作成される（非冪等）
+    </p>
+  </div>
+
+  <h2>ステートレス</h2>
+
+  <p>
+    RESTでは<strong>サーバーは状態を持たない</strong>ことが原則です。
+  </p>
+
+  <p>
+    <strong>ステートレス</strong> = 各リクエストは独立している<br>
+    → 前のリクエストの情報をサーバーが覚えていない
+  </p>
+
+  <div class="compare">
+    <div class="compare-bad">
+      <h4>❌ ステートフル</h4>
+<pre><code>// サーバーがセッションを持つ
+POST /login  // ログイン状態を保持
+GET /my-data // サーバーが「誰か」を覚えている</code></pre>
+      <p>サーバーがユーザーを記憶</p>
+    </div>
+    <div class="compare-good">
+      <h4>⭕ ステートレス</h4>
+<pre><code>// 毎回認証情報を送る
+GET /users/1
+Authorization: Bearer &lt;token&gt;</code></pre>
+      <p>毎回「自分が誰か」を伝える</p>
+    </div>
+  </div>
+
+  <p>
+    <strong>利点</strong>:
+  </p>
+  <ul>
+    <li><strong>スケーラビリティ</strong>: どのサーバーでも処理可能</li>
+    <li><strong>シンプル</strong>: セッション管理が不要</li>
+    <li><strong>キャッシュ</strong>: レスポンスをキャッシュしやすい</li>
+  </ul>
+
+  <h2>見抜くべき問題</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔴</span>
+      コードレビューで指摘すべきポイント
+    </div>
+    <ul>
+      <li><strong>動詞エンドポイント</strong>: /getUser, /createPost など</li>
+      <li><strong>GETで副作用</strong>: GET /deleteUser?id=1</li>
+      <li><strong>POSTで取得</strong>: POST /searchUsers</li>
+      <li><strong>PUTで部分更新</strong>: 一部フィールドだけ送ってPUT</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-api1-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>RESTfulなAPIエンドポイント設計として正しいのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api1-1" style="display:none;">
+      A. GET /getUserById?id=1
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api1-1" style="display:none;">
+      B. GET /users/1
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api1-1" style="display:none;">
+      C. POST /getUser
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api1-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-api1-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>「冪等性がある」とはどういう意味？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api1-2" style="display:none;">
+      A. 処理が高速であること
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api1-2" style="display:none;">
+      B. 何度実行しても結果が同じであること
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api1-2" style="display:none;">
+      C. エラーが発生しないこと
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api1-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('api1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- api2: URLエンドポイント設計 -->
+<section id="api2">
+  <h1>URLエンドポイント設計</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>命名規則（ケバブケース）</li>
+      <li>リソースの階層構造</li>
+      <li>クエリパラメータの使い方</li>
+      <li>一貫性のあるURL設計</li>
+    </ul>
+  </div>
+
+  <h2>命名規則</h2>
+
+  <p>
+    URLの命名には<strong>一貫したルール</strong>が必要です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">推奨される命名規則</div>
+    <ul>
+      <li><strong>小文字のみ</strong>: /users（/Users ではない）</li>
+      <li><strong>複数形</strong>: /users, /posts, /orders</li>
+      <li><strong>ケバブケース</strong>: /user-profiles（/userProfiles ではない）</li>
+      <li><strong>名詞のみ</strong>: /users（/getUsers ではない）</li>
+    </ul>
+  </div>
+
+  <div class="compare">
+    <div class="compare-bad">
+      <h4>❌ 悪い例</h4>
+<pre><code>/User             // 大文字
+/user             // 単数形
+/userProfiles     // キャメルケース
+/user_profiles    // スネークケース
+/getUsers         // 動詞</code></pre>
+    </div>
+    <div class="compare-good">
+      <h4>⭕ 良い例</h4>
+<pre><code>/users            // 小文字・複数形
+/user-profiles    // ケバブケース
+/order-items      // ケバブケース</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      ケバブケースとは
+    </div>
+    <p style="margin:0;">
+      単語をハイフン（-）で繋ぐ命名法。<br>
+      串刺し（kebab）のように見えるから「ケバブケース」。<br>
+      URLでは最も読みやすく、推奨されています。
+    </p>
+  </div>
+
+  <h2>階層構造</h2>
+
+  <p>
+    リソース間の関係は<strong>URLの階層</strong>で表現します。
+  </p>
+
+  <div class="card">
+    <div class="card-title">階層構造の例</div>
+<pre><code>// ユーザーの投稿一覧
+GET /users/1/posts
+
+// 投稿のコメント一覧
+GET /posts/1/comments
+
+// ユーザー1の投稿2のコメント一覧
+GET /users/1/posts/2/comments</code></pre>
+  </div>
+
+  <p>
+    <strong>原則</strong>: 深くなりすぎない（3階層程度まで）
+  </p>
+
+  <div class="compare">
+    <div class="compare-bad">
+      <h4>❌ 深すぎる</h4>
+<pre><code>GET /companies/1/departments/2/teams/3/members/4/tasks/5</code></pre>
+      <p>深すぎて分かりにくい</p>
+    </div>
+    <div class="compare-good">
+      <h4>⭕ 適切な深さ</h4>
+<pre><code>GET /teams/3/members
+GET /members/4/tasks</code></pre>
+      <p>必要な関係だけを表現</p>
+    </div>
+  </div>
+
+  <h2>クエリパラメータ</h2>
+
+  <p>
+    <strong>リソースの特定以外</strong>にはクエリパラメータを使います。
+  </p>
+
+  <div class="card">
+    <div class="card-title">クエリパラメータの用途</div>
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#f0f0f0;">
+        <th style="padding:8px; border:1px solid #ddd;">用途</th>
+        <th style="padding:8px; border:1px solid #ddd;">例</th>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">フィルタリング</td>
+        <td style="padding:8px; border:1px solid #ddd;">GET /users?status=active</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">ソート</td>
+        <td style="padding:8px; border:1px solid #ddd;">GET /users?sort=created_at&order=desc</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">ページネーション</td>
+        <td style="padding:8px; border:1px solid #ddd;">GET /users?page=2&limit=20</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">検索</td>
+        <td style="padding:8px; border:1px solid #ddd;">GET /users?q=tanaka</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">フィールド選択</td>
+        <td style="padding:8px; border:1px solid #ddd;">GET /users?fields=id,name,email</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>パスパラメータ vs クエリパラメータ</h2>
+
+  <div class="card">
+    <div class="card-title">使い分けの基準</div>
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#f0f0f0;">
+        <th style="padding:8px; border:1px solid #ddd;">-</th>
+        <th style="padding:8px; border:1px solid #ddd;">パスパラメータ</th>
+        <th style="padding:8px; border:1px solid #ddd;">クエリパラメータ</th>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">用途</td>
+        <td style="padding:8px; border:1px solid #ddd;">リソースの特定</td>
+        <td style="padding:8px; border:1px solid #ddd;">オプション・条件</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">必須か</td>
+        <td style="padding:8px; border:1px solid #ddd;">必須</td>
+        <td style="padding:8px; border:1px solid #ddd;">省略可能</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">例</td>
+        <td style="padding:8px; border:1px solid #ddd;">/users/<strong>123</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">/users?<strong>status=active</strong></td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>見抜くべき問題</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔴</span>
+      コードレビューで指摘すべきポイント
+    </div>
+    <ul>
+      <li><strong>命名の不一致</strong>: /users と /User が混在</li>
+      <li><strong>キャメルケース</strong>: /userProfiles</li>
+      <li><strong>単数形</strong>: /user/1（/users/1 が正しい）</li>
+      <li><strong>動詞の使用</strong>: /getUsers, /deletePost</li>
+      <li><strong>深すぎる階層</strong>: 4階層以上</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-api2-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>URLの命名規則として推奨されるのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api2-1" style="display:none;">
+      A. キャメルケース（userProfiles）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api2-1" style="display:none;">
+      B. ケバブケース（user-profiles）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api2-1" style="display:none;">
+      C. スネークケース（user_profiles）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api2-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-api2-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>クエリパラメータを使うべき場面は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api2-2" style="display:none;">
+      A. 特定のユーザーを取得する（/users?id=1）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api2-2" style="display:none;">
+      B. ユーザー一覧をフィルタリングする（/users?status=active）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api2-2" style="display:none;">
+      C. ユーザーを作成する（POST /users?name=田中）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api2-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('api2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- api3: HTTPステータスコード -->
+<section id="api3">
+  <h1>HTTPステータスコード</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ステータスコードの分類（2xx/3xx/4xx/5xx）</li>
+      <li>よく使うステータスコード</li>
+      <li>適切な使い分け</li>
+      <li>「全部200」問題</li>
+    </ul>
+  </div>
+
+  <h2>ステータスコードとは</h2>
+
+  <p>
+    <strong>ステータスコード</strong>は、HTTPレスポンスの結果を表す3桁の数字です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">ステータスコードの分類</div>
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#f0f0f0;">
+        <th style="padding:8px; border:1px solid #ddd;">範囲</th>
+        <th style="padding:8px; border:1px solid #ddd;">分類</th>
+        <th style="padding:8px; border:1px solid #ddd;">意味</th>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>2xx</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">成功</td>
+        <td style="padding:8px; border:1px solid #ddd;">リクエストが正常に処理された</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>3xx</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">リダイレクト</td>
+        <td style="padding:8px; border:1px solid #ddd;">別のURLに移動が必要</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>4xx</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">クライアントエラー</td>
+        <td style="padding:8px; border:1px solid #ddd;">リクエストに問題がある</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>5xx</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">サーバーエラー</td>
+        <td style="padding:8px; border:1px solid #ddd;">サーバー側に問題がある</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>2xx: 成功</h2>
+
+  <div class="card">
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#f0f0f0;">
+        <th style="padding:8px; border:1px solid #ddd;">コード</th>
+        <th style="padding:8px; border:1px solid #ddd;">名前</th>
+        <th style="padding:8px; border:1px solid #ddd;">使う場面</th>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>200</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">OK</td>
+        <td style="padding:8px; border:1px solid #ddd;">GET成功、更新成功</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>201</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">Created</td>
+        <td style="padding:8px; border:1px solid #ddd;">POST成功（新規作成）</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>204</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">No Content</td>
+        <td style="padding:8px; border:1px solid #ddd;">DELETE成功（返すデータなし）</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>4xx: クライアントエラー</h2>
+
+  <div class="card">
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#f0f0f0;">
+        <th style="padding:8px; border:1px solid #ddd;">コード</th>
+        <th style="padding:8px; border:1px solid #ddd;">名前</th>
+        <th style="padding:8px; border:1px solid #ddd;">使う場面</th>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>400</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">Bad Request</td>
+        <td style="padding:8px; border:1px solid #ddd;">リクエストの形式が不正</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>401</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">Unauthorized</td>
+        <td style="padding:8px; border:1px solid #ddd;">認証が必要/認証失敗</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>403</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">Forbidden</td>
+        <td style="padding:8px; border:1px solid #ddd;">認証済みだが権限がない</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>404</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">Not Found</td>
+        <td style="padding:8px; border:1px solid #ddd;">リソースが見つからない</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>409</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">Conflict</td>
+        <td style="padding:8px; border:1px solid #ddd;">既に存在する（重複登録）</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>422</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">Unprocessable Entity</td>
+        <td style="padding:8px; border:1px solid #ddd;">バリデーションエラー</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>429</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">Too Many Requests</td>
+        <td style="padding:8px; border:1px solid #ddd;">レート制限に達した</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      401 vs 403 の違い
+    </div>
+    <p style="margin:0;">
+      <strong>401 Unauthorized</strong>: 「あなた誰？」（認証されていない）<br>
+      <strong>403 Forbidden</strong>: 「あなたは知ってるけど、権限がない」（認可されていない）<br>
+      → 401は再ログインで解決、403は権限付与が必要
+    </p>
+  </div>
+
+  <h2>5xx: サーバーエラー</h2>
+
+  <div class="card">
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#f0f0f0;">
+        <th style="padding:8px; border:1px solid #ddd;">コード</th>
+        <th style="padding:8px; border:1px solid #ddd;">名前</th>
+        <th style="padding:8px; border:1px solid #ddd;">使う場面</th>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>500</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">Internal Server Error</td>
+        <td style="padding:8px; border:1px solid #ddd;">サーバー内部エラー</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>502</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">Bad Gateway</td>
+        <td style="padding:8px; border:1px solid #ddd;">上流サーバーからの応答が不正</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>503</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">Service Unavailable</td>
+        <td style="padding:8px; border:1px solid #ddd;">メンテナンス中/過負荷</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>504</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">Gateway Timeout</td>
+        <td style="padding:8px; border:1px solid #ddd;">上流サーバーがタイムアウト</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>見抜くべき問題: 全部200返却</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔴</span>
+      最もよくある問題
+    </div>
+<pre><code>// ❌ エラーでも200を返す
+app.post('/users', (req, res) => {
+  if (!req.body.email) {
+    // 200で返している（間違い！）
+    res.status(200).json({
+      success: false,
+      error: 'Email is required'
+    });
+    return;
+  }
+  // ...
+});
+
+// ⭕ 適切なステータスコードを返す
+app.post('/users', (req, res) => {
+  if (!req.body.email) {
+    res.status(400).json({  // 400 Bad Request
+      error: 'Email is required'
+    });
+    return;
+  }
+  // ...
+});</code></pre>
+  </div>
+
+  <p>
+    <strong>全部200の問題点</strong>:
+  </p>
+  <ul>
+    <li>クライアントがエラー判定しにくい</li>
+    <li>監視ツールがエラーを検知できない</li>
+    <li>キャッシュの制御が困難</li>
+    <li>REST原則から外れる</li>
+  </ul>
+
+  <div class="quiz" id="quiz-api3-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>POST でリソースを新規作成した場合、返すべきステータスコードは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api3-1" style="display:none;">
+      A. 200 OK
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api3-1" style="display:none;">
+      B. 201 Created
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api3-1" style="display:none;">
+      C. 204 No Content
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api3-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-api3-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>「認証は成功したが、そのリソースへのアクセス権限がない」場合に返すべきコードは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api3-2" style="display:none;">
+      A. 401 Unauthorized
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api3-2" style="display:none;">
+      B. 403 Forbidden
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api3-2" style="display:none;">
+      C. 404 Not Found
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api3-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-api3-3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 3
+    </div>
+    <p>以下のコードの問題点は？</p>
+<pre><code>app.post('/users', (req, res) => {
+  if (!req.body.email) {
+    res.status(200).json({ error: 'Email required' });
+    return;
+  }
+});</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api3-3" style="display:none;">
+      A. エラー時に200を返している
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api3-3" style="display:none;">
+      B. JSONではなくテキストを返すべき
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api3-3" style="display:none;">
+      C. 問題はない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api3-3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('api3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- api4: リクエスト/レスポンス設計 -->
+<section id="api4">
+  <h1>リクエスト/レスポンス設計</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>JSON構造の設計</li>
+      <li>レスポンス形式の統一</li>
+      <li>ページネーション</li>
+      <li>エラーレスポンス</li>
+    </ul>
+  </div>
+
+  <h2>JSON構造の基本</h2>
+
+  <p>
+    APIのリクエスト/レスポンスは<strong>JSON形式</strong>が標準です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">基本的なレスポンス構造</div>
+<pre><code>// 単一リソース
+{
+  "id": "123",
+  "name": "田中太郎",
+  "email": "tanaka@example.com",
+  "createdAt": "2026-01-15T10:30:00Z"
+}
+
+// リソースのコレクション
+{
+  "data": [
+    { "id": "1", "name": "田中" },
+    { "id": "2", "name": "佐藤" }
+  ],
+  "meta": {
+    "total": 100,
+    "page": 1,
+    "limit": 20
+  }
+}</code></pre>
+  </div>
+
+  <h2>命名規則</h2>
+
+  <div class="card">
+    <div class="card-title">フィールド名の命名</div>
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#f0f0f0;">
+        <th style="padding:8px; border:1px solid #ddd;">ケース</th>
+        <th style="padding:8px; border:1px solid #ddd;">例</th>
+        <th style="padding:8px; border:1px solid #ddd;">採用</th>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">キャメルケース</td>
+        <td style="padding:8px; border:1px solid #ddd;">createdAt, firstName</td>
+        <td style="padding:8px; border:1px solid #ddd;">推奨（JavaScript親和性）</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">スネークケース</td>
+        <td style="padding:8px; border:1px solid #ddd;">created_at, first_name</td>
+        <td style="padding:8px; border:1px solid #ddd;">許容（Ruby/Python系）</td>
+      </tr>
+    </table>
+    <p style="margin-top:10px;">
+      <strong>重要</strong>: どちらでもいいが、<strong>プロジェクト内で統一</strong>すること
+    </p>
+  </div>
+
+  <h2>ページネーション</h2>
+
+  <p>
+    大量のデータを取得する場合は<strong>ページネーション</strong>が必須です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">主な方式</div>
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#f0f0f0;">
+        <th style="padding:8px; border:1px solid #ddd;">方式</th>
+        <th style="padding:8px; border:1px solid #ddd;">例</th>
+        <th style="padding:8px; border:1px solid #ddd;">特徴</th>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>Offset</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">?page=2&limit=20</td>
+        <td style="padding:8px; border:1px solid #ddd;">シンプル、大量データで遅い</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>Cursor</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">?cursor=abc123&limit=20</td>
+        <td style="padding:8px; border:1px solid #ddd;">高速、リアルタイム向け</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Offset方式のレスポンス</div>
+<pre><code>GET /users?page=2&limit=20
+
+{
+  "data": [...],
+  "pagination": {
+    "page": 2,
+    "limit": 20,
+    "total": 150,
+    "totalPages": 8
+  }
+}</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Cursor方式のレスポンス</div>
+<pre><code>GET /posts?cursor=eyJpZCI6MTAwfQ&limit=20
+
+{
+  "data": [...],
+  "pagination": {
+    "nextCursor": "eyJpZCI6MTIwfQ",
+    "hasMore": true
+  }
+}</code></pre>
+  </div>
+
+  <h2>エラーレスポンス</h2>
+
+  <p>
+    エラーレスポンスも<strong>統一された形式</strong>にします。
+  </p>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      推奨: 統一されたエラー形式
+    </div>
+<pre><code>{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "入力内容に問題があります",
+    "details": [
+      {
+        "field": "email",
+        "message": "メールアドレスの形式が不正です"
+      },
+      {
+        "field": "password",
+        "message": "8文字以上必要です"
+      }
+    ]
+  }
+}</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      悪い例: 形式がバラバラ
+    </div>
+<pre><code>// エンドポイントAの場合
+{ "error": "Invalid email" }
+
+// エンドポイントBの場合
+{ "message": "Error", "errors": ["Invalid"] }
+
+// エンドポイントCの場合
+{ "success": false, "msg": "Failed" }</code></pre>
+  </div>
+
+  <h2>見抜くべき問題</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔴</span>
+      コードレビューで指摘すべきポイント
+    </div>
+    <ul>
+      <li><strong>命名の不統一</strong>: createdAt と created_at が混在</li>
+      <li><strong>ページネーションなし</strong>: 全件返却</li>
+      <li><strong>エラー形式がバラバラ</strong>: APIごとに違う</li>
+      <li><strong>日付形式の不統一</strong>: ISO 8601以外の形式</li>
+      <li><strong>ネストが深すぎる</strong>: 5階層以上のJSON</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-api4-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>大量データを扱うAPIで必須なのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api4-1" style="display:none;">
+      A. キャッシュ
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api4-1" style="display:none;">
+      B. ページネーション
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api4-1" style="display:none;">
+      C. 圧縮
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api4-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-api4-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>APIレスポンスの設計で最も重要なことは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api4-2" style="display:none;">
+      A. データ量を最小限にする
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api4-2" style="display:none;">
+      B. 形式を統一する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api4-2" style="display:none;">
+      C. 常にキャメルケースを使う
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api4-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('api4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- api5: APIバージョニング -->
+<section id="api5">
+  <h1>APIバージョニング</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>なぜバージョニングが必要か</li>
+      <li>3つの方式（URL/Header/Query）</li>
+      <li>破壊的変更とは</li>
+      <li>バージョン移行戦略</li>
+    </ul>
+  </div>
+
+  <h2>なぜバージョニングが必要か</h2>
+
+  <p>
+    APIは<strong>変更される</strong>ものです。<br>
+    しかし、既存のクライアントを壊さずに変更したい。
+  </p>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">🏢</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      建物の入口を変えるとき:<br>
+      <strong>バージョニングなし</strong>: 突然入口を変える → 来訪者が迷子<br>
+      <strong>バージョニングあり</strong>: 新しい入口を作り、古い入口も残す → 徐々に移行
+    </p>
+  </div>
+
+  <h2>3つの方式</h2>
+
+  <div class="card">
+    <div class="card-title">1. URLバージョニング（最も一般的）</div>
+<pre><code>GET /v1/users
+GET /v2/users</code></pre>
+    <p>
+      <strong>利点</strong>: 直感的、キャッシュしやすい<br>
+      <strong>欠点</strong>: URLが変わる
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">2. ヘッダーバージョニング</div>
+<pre><code>GET /users
+Accept: application/vnd.myapi.v1+json
+
+GET /users
+Accept: application/vnd.myapi.v2+json</code></pre>
+    <p>
+      <strong>利点</strong>: URLがきれい<br>
+      <strong>欠点</strong>: ブラウザでテストしにくい
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">3. クエリパラメータバージョニング</div>
+<pre><code>GET /users?version=1
+GET /users?version=2</code></pre>
+    <p>
+      <strong>利点</strong>: 実装が簡単<br>
+      <strong>欠点</strong>: オプション扱いになりがち
+    </p>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      2026年の推奨
+    </div>
+    <p style="margin:0;">
+      <strong>URLバージョニング</strong>が最も一般的で推奨。<br>
+      シンプルで分かりやすく、多くのAPIで採用されています。
+    </p>
+  </div>
+
+  <h2>破壊的変更（Breaking Changes）</h2>
+
+  <p>
+    <strong>破壊的変更</strong>とは、既存のクライアントが動かなくなる変更です。
+  </p>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      破壊的変更の例
+    </div>
+    <ul>
+      <li>フィールドの削除（name → 削除）</li>
+      <li>フィールド名の変更（name → fullName）</li>
+      <li>フィールドの型変更（id: "123" → id: 123）</li>
+      <li>必須フィールドの追加</li>
+      <li>エンドポイントの削除</li>
+      <li>レスポンス構造の変更</li>
+    </ul>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      非破壊的変更（後方互換）
+    </div>
+    <ul>
+      <li>オプショナルなフィールドの追加</li>
+      <li>新しいエンドポイントの追加</li>
+      <li>新しいHTTPメソッドの追加</li>
+    </ul>
+  </div>
+
+  <h2>バージョン移行戦略</h2>
+
+  <div class="card">
+    <div class="card-title">移行のベストプラクティス</div>
+    <ol>
+      <li><strong>新バージョンをリリース</strong>（v2）</li>
+      <li><strong>旧バージョンを非推奨に</strong>（deprecation notice）</li>
+      <li><strong>移行期間を設ける</strong>（6ヶ月〜1年）</li>
+      <li><strong>旧バージョンを廃止</strong></li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title">非推奨を伝える方法</div>
+<pre><code>// レスポンスヘッダーで通知
+Deprecation: true
+Sunset: Sat, 31 Dec 2026 23:59:59 GMT
+Link: &lt;/v2/users&gt;; rel="successor-version"
+
+// レスポンスボディで通知
+{
+  "data": [...],
+  "warning": "This API version is deprecated. Please migrate to v2 by 2026-12-31."
+}</code></pre>
+  </div>
+
+  <h2>見抜くべき問題</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔴</span>
+      コードレビューで指摘すべきポイント
+    </div>
+    <ul>
+      <li><strong>バージョニングなし</strong>: 本番APIにバージョンがない</li>
+      <li><strong>破壊的変更</strong>: 既存フィールドの削除/変更</li>
+      <li><strong>非推奨通知なし</strong>: 突然のAPI廃止</li>
+      <li><strong>複数方式の混在</strong>: v1とversionパラメータが混在</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-api5-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>最も一般的なAPIバージョニング方式は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api5-1" style="display:none;">
+      A. URLバージョニング（/v1/users）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api5-1" style="display:none;">
+      B. ヘッダーバージョニング
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api5-1" style="display:none;">
+      C. クエリパラメータバージョニング
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api5-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-api5-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>「破壊的変更」に該当するのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api5-2" style="display:none;">
+      A. オプショナルな新フィールドの追加
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api5-2" style="display:none;">
+      B. 既存フィールドの名前を変更
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api5-2" style="display:none;">
+      C. 新しいエンドポイントの追加
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api5-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('api5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- api6: OpenAPI/Swagger -->
+<section id="api6">
+  <h1>OpenAPI/Swagger</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>OpenAPIとは何か</li>
+      <li>仕様書の書き方</li>
+      <li>Swagger UIの使い方</li>
+      <li>コード生成</li>
+    </ul>
+  </div>
+
+  <h2>OpenAPIとは</h2>
+
+  <p>
+    <strong>OpenAPI</strong>は、REST APIの仕様を記述するための標準フォーマットです。
+  </p>
+
+  <p>
+    <strong>Swagger</strong>は元々の名前。現在は<strong>OpenAPI Specification（OAS）</strong>が正式名称です。
+  </p>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      歴史
+    </div>
+    <p style="margin:0;">
+      <strong>Swagger</strong>: 2011年に登場、API仕様記述ツール<br>
+      <strong>OpenAPI</strong>: 2015年にLinux Foundationへ寄贈され標準化<br>
+      → 仕様は「OpenAPI」、ツール群は「Swagger」と呼ばれることが多い
+    </p>
+  </div>
+
+  <h2>OpenAPI仕様書の基本</h2>
+
+  <div class="card">
+    <div class="card-title">基本構造（YAML形式）</div>
+<pre><code>openapi: 3.1.0
+info:
+  title: ユーザー管理API
+  version: 1.0.0
+  description: ユーザーのCRUD操作を提供します
+
+servers:
+  - url: https://api.example.com/v1
+    description: 本番環境
+
+paths:
+  /users:
+    get:
+      summary: ユーザー一覧を取得
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+        - id
+        - name
+        - email</code></pre>
+  </div>
+
+  <h2>主要なセクション</h2>
+
+  <div class="card">
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#f0f0f0;">
+        <th style="padding:8px; border:1px solid #ddd;">セクション</th>
+        <th style="padding:8px; border:1px solid #ddd;">役割</th>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>info</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">APIの基本情報（タイトル、バージョン）</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>servers</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">APIサーバーのURL</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>paths</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">エンドポイントの定義</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>components</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">再利用可能なスキーマ</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>security</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">認証方式の定義</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>Swagger UI</h2>
+
+  <p>
+    <strong>Swagger UI</strong>は、OpenAPI仕様書から自動生成されるドキュメントUIです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">Swagger UIの機能</div>
+    <ul>
+      <li><strong>インタラクティブ</strong>: ブラウザからAPIを試せる</li>
+      <li><strong>自動生成</strong>: 仕様書から自動でUI生成</li>
+      <li><strong>リクエスト例</strong>: サンプルリクエストを表示</li>
+      <li><strong>認証対応</strong>: 認証トークンを入力可能</li>
+    </ul>
+  </div>
+
+  <h2>コード生成</h2>
+
+  <p>
+    OpenAPI仕様書から<strong>クライアントコード</strong>や<strong>サーバースタブ</strong>を生成できます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">主なコード生成ツール</div>
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#f0f0f0;">
+        <th style="padding:8px; border:1px solid #ddd;">ツール</th>
+        <th style="padding:8px; border:1px solid #ddd;">特徴</th>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>openapi-typescript</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">TypeScript型定義を生成</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>openapi-generator</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">40以上の言語に対応</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>orval</strong></td>
+        <td style="padding:8px; border:1px solid #ddd;">React Query/SWR統合</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>見抜くべき問題</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔴</span>
+      コードレビューで指摘すべきポイント
+    </div>
+    <ul>
+      <li><strong>ドキュメントなし</strong>: 仕様書がない/古い</li>
+      <li><strong>実装との乖離</strong>: 仕様書と実装が一致していない</li>
+      <li><strong>型定義の不足</strong>: スキーマが不完全</li>
+      <li><strong>サンプルなし</strong>: リクエスト/レスポンス例がない</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-api6-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>OpenAPIとSwaggerの関係は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api6-1" style="display:none;">
+      A. 全く別のもの
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api6-1" style="display:none;">
+      B. SwaggerがOpenAPIとして標準化された
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api6-1" style="display:none;">
+      C. OpenAPIがSwaggerに名前変更された
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api6-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-api6-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>OpenAPI仕様書を使う最大のメリットは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api6-2" style="display:none;">
+      A. APIが高速になる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api6-2" style="display:none;">
+      B. ドキュメントとコードを自動生成できる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api6-2" style="display:none;">
+      C. セキュリティが向上する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api6-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('api6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- api7: GraphQL概要 -->
+<section id="api7">
+  <h1>GraphQL概要</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>GraphQLとは何か</li>
+      <li>Query/Mutation/Subscription</li>
+      <li>REST vs GraphQL</li>
+      <li>N+1問題</li>
+    </ul>
+  </div>
+
+  <h2>GraphQLとは</h2>
+
+  <p>
+    <strong>GraphQL</strong>は、Facebookが開発した<strong>APIクエリ言語</strong>です。
+  </p>
+
+  <p>
+    <strong>特徴</strong>: クライアントが<strong>必要なデータだけ</strong>を指定して取得できる
+  </p>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">🍽️</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      レストランで例えると:<br>
+      <strong>REST</strong>: セットメニュー（決まった内容が来る）<br>
+      <strong>GraphQL</strong>: アラカルト（欲しいものだけ注文）
+    </p>
+  </div>
+
+  <h2>Query（データ取得）</h2>
+
+  <div class="card">
+    <div class="card-title">RESTの場合</div>
+<pre><code>// ユーザーと投稿を別々に取得
+GET /users/1
+GET /users/1/posts
+
+// 2回のリクエストが必要</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">GraphQLの場合</div>
+<pre><code>query {
+  user(id: "1") {
+    name
+    email
+    posts {
+      title
+      createdAt
+    }
+  }
+}
+
+// 1回のリクエストで必要なデータだけ取得</code></pre>
+  </div>
+
+  <h2>Mutation（データ変更）</h2>
+
+  <p>
+    <strong>Mutation</strong>は、データの作成・更新・削除を行います。
+  </p>
+
+  <div class="card">
+<pre><code>mutation {
+  createUser(input: {
+    name: "田中"
+    email: "tanaka@example.com"
+  }) {
+    id
+    name
+    email
+  }
+}</code></pre>
+  </div>
+
+  <h2>Subscription（リアルタイム）</h2>
+
+  <p>
+    <strong>Subscription</strong>は、データの変更をリアルタイムで受け取ります。
+  </p>
+
+  <div class="card">
+<pre><code>subscription {
+  messageAdded(roomId: "123") {
+    id
+    content
+    sender {
+      name
+    }
+  }
+}
+
+// WebSocketで接続し、新しいメッセージをリアルタイム受信</code></pre>
+  </div>
+
+  <h2>REST vs GraphQL</h2>
+
+  <div class="card">
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#f0f0f0;">
+        <th style="padding:8px; border:1px solid #ddd;">観点</th>
+        <th style="padding:8px; border:1px solid #ddd;">REST</th>
+        <th style="padding:8px; border:1px solid #ddd;">GraphQL</th>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">データ取得</td>
+        <td style="padding:8px; border:1px solid #ddd;">エンドポイントごとに固定</td>
+        <td style="padding:8px; border:1px solid #ddd;">クライアントが指定</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">Over-fetching</td>
+        <td style="padding:8px; border:1px solid #ddd;">発生しやすい</td>
+        <td style="padding:8px; border:1px solid #ddd;">発生しない</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">Under-fetching</td>
+        <td style="padding:8px; border:1px solid #ddd;">複数リクエスト必要</td>
+        <td style="padding:8px; border:1px solid #ddd;">1リクエストで完結</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">キャッシュ</td>
+        <td style="padding:8px; border:1px solid #ddd;">HTTPキャッシュ活用</td>
+        <td style="padding:8px; border:1px solid #ddd;">専用キャッシュ必要</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">学習曲線</td>
+        <td style="padding:8px; border:1px solid #ddd;">低い</td>
+        <td style="padding:8px; border:1px solid #ddd;">高い</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📝</span>
+      Over-fetching / Under-fetching
+    </div>
+    <p style="margin:0;">
+      <strong>Over-fetching</strong>: 必要以上のデータを取得してしまう<br>
+      <strong>Under-fetching</strong>: 必要なデータが足りず、追加リクエストが必要
+    </p>
+  </div>
+
+  <h2>N+1問題</h2>
+
+  <p>
+    GraphQLで最も注意すべき問題が<strong>N+1問題</strong>です。
+  </p>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔴</span>
+      N+1問題の例
+    </div>
+<pre><code>query {
+  users {        # 1回のクエリで全ユーザー取得
+    name
+    posts {      # 各ユーザーごとに投稿を取得（N回）
+      title
+    }
+  }
+}
+
+// ユーザー10人 → 1 + 10 = 11回のDBクエリ
+// ユーザー1000人 → 1 + 1000 = 1001回のDBクエリ</code></pre>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      解決策: DataLoader
+    </div>
+<pre><code>// DataLoaderでバッチ処理
+const postLoader = new DataLoader(async (userIds) => {
+  // 1回のクエリで全ユーザーの投稿を取得
+  const posts = await db.posts.findMany({
+    where: { userId: { in: userIds } }
+  });
+  // ユーザーIDごとにグループ化して返す
+  return userIds.map(id =>
+    posts.filter(post => post.userId === id)
+  );
+});</code></pre>
+  </div>
+
+  <h2>見抜くべき問題</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔴</span>
+      コードレビューで指摘すべきポイント
+    </div>
+    <ul>
+      <li><strong>N+1問題</strong>: DataLoaderを使っていない</li>
+      <li><strong>深いネスト</strong>: 無制限にネストを許可</li>
+      <li><strong>クエリ複雑度</strong>: 複雑なクエリを制限していない</li>
+      <li><strong>認可チェック漏れ</strong>: リゾルバーで権限確認していない</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-api7-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>GraphQLの最大の特徴は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api7-1" style="display:none;">
+      A. RESTより高速
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api7-1" style="display:none;">
+      B. クライアントが必要なデータだけを指定できる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api7-1" style="display:none;">
+      C. データベースと直接接続できる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api7-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-api7-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>GraphQLのN+1問題の解決策は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api7-2" style="display:none;">
+      A. キャッシュを使う
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api7-2" style="display:none;">
+      B. DataLoaderでバッチ処理する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api7-2" style="display:none;">
+      C. クエリを分割する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api7-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-api7-3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 3
+    </div>
+    <p>「Over-fetching」とは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api7-3" style="display:none;">
+      A. 必要以上のデータを取得してしまうこと
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api7-3" style="display:none;">
+      B. リクエストが多すぎること
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api7-3" style="display:none;">
+      C. サーバーに負荷がかかること
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api7-3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('api7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- api8: tRPC概要 -->
+<section id="api8">
+  <h1>tRPC概要</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>tRPCとは何か</li>
+      <li>型安全RPCの仕組み</li>
+      <li>REST/GraphQL/tRPCの使い分け</li>
+      <li>適切なユースケース</li>
+    </ul>
+  </div>
+
+  <h2>tRPCとは</h2>
+
+  <p>
+    <strong>tRPC</strong>は、<strong>型安全なRPC（Remote Procedure Call）</strong>ライブラリです。
+  </p>
+
+  <p>
+    <strong>特徴</strong>: サーバーとクライアントで<strong>型を共有</strong>できる
+  </p>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      RPC（Remote Procedure Call）とは
+    </div>
+    <p style="margin:0;">
+      「遠隔手続き呼び出し」の意味。<br>
+      サーバーの関数を、ローカルの関数のように呼び出す仕組みです。
+    </p>
+  </div>
+
+  <h2>tRPCの基本</h2>
+
+  <div class="card">
+    <div class="card-title">サーバー側（router定義）</div>
+<pre><code>// server/router.ts
+import { initTRPC } from '@trpc/server';
+import { z } from 'zod';
+
+const t = initTRPC.create();
+
+export const appRouter = t.router({
+  // ユーザー取得
+  getUser: t.procedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      const user = await db.user.findUnique({
+        where: { id: input.id }
+      });
+      return user;
+    }),
+
+  // ユーザー作成
+  createUser: t.procedure
+    .input(z.object({
+      name: z.string(),
+      email: z.string().email()
+    }))
+    .mutation(async ({ input }) => {
+      return await db.user.create({ data: input });
+    })
+});
+
+export type AppRouter = typeof appRouter;</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">クライアント側（型安全な呼び出し）</div>
+<pre><code>// client/api.ts
+import { createTRPCClient } from '@trpc/client';
+import type { AppRouter } from '../server/router';
+
+const trpc = createTRPCClient&lt;AppRouter&gt;({
+  url: 'http://localhost:3000/trpc',
+});
+
+// 型が自動で付く！
+const user = await trpc.getUser.query({ id: '1' });
+// user.name, user.email に補完が効く
+
+// 型エラーを検出！
+await trpc.createUser.mutation({
+  name: '田中',
+  email: 'invalid'  // ❌ emailの形式エラー
+});</code></pre>
+  </div>
+
+  <h2>tRPCの強み</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      tRPCのメリット
+    </div>
+    <ul>
+      <li><strong>完全な型安全</strong>: 入力/出力の型がサーバーとクライアントで共有</li>
+      <li><strong>自動補完</strong>: IDEで補完が効く</li>
+      <li><strong>スキーマ不要</strong>: OpenAPI/GraphQLスキーマを書く必要がない</li>
+      <li><strong>開発体験（DX）が最高</strong>: 型エラーを即座に検出</li>
+    </ul>
+  </div>
+
+  <h2>REST / GraphQL / tRPC の比較</h2>
+
+  <div class="card">
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#f0f0f0;">
+        <th style="padding:8px; border:1px solid #ddd;">観点</th>
+        <th style="padding:8px; border:1px solid #ddd;">REST</th>
+        <th style="padding:8px; border:1px solid #ddd;">GraphQL</th>
+        <th style="padding:8px; border:1px solid #ddd;">tRPC</th>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">型安全</td>
+        <td style="padding:8px; border:1px solid #ddd;">手動で型定義</td>
+        <td style="padding:8px; border:1px solid #ddd;">コード生成で型</td>
+        <td style="padding:8px; border:1px solid #ddd;">自動で共有</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">学習曲線</td>
+        <td style="padding:8px; border:1px solid #ddd;">低い</td>
+        <td style="padding:8px; border:1px solid #ddd;">高い</td>
+        <td style="padding:8px; border:1px solid #ddd;">中程度</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">公開API</td>
+        <td style="padding:8px; border:1px solid #ddd;">最適</td>
+        <td style="padding:8px; border:1px solid #ddd;">適</td>
+        <td style="padding:8px; border:1px solid #ddd;">不向き</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">内部API</td>
+        <td style="padding:8px; border:1px solid #ddd;">可</td>
+        <td style="padding:8px; border:1px solid #ddd;">可</td>
+        <td style="padding:8px; border:1px solid #ddd;">最適</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">言語</td>
+        <td style="padding:8px; border:1px solid #ddd;">任意</td>
+        <td style="padding:8px; border:1px solid #ddd;">任意</td>
+        <td style="padding:8px; border:1px solid #ddd;">TypeScript限定</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>tRPCの適切なユースケース</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      tRPCが最適な場面
+    </div>
+    <ul>
+      <li><strong>フルスタックTypeScript</strong>: Next.js, T3 Stackなど</li>
+      <li><strong>Monorepo</strong>: サーバーとクライアントが同じリポジトリ</li>
+      <li><strong>内部API</strong>: 自社サービス内での通信</li>
+      <li><strong>小〜中規模プロジェクト</strong>: MVPやスタートアップ</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      tRPCが不向きな場面
+    </div>
+    <ul>
+      <li><strong>公開API</strong>: 外部開発者が使うAPI</li>
+      <li><strong>非TypeScript環境</strong>: モバイルアプリ（Swift/Kotlin）との通信</li>
+      <li><strong>マルチリポジトリ</strong>: 別チームが管理するサービス間</li>
+    </ul>
+  </div>
+
+  <h2>見抜くべき問題</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔴</span>
+      コードレビューで指摘すべきポイント
+    </div>
+    <ul>
+      <li><strong>用途の誤解</strong>: 公開APIにtRPCを使おうとしている</li>
+      <li><strong>バリデーション不足</strong>: zodスキーマが不完全</li>
+      <li><strong>エラーハンドリング</strong>: TRPCErrorを適切に使っていない</li>
+      <li><strong>認証/認可</strong>: middlewareで権限チェックしていない</li>
+    </ul>
+  </div>
+
+  <h2>REST / GraphQL / tRPC の使い分け</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      2026年版 選択ガイド
+    </div>
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#f0f0f0;">
+        <th style="padding:8px; border:1px solid #ddd;">ケース</th>
+        <th style="padding:8px; border:1px solid #ddd;">推奨</th>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">公開API / 外部向け</td>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>REST + OpenAPI</strong></td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">複雑なUI / モバイルアプリ</td>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>GraphQL</strong></td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">フルスタックTS / Monorepo</td>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>tRPC</strong></td>
+      </tr>
+      <tr>
+        <td style="padding:8px; border:1px solid #ddd;">シンプルなCRUD</td>
+        <td style="padding:8px; border:1px solid #ddd;"><strong>REST</strong></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">🎉</span>
+      Phase 2 完了！
+    </div>
+    <p style="margin:0;">
+      API設計の基本を学びました。<br>
+      次のPhase 3では<strong>データベース</strong>を学びます。<br>
+      正規化、インデックス、N+1問題など、パフォーマンスに直結する内容です。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-api8-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>tRPCの最大の特徴は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api8-1" style="display:none;">
+      A. どの言語からでも呼び出せる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api8-1" style="display:none;">
+      B. サーバーとクライアントで型を自動共有できる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api8-1" style="display:none;">
+      C. RESTより高速
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api8-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-api8-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>tRPCが不向きな場面は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api8-2" style="display:none;">
+      A. Next.jsのフルスタックアプリ
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api8-2" style="display:none;">
+      B. 外部開発者向けの公開API
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api8-2" style="display:none;">
+      C. TypeScript Monorepo
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api8-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-api8-3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 3（総合）
+    </div>
+    <p>「公開API + ドキュメント自動生成」に最適な組み合わせは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-api8-3" style="display:none;">
+      A. REST + OpenAPI
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api8-3" style="display:none;">
+      B. GraphQL
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-api8-3" style="display:none;">
+      C. tRPC
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-api8-3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('api8')">
+    <span class="icon">✓</span>
+    Phase 2を完了
+  </button>
+</section>
