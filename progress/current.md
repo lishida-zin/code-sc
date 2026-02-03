@@ -3,8 +3,8 @@
 
 ## 📍 現在地
 - **Level**: 3 - React/TypeScript
-- **Phase**: 教科書作成完了
-- **状態**: ✅ Level 3 教科書完成、学習開始可能
+- **Phase**: 教科書品質改善完了
+- **状態**: ✅ Level 3 教科書に図解・改善を追加完了
 
 ## 🎯 次やること
 **Level 3 の学習を開始**
@@ -18,32 +18,22 @@ cd textbook && python -m http.server 8080
 
 ## ✅ 今回完了した作業
 
-### Level 3 教科書HTML作成（32セクション）
-| Phase | 内容 | セクション | 状態 |
-|-------|------|-----------|------|
-| Phase 1 | TypeScript基礎 | ts1-ts8 | ✅ 完了 |
-| Phase 2 | React基礎 | react1-react8 | ✅ 完了 |
-| Phase 3 | Hooks深掘り | hooks1-hooks8 | ✅ 完了 |
-| Phase 4 | 実践パターン | advanced1-advanced8 | ✅ 完了 |
+### Level 3 教科書品質改善
+| 改善項目 | 内容 | 対象ファイル |
+|---------|------|-------------|
+| クイズアイコン修正 | `?` → `❓` に統一 | phase4.html |
+| useEffectライフサイクル図 | SVGで視覚化 | phase3.html (hooks1) |
+| コンポーネントツリー図 | Props流れを視覚化 | phase2.html (react3) |
+| 仮想DOM差分検出図 | 差分検出の仕組みを視覚化 | phase2.html (react1) |
+| Server/Client境界図 | 境界の概念を視覚化 | phase4.html (advanced1) |
+| 状態管理フローチャート | テキスト→SVG図に変換 | phase4.html (advanced3) |
 
-### HTML分割管理に移行
-旧: `engineer-textbook.html`（16000行超の一体型）
-↓
-新: 分割管理
-```
-textbook/
-├── index.html          # メインエントリ（ナビ+ダッシュボード）
-├── css/style.css       # 共通スタイル
-├── js/main.js          # 共通JS（動的読み込み）
-├── level0/intro.html
-├── level1/phase1-3.html
-├── level2/phase1-4.html
-└── level3/phase1-4.html
-```
-
-### CLAUDE.md更新
-- ファイル構成を更新
-- 教科書HTML分割ルールを追加
+### 追加したSVG図（6個）
+1. **useEffectライフサイクル図** - マウント→レンダリング→Effect→クリーンアップ→アンマウントの流れ
+2. **コンポーネントツリー/Props図** - App→Header/Content/Footer→PostList→PostItemの階層とPropsの流れ
+3. **仮想DOM差分検出図** - 前の仮想DOM・新しい仮想DOM・実際のDOMの比較と差分適用
+4. **Server/Client境界図** - Server ComponentsとClient Componentsの境界線
+5. **状態管理選択フローチャート** - グローバル状態？→サーバー状態？→TanStack Query/Zustand/Jotai
 
 ## 完了した作業（累計）
 | 作業 | 状態 |
@@ -53,6 +43,7 @@ textbook/
 | Level 2 Phase 1-4: JavaScript | ✅ 完了 |
 | Level 3 カリキュラム作成 | ✅ 完了 |
 | Level 3 教科書HTML作成 | ✅ 完了 |
+| Level 3 教科書品質改善 | ✅ 完了（NEW）|
 | HTML分割管理移行 | ✅ 完了 |
 
 ## 参照ファイル
@@ -64,4 +55,4 @@ textbook/
 ## 次回セッションでやること（候補）
 1. **Level 3 学習開始** - ts1から順に進める
 2. **Level 4 カリキュラム作成** - API/DB（Node.js、SQL）
-3. **教科書の改善** - 動作確認で見つかった問題があれば修正
+3. **教科書の動作確認** - ブラウザでSVG図の表示確認

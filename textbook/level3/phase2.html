@@ -136,6 +136,93 @@ button.addEventListener("click", () => {
         </ol>
       </div>
 
+      <!-- 仮想DOM差分検出の図 -->
+      <div class="card">
+        <h3>仮想DOMの差分検出（図解）</h3>
+
+        <svg viewBox="0 0 650 280" style="width:100%; max-width:650px; margin:20px auto; display:block;">
+          <!-- 背景 -->
+          <rect x="0" y="0" width="650" height="280" fill="#f8f9fa" rx="10"/>
+
+          <!-- 左側：前の仮想DOM -->
+          <text x="100" y="25" text-anchor="middle" fill="#333" font-weight="bold" font-size="12">前の仮想DOM</text>
+          <rect x="30" y="35" width="140" height="120" fill="#e3f2fd" stroke="#2196F3" stroke-width="2" rx="5"/>
+
+          <rect x="50" y="50" width="100" height="25" fill="#2196F3" rx="3"/>
+          <text x="100" y="67" text-anchor="middle" fill="white" font-size="11">div</text>
+
+          <rect x="60" y="85" width="40" height="20" fill="#64B5F6" rx="3"/>
+          <text x="80" y="99" text-anchor="middle" fill="white" font-size="9">h1</text>
+
+          <rect x="110" y="85" width="40" height="20" fill="#64B5F6" rx="3"/>
+          <text x="130" y="99" text-anchor="middle" fill="white" font-size="9">p</text>
+
+          <rect x="60" y="115" width="40" height="20" fill="#64B5F6" rx="3"/>
+          <text x="80" y="129" text-anchor="middle" fill="white" font-size="9">span</text>
+
+          <!-- 中央：新しい仮想DOM -->
+          <text x="325" y="25" text-anchor="middle" fill="#333" font-weight="bold" font-size="12">新しい仮想DOM</text>
+          <rect x="255" y="35" width="140" height="120" fill="#e8f5e9" stroke="#4CAF50" stroke-width="2" rx="5"/>
+
+          <rect x="275" y="50" width="100" height="25" fill="#4CAF50" rx="3"/>
+          <text x="325" y="67" text-anchor="middle" fill="white" font-size="11">div</text>
+
+          <rect x="285" y="85" width="40" height="20" fill="#81C784" rx="3"/>
+          <text x="305" y="99" text-anchor="middle" fill="white" font-size="9">h1</text>
+
+          <!-- 変更されたp要素（ハイライト） -->
+          <rect x="335" y="85" width="40" height="20" fill="#FF9800" rx="3" stroke="#E65100" stroke-width="2"/>
+          <text x="355" y="99" text-anchor="middle" fill="white" font-size="9">p</text>
+          <text x="355" y="75" text-anchor="middle" fill="#E65100" font-weight="bold" font-size="8">変更!</text>
+
+          <rect x="285" y="115" width="40" height="20" fill="#81C784" rx="3"/>
+          <text x="305" y="129" text-anchor="middle" fill="white" font-size="9">span</text>
+
+          <!-- 右側：実際のDOM -->
+          <text x="550" y="25" text-anchor="middle" fill="#333" font-weight="bold" font-size="12">実際のDOM</text>
+          <rect x="480" y="35" width="140" height="120" fill="#fff" stroke="#333" stroke-width="2" rx="5"/>
+
+          <rect x="500" y="50" width="100" height="25" fill="#9E9E9E" rx="3"/>
+          <text x="550" y="67" text-anchor="middle" fill="white" font-size="11">div</text>
+
+          <rect x="510" y="85" width="40" height="20" fill="#BDBDBD" rx="3"/>
+          <text x="530" y="99" text-anchor="middle" fill="white" font-size="9">h1</text>
+
+          <!-- 更新されるp要素 -->
+          <rect x="560" y="85" width="40" height="20" fill="#FF9800" rx="3"/>
+          <text x="580" y="99" text-anchor="middle" fill="white" font-size="9">p</text>
+
+          <rect x="510" y="115" width="40" height="20" fill="#BDBDBD" rx="3"/>
+          <text x="530" y="129" text-anchor="middle" fill="white" font-size="9">span</text>
+
+          <!-- 矢印：比較 -->
+          <path d="M175 95 L250 95" stroke="#333" stroke-width="2" marker-end="url(#comparearrow)"/>
+          <text x="212" y="85" text-anchor="middle" fill="#666" font-size="10">比較</text>
+
+          <!-- 矢印：差分のみ適用 -->
+          <path d="M400 95 L475 95" stroke="#FF9800" stroke-width="3" marker-end="url(#orangearrow)"/>
+          <text x="437" y="85" text-anchor="middle" fill="#E65100" font-size="10">差分のみ</text>
+          <text x="437" y="110" text-anchor="middle" fill="#E65100" font-size="10">適用</text>
+
+          <!-- 説明テキスト -->
+          <rect x="30" y="180" width="590" height="85" fill="#fff3e0" rx="5"/>
+          <text x="50" y="200" fill="#E65100" font-weight="bold" font-size="12">ポイント</text>
+          <text x="50" y="220" fill="#333" font-size="11">• 仮想DOM同士を比較して「何が変わったか」を検出</text>
+          <text x="50" y="240" fill="#333" font-size="11">• 変更があった部分（この例ではp要素）だけを実際のDOMに反映</text>
+          <text x="50" y="260" fill="#333" font-size="11">• 全体を再描画するより圧倒的に高速！</text>
+
+          <!-- 矢印マーカー定義 -->
+          <defs>
+            <marker id="comparearrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L9,3 z" fill="#333"/>
+            </marker>
+            <marker id="orangearrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L9,3 z" fill="#FF9800"/>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+
       <h2>コンポーネント指向</h2>
 
       <p>
@@ -433,6 +520,93 @@ function App() {
       <p>
         <strong>ルール</strong>: コンポーネント名は<strong>大文字で始める</strong>（PascalCase）
       </p>
+
+      <!-- コンポーネントツリーとPropsの図 -->
+      <div class="card">
+        <h2>コンポーネントツリーとデータの流れ（図解）</h2>
+        <p>Reactアプリはコンポーネントの<strong>ツリー構造</strong>で構成されます。データは<strong>親から子へ一方向</strong>に流れます。</p>
+
+        <svg viewBox="0 0 600 350" style="width:100%; max-width:600px; margin:20px auto; display:block;">
+          <!-- 背景 -->
+          <rect x="0" y="0" width="600" height="350" fill="#f8f9fa" rx="10"/>
+
+          <!-- タイトル -->
+          <text x="300" y="25" text-anchor="middle" fill="#333" font-weight="bold" font-size="14">コンポーネントツリーとPropsの流れ</text>
+
+          <!-- App（ルート） -->
+          <rect x="230" y="45" width="140" height="50" fill="#4CAF50" rx="8"/>
+          <text x="300" y="75" text-anchor="middle" fill="white" font-weight="bold" font-size="14">App</text>
+
+          <!-- Propsラベル（左） -->
+          <text x="200" y="120" text-anchor="end" fill="#FF9800" font-weight="bold" font-size="11">Props: user</text>
+          <path d="M210 115 L230 115" stroke="#FF9800" stroke-width="2" stroke-dasharray="4"/>
+
+          <!-- 矢印 App → Header -->
+          <path d="M260 95 L180 135" stroke="#2196F3" stroke-width="2" marker-end="url(#bluearrow)"/>
+
+          <!-- 矢印 App → Content -->
+          <path d="M300 95 L300 135" stroke="#2196F3" stroke-width="2" marker-end="url(#bluearrow)"/>
+
+          <!-- 矢印 App → Footer -->
+          <path d="M340 95 L420 135" stroke="#2196F3" stroke-width="2" marker-end="url(#bluearrow)"/>
+
+          <!-- Header -->
+          <rect x="110" y="140" width="120" height="45" fill="#2196F3" rx="8"/>
+          <text x="170" y="167" text-anchor="middle" fill="white" font-weight="bold" font-size="13">Header</text>
+
+          <!-- Content -->
+          <rect x="240" y="140" width="120" height="45" fill="#2196F3" rx="8"/>
+          <text x="300" y="167" text-anchor="middle" fill="white" font-weight="bold" font-size="13">Content</text>
+
+          <!-- Footer -->
+          <rect x="370" y="140" width="120" height="45" fill="#2196F3" rx="8"/>
+          <text x="430" y="167" text-anchor="middle" fill="white" font-weight="bold" font-size="13">Footer</text>
+
+          <!-- Propsラベル（Content下） -->
+          <text x="380" y="210" text-anchor="start" fill="#FF9800" font-weight="bold" font-size="11">Props: posts</text>
+          <path d="M370 205 L350 205" stroke="#FF9800" stroke-width="2" stroke-dasharray="4"/>
+
+          <!-- 矢印 Content → PostList -->
+          <path d="M300 185 L300 225" stroke="#2196F3" stroke-width="2" marker-end="url(#bluearrow)"/>
+
+          <!-- PostList -->
+          <rect x="240" y="230" width="120" height="45" fill="#9C27B0" rx="8"/>
+          <text x="300" y="257" text-anchor="middle" fill="white" font-weight="bold" font-size="13">PostList</text>
+
+          <!-- 矢印 PostList → PostItem -->
+          <path d="M270 275 L200 305" stroke="#2196F3" stroke-width="2" marker-end="url(#bluearrow)"/>
+          <path d="M300 275 L300 305" stroke="#2196F3" stroke-width="2" marker-end="url(#bluearrow)"/>
+          <path d="M330 275 L400 305" stroke="#2196F3" stroke-width="2" marker-end="url(#bluearrow)"/>
+
+          <!-- PostItem x 3 -->
+          <rect x="140" y="310" width="90" height="30" fill="#E91E63" rx="5"/>
+          <text x="185" y="330" text-anchor="middle" fill="white" font-size="11">PostItem</text>
+
+          <rect x="255" y="310" width="90" height="30" fill="#E91E63" rx="5"/>
+          <text x="300" y="330" text-anchor="middle" fill="white" font-size="11">PostItem</text>
+
+          <rect x="370" y="310" width="90" height="30" fill="#E91E63" rx="5"/>
+          <text x="415" y="330" text-anchor="middle" fill="white" font-size="11">PostItem</text>
+
+          <!-- 凡例 -->
+          <rect x="480" y="50" width="12" height="12" fill="#2196F3" rx="2"/>
+          <text x="498" y="60" fill="#333" font-size="10">親→子</text>
+
+          <rect x="480" y="70" width="12" height="12" fill="#FF9800" rx="2"/>
+          <text x="498" y="80" fill="#333" font-size="10">Props</text>
+
+          <!-- 矢印マーカー定義 -->
+          <defs>
+            <marker id="bluearrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L9,3 z" fill="#2196F3"/>
+            </marker>
+          </defs>
+        </svg>
+
+        <div class="card card-info" style="margin-top:15px;">
+          <p style="margin:0;"><strong>重要</strong>：データは<strong>常に上から下へ</strong>流れます（単方向データフロー）。子から親へ直接データを渡すことはできません。</p>
+        </div>
+      </div>
 
       <h2>Props（プロップス）</h2>
 
