@@ -271,44 +271,75 @@ code-sc/
 │   ├── overview.md              # 全体ロードマップ
 │   ├── level0.md                # AI時代のエンジニア
 │   ├── level1.md                # HTML/CSS
-│   └── level2.md                # JavaScript ← 現在のLevel
+│   ├── level2.md                # JavaScript
+│   └── level3.md                # React/TypeScript ← 現在のLevel
 ├── progress/
 │   ├── current.md               # 現在の進捗 ← これを読む
 │   └── archive/                 # 過去の記録（読まない）
-├── textbook/
-│   └── engineer-textbook.html   # 教科書（LD/ディスレクシア対応）
+├── textbook/                    # 教科書（LD/ディスレクシア対応）
+│   ├── index.html               # メインエントリ（ナビ＋ダッシュボード）
+│   ├── css/style.css            # 共通スタイル
+│   ├── js/main.js               # 共通JavaScript（動的読み込み含む）
+│   ├── level0/intro.html        # Level 0コンテンツ
+│   ├── level1/                  # Level 1コンテンツ
+│   │   ├── phase1.html          # HTML基礎（html1-html7）
+│   │   ├── phase2.html          # CSS基礎（css1-css7）
+│   │   └── phase3.html          # 実践（prac1-prac4）
+│   ├── level2/                  # Level 2コンテンツ
+│   │   ├── phase1.html          # JavaScript基礎（js1-js9）
+│   │   ├── phase2.html          # DOM操作（dom1-dom6）
+│   │   ├── phase3.html          # 非同期処理（async1-async8）
+│   │   └── phase4.html          # モダンJS（modern1-modern7）
+│   ├── level3/                  # Level 3コンテンツ
+│   │   ├── phase1.html          # TypeScript基礎（ts1-ts8）
+│   │   ├── phase2.html          # React基礎（react1-react8）
+│   │   ├── phase3.html          # Hooks深掘り（hooks1-hooks8）
+│   │   └── phase4.html          # 実践パターン（advanced1-advanced8）※作成中
+│   └── engineer-textbook.html   # バックアップ（旧一体型ファイル）
 └── lessons/                     # 教材
 ```
 
-## 教科書HTMLの構造
+## 教科書HTML分割ルール
 
-> **編集時の参照用**（行番号は目安）
+> **重要**: 教科書HTMLは分割管理する。一体型ファイルは肥大化するため禁止。
 
+### ファイル構造
+| ファイル | 役割 |
+|----------|------|
+| `index.html` | メインエントリ。ナビゲーション、ダッシュボード、コンテンツコンテナ |
+| `css/style.css` | 共通スタイル（WCAG対応、ダークモード含む） |
+| `js/main.js` | 共通JavaScript（動的読み込み、クイズ、進捗管理） |
+| `levelN/phaseM.html` | 各Phaseのセクション（`<section>`タグのみ、head/bodyなし） |
+
+### 新しいPhaseを追加する手順
+1. **ナビゲーション更新**: `index.html` にアコーディオン＋リンク追加
+2. **ダッシュボード更新**: `index.html` のprogressカードのmax値を更新
+3. **コンテンツファイル作成**: `levelN/phaseM.html` を新規作成
+4. **セクションマッピング更新**: `js/main.js` の `sectionToFile` に追加
+5. **進捗更新**: `js/main.js` の `updateProgress()` にセクションID追加
+
+### Phase HTMLの書き方
+```html
+<!-- level3/phase1.html の例 -->
+<!-- ============================================
+     Level 3 Phase 1: TypeScript基礎
+     ============================================ -->
+
+<section id="ts1">
+  <h1>TypeScriptとは？</h1>
+  <!-- コンテンツ -->
+  <button class="complete-btn" onclick="completeSection('ts1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ts2">
+  <!-- ... -->
+</section>
 ```
-engineer-textbook.html (約4400行)
-├── <style>              # 1-800行: CSS（ダークモード含む）
-├── <nav id="main-nav">  # 802-891行: サイドナビゲーション
-│   ├── Level 0          # 814-822行
-│   ├── Level 1          # 825-881行（Phase1-3）
-│   └── Level 2          # 883-889行 ← 新Level追加箇所
-├── <main>               # 893-4199行: コンテンツ
-│   ├── dashboard        # 897-965行: ダッシュボード
-│   ├── level0-intro     # 970-1100行頃
-│   ├── html1-html7      # Level 1 Phase 1
-│   ├── css1-css7        # Level 1 Phase 2
-│   ├── prac1-prac4      # Level 1 Phase 3（～4197行）
-│   └── js1-js9 など     # ← 新セクション追加箇所（4197行の後）
-└── <script>             # 4201-4418行: JavaScript
-    ├── toggleTheme      # ダークモード
-    ├── toggleAccordion  # ナビ折りたたみ
-    ├── showSection      # ページ切替
-    ├── checkQuiz        # クイズ機能
-    ├── completeSection  # 完了機能
-    └── updateProgress   # 進捗更新 ← 新Level追加時に更新必要
-```
 
-**新Levelを追加する手順:**
-1. ナビゲーション: 該当Levelのアコーディオンを追加/有効化
-2. ダッシュボード: progressカードを追加
-3. メインコンテンツ: `</main>`の前にsectionを追加
-4. JavaScript: `updateProgress()`にLevel追加
+### 注意事項
+- 各Phaseファイルは `<section>` タグのみを含む（`<!DOCTYPE>`、`<html>`、`<head>`、`<body>` 不要）
+- セクションIDは一意にする（例: ts1, react1, hooks1）
+- 既存スタイルクラスを踏襲（card-info, compare-good, quiz等）
+- クイズは `data-correct="true"` で正解を指定

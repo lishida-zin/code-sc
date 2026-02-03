@@ -1,0 +1,510 @@
+<section id="prac1">
+      <h1>15. DevTools入門</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>DevToolsの開き方</li>
+          <li>要素の検証方法</li>
+          <li>CSSの確認・編集方法</li>
+        </ul>
+      </div>
+
+      <h2>DevToolsってなに？</h2>
+
+      <p>
+        <strong>DevTools</strong>（開発者ツール）は、ブラウザに内蔵された「調査ツール」です。
+      </p>
+
+      <p>
+        Webページの<strong>HTML</strong>や<strong>CSS</strong>を見たり、一時的に変更したりできます。
+      </p>
+
+      <h2>開き方</h2>
+
+      <table>
+        <tr>
+          <th>方法</th>
+          <th>操作</th>
+        </tr>
+        <tr>
+          <td>キーボード</td>
+          <td><strong>F12</strong> または <strong>Ctrl+Shift+I</strong>（Macは Command+Option+I）</td>
+        </tr>
+        <tr>
+          <td>右クリック</td>
+          <td>ページ上で右クリック → 「検証」</td>
+        </tr>
+      </table>
+
+      <h2>Elementsタブ</h2>
+
+      <p>
+        <strong>Elements</strong>タブでは、ページのHTML構造を見ることができます。
+      </p>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">🔍</span>
+          できること
+        </div>
+        <ul>
+          <li>HTMLの構造を確認</li>
+          <li>要素にどのCSSが適用されているか確認</li>
+          <li>CSSを一時的に変更して試す</li>
+        </ul>
+      </div>
+
+      <h2>要素を検証する手順</h2>
+
+      <ol>
+        <li>DevToolsを開く</li>
+        <li>左上の「矢印アイコン」をクリック</li>
+        <li>ページ上の調べたい要素をクリック</li>
+        <li>右側にCSSが表示される</li>
+      </ol>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          注意点
+        </div>
+        <p style="margin:0;">
+          DevToolsでの変更は<strong>一時的</strong>です。
+        </p>
+        <p style="margin:0;">
+          ページをリロードすると元に戻ります。
+        </p>
+      </div>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li><strong>F12</strong>でDevToolsを開く</li>
+          <li><strong>Elements</strong>タブでHTML/CSSを確認</li>
+          <li>CSSを<strong>一時的に変更</strong>して試せる</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-prac1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>DevToolsを開くショートカットキーは？</p>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-prac1" style="display:none;">
+          A. F12
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac1" style="display:none;">
+          B. F5
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac1" style="display:none;">
+          C. Ctrl+S
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-prac1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('prac1')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         実践 2: 実サイト読解
+         ============================================ -->
+    <section id="prac2">
+      <h1>16. 実サイト読解</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>実際のWebサイトのコードを読む方法</li>
+          <li>構造を把握するコツ</li>
+          <li>シニアエンジニアの読み方</li>
+        </ul>
+      </div>
+
+      <h2>なぜ実サイトを読むのか？</h2>
+
+      <p>
+        教科書で学んだことを、<strong>実際のコード</strong>で確認することが大切です。
+      </p>
+
+      <p>
+        プロが書いたコードには、<strong>良いパターン</strong>がたくさんあります。
+      </p>
+
+      <h2>読み方の手順</h2>
+
+      <ol>
+        <li><strong>全体構造</strong>を把握する（header, main, footer）</li>
+        <li><strong>セマンティックタグ</strong>を確認する（nav, article など）</li>
+        <li><strong>クラス名</strong>から意図を読み取る</li>
+        <li><strong>CSS</strong>でどうスタイルが当たっているか確認</li>
+      </ol>
+
+      <h2>シニアエンジニアの読み方</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">👀</span>
+          見るポイント
+        </div>
+        <ul>
+          <li>「このレイアウトはFlexbox？Grid？」</li>
+          <li>「クラス名の命名規則は何？」</li>
+          <li>「セマンティックタグは適切に使われている？」</li>
+          <li>「アクセシビリティは考慮されている？」</li>
+        </ul>
+      </div>
+
+      <h2>練習方法</h2>
+
+      <ol>
+        <li>好きなWebサイトを開く</li>
+        <li>DevToolsを開く（F12）</li>
+        <li>header, nav, main, footer を探す</li>
+        <li>Flexbox/Gridがどこで使われているか確認</li>
+      </ol>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li>実サイトのコードを読む練習をする</li>
+          <li><strong>全体構造</strong>から把握する</li>
+          <li><strong>クラス名</strong>から意図を読み取る</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-prac2">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>実サイトを読むとき、最初に確認すべきは？</p>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-prac2" style="display:none;">
+          A. 全体構造（header, main, footer）
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac2" style="display:none;">
+          B. 文字の色
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac2" style="display:none;">
+          C. 画像のサイズ
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-prac2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('prac2')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         実践 3: UIパターン
+         ============================================ -->
+    <section id="prac3">
+      <h1>17. UIパターン認識</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>よくあるUIパターン</li>
+          <li>パターンの名前と構造</li>
+          <li>見た瞬間にわかるようになる</li>
+        </ul>
+      </div>
+
+      <h2>UIパターンを知る意味</h2>
+
+      <p>
+        Webサイトには「<strong>よくある形</strong>」があります。
+      </p>
+
+      <p>
+        パターンを知っていると、コードを見た瞬間に「これはカードだな」とわかります。
+      </p>
+
+      <h2>代表的なUIパターン</h2>
+
+      <table>
+        <tr>
+          <th>パターン名</th>
+          <th>特徴</th>
+          <th>よくある場所</th>
+        </tr>
+        <tr>
+          <td><strong>ヘッダー</strong></td>
+          <td>ロゴ、ナビ、検索</td>
+          <td>ページ上部</td>
+        </tr>
+        <tr>
+          <td><strong>ナビゲーション</strong></td>
+          <td>リンクの並び</td>
+          <td>ヘッダー内、サイドバー</td>
+        </tr>
+        <tr>
+          <td><strong>カード</strong></td>
+          <td>画像＋タイトル＋説明</td>
+          <td>商品一覧、記事一覧</td>
+        </tr>
+        <tr>
+          <td><strong>フォーム</strong></td>
+          <td>入力欄＋ボタン</td>
+          <td>ログイン、検索</td>
+        </tr>
+        <tr>
+          <td><strong>フッター</strong></td>
+          <td>著作権、リンク集</td>
+          <td>ページ下部</td>
+        </tr>
+      </table>
+
+      <h2>カードパターンの例</h2>
+
+      <pre><code>&lt;article class="card"&gt;
+  &lt;img src="thumbnail.jpg" alt="..."&gt;
+  &lt;h3&gt;記事タイトル&lt;/h3&gt;
+  &lt;p&gt;記事の説明文...&lt;/p&gt;
+  &lt;a href="..."&gt;もっと読む&lt;/a&gt;
+&lt;/article&gt;</code></pre>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          見分けるコツ
+        </div>
+        <ul>
+          <li>クラス名に<code>card</code>が含まれる</li>
+          <li><code>article</code>タグで囲まれている</li>
+          <li>Gridで複数並んでいる</li>
+        </ul>
+      </div>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li>UIには<strong>よくあるパターン</strong>がある</li>
+          <li>パターン名を知っていると<strong>コードが読みやすくなる</strong></li>
+          <li>ヘッダー、ナビ、カード、フォーム、フッターが基本</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-prac3">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>「画像＋タイトル＋説明文」の組み合わせで一覧表示されるUIパターンは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac3" style="display:none;">
+          A. ヘッダー
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-prac3" style="display:none;">
+          B. カード
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac3" style="display:none;">
+          C. フォーム
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-prac3')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('prac3')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         実践 4: CSS新機能
+         ============================================ -->
+    <section id="prac4">
+      <h1>18. 2026年のCSS新機能</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>CSS変数</li>
+          <li>:has()セレクタ</li>
+          <li>Container Queries</li>
+        </ul>
+      </div>
+
+      <h2>知っておくべき新機能</h2>
+
+      <p>
+        CSSは進化し続けています。
+      </p>
+
+      <p>
+        最新の機能を知っておくと、<strong>モダンなコードが読める</strong>ようになります。
+      </p>
+
+      <h2>CSS変数（カスタムプロパティ）</h2>
+
+      <p>
+        色やサイズを<strong>変数</strong>として定義できます。
+      </p>
+
+      <pre><code>:root {
+  --primary-color: #2563EB;
+  --spacing: 20px;
+}
+
+.button {
+  background: var(--primary-color);
+  padding: var(--spacing);
+}</code></pre>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          メリット
+        </div>
+        <ul>
+          <li>色を一箇所で管理できる</li>
+          <li>テーマ切り替えが簡単</li>
+          <li>コードの意味がわかりやすい</li>
+        </ul>
+      </div>
+
+      <h2>:has()セレクタ</h2>
+
+      <p>
+        「子要素を持つ親」を選べる、革命的なセレクタです。
+      </p>
+
+      <pre><code>/* 画像を持つカードだけ背景色を変える */
+.card:has(img) {
+  background: #f0f0f0;
+}</code></pre>
+
+      <h2>Container Queries</h2>
+
+      <p>
+        画面サイズではなく、<strong>コンテナのサイズ</strong>に応じてスタイルを変えます。
+      </p>
+
+      <pre><code>.card-container {
+  container-type: inline-size;
+}
+
+@container (min-width: 400px) {
+  .card {
+    flex-direction: row;
+  }
+}</code></pre>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li><strong>CSS変数</strong>で色やサイズを一元管理</li>
+          <li><strong>:has()</strong>で子要素を条件に親を選択</li>
+          <li><strong>Container Queries</strong>でコンポーネント単位のレスポンシブ</li>
+        </ol>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📖</span>
+          今は「読めればOK」
+        </div>
+        <p style="margin:0;">
+          これらの機能は、コードで見かけたときに「何をしているか」わかればOKです。
+        </p>
+        <p style="margin:0;">
+          実際に使うのは、もっと慣れてからで大丈夫。
+        </p>
+      </div>
+
+      <div class="quiz" id="quiz-prac4">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>CSS変数を使うときの記法は？</p>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-prac4" style="display:none;">
+          A. var(--変数名)
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac4" style="display:none;">
+          B. $変数名
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac4" style="display:none;">
+          C. @変数名
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-prac4')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('prac4')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+
+      <div class="card card-success" style="margin-top:40px;">
+        <div class="card-title">
+          <span class="icon">🎉</span>
+          Level 1 完了！
+        </div>
+        <p style="margin:0;">
+          おめでとうございます！HTML/CSSの基礎を学び終えました。
+        </p>
+        <p style="margin:0;">
+          次は<strong>Level 2: JavaScript</strong>に進みましょう。
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================
+         Level 2: JavaScript
+         Phase 1: JavaScript基礎
+         ============================================ -->
+
+    <!-- Lesson 1: JavaScriptとは -->

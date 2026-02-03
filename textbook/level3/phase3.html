@@ -1,0 +1,1585 @@
+<section id="hooks1">
+      <h1>useEffect基礎</h1>
+
+      <p class="lead">
+        <strong>副作用（Side Effect）</strong>とは、コンポーネントの「レンダリング以外の処理」のことです。
+        データ取得、DOM操作、タイマー設定など。useEffectはこれらを安全に実行するためのHooksです。
+      </p>
+
+      <!-- 副作用とは -->
+      <div class="card">
+        <h2>副作用とは何か</h2>
+        <p><strong>純粋関数</strong>（Pure Function）= 同じ入力には常に同じ出力を返す関数</p>
+        <p><strong>副作用</strong>（Side Effect）= 関数の外部に影響を与える処理</p>
+
+        <div class="code-block">
+          <div class="code-header">純粋関数と副作用の例</div>
+          <pre><code>// 純粋関数：外部に影響しない
+function add(a, b) {
+  return a + b;
+}
+
+// 副作用を持つ関数：外部に影響する
+function logAndAdd(a, b) {
+  console.log(`計算中: ${a} + ${b}`);  // 副作用: コンソール出力
+  fetch('/api/log', { method: 'POST' }); // 副作用: ネットワーク通信
+  return a + b;
+}</code></pre>
+        </div>
+
+        <p><strong>Reactコンポーネントでの副作用の例：</strong></p>
+        <ul>
+          <li>API呼び出し（データフェッチ）</li>
+          <li>イベントリスナーの登録</li>
+          <li>タイマーの設定（setTimeout, setInterval）</li>
+          <li>ローカルストレージの読み書き</li>
+          <li>DOM要素への直接アクセス</li>
+        </ul>
+      </div>
+
+      <!-- useEffectの基本構文 -->
+      <div class="card">
+        <h2>useEffectの基本構文</h2>
+
+        <div class="code-block">
+          <div class="code-header">useEffectの構文</div>
+          <pre><code>import { useEffect } from 'react';
+
+function Component() {
+  useEffect(() => {
+    // 副作用の処理
+    console.log('コンポーネントがレンダリングされた');
+
+    // クリーンアップ関数（省略可）
+    return () => {
+      console.log('クリーンアップ実行');
+    };
+  }, [依存配列]); // 依存配列
+
+  return &lt;div&gt;...&lt;/div&gt;;
+}</code></pre>
+        </div>
+
+        <p><strong>3つの要素：</strong></p>
+        <ol>
+          <li><strong>副作用関数</strong>：実行したい処理</li>
+          <li><strong>クリーンアップ関数</strong>：副作用を解除する処理（return文）</li>
+          <li><strong>依存配列</strong>：いつ再実行するかを指定</li>
+        </ol>
+      </div>
+
+      <!-- 実行タイミング -->
+      <div class="card">
+        <h2>実行タイミング（依存配列の違い）</h2>
+
+        <div class="code-block">
+          <div class="code-header">依存配列による実行タイミングの違い</div>
+          <pre><code>// パターン1: 毎回実行（依存配列なし）
+useEffect(() => {
+  console.log('毎回のレンダリング後に実行');
+});
+
+// パターン2: マウント時のみ（空配列）
+useEffect(() => {
+  console.log('最初の1回だけ実行');
+}, []);
+
+// パターン3: 特定の値が変わったとき
+useEffect(() => {
+  console.log(`countが${count}に変わった`);
+}, [count]);
+
+// パターン4: 複数の値のどれかが変わったとき
+useEffect(() => {
+  console.log('countまたはnameが変わった');
+}, [count, name]);</code></pre>
+        </div>
+
+        <table class="table-responsive">
+          <thead>
+            <tr>
+              <th>依存配列</th>
+              <th>実行タイミング</th>
+              <th>使用例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>なし（省略）</td>
+              <td>毎回のレンダリング後</td>
+              <td>ほぼ使わない（パフォーマンス問題）</td>
+            </tr>
+            <tr>
+              <td>[]（空配列）</td>
+              <td>マウント時のみ</td>
+              <td>初期化処理、API初回呼び出し</td>
+            </tr>
+            <tr>
+              <td>[value]</td>
+              <td>valueが変わったとき</td>
+              <td>値に応じたデータ取得</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- レビューポイント -->
+      <div class="card card-danger">
+        <h2>レビューで指摘すべきポイント</h2>
+        <ul>
+          <li><strong>依存配列なし</strong> → 毎回実行され、パフォーマンス問題に</li>
+          <li><strong>空配列で値を使う</strong> → 値が更新されても反映されないバグ</li>
+          <li><strong>useEffectの位置</strong> → 必ずコンポーネントのトップレベルで呼ぶ</li>
+        </ul>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-hooks1-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>次のuseEffectはいつ実行されますか？</p>
+        <div class="code-block">
+          <pre><code>useEffect(() => {
+  console.log('実行');
+}, [userId]);</code></pre>
+        </div>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks1-1" style="display:none;">
+          A. コンポーネントがマウントされたときのみ
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks1-1" style="display:none;">
+          B. マウント時と、userIdが変わったとき
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks1-1" style="display:none;">
+          C. 毎回のレンダリング後
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks1-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('hooks1')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- hooks2: useEffect実践 -->
+    <section id="hooks2">
+      <h1>useEffect実践</h1>
+
+      <p class="lead">
+        useEffectの実践的なパターンを学びます。
+        データフェッチ、イベント購読、タイマーの3大ユースケースを押さえましょう。
+      </p>
+
+      <!-- データフェッチ -->
+      <div class="card">
+        <h2>データフェッチの例</h2>
+
+        <div class="code-block">
+          <div class="code-header">userIdに応じてデータを取得</div>
+          <pre><code>function UserProfile({ userId }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // フラグでマウント状態を追跡
+    let isMounted = true;
+
+    async function fetchUser() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(`/api/users/${userId}`);
+        const data = await response.json();
+
+        // アンマウント後にsetStateしない
+        if (isMounted) {
+          setUser(data);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err.message);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchUser();
+
+    // クリーンアップ：フラグをfalseに
+    return () => {
+      isMounted = false;
+    };
+  }, [userId]); // userIdが変わったら再取得
+
+  if (loading) return &lt;p&gt;読み込み中...&lt;/p&gt;;
+  if (error) return &lt;p&gt;エラー: {error}&lt;/p&gt;;
+  return &lt;p&gt;{user?.name}&lt;/p&gt;;
+}</code></pre>
+        </div>
+
+        <div class="card card-warning">
+          <h3>2026年の推奨：TanStack Query</h3>
+          <p>実務ではuseEffectで直接fetchせず、<strong>TanStack Query</strong>（旧React Query）を使うことが推奨されます。</p>
+          <p>理由：キャッシュ、再取得、ローディング状態の管理が自動化される</p>
+        </div>
+      </div>
+
+      <!-- イベント購読 -->
+      <div class="card">
+        <h2>購読（Subscription）の例</h2>
+
+        <div class="code-block">
+          <div class="code-header">ウィンドウリサイズの購読</div>
+          <pre><code>function WindowSize() {
+  const [size, setSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  useEffect(() => {
+    // イベントハンドラを定義
+    function handleResize() {
+      setSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+
+    // イベントリスナーを登録
+    window.addEventListener('resize', handleResize);
+
+    // クリーンアップ：リスナーを解除
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []); // マウント時に1回だけ登録
+
+  return &lt;p&gt;{size.width} x {size.height}&lt;/p&gt;;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- タイマー -->
+      <div class="card">
+        <h2>タイマーの例</h2>
+
+        <div class="code-block">
+          <div class="code-header">カウントダウンタイマー</div>
+          <pre><code>function Countdown({ initialSeconds }) {
+  const [seconds, setSeconds] = useState(initialSeconds);
+
+  useEffect(() => {
+    // 0以下なら何もしない
+    if (seconds &lt;= 0) return;
+
+    // 1秒ごとにカウントダウン
+    const timerId = setInterval(() => {
+      setSeconds(prev => prev - 1);
+    }, 1000);
+
+    // クリーンアップ：タイマーをクリア
+    return () => {
+      clearInterval(timerId);
+    };
+  }, [seconds]); // secondsが変わるたびに再設定
+
+  return &lt;p&gt;残り: {seconds}秒&lt;/p&gt;;
+}</code></pre>
+        </div>
+
+        <div class="card card-warning">
+          <h3>注意：setIntervalの罠</h3>
+          <p>上の例は正しいですが、依存配列に<code>seconds</code>を入れると毎秒クリア＆再設定されます。</p>
+          <p>より効率的な実装は<code>useRef</code>を使う方法（後述）です。</p>
+        </div>
+      </div>
+
+      <!-- レビューポイント -->
+      <div class="card card-danger">
+        <h2>レビューで指摘すべきポイント</h2>
+        <ul>
+          <li><strong>isMountedフラグなし</strong> → アンマウント後のsetStateでWarning</li>
+          <li><strong>クリーンアップなし</strong> → イベントリスナー、タイマーの蓄積（メモリリーク）</li>
+          <li><strong>useEffect内で直接async</strong> → 非推奨（内部で関数定義すべき）</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-header">よくある間違い：useEffectを直接asyncにする</div>
+          <pre><code>// ❌ useEffectにasyncを直接つけるのはNG
+useEffect(async () => {
+  const data = await fetch('/api/data');
+  // ...
+}, []);
+
+// ⭕ 内部で関数を定義して呼び出す
+useEffect(() => {
+  async function fetchData() {
+    const data = await fetch('/api/data');
+    // ...
+  }
+  fetchData();
+}, []);</code></pre>
+        </div>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-hooks2-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>イベントリスナーを登録するuseEffectで、クリーンアップ関数を書かないと何が起こりますか？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks2-1" style="display:none;">
+          A. TypeScriptのコンパイルエラー
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks2-1" style="display:none;">
+          B. イベントリスナーが重複登録され、メモリリークの原因になる
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks2-1" style="display:none;">
+          C. 特に問題は起こらない
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks2-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('hooks2')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- hooks3: useEffectの罠（★最重要） -->
+    <section id="hooks3">
+      <h1>useEffectの罠（★最重要）</h1>
+
+      <p class="lead">
+        useEffectは<strong>最もバグを生みやすいHooks</strong>です。
+        レビューで最も指摘が多い問題を徹底的に学びます。
+      </p>
+
+      <!-- 罠1：依存配列の欠落 -->
+      <div class="card card-danger">
+        <h2>罠1：依存配列の欠落（最も多いバグ）</h2>
+
+        <div class="code-block">
+          <div class="code-header">依存配列の欠落の例</div>
+          <pre><code>// ❌ 依存配列が空：userIdが変わっても再実行されない
+function UserProfile({ userId }) {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    fetchUser(userId).then(setUser);
+  }, []); // ← userIdが欠落！
+
+  return &lt;p&gt;{user?.name}&lt;/p&gt;;
+}
+
+// ⭕ 依存配列にuserIdを追加
+useEffect(() => {
+  fetchUser(userId).then(setUser);
+}, [userId]); // ← userIdが変わったら再実行</code></pre>
+        </div>
+
+        <p><strong>結果：</strong>userIdが「1」から「2」に変わっても、古いuser（ID=1）が表示されたまま</p>
+        <p><strong>発見方法：</strong>ESLintの<code>react-hooks/exhaustive-deps</code>ルールを有効にする</p>
+      </div>
+
+      <!-- 罠2：無限ループ -->
+      <div class="card card-danger">
+        <h2>罠2：無限ループ（オブジェクトを依存配列に入れる）</h2>
+
+        <div class="code-block">
+          <div class="code-header">無限ループの例</div>
+          <pre><code>// ❌ 毎回新しいオブジェクトが生成される
+function Parent() {
+  const options = { sortBy: 'name' }; // 毎レンダリングで新しい参照
+
+  return &lt;Child options={options} /&gt;;
+}
+
+function Child({ options }) {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetchData(options).then(setData);
+  }, [options]); // ← optionsが毎回「違う」と判定される
+
+  return &lt;ul&gt;{data.map(...)}&lt;/ul&gt;;
+}
+// 結果：レンダリング → useEffect → setData → 再レンダリング → 無限ループ</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">解決策：useMemoで参照を安定させる</div>
+          <pre><code>// ⭕ useMemoでオブジェクトの参照を安定させる
+function Parent() {
+  const options = useMemo(() => ({ sortBy: 'name' }), []);
+  return &lt;Child options={options} /&gt;;
+}
+
+// または、個別のプリミティブ値を依存配列に
+useEffect(() => {
+  fetchData({ sortBy: options.sortBy });
+}, [options.sortBy]); // プリミティブ値なら安定</code></pre>
+        </div>
+
+        <p><strong>なぜ起こる？</strong>JavaScriptでは<code>{} !== {}</code>（オブジェクトは参照で比較）</p>
+      </div>
+
+      <!-- 罠3：クリーンアップ忘れ -->
+      <div class="card card-danger">
+        <h2>罠3：クリーンアップ忘れ（メモリリーク）</h2>
+
+        <div class="code-block">
+          <div class="code-header">クリーンアップ忘れの例</div>
+          <pre><code>// ❌ クリーンアップなし：タイマーが残り続ける
+function Timer() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setCount(c => c + 1);
+    }, 1000);
+    // return がない！
+  }, []);
+
+  return &lt;p&gt;{count}&lt;/p&gt;;
+}
+
+// ⭕ クリーンアップでタイマーを解除
+useEffect(() => {
+  const id = setInterval(() => {
+    setCount(c => c + 1);
+  }, 1000);
+
+  return () => clearInterval(id); // クリーンアップ
+}, []);</code></pre>
+        </div>
+
+        <p><strong>結果：</strong>コンポーネントがアンマウントされてもタイマーが動き続ける（メモリリーク）</p>
+        <p><strong>クリーンアップが必要なケース：</strong></p>
+        <ul>
+          <li>イベントリスナー（addEventListener）</li>
+          <li>タイマー（setInterval, setTimeout）</li>
+          <li>WebSocket接続</li>
+          <li>購読（subscription）</li>
+        </ul>
+      </div>
+
+      <!-- Hooksのルール -->
+      <div class="card card-danger">
+        <h2>Hooksのルール違反</h2>
+
+        <div class="code-block">
+          <div class="code-header">条件の中でHooksを呼ぶ（NG）</div>
+          <pre><code>// ❌ 条件の中でHooks（Reactのルール違反）
+function Component({ isLoggedIn }) {
+  if (isLoggedIn) {
+    useEffect(() => {
+      // ...
+    }, []);
+  }
+  // Reactはエラーを出すか、予測不能な動作に
+}
+
+// ⭕ Hooksはトップレベルで呼び、条件は内部で
+function Component({ isLoggedIn }) {
+  useEffect(() => {
+    if (isLoggedIn) {
+      // ...
+    }
+  }, [isLoggedIn]);
+}</code></pre>
+        </div>
+
+        <p><strong>なぜNG？</strong>ReactはHooksの呼び出し順で状態を管理している。条件分岐で順序が変わると壊れる。</p>
+      </div>
+
+      <!-- レビューポイント -->
+      <div class="card card-danger">
+        <h2>レビューで必ず確認すべきポイント</h2>
+        <table class="table-responsive">
+          <thead>
+            <tr>
+              <th>問題</th>
+              <th>指摘例</th>
+              <th>危険度</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>依存配列の欠落</td>
+              <td>「〇〇を依存配列に追加すべき」</td>
+              <td>🔴 最高</td>
+            </tr>
+            <tr>
+              <td>クリーンアップなし</td>
+              <td>「return文でクリーンアップすべき」</td>
+              <td>🔴 最高</td>
+            </tr>
+            <tr>
+              <td>条件内でHooks</td>
+              <td>「Hooksはトップレベルで呼ぶべき」</td>
+              <td>🔴 最高</td>
+            </tr>
+            <tr>
+              <td>オブジェクトを依存配列に</td>
+              <td>「useMemoで参照を安定させるべき」</td>
+              <td>高</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- クイズ1 -->
+      <div class="quiz" id="quiz-hooks3-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 1
+        </div>
+        <p>次のコードの問題点は何ですか？</p>
+        <div class="code-block">
+          <pre><code>function SearchResults({ query }) {
+  const [results, setResults] = useState([]);
+
+  useEffect(() => {
+    fetch(`/api/search?q=${query}`)
+      .then(res => res.json())
+      .then(setResults);
+  }, []);
+
+  return &lt;ul&gt;{results.map(...)}&lt;/ul&gt;;
+}</code></pre>
+        </div>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks3-1" style="display:none;">
+          A. 依存配列にqueryが欠落している
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks3-1" style="display:none;">
+          B. クリーンアップ関数がない
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks3-1" style="display:none;">
+          C. async/awaitを使うべき
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks3-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="quiz-hooks3-2">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 2
+        </div>
+        <p>次のコードが無限ループを起こす理由は？</p>
+        <div class="code-block">
+          <pre><code>function Component() {
+  const [data, setData] = useState([]);
+  const config = { page: 1, limit: 10 };
+
+  useEffect(() => {
+    fetchData(config).then(setData);
+  }, [config]);
+
+  return &lt;div&gt;{data.length}件&lt;/div&gt;;
+}</code></pre>
+        </div>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks3-2" style="display:none;">
+          A. setDataが再レンダリングを引き起こすから
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks3-2" style="display:none;">
+          B. configが毎回新しいオブジェクト（新しい参照）になるから
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks3-2" style="display:none;">
+          C. fetchDataがPromiseを返すから
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks3-2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('hooks3')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- hooks4: useRef -->
+    <section id="hooks4">
+      <h1>useRef</h1>
+
+      <p class="lead">
+        <strong>useRef</strong>は「再レンダリングを引き起こさない」値を保持するためのHooksです。
+        DOM要素への参照や、レンダリング間で保持したい値に使います。
+      </p>
+
+      <!-- useRefの基本 -->
+      <div class="card">
+        <h2>useRefの基本</h2>
+
+        <div class="code-block">
+          <div class="code-header">useRefの構文</div>
+          <pre><code>import { useRef } from 'react';
+
+function Component() {
+  // 初期値を設定
+  const countRef = useRef(0);
+
+  // .current プロパティで値にアクセス
+  console.log(countRef.current); // 0
+
+  // 値を更新（再レンダリングは起こらない）
+  countRef.current = 1;
+
+  return &lt;div&gt;...&lt;/div&gt;;
+}</code></pre>
+        </div>
+
+        <p><strong>useStateとの違い：</strong></p>
+        <table class="table-responsive">
+          <thead>
+            <tr>
+              <th>特性</th>
+              <th>useState</th>
+              <th>useRef</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>値の更新</td>
+              <td>再レンダリングを引き起こす</td>
+              <td>再レンダリングしない</td>
+            </tr>
+            <tr>
+              <td>用途</td>
+              <td>UIに反映する値</td>
+              <td>UIに反映しない値、DOM参照</td>
+            </tr>
+            <tr>
+              <td>アクセス方法</td>
+              <td>直接（value）</td>
+              <td>.current経由</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- DOM要素へのアクセス -->
+      <div class="card">
+        <h2>ユースケース1：DOM要素へのアクセス</h2>
+
+        <div class="code-block">
+          <div class="code-header">input要素にフォーカスを当てる</div>
+          <pre><code>function TextInput() {
+  const inputRef = useRef&lt;HTMLInputElement&gt;(null);
+
+  const handleClick = () => {
+    // DOM要素に直接アクセス
+    inputRef.current?.focus();
+  };
+
+  return (
+    &lt;&gt;
+      &lt;input ref={inputRef} type="text" /&gt;
+      &lt;button onClick={handleClick}&gt;フォーカス&lt;/button&gt;
+    &lt;/&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p><strong>TypeScriptでの型：</strong></p>
+        <ul>
+          <li><code>useRef&lt;HTMLInputElement&gt;(null)</code> - input要素</li>
+          <li><code>useRef&lt;HTMLDivElement&gt;(null)</code> - div要素</li>
+          <li><code>useRef&lt;HTMLButtonElement&gt;(null)</code> - button要素</li>
+        </ul>
+      </div>
+
+      <!-- 値の保持 -->
+      <div class="card">
+        <h2>ユースケース2：値の保持（再レンダリングなし）</h2>
+
+        <div class="code-block">
+          <div class="code-header">前回の値を保持する</div>
+          <pre><code>function Counter() {
+  const [count, setCount] = useState(0);
+  const prevCountRef = useRef&lt;number&gt;();
+
+  useEffect(() => {
+    // レンダリング後に前回の値を保存
+    prevCountRef.current = count;
+  });
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;現在: {count}&lt;/p&gt;
+      &lt;p&gt;前回: {prevCountRef.current}&lt;/p&gt;
+      &lt;button onClick={() => setCount(c => c + 1)}&gt;
+        増やす
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">タイマーIDを保持する</div>
+          <pre><code>function Stopwatch() {
+  const [time, setTime] = useState(0);
+  const timerRef = useRef&lt;number | null&gt;(null);
+
+  const start = () => {
+    // すでに動いていたら何もしない
+    if (timerRef.current !== null) return;
+
+    timerRef.current = setInterval(() => {
+      setTime(t => t + 1);
+    }, 1000);
+  };
+
+  const stop = () => {
+    if (timerRef.current !== null) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;{time}秒&lt;/p&gt;
+      &lt;button onClick={start}&gt;開始&lt;/button&gt;
+      &lt;button onClick={stop}&gt;停止&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- レビューポイント -->
+      <div class="card card-danger">
+        <h2>レビューで指摘すべきポイント</h2>
+        <ul>
+          <li><strong>UIに反映する値にuseRef</strong> → useStateを使うべき</li>
+          <li><strong>.currentの初期値null忘れ</strong> → DOM参照は初期値nullにする</li>
+          <li><strong>ref.currentを依存配列に入れる</strong> → 意味がない（変更を検知しない）</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-header">間違い例：UIに反映する値にuseRef</div>
+          <pre><code>// ❌ UIに表示する値にuseRefは不適切
+function Counter() {
+  const countRef = useRef(0);
+
+  const increment = () => {
+    countRef.current += 1;
+    // UIは更新されない！
+  };
+
+  return &lt;p&gt;{countRef.current}&lt;/p&gt;; // 常に初期値0
+}
+
+// ⭕ UIに反映するならuseState
+function Counter() {
+  const [count, setCount] = useState(0);
+  return &lt;p&gt;{count}&lt;/p&gt;;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-hooks4-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>useRefとuseStateの違いとして正しいのはどれですか？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks4-1" style="display:none;">
+          A. useRefは文字列のみ、useStateは全ての型を保持できる
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks4-1" style="display:none;">
+          B. useRefの値の更新は再レンダリングを引き起こさない
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks4-1" style="display:none;">
+          C. useRefはDOM操作専用で、他の用途には使えない
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks4-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('hooks4')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- hooks5: useContext -->
+    <section id="hooks5">
+      <h1>useContext</h1>
+
+      <p class="lead">
+        <strong>useContext</strong>は、コンポーネントツリー全体でデータを共有するためのHooksです。
+        「Props drilling」（深いバケツリレー）を解消します。
+      </p>
+
+      <!-- Contextとは -->
+      <div class="card">
+        <h2>Contextとは（グローバル状態共有）</h2>
+
+        <p><strong>Props drilling の問題：</strong></p>
+        <div class="code-block">
+          <div class="code-header">Props drilling の例</div>
+          <pre><code>// ❌ 深いバケツリレー
+function App() {
+  const [theme, setTheme] = useState('light');
+  return &lt;Header theme={theme} /&gt;;
+}
+
+function Header({ theme }) {
+  return &lt;Nav theme={theme} /&gt;; // 使わないのに渡す
+}
+
+function Nav({ theme }) {
+  return &lt;Button theme={theme} /&gt;; // 使わないのに渡す
+}
+
+function Button({ theme }) {
+  return &lt;button className={theme}&gt;Click&lt;/button&gt;; // ここで使う
+}</code></pre>
+        </div>
+
+        <p><strong>Contextで解決：</strong></p>
+        <div class="code-block">
+          <div class="code-header">Context を使った例</div>
+          <pre><code>// ⭕ Contextで直接アクセス
+const ThemeContext = createContext('light');
+
+function App() {
+  const [theme, setTheme] = useState('light');
+  return (
+    &lt;ThemeContext.Provider value={theme}&gt;
+      &lt;Header /&gt; {/* themeを渡さない */}
+    &lt;/ThemeContext.Provider&gt;
+  );
+}
+
+function Button() {
+  const theme = useContext(ThemeContext); // 直接取得
+  return &lt;button className={theme}&gt;Click&lt;/button&gt;;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- 3ステップ -->
+      <div class="card">
+        <h2>Context の3ステップ</h2>
+
+        <div class="code-block">
+          <div class="code-header">Step 1: createContext で作成</div>
+          <pre><code>import { createContext } from 'react';
+
+// 初期値を設定（型推論のため）
+interface User {
+  id: number;
+  name: string;
+}
+
+const UserContext = createContext&lt;User | null&gt;(null);</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">Step 2: Provider で値を提供</div>
+          <pre><code>function App() {
+  const [user, setUser] = useState&lt;User | null&gt;({
+    id: 1,
+    name: 'Alice'
+  });
+
+  return (
+    &lt;UserContext.Provider value={user}&gt;
+      &lt;Dashboard /&gt;
+    &lt;/UserContext.Provider&gt;
+  );
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">Step 3: useContext で取得</div>
+          <pre><code>function UserProfile() {
+  const user = useContext(UserContext);
+
+  if (!user) return &lt;p&gt;ログインしてください&lt;/p&gt;;
+
+  return &lt;p&gt;{user.name}さん、こんにちは&lt;/p&gt;;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- 注意点 -->
+      <div class="card card-warning">
+        <h2>Context の注意点（パフォーマンス）</h2>
+
+        <p><strong>問題：</strong>Context の値が変わると、useContext を使っている<strong>全てのコンポーネント</strong>が再レンダリングされる</p>
+
+        <div class="code-block">
+          <div class="code-header">パフォーマンス問題の例</div>
+          <pre><code>// ❌ 全ての値を1つのContextに入れる
+const AppContext = createContext({
+  user: null,
+  theme: 'light',
+  notifications: [],
+  // ...大量の状態
+});
+
+// themeだけ変わっても、user や notifications を使うコンポーネントも再レンダリング</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">解決策：Contextを分割する</div>
+          <pre><code>// ⭕ 関連する状態ごとにContextを分ける
+const UserContext = createContext(null);
+const ThemeContext = createContext('light');
+const NotificationContext = createContext([]);
+
+// themeが変わっても、UserContextを使うコンポーネントは再レンダリングされない</code></pre>
+        </div>
+
+        <p><strong>実務では：</strong>高頻度で更新される状態は、ZustandやJotaiなどの状態管理ライブラリを使う</p>
+      </div>
+
+      <!-- レビューポイント -->
+      <div class="card card-danger">
+        <h2>レビューで指摘すべきポイント</h2>
+        <ul>
+          <li><strong>巨大なContext</strong> → 分割を検討すべき</li>
+          <li><strong>高頻度更新をContextで</strong> → Zustand等を検討すべき</li>
+          <li><strong>Provider外でuseContext</strong> → undefinedになる</li>
+        </ul>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-hooks5-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>Contextのパフォーマンス問題を軽減する方法として適切なのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks5-1" style="display:none;">
+          A. useEffectでContextの値をキャッシュする
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks5-1" style="display:none;">
+          B. 関連する状態ごとにContextを分割する
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks5-1" style="display:none;">
+          C. useRefでContextの値を保持する
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks5-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('hooks5')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- hooks6: useReducer -->
+    <section id="hooks6">
+      <h1>useReducer</h1>
+
+      <p class="lead">
+        <strong>useReducer</strong>は、複雑な状態更新ロジックを管理するためのHooksです。
+        Reduxパターンに基づいた「action」と「reducer」を使います。
+      </p>
+
+      <!-- 複雑な状態更新 -->
+      <div class="card">
+        <h2>複雑な状態更新の問題</h2>
+
+        <div class="code-block">
+          <div class="code-header">useStateで複雑な状態を扱う問題</div>
+          <pre><code>// ❌ 複数のsetStateが散らばる
+function ShoppingCart() {
+  const [items, setItems] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [discount, setDiscount] = useState(0);
+
+  const addItem = (item) => {
+    setItems([...items, item]);
+    setTotal(total + item.price);
+    // discountも再計算...
+  };
+
+  const removeItem = (id) => {
+    setItems(items.filter(i => i.id !== id));
+    // totalも再計算...
+  };
+
+  // 状態更新ロジックがバラバラで管理しづらい
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- useReducerの構文 -->
+      <div class="card">
+        <h2>useReducerの構文</h2>
+
+        <div class="code-block">
+          <div class="code-header">useReducerの基本形</div>
+          <pre><code>import { useReducer } from 'react';
+
+// 状態の型
+interface State {
+  count: number;
+}
+
+// アクションの型
+type Action =
+  | { type: 'increment' }
+  | { type: 'decrement' }
+  | { type: 'reset'; payload: number };
+
+// reducer関数：現在の状態とアクションから新しい状態を返す
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case 'increment':
+      return { count: state.count + 1 };
+    case 'decrement':
+      return { count: state.count - 1 };
+    case 'reset':
+      return { count: action.payload };
+    default:
+      return state;
+  }
+}
+
+function Counter() {
+  // useReducer(reducer関数, 初期状態)
+  const [state, dispatch] = useReducer(reducer, { count: 0 });
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;{state.count}&lt;/p&gt;
+      &lt;button onClick={() => dispatch({ type: 'increment' })}&gt;
+        +1
+      &lt;/button&gt;
+      &lt;button onClick={() => dispatch({ type: 'decrement' })}&gt;
+        -1
+      &lt;/button&gt;
+      &lt;button onClick={() => dispatch({ type: 'reset', payload: 0 })}&gt;
+        リセット
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p><strong>3つの要素：</strong></p>
+        <ol>
+          <li><strong>state</strong>：現在の状態</li>
+          <li><strong>dispatch</strong>：アクションを発行する関数</li>
+          <li><strong>reducer</strong>：状態の更新ロジックをまとめた関数</li>
+        </ol>
+      </div>
+
+      <!-- 使い分け -->
+      <div class="card">
+        <h2>useStateとの使い分け</h2>
+
+        <table class="table-responsive">
+          <thead>
+            <tr>
+              <th>状況</th>
+              <th>推奨</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>単純な値（数値、文字列、真偽値）</td>
+              <td>useState</td>
+            </tr>
+            <tr>
+              <td>オブジェクト・配列（少数のプロパティ）</td>
+              <td>useState</td>
+            </tr>
+            <tr>
+              <td>複数の状態が連動して更新される</td>
+              <td>useReducer</td>
+            </tr>
+            <tr>
+              <td>更新ロジックが複雑（複数のswitch分岐）</td>
+              <td>useReducer</td>
+            </tr>
+            <tr>
+              <td>状態更新を別ファイルでテストしたい</td>
+              <td>useReducer</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p><strong>実務での判断：</strong>「3つ以上のsetStateが連動する」or「更新パターンが3種類以上」ならuseReducer検討</p>
+      </div>
+
+      <!-- レビューポイント -->
+      <div class="card card-danger">
+        <h2>レビューで指摘すべきポイント</h2>
+        <ul>
+          <li><strong>reducer内で副作用</strong> → 純粋関数であるべき（fetchやconsole.logはNG）</li>
+          <li><strong>stateを直接変更</strong> → 新しいオブジェクトを返すべき</li>
+          <li><strong>過度に複雑なreducer</strong> → 分割を検討</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-header">間違い例：reducer内で副作用</div>
+          <pre><code>// ❌ reducer内で副作用（fetchはNG）
+function reducer(state, action) {
+  switch (action.type) {
+    case 'fetch':
+      fetch('/api/data'); // NG: 副作用
+      return state;
+  }
+}
+
+// ⭕ 副作用はuseEffectかイベントハンドラで
+const handleFetch = async () => {
+  const data = await fetch('/api/data');
+  dispatch({ type: 'setData', payload: data });
+};</code></pre>
+        </div>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-hooks6-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>useReducerを使うべき状況として最も適切なのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks6-1" style="display:none;">
+          A. 単純なカウンターを実装するとき
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks6-1" style="display:none;">
+          B. 複数の状態が連動して更新される複雑なフォーム
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks6-1" style="display:none;">
+          C. APIからデータを取得するとき
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks6-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('hooks6')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- hooks7: useMemo/useCallback -->
+    <section id="hooks7">
+      <h1>useMemo / useCallback</h1>
+
+      <p class="lead">
+        <strong>useMemo</strong>と<strong>useCallback</strong>は、パフォーマンス最適化のためのHooksです。
+        計算結果や関数を「メモ化」して、不要な再計算・再生成を防ぎます。
+      </p>
+
+      <!-- メモ化とは -->
+      <div class="card">
+        <h2>メモ化（Memoization）とは</h2>
+
+        <p><strong>メモ化</strong> = 計算結果をキャッシュして、同じ入力なら再計算せずに返す</p>
+
+        <div class="code-block">
+          <div class="code-header">メモ化の概念</div>
+          <pre><code>// メモ化なし：毎回計算
+function slowCalculation(n) {
+  // 重い処理...
+  return result;
+}
+
+// メモ化あり：同じnなら前回の結果を返す
+const cache = new Map();
+function memoizedCalculation(n) {
+  if (cache.has(n)) {
+    return cache.get(n); // キャッシュから返す
+  }
+  const result = slowCalculation(n);
+  cache.set(n, result);
+  return result;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- useMemo -->
+      <div class="card">
+        <h2>useMemo：計算結果のメモ化</h2>
+
+        <div class="code-block">
+          <div class="code-header">useMemoの例</div>
+          <pre><code>import { useMemo } from 'react';
+
+function FilteredList({ items, filter }) {
+  // ❌ 毎回フィルタリングが実行される
+  // const filteredItems = items.filter(item => item.includes(filter));
+
+  // ⭕ items または filter が変わったときだけ再計算
+  const filteredItems = useMemo(() => {
+    console.log('フィルタリング実行');
+    return items.filter(item => item.includes(filter));
+  }, [items, filter]);
+
+  return (
+    &lt;ul&gt;
+      {filteredItems.map(item => &lt;li key={item}&gt;{item}&lt;/li&gt;)}
+    &lt;/ul&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p><strong>いつ使う？</strong></p>
+        <ul>
+          <li>計算コストが高い処理（大量のデータのフィルタリング・ソート）</li>
+          <li>オブジェクト・配列の参照を安定させたいとき</li>
+        </ul>
+      </div>
+
+      <!-- useCallback -->
+      <div class="card">
+        <h2>useCallback：関数のメモ化</h2>
+
+        <div class="code-block">
+          <div class="code-header">useCallbackの例</div>
+          <pre><code>import { useCallback } from 'react';
+
+function Parent() {
+  const [count, setCount] = useState(0);
+
+  // ❌ 毎回新しい関数が生成される
+  // const handleClick = () => setCount(c => c + 1);
+
+  // ⭕ 依存配列の値が変わらない限り同じ関数を返す
+  const handleClick = useCallback(() => {
+    setCount(c => c + 1);
+  }, []); // setCountは安定しているので依存不要
+
+  return &lt;ExpensiveChild onClick={handleClick} /&gt;;
+}
+
+// memo()でラップされた子コンポーネント
+const ExpensiveChild = memo(function ExpensiveChild({ onClick }) {
+  console.log('ExpensiveChild レンダリング');
+  return &lt;button onClick={onClick}&gt;Click&lt;/button&gt;;
+});</code></pre>
+        </div>
+
+        <p><strong>いつ使う？</strong></p>
+        <ul>
+          <li><code>memo()</code>でラップした子コンポーネントに関数を渡すとき</li>
+          <li>useEffectの依存配列に関数を入れるとき</li>
+        </ul>
+      </div>
+
+      <!-- React Compiler -->
+      <div class="card card-success">
+        <h2>2026年の豆知識：React Compiler</h2>
+
+        <p><strong>React Compiler</strong>（旧React Forget）が正式リリースされ、
+        useMemo/useCallbackを<strong>自動的に挿入</strong>してくれるようになりました。</p>
+
+        <p>つまり：</p>
+        <ul>
+          <li>新規プロジェクトでは手動のメモ化は<strong>不要</strong>になりつつある</li>
+          <li>既存コードでは、過剰なuseMemo/useCallbackを削除してシンプルに</li>
+          <li>ただし「いつメモ化が必要か」を理解することは依然として重要</li>
+        </ul>
+      </div>
+
+      <!-- レビューポイント -->
+      <div class="card card-danger">
+        <h2>レビューで指摘すべきポイント</h2>
+        <ul>
+          <li><strong>過剰なメモ化</strong> → シンプルな計算には不要（オーバーヘッドになる）</li>
+          <li><strong>依存配列の欠落</strong> → 古い値を参照してバグに</li>
+          <li><strong>memo()なしでuseCallback</strong> → 子が毎回レンダリングされるなら意味なし</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-header">過剰なメモ化の例</div>
+          <pre><code>// ❌ シンプルな計算にuseMemoは不要
+const doubled = useMemo(() => count * 2, [count]);
+
+// ⭕ 直接計算で十分
+const doubled = count * 2;</code></pre>
+        </div>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-hooks7-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>useMemoとuseCallbackの違いとして正しいのは？</p>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks7-1" style="display:none;">
+          A. useMemoは計算結果を、useCallbackは関数をメモ化する
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks7-1" style="display:none;">
+          B. useMemoは同期処理用、useCallbackは非同期処理用
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks7-1" style="display:none;">
+          C. useMemoはクラスコンポーネント用、useCallbackは関数コンポーネント用
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks7-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('hooks7')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- hooks8: カスタムHooks -->
+    <section id="hooks8">
+      <h1>カスタムHooks</h1>
+
+      <p class="lead">
+        <strong>カスタムHooks</strong>は、再利用可能なロジックを抽出するためのパターンです。
+        「use」から始まる名前で、他のHooksを組み合わせて作ります。
+      </p>
+
+      <!-- カスタムHooksとは -->
+      <div class="card">
+        <h2>カスタムHooksとは</h2>
+
+        <p><strong>問題：</strong>同じロジックが複数のコンポーネントで重複する</p>
+
+        <div class="code-block">
+          <div class="code-header">ロジックの重複</div>
+          <pre><code>// ComponentA.tsx
+function ComponentA() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/dataA').then(res => res.json()).then(setData);
+    setLoading(false);
+  }, []);
+  // ...
+}
+
+// ComponentB.tsx
+function ComponentB() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/dataB').then(res => res.json()).then(setData);
+    setLoading(false);
+  }, []);
+  // ... 同じパターンの繰り返し
+}</code></pre>
+        </div>
+
+        <p><strong>解決：</strong>カスタムHooksでロジックを抽出</p>
+
+        <div class="code-block">
+          <div class="code-header">カスタムHooksで抽出</div>
+          <pre><code>// useFetch.ts（カスタムHooks）
+function useFetch&lt;T&gt;(url: string) {
+  const [data, setData] = useState&lt;T | null&gt;(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState&lt;Error | null&gt;(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        if (isMounted) setData(data);
+      })
+      .catch(err => {
+        if (isMounted) setError(err);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => { isMounted = false; };
+  }, [url]);
+
+  return { data, loading, error };
+}
+
+// 使用する側
+function ComponentA() {
+  const { data, loading, error } = useFetch('/api/dataA');
+  if (loading) return &lt;p&gt;読み込み中...&lt;/p&gt;;
+  return &lt;p&gt;{data?.name}&lt;/p&gt;;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- 命名規則 -->
+      <div class="card">
+        <h2>命名規則：「use」から始める</h2>
+
+        <p><strong>必須ルール：</strong>カスタムHooksは<code>use</code>から始まる名前にする</p>
+
+        <div class="code-block">
+          <div class="code-header">命名の例</div>
+          <pre><code>// ⭕ 正しい命名
+function useLocalStorage(key) { ... }
+function useWindowSize() { ... }
+function useDebounce(value, delay) { ... }
+function useOnClickOutside(ref, handler) { ... }
+
+// ❌ 間違った命名（Hooksと認識されない）
+function getLocalStorage(key) { ... }
+function windowSizeHook() { ... }</code></pre>
+        </div>
+
+        <p><strong>なぜ重要？</strong></p>
+        <ul>
+          <li>ESLintがHooksのルール違反を検出できる</li>
+          <li>他の開発者が「これはHooksだ」と認識できる</li>
+          <li>内部でuseState等を使っていることが分かる</li>
+        </ul>
+      </div>
+
+      <!-- 実用例 -->
+      <div class="card">
+        <h2>よく使われるカスタムHooksの例</h2>
+
+        <div class="code-block">
+          <div class="code-header">useLocalStorage</div>
+          <pre><code>function useLocalStorage&lt;T&gt;(key: string, initialValue: T) {
+  const [value, setValue] = useState&lt;T&gt;(() => {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : initialValue;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(value));
+  }, [key, value]);
+
+  return [value, setValue] as const;
+}
+
+// 使用例
+function Settings() {
+  const [theme, setTheme] = useLocalStorage('theme', 'light');
+  return &lt;button onClick={() => setTheme('dark')}&gt;ダークモード&lt;/button&gt;;
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">useDebounce</div>
+          <pre><code>function useDebounce&lt;T&gt;(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+// 使用例：検索入力の遅延
+function Search() {
+  const [query, setQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 300);
+  // debouncedQueryが変わったときだけAPI呼び出し
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- レビューポイント -->
+      <div class="card card-danger">
+        <h2>レビューで指摘すべきポイント</h2>
+        <ul>
+          <li><strong>useで始まらない名前</strong> → Hooksの命名規則違反</li>
+          <li><strong>コンポーネント内で定義</strong> → ファイル外に抽出すべき</li>
+          <li><strong>過度に複雑なカスタムHooks</strong> → 分割を検討</li>
+          <li><strong>同じロジックが複数箇所に</strong> → カスタムHooksに抽出すべき</li>
+        </ul>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-hooks8-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>カスタムHooksの命名規則として正しいのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks8-1" style="display:none;">
+          A. 「hook」で終わる（例：localStorageHook）
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks8-1" style="display:none;">
+          B. 「use」で始まる（例：useLocalStorage）
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks8-1" style="display:none;">
+          C. 任意の名前でよい
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks8-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Phase 3完了メッセージ -->
+      <div class="card card-success">
+        <h2>Phase 3 完了！</h2>
+        <p>Hooks深掘りを完了しました。以下を習得しました：</p>
+        <ul>
+          <li>useEffectの基礎と罠（依存配列、クリーンアップ、無限ループ）</li>
+          <li>useRef（DOM参照、値の保持）</li>
+          <li>useContext（グローバル状態共有）</li>
+          <li>useReducer（複雑な状態管理）</li>
+          <li>useMemo/useCallback（メモ化）</li>
+          <li>カスタムHooks（ロジックの再利用）</li>
+        </ul>
+        <p>次はPhase 4「実践パターン」でモダンReact（Server Components等）を学びます。</p>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('hooks8')">
+        <span class="icon">✓</span>
+        Phase 3を完了
+      </button>
+    </section>

@@ -1,0 +1,982 @@
+<section id="dom1">
+      <h1>DOMとは？</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>DOMの概念（Document Object Model）</li>
+          <li>HTMLとDOMの関係</li>
+          <li>DOMツリー構造の理解</li>
+        </ul>
+      </div>
+
+      <h2>DOM = HTMLをJavaScriptで操作するための仕組み</h2>
+
+      <p>
+        HTMLはただの「テキストファイル」です。
+      </p>
+
+      <p>
+        ブラウザがHTMLを読み込むと、<strong>DOMツリー</strong>という構造に変換します。
+      </p>
+
+      <p>
+        JavaScriptはこのDOMツリーを操作することで、ページを動的に変更できます。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🌳</span>
+          DOMツリーのイメージ
+        </div>
+        <pre><code>HTML:
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;h1&gt;タイトル&lt;/h1&gt;
+    &lt;p&gt;本文&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+
+DOMツリー:
+document
+  └─ html
+       └─ body
+            ├─ h1
+            │    └─ "タイトル"
+            └─ p
+                 └─ "本文"</code></pre>
+      </div>
+
+      <h2>なぜ「ツリー」と呼ぶのか</h2>
+
+      <p>
+        HTMLの要素は<strong>親子関係</strong>を持っています。
+      </p>
+
+      <ul>
+        <li><code>&lt;body&gt;</code>は<code>&lt;h1&gt;</code>の<strong>親（parent）</strong></li>
+        <li><code>&lt;h1&gt;</code>は<code>&lt;body&gt;</code>の<strong>子（child）</strong></li>
+        <li><code>&lt;h1&gt;</code>と<code>&lt;p&gt;</code>は<strong>兄弟（sibling）</strong></li>
+      </ul>
+
+      <p>
+        この構造が木の枝分かれに似ているので「ツリー」と呼びます。
+      </p>
+
+      <h2>documentオブジェクト</h2>
+
+      <p>
+        JavaScriptからDOMにアクセスするための入り口が<code>document</code>です。
+      </p>
+
+      <pre><code>// documentオブジェクト
+document              // DOMツリー全体
+document.body         // &lt;body&gt;要素
+document.head         // &lt;head&gt;要素
+document.title        // &lt;title&gt;の中身
+
+// 確認してみよう（ブラウザのコンソールで）
+console.log(document.title);</code></pre>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          覚えておくこと
+        </div>
+        <p style="margin:0;">
+          <strong>DOM操作 = HTML要素をJavaScriptで変更すること</strong><br>
+          テキストを書き換える、要素を追加・削除する、スタイルを変える...etc
+        </p>
+      </div>
+
+      <!-- クイズ -->
+      <h2>確認クイズ</h2>
+
+      <div class="quiz" id="quiz-dom1">
+        <div class="quiz-question">
+          <strong>問題：</strong>DOMについて正しい説明はどれ？
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom1" value="a">
+            DOMはHTMLファイルそのもののこと
+          </label>
+          <label class="quiz-option" data-correct="true" data-explanation="DOM（Document Object Model）はHTMLをJavaScriptで操作できるようにした「オブジェクトのツリー構造」です。HTMLファイル自体ではなく、ブラウザが解析して作ったメモリ上の表現です。">
+            <input type="radio" name="quiz-dom1" value="b">
+            DOMはブラウザがHTMLを解析して作るツリー構造
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom1" value="c">
+            DOMはCSSを操作するための仕組み
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-dom1')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('dom1')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 11: 要素の取得 -->
+    <section id="dom2">
+      <h1>要素の取得</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>querySelector / querySelectorAll</li>
+          <li>getElementById（古い方法）</li>
+          <li>どの方法を使うべきか</li>
+        </ul>
+      </div>
+
+      <h2>要素を操作する前に「取得」する</h2>
+
+      <p>
+        DOM操作の第一歩は、操作したい要素を<strong>取得</strong>することです。
+      </p>
+
+      <h2>querySelector（推奨）</h2>
+
+      <p>
+        CSSセレクタで要素を取得する<strong>現代的な方法</strong>です。
+      </p>
+
+      <pre><code>// IDで取得
+const header = document.querySelector('#header');
+
+// クラスで取得（最初の1つ）
+const btn = document.querySelector('.btn');
+
+// タグで取得（最初の1つ）
+const h1 = document.querySelector('h1');
+
+// 複雑なセレクタもOK
+const item = document.querySelector('nav .menu-item:first-child');</code></pre>
+
+      <h2>querySelectorAll（複数取得）</h2>
+
+      <pre><code>// マッチするすべての要素を取得
+const buttons = document.querySelectorAll('.btn');
+
+// NodeListが返る（配列に似たもの）
+buttons.length;    // 要素の数
+buttons[0];        // 最初の要素
+
+// ループ処理
+buttons.forEach(btn => {
+  console.log(btn.textContent);
+});</code></pre>
+
+      <h2>getElementById（古い方法）</h2>
+
+      <pre><code>// IDで取得（#は不要）
+const header = document.getElementById('header');
+
+// これは querySelector と同じ結果
+const header2 = document.querySelector('#header');</code></pre>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          レビューで指摘すべきポイント
+        </div>
+        <p>
+          <code>getElementById</code>は動作しますが、<br>
+          <strong>querySelectorで統一</strong>する方がコードの一貫性が保てます。
+        </p>
+        <div class="compare-box" style="margin-top:16px;">
+          <div class="compare-bad">
+            <div class="compare-title">
+              <span class="icon">❌</span> 混在
+            </div>
+            <pre><code>getElementById('header')
+querySelector('.nav')
+getElementsByClassName('btn')</code></pre>
+          </div>
+          <div class="compare-good">
+            <div class="compare-title">
+              <span class="icon">⭕</span> 統一
+            </div>
+            <pre><code>querySelector('#header')
+querySelector('.nav')
+querySelectorAll('.btn')</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <h2>要素が見つからない場合</h2>
+
+      <pre><code>const element = document.querySelector('.not-exist');
+console.log(element);  // null
+
+// そのままプロパティにアクセスするとエラー
+element.textContent;   // Error: Cannot read property of null
+
+// 安全にアクセス
+if (element) {
+  element.textContent = '新しいテキスト';
+}
+
+// または オプショナルチェーン
+element?.textContent;  // undefined（エラーにならない）</code></pre>
+
+      <!-- クイズ -->
+      <h2>確認クイズ</h2>
+
+      <div class="quiz" id="quiz-dom2">
+        <div class="quiz-question">
+          <strong>問題：</strong>すべての<code>.item</code>クラスの要素を取得する正しいコードは？
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom2" value="a">
+            document.querySelector('.item')
+          </label>
+          <label class="quiz-option" data-correct="true" data-explanation="querySelectorは「最初の1つだけ」、querySelectorAllは「すべて」を取得します。複数要素を扱う場合はquerySelectorAllを使い、forEachでループ処理できます。">
+            <input type="radio" name="quiz-dom2" value="b">
+            document.querySelectorAll('.item')
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom2" value="c">
+            document.getElement('.item')
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-dom2')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('dom2')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 12: 要素の操作 -->
+    <section id="dom3">
+      <h1>要素の操作</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>textContent と innerHTML の違い</li>
+          <li>classList でクラスを操作</li>
+          <li>XSS脆弱性とその対策</li>
+        </ul>
+      </div>
+
+      <h2>テキストの変更</h2>
+
+      <pre><code>const el = document.querySelector('#message');
+
+// テキストを取得
+console.log(el.textContent);
+
+// テキストを変更
+el.textContent = '新しいメッセージ';</code></pre>
+
+      <h2>textContent vs innerHTML</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔥</span>
+          最重要：XSS脆弱性
+        </div>
+        <p>
+          <code>innerHTML</code>にユーザー入力を直接渡すと、<br>
+          <strong>XSS（クロスサイトスクリプティング）攻撃</strong>が可能になります。
+        </p>
+
+        <div class="compare-box" style="margin-top:16px;">
+          <div class="compare-bad">
+            <div class="compare-title">
+              <span class="icon">❌</span> 危険（XSS脆弱性）
+            </div>
+            <pre><code>// ユーザー入力をそのまま使う
+const userInput = '&lt;script&gt;alert("攻撃")&lt;/script&gt;';
+el.innerHTML = userInput;
+// → スクリプトが実行される！</code></pre>
+          </div>
+          <div class="compare-good">
+            <div class="compare-title">
+              <span class="icon">⭕</span> 安全
+            </div>
+            <pre><code>// textContentを使う
+const userInput = '&lt;script&gt;alert("攻撃")&lt;/script&gt;';
+el.textContent = userInput;
+// → 文字列として表示される</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          ルール
+        </div>
+        <ul style="margin:0;">
+          <li><strong>ユーザー入力</strong> → <code>textContent</code>を使う</li>
+          <li><strong>自分で書いたHTML</strong> → <code>innerHTML</code>でもOK</li>
+          <li>迷ったら<code>textContent</code>を使う</li>
+        </ul>
+      </div>
+
+      <h2>クラスの操作（classList）</h2>
+
+      <pre><code>const el = document.querySelector('.box');
+
+// クラスを追加
+el.classList.add('active');
+
+// クラスを削除
+el.classList.remove('active');
+
+// クラスの有無を切り替え
+el.classList.toggle('active');
+
+// クラスを持っているか確認
+el.classList.contains('active');  // true/false</code></pre>
+
+      <h2>属性の操作</h2>
+
+      <pre><code>const link = document.querySelector('a');
+
+// 属性を取得
+link.getAttribute('href');
+
+// 属性を設定
+link.setAttribute('href', 'https://example.com');
+
+// 属性を削除
+link.removeAttribute('target');
+
+// data属性
+el.dataset.userId;        // data-user-id の値
+el.dataset.userId = '123'; // 設定</code></pre>
+
+      <h2>スタイルの操作</h2>
+
+      <pre><code>const el = document.querySelector('.box');
+
+// インラインスタイルを設定
+el.style.color = 'red';
+el.style.backgroundColor = 'blue';  // キャメルケース
+
+// 複数のスタイルを一度に
+el.style.cssText = 'color: red; background: blue;';</code></pre>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          ベストプラクティス
+        </div>
+        <p style="margin:0;">
+          スタイルの変更は<code>classList</code>でクラスを付け替える方が推奨。<br>
+          CSSでスタイルを定義し、JSではクラスの追加/削除だけ行う。
+        </p>
+        <pre><code>// ❌ JSでスタイル直接変更
+el.style.color = 'red';
+el.style.fontWeight = 'bold';
+
+// ⭕ クラスで切り替え
+el.classList.add('highlight');
+// CSS: .highlight { color: red; font-weight: bold; }</code></pre>
+      </div>
+
+      <!-- クイズ1 -->
+      <h2>確認クイズ</h2>
+
+      <div class="quiz" id="quiz-dom3-1">
+        <div class="quiz-question">
+          <strong>問題1：</strong>以下のコードの問題点は？
+          <pre><code>const userComment = getUserInput();
+commentBox.innerHTML = userComment;</code></pre>
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom3-1" value="a">
+            問題なし
+          </label>
+          <label class="quiz-option" data-correct="true" data-explanation="innerHTMLにユーザー入力を直接渡すとXSS（クロスサイトスクリプティング）攻撃が可能になります。悪意あるスクリプトが実行される危険があります。ユーザー入力にはtextContentを使いましょう。">
+            <input type="radio" name="quiz-dom3-1" value="b">
+            XSS脆弱性がある。textContentを使うべき
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom3-1" value="c">
+            getUserInput()の戻り値の型が不明
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-dom3-1')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="quiz-dom3-2" style="margin-top:32px;">
+        <div class="quiz-question">
+          <strong>問題2：</strong>スタイルを変更する最も良い方法は？
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom3-2" value="a">
+            el.style.color = 'red';
+          </label>
+          <label class="quiz-option" data-correct="true" data-explanation="スタイル変更はclassListでクラスを切り替えるのがベストプラクティスです。CSSでスタイルを定義し、JSではクラスの追加/削除だけ行うことで、関心の分離（CSS=見た目、JS=振る舞い）を保てます。">
+            <input type="radio" name="quiz-dom3-2" value="b">
+            el.classList.add('highlight');
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom3-2" value="c">
+            el.setAttribute('style', 'color: red');
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-dom3-2')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- クイズ3 -->
+      <div class="quiz" id="quiz-dom3-3" style="margin-top:32px;">
+        <div class="quiz-question">
+          <strong>問題3：</strong>AIが書いた以下のコードをレビューしてください。問題点は？
+          <pre><code>function displaySearchResults(results) {
+  const container = document.querySelector('#results');
+  container.innerHTML = '';
+
+  results.forEach(result => {
+    container.innerHTML += '&lt;div&gt;' + result.title + '&lt;/div&gt;';
+  });
+}</code></pre>
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom3-3" value="a">
+            問題なし。正しく動作する
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom3-3" value="b">
+            forEachの使い方が間違っている
+          </label>
+          <label class="quiz-option" data-correct="true" data-explanation="result.titleがデータベースやAPIから取得したユーザー入力由来のデータなら、innerHTMLに直接渡すとXSS攻撃が可能です。AIはこのようなコードを書きがちです。安全なのはtextContentを使うか、サニタイズすることです。">
+            <input type="radio" name="quiz-dom3-3" value="c">
+            result.titleがユーザー入力由来ならXSS脆弱性がある
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-dom3-3')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('dom3')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 13: イベント基礎 -->
+    <section id="dom4">
+      <h1>イベント基礎</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>イベントとは何か</li>
+          <li>addEventListener の使い方</li>
+          <li>イベントオブジェクト</li>
+        </ul>
+      </div>
+
+      <h2>イベント = 「何かが起きた」という通知</h2>
+
+      <p>
+        ユーザーがボタンをクリックした、キーを押した、ページが読み込まれた...
+      </p>
+
+      <p>
+        これらはすべて<strong>イベント</strong>です。
+      </p>
+
+      <p>
+        JavaScriptは「イベントが起きたら何かする」という形で動作を定義します。
+      </p>
+
+      <h2>addEventListener</h2>
+
+      <pre><code>const button = document.querySelector('#myButton');
+
+// クリックされたら関数を実行
+button.addEventListener('click', () => {
+  console.log('クリックされた！');
+});
+
+// 関数を別で定義してもOK
+function handleClick() {
+  console.log('クリックされた！');
+}
+button.addEventListener('click', handleClick);</code></pre>
+
+      <h2>よく使うイベント</h2>
+
+      <div class="card">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border-light);">
+              <th style="padding:12px;text-align:left;">イベント</th>
+              <th style="padding:12px;text-align:left;">発生タイミング</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border-light);">
+              <td style="padding:12px;"><code>click</code></td>
+              <td style="padding:12px;">クリックした時</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-light);">
+              <td style="padding:12px;"><code>submit</code></td>
+              <td style="padding:12px;">フォーム送信時</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-light);">
+              <td style="padding:12px;"><code>keydown</code></td>
+              <td style="padding:12px;">キーを押した時</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-light);">
+              <td style="padding:12px;"><code>input</code></td>
+              <td style="padding:12px;">入力値が変わった時</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-light);">
+              <td style="padding:12px;"><code>change</code></td>
+              <td style="padding:12px;">値が確定した時</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-light);">
+              <td style="padding:12px;"><code>focus</code></td>
+              <td style="padding:12px;">フォーカスが当たった時</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-light);">
+              <td style="padding:12px;"><code>blur</code></td>
+              <td style="padding:12px;">フォーカスが外れた時</td>
+            </tr>
+            <tr>
+              <td style="padding:12px;"><code>load</code></td>
+              <td style="padding:12px;">読み込み完了時</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>イベントオブジェクト</h2>
+
+      <p>
+        イベントが発生すると、詳細情報を持った<strong>イベントオブジェクト</strong>が渡されます。
+      </p>
+
+      <pre><code>button.addEventListener('click', (event) => {
+  // イベントオブジェクトを受け取る
+  console.log(event.type);      // "click"
+  console.log(event.target);    // クリックされた要素
+  console.log(event.currentTarget); // リスナーが付いた要素
+});
+
+// キーイベントの例
+input.addEventListener('keydown', (event) => {
+  console.log(event.key);       // 押されたキー（"Enter"など）
+  console.log(event.code);      // キーコード
+});</code></pre>
+
+      <h2>デフォルト動作のキャンセル</h2>
+
+      <pre><code>// リンクのデフォルト動作（ページ遷移）を止める
+link.addEventListener('click', (event) => {
+  event.preventDefault();
+  console.log('ページ遷移せずに処理');
+});
+
+// フォームのデフォルト動作（送信）を止める
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  // 独自のバリデーションや送信処理
+});</code></pre>
+
+      <!-- クイズ -->
+      <h2>確認クイズ</h2>
+
+      <div class="quiz" id="quiz-dom4">
+        <div class="quiz-question">
+          <strong>問題：</strong>フォームの送信時にページ遷移を防ぐ正しいコードは？
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom4" value="a">
+            event.stopSubmit();
+          </label>
+          <label class="quiz-option" data-correct="true" data-explanation="preventDefault()はブラウザのデフォルト動作をキャンセルします。フォーム送信のページ遷移、リンクのページ遷移などを止められます。SPAでのルーティングやバリデーション実装で必須のメソッドです。">
+            <input type="radio" name="quiz-dom4" value="b">
+            event.preventDefault();
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom4" value="c">
+            event.cancelSubmit();
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-dom4')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" id="quiz-dom4-2">
+        <div class="quiz-question">
+          <strong>問題2：</strong>以下のコードで、ボタンをクリックしたとき<code>e.target</code>と<code>e.currentTarget</code>は同じ？
+          <pre><code>&lt;div id="parent"&gt;
+  &lt;button id="child"&gt;クリック&lt;/button&gt;
+&lt;/div&gt;
+
+parent.addEventListener('click', (e) => {
+  console.log(e.target.id);
+  console.log(e.currentTarget.id);
+});</code></pre>
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom4-2" value="a">
+            両方とも "child"
+          </label>
+          <label class="quiz-option" data-correct="true" data-explanation="targetは「実際にクリックされた要素」（child）、currentTargetは「イベントリスナーが登録された要素」（parent）です。イベント委譲で必須の知識です。">
+            <input type="radio" name="quiz-dom4-2" value="b">
+            target: "child", currentTarget: "parent"
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom4-2" value="c">
+            両方とも "parent"
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-dom4-2')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" id="quiz-dom4-3">
+        <div class="quiz-question">
+          <strong>問題3：</strong>レビューで指摘すべきコードは？
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="true" data-explanation="onclick属性はHTMLとJSが混在し、保守性が低下します。addEventListenerを使うと、複数のイベントハンドラを登録でき、HTMLとJSを分離できます。">
+            <input type="radio" name="quiz-dom4-3" value="a">
+            &lt;button onclick="handleClick()"&gt;
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom4-3" value="b">
+            button.addEventListener('click', handleClick)
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom4-3" value="c">
+            両方問題ない
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-dom4-3')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('dom4')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 14: イベント伝播 -->
+    <section id="dom5">
+      <h1>イベント伝播</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>バブリングとキャプチャリング</li>
+          <li>イベント委譲（Event Delegation）</li>
+          <li>パフォーマンスの最適化</li>
+        </ul>
+      </div>
+
+      <h2>イベントは「伝播」する</h2>
+
+      <p>
+        子要素で発生したイベントは、<strong>親要素にも伝わります</strong>。
+      </p>
+
+      <pre><code>&lt;div id="parent"&gt;
+  &lt;button id="child"&gt;クリック&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  document.querySelector('#parent').addEventListener('click', () => {
+    console.log('親がクリックされた');
+  });
+
+  document.querySelector('#child').addEventListener('click', () => {
+    console.log('子がクリックされた');
+  });
+
+  // ボタンをクリックすると:
+  // "子がクリックされた"
+  // "親がクリックされた"  ← 親にも伝わる！
+&lt;/script&gt;</code></pre>
+
+      <h2>バブリングを止める</h2>
+
+      <pre><code>child.addEventListener('click', (event) => {
+  event.stopPropagation();  // 親に伝わらなくなる
+  console.log('子がクリックされた');
+});</code></pre>
+
+      <h2>イベント委譲（重要！）</h2>
+
+      <p>
+        多くの要素にイベントを付ける場合、<strong>親要素で一括管理</strong>すると効率的です。
+      </p>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-title">
+            <span class="icon">❌</span> 非効率（各要素にリスナー）
+          </div>
+          <pre><code>// 100個のボタンに100個のリスナー
+buttons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    console.log('クリック');
+  });
+});
+// → メモリ消費大</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-title">
+            <span class="icon">⭕</span> 効率的（イベント委譲）
+          </div>
+          <pre><code>// 親要素に1つだけリスナー
+container.addEventListener('click', (e) => {
+  if (e.target.matches('.btn')) {
+    console.log('クリック');
+  }
+});
+// → メモリ節約</code></pre>
+        </div>
+      </div>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          イベント委譲のメリット
+        </div>
+        <ul style="margin:0;">
+          <li><strong>メモリ効率</strong>: リスナーが1つで済む</li>
+          <li><strong>動的要素対応</strong>: 後から追加された要素にも自動で対応</li>
+          <li><strong>コード簡潔化</strong>: 管理が楽になる</li>
+        </ul>
+      </div>
+
+      <h2>event.target と event.currentTarget</h2>
+
+      <pre><code>container.addEventListener('click', (e) => {
+  console.log(e.target);        // 実際にクリックされた要素
+  console.log(e.currentTarget); // リスナーが付いている要素（container）
+});</code></pre>
+
+      <!-- クイズ -->
+      <h2>確認クイズ</h2>
+
+      <div class="quiz" id="quiz-dom5">
+        <div class="quiz-question">
+          <strong>問題：</strong>100個の<code>.item</code>要素にクリックイベントを付ける最も効率的な方法は？
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom5" value="a">
+            querySelectorAllで取得してforEachでaddEventListener
+          </label>
+          <label class="quiz-option" data-correct="true" data-explanation="イベント委譲（Event Delegation）は、親要素にリスナーを1つだけ付けてバブリングを利用する手法です。メモリ効率が良く、動的に追加された要素にも自動対応します。大量の要素を扱う際の定番パターンです。">
+            <input type="radio" name="quiz-dom5" value="b">
+            親要素にaddEventListenerしてe.target.matches('.item')で判定
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom5" value="c">
+            HTMLにonclick属性を直接書く
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-dom5')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('dom5')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 15: フォーム操作 -->
+    <section id="dom6">
+      <h1>フォーム操作</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>フォームの値を取得する</li>
+          <li>バリデーション（入力チェック）</li>
+          <li>送信処理の制御</li>
+        </ul>
+      </div>
+
+      <h2>フォーム要素の値を取得</h2>
+
+      <pre><code>// テキスト入力
+const input = document.querySelector('#name');
+console.log(input.value);  // 入力された値
+
+// セレクトボックス
+const select = document.querySelector('#country');
+console.log(select.value);  // 選択された値
+
+// チェックボックス
+const checkbox = document.querySelector('#agree');
+console.log(checkbox.checked);  // true/false
+
+// ラジオボタン
+const radios = document.querySelectorAll('[name="gender"]');
+radios.forEach(radio => {
+  if (radio.checked) {
+    console.log(radio.value);  // 選択された値
+  }
+});</code></pre>
+
+      <h2>リアルタイムバリデーション</h2>
+
+      <pre><code>const emailInput = document.querySelector('#email');
+const errorMsg = document.querySelector('#email-error');
+
+emailInput.addEventListener('input', () => {
+  const email = emailInput.value;
+
+  // メール形式チェック
+  const isValid = email.includes('@') && email.includes('.');
+
+  if (!isValid && email.length > 0) {
+    errorMsg.textContent = 'メールアドレスの形式が不正です';
+    emailInput.classList.add('error');
+  } else {
+    errorMsg.textContent = '';
+    emailInput.classList.remove('error');
+  }
+});</code></pre>
+
+      <h2>フォーム送信の制御</h2>
+
+      <pre><code>const form = document.querySelector('#myForm');
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault();  // デフォルトの送信を止める
+
+  // バリデーション
+  const name = form.querySelector('#name').value;
+  const email = form.querySelector('#email').value;
+
+  if (!name || !email) {
+    alert('すべての項目を入力してください');
+    return;
+  }
+
+  // 送信処理
+  console.log('送信:', { name, email });
+
+  // APIに送信する場合
+  // fetch('/api/submit', { method: 'POST', body: ... });
+});</code></pre>
+
+      <h2>FormData API</h2>
+
+      <pre><code>form.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  // FormDataで一括取得
+  const formData = new FormData(form);
+
+  // 値を取り出す
+  console.log(formData.get('name'));
+  console.log(formData.get('email'));
+
+  // オブジェクトに変換
+  const data = Object.fromEntries(formData);
+  console.log(data);  // { name: "...", email: "..." }
+});</code></pre>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          セキュリティ注意
+        </div>
+        <p style="margin:0;">
+          <strong>クライアント側のバリデーションだけでは不十分</strong>です。<br>
+          悪意あるユーザーはJavaScriptを無効にできます。<br>
+          必ずサーバー側でも検証してください。
+        </p>
+      </div>
+
+      <!-- クイズ -->
+      <h2>確認クイズ</h2>
+
+      <div class="quiz" id="quiz-dom6">
+        <div class="quiz-question">
+          <strong>問題：</strong>フォームのすべての入力値を一括で取得する方法として正しいのは？
+        </div>
+        <div class="quiz-options">
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom6" value="a">
+            form.getAllValues()
+          </label>
+          <label class="quiz-option" data-correct="true" data-explanation="FormData APIは、フォームの全入力値をまとめて取得できる標準APIです。formData.get('name')で個別取得、Object.fromEntries(formData)でオブジェクト化できます。fetch APIとの相性も良いです。">
+            <input type="radio" name="quiz-dom6" value="b">
+            new FormData(form)
+          </label>
+          <label class="quiz-option" data-correct="false">
+            <input type="radio" name="quiz-dom6" value="c">
+            form.serialize()
+          </label>
+        </div>
+        <button class="quiz-submit" onclick="checkQuiz('quiz-dom6')">回答する</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('dom6')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+
+      <div class="card card-success" style="margin-top:40px;">
+        <div class="card-title">
+          <span class="icon">🎉</span>
+          Phase 2 完了！
+        </div>
+        <p style="margin:0;">
+          DOM操作・イベントの基礎を学び終えました！
+        </p>
+        <p style="margin:0;">
+          次のPhase 3では<strong>非同期処理</strong>を学びます。<br>
+          これはJavaScriptで最もバグが多い領域です。
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================
+         Phase 3: 非同期処理
+         ============================================ -->
+
+    <!-- async1: 同期と非同期 -->

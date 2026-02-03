@@ -1098,6 +1098,71 @@
 
         </div>
       </div>
+
+      <!-- Level 3 -->
+      <div class="nav-accordion" data-accordion="level3">
+        <div class="nav-accordion-header level" onclick="toggleAccordion('level3')">
+          <span>Level 3: React/TypeScript</span>
+          <span class="nav-accordion-icon">▶</span>
+        </div>
+        <div class="nav-accordion-content">
+
+          <!-- Phase 1: TypeScript基礎 -->
+          <div class="nav-accordion" data-accordion="ts-phase1">
+            <div class="nav-accordion-header" onclick="toggleAccordion('ts-phase1')">
+              <span>Phase 1: TypeScript基礎</span>
+              <span class="nav-accordion-icon">▶</span>
+            </div>
+            <div class="nav-accordion-content">
+              <a href="#ts1" class="nav-link" data-section="ts1">1. TypeScriptとは</a>
+              <a href="#ts2" class="nav-link" data-section="ts2">2. 基本の型</a>
+              <a href="#ts3" class="nav-link" data-section="ts3">3. 型推論</a>
+              <a href="#ts4" class="nav-link" data-section="ts4">4. Union型・リテラル型</a>
+              <a href="#ts5" class="nav-link" data-section="ts5">5. interface と type</a>
+              <a href="#ts6" class="nav-link" data-section="ts6">6. ジェネリクス</a>
+              <a href="#ts7" class="nav-link" data-section="ts7">7. 型ガード・Narrowing</a>
+              <a href="#ts8" class="nav-link" data-section="ts8">8. ユーティリティ型</a>
+            </div>
+          </div>
+
+          <!-- Phase 2: React基礎 -->
+          <div class="nav-accordion" data-accordion="react-phase2">
+            <div class="nav-accordion-header" onclick="toggleAccordion('react-phase2')">
+              <span>Phase 2: React基礎</span>
+              <span class="nav-accordion-icon">▶</span>
+            </div>
+            <div class="nav-accordion-content">
+              <a href="#react1" class="nav-link" data-section="react1">9. Reactとは</a>
+              <a href="#react2" class="nav-link" data-section="react2">10. JSXの仕組み</a>
+              <a href="#react3" class="nav-link" data-section="react3">11. コンポーネントとProps</a>
+              <a href="#react4" class="nav-link" data-section="react4">12. useState</a>
+              <a href="#react5" class="nav-link" data-section="react5">13. イベントハンドリング</a>
+              <a href="#react6" class="nav-link" data-section="react6">14. 条件付きレンダリング</a>
+              <a href="#react7" class="nav-link" data-section="react7">15. リストとkey</a>
+              <a href="#react8" class="nav-link" data-section="react8">16. コンポーネント設計</a>
+            </div>
+          </div>
+
+          <!-- Phase 3: Hooks深掘り -->
+          <div class="nav-accordion" data-accordion="hooks-phase3">
+            <div class="nav-accordion-header" onclick="toggleAccordion('hooks-phase3')">
+              <span>Phase 3: Hooks深掘り</span>
+              <span class="nav-accordion-icon">▶</span>
+            </div>
+            <div class="nav-accordion-content">
+              <a href="#hooks1" class="nav-link" data-section="hooks1">17. useEffect基礎</a>
+              <a href="#hooks2" class="nav-link" data-section="hooks2">18. useEffect実践</a>
+              <a href="#hooks3" class="nav-link" data-section="hooks3">19. useEffectの罠</a>
+              <a href="#hooks4" class="nav-link" data-section="hooks4">20. useRef</a>
+              <a href="#hooks5" class="nav-link" data-section="hooks5">21. useContext</a>
+              <a href="#hooks6" class="nav-link" data-section="hooks6">22. useReducer</a>
+              <a href="#hooks7" class="nav-link" data-section="hooks7">23. useMemo/useCallback</a>
+              <a href="#hooks8" class="nav-link" data-section="hooks8">24. カスタムHooks</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   </nav>
 
@@ -1145,6 +1210,14 @@
             <progress id="level2-progress" value="0" max="30"></progress>
           </div>
           <p>Webページに「動き」を加える言語を読めるようになります。</p>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Level 3: React/TypeScript</h3>
+          <div class="progress-container">
+            <progress id="level3-progress" value="0" max="32"></progress>
+          </div>
+          <p>フロントエンドUIフレームワークを読めるようになります。</p>
         </div>
       </div>
 
@@ -11254,6 +11327,4481 @@ user.greet();</code></pre>
       </button>
     </section>
 
+    <!-- ============================================
+         Level 3: React/TypeScript
+         Phase 1: TypeScript基礎
+         ============================================ -->
+
+    <!-- Lesson 1: TypeScriptとは -->
+    <section id="ts1">
+      <h1>TypeScriptとは？</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>TypeScriptとJavaScriptの違い</li>
+          <li>型システムの意義</li>
+          <li>コンパイル時チェックの恩恵</li>
+        </ul>
+      </div>
+
+      <h2>JavaScriptに「型」を追加した言語</h2>
+
+      <p>
+        TypeScriptは<strong>JavaScriptのスーパーセット</strong>です。
+      </p>
+
+      <p>
+        「スーパーセット」とは、JavaScriptの機能をすべて含み、<br>
+        さらに「型」という機能を追加したものです。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🏠</span>
+          たとえ話
+        </div>
+        <p>
+          JavaScript = 普通の家<br>
+          TypeScript = <strong>セキュリティシステム付きの家</strong>
+        </p>
+        <p style="margin:0;">
+          セキュリティ（型チェック）があると、<br>
+          「泥棒（バグ）」が入りにくくなります。
+        </p>
+      </div>
+
+      <h2>型とは何か？</h2>
+
+      <p>
+        「型」とは、<strong>データの種類</strong>のことです。
+      </p>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-title">JavaScript（型なし）</div>
+<pre><code>// 何でも入る（危険）
+let name = "田中";
+name = 123;  // エラーにならない！
+
+// 実行時に壊れる
+console.log(name.toUpperCase());
+// TypeError: toUpperCase is not a function</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-title">TypeScript（型あり）</div>
+<pre><code>// 文字列だけ入る（安全）
+let name: string = "田中";
+name = 123;  // コンパイルエラー！
+
+// 実行前にミスが分かる</code></pre>
+        </div>
+      </div>
+
+      <h2>コンパイル時チェック</h2>
+
+      <p>
+        TypeScriptは<strong>コードを実行する前</strong>にエラーを見つけます。
+      </p>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✓</span>
+          コンパイル時チェックの恩恵
+        </div>
+        <ul>
+          <li><strong>早期発見</strong>: 書いた瞬間にエラーが分かる</li>
+          <li><strong>自動補完</strong>: IDEが賢くなる</li>
+          <li><strong>リファクタリング安全</strong>: 変更の影響が分かる</li>
+          <li><strong>ドキュメント</strong>: 型が仕様を語る</li>
+        </ul>
+      </div>
+
+      <h2>2026年、TypeScriptは必須</h2>
+
+      <p>
+        2026年現在、<strong>新規プロジェクトのほとんどがTypeScript</strong>です。
+      </p>
+
+      <ul>
+        <li>React/Next.js → TypeScript推奨</li>
+        <li>Vue/Nuxt → TypeScript推奨</li>
+        <li>Node.js → TypeScript利用が一般的</li>
+      </ul>
+
+      <p>
+        AIが書くコードも多くがTypeScriptです。<br>
+        <strong>型を読めないと、コードレビューができません。</strong>
+      </p>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔍</span>
+          コードレビューの観点
+        </div>
+        <p style="margin:0;">
+          「TypeScriptを使っているのにanyだらけ」は最も多い問題です。<br>
+          Phase 1では、<strong>型を正しく読み、問題を見抜く力</strong>を身につけます。
+        </p>
+      </div>
+
+      <div class="quiz" id="quiz-ts1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>TypeScriptの最大の利点は？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts1" style="display:none;">
+          A. JavaScriptより実行速度が速い
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts1" style="display:none;">
+          B. コンパイル時にエラーを発見できる
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts1" style="display:none;">
+          C. ブラウザで直接実行できる
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('ts1')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 2: 基本の型 -->
+    <section id="ts2">
+      <h1>基本の型</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>プリミティブ型（string / number / boolean）</li>
+          <li>null と undefined の違い</li>
+          <li>any の危険性</li>
+        </ul>
+      </div>
+
+      <h2>プリミティブ型</h2>
+
+      <p>
+        TypeScriptの基本的な型は<strong>3つ</strong>です。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">📦</span>
+          基本の3型
+        </div>
+<pre><code>// 文字列
+const name: string = "田中";
+
+// 数値（整数も小数も同じ）
+const age: number = 25;
+const price: number = 1980.5;
+
+// 真偽値
+const isActive: boolean = true;</code></pre>
+      </div>
+
+      <h2>null と undefined</h2>
+
+      <p>
+        「値がない」ことを表す型が2つあります。
+      </p>
+
+      <div class="compare-box">
+        <div class="compare-blue">
+          <div class="compare-title">undefined</div>
+          <p>「まだ値が設定されていない」</p>
+<pre><code>let user: string | undefined;
+console.log(user); // undefined
+
+// 変数を宣言しただけの状態</code></pre>
+        </div>
+        <div class="compare-orange">
+          <div class="compare-title">null</div>
+          <p>「意図的に空にした」</p>
+<pre><code>let user: string | null = null;
+console.log(user); // null
+
+// 明示的に「なし」と設定</code></pre>
+        </div>
+      </div>
+
+      <h2>any の危険性</h2>
+
+      <p>
+        <code>any</code>は「どんな型でもOK」という意味です。
+      </p>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔥</span>
+          any = 型チェック放棄
+        </div>
+<pre><code>// ❌ any を使うと型チェックが無効化
+function process(data: any) {
+  // 何をしてもエラーにならない
+  return data.name.toUpperCase();
+}
+
+process(123); // 実行時エラー！
+// TypeError: Cannot read property 'toUpperCase' of undefined</code></pre>
+        <p style="margin:0;">
+          <strong>any</strong>はTypeScriptの恩恵を捨てることを意味します。<br>
+          レビューで見つけたら、必ず指摘しましょう。
+        </p>
+      </div>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-title">❌ anyの乱用</div>
+<pre><code>function getUser(id: any): any {
+  // 何が入って何が出るか不明
+}
+
+const result: any = getUser("abc");
+result.name.first; // 実行時まで分からない</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-title">✓ 具体的な型</div>
+<pre><code>interface User {
+  name: string;
+  age: number;
+}
+
+function getUser(id: string): User {
+  // 入力と出力が明確
+}
+
+const result = getUser("abc");
+result.name; // 自動補完が効く</code></pre>
+        </div>
+      </div>
+
+      <h2>配列の型</h2>
+
+      <p>
+        配列の型は2つの書き方があります。
+      </p>
+
+      <div class="card">
+<pre><code>// 書き方1: type[]
+const numbers: number[] = [1, 2, 3];
+const names: string[] = ["田中", "山田"];
+
+// 書き方2: Array&lt;type&gt;
+const numbers2: Array&lt;number&gt; = [1, 2, 3];
+const names2: Array&lt;string&gt; = ["田中", "山田"];
+
+// 両方とも同じ意味</code></pre>
+      </div>
+
+      <div class="quiz" id="quiz-ts2">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>このコードの問題点は？</p>
+<pre><code>function calculate(value: any) {
+  return value * 2;
+}</code></pre>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts2" style="display:none;">
+          A. 関数名が不適切
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts2" style="display:none;">
+          B. any型で型チェックが無効化されている
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts2" style="display:none;">
+          C. 戻り値の型がない
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('ts2')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 3: 型推論 -->
+    <section id="ts3">
+      <h1>型推論</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>型推論の仕組み</li>
+          <li>明示的型注釈との違い</li>
+          <li>いつ型注釈が必要か</li>
+        </ul>
+      </div>
+
+      <h2>TypeScriptは賢い</h2>
+
+      <p>
+        TypeScriptは値から<strong>型を推測</strong>できます。
+      </p>
+
+      <div class="card">
+<pre><code>// 型注釈なしでも型が付く
+const name = "田中";   // string と推論
+const age = 25;        // number と推論
+const isActive = true; // boolean と推論
+
+// 型注釈を書いたのと同じ効果
+// const name: string = "田中";</code></pre>
+      </div>
+
+      <p>
+        これを<strong>型推論</strong>（Type Inference）と呼びます。
+      </p>
+
+      <h2>型推論 vs 明示的型注釈</h2>
+
+      <div class="compare-box">
+        <div class="compare-blue">
+          <div class="compare-title">型推論（暗黙）</div>
+<pre><code>// コンパイラが自動で型を付ける
+const user = {
+  name: "田中",
+  age: 25
+};
+// { name: string; age: number } と推論</code></pre>
+          <p>✓ コードが簡潔</p>
+        </div>
+        <div class="compare-green">
+          <div class="compare-title">型注釈（明示）</div>
+<pre><code>// 開発者が明示的に型を書く
+const user: {
+  name: string;
+  age: number;
+} = {
+  name: "田中",
+  age: 25
+};</code></pre>
+          <p>✓ 意図が明確</p>
+        </div>
+      </div>
+
+      <h2>型注釈が必要な場面</h2>
+
+      <p>
+        型推論に頼れない場面があります。
+      </p>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          型注釈が必要なケース
+        </div>
+        <ul>
+          <li><strong>関数の引数</strong>: 推論できない</li>
+          <li><strong>空の配列</strong>: any[]になってしまう</li>
+          <li><strong>API の戻り値</strong>: 型が不明</li>
+          <li><strong>意図を明示したい</strong>: 可読性のため</li>
+        </ul>
+      </div>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-title">❌ 型注釈なし</div>
+<pre><code>// 引数の型が不明
+function greet(name) {
+  return "Hello, " + name;
+}
+
+// 何でも渡せてしまう
+greet(123); // エラーにならない</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-title">✓ 型注釈あり</div>
+<pre><code>// 引数の型が明確
+function greet(name: string) {
+  return "Hello, " + name;
+}
+
+// 間違いがすぐ分かる
+greet(123); // コンパイルエラー</code></pre>
+        </div>
+      </div>
+
+      <h2>関数の戻り値の型推論</h2>
+
+      <p>
+        関数の戻り値は<strong>推論される</strong>ことが多いです。
+      </p>
+
+      <div class="card">
+<pre><code>// 戻り値は string と推論される
+function greet(name: string) {
+  return "Hello, " + name;
+}
+
+// 戻り値は number と推論される
+function add(a: number, b: number) {
+  return a + b;
+}
+
+// 明示的に書くこともできる
+function greet(name: string): string {
+  return "Hello, " + name;
+}</code></pre>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          実務でのルール
+        </div>
+        <p style="margin:0;">
+          多くのプロジェクトでは<strong>関数の引数は必須</strong>、<br>
+          <strong>戻り値は省略OK</strong>というルールを採用しています。
+        </p>
+      </div>
+
+      <div class="quiz" id="quiz-ts3">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>このコードで count の型は？</p>
+<pre><code>const count = 0;</code></pre>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts3" style="display:none;">
+          A. any
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts3" style="display:none;">
+          B. number
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts3" style="display:none;">
+          C. 型がない
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts3')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('ts3')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 4: Union型・リテラル型 -->
+    <section id="ts4">
+      <h1>Union型・リテラル型</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>Union型（複数の型を許容）</li>
+          <li>リテラル型（特定の値のみ許容）</li>
+          <li>型の絞り込み</li>
+        </ul>
+      </div>
+
+      <h2>Union型とは</h2>
+
+      <p>
+        <strong>Union型</strong>は「AまたはB」という型です。
+      </p>
+
+      <div class="card">
+<pre><code>// string または number
+let value: string | number;
+
+value = "hello";  // OK
+value = 123;      // OK
+value = true;     // エラー！boolean は許可されていない</code></pre>
+      </div>
+
+      <p>
+        <code>|</code>（パイプ）で型を繋げます。
+      </p>
+
+      <h2>よく使うUnion型</h2>
+
+      <div class="card">
+<pre><code>// nullを許容する型（Nullable）
+let user: User | null = null;
+
+// undefinedを許容する型（Optional）
+let name: string | undefined;
+
+// 複数の型を許容
+function format(value: string | number | boolean): string {
+  return String(value);
+}</code></pre>
+      </div>
+
+      <h2>リテラル型とは</h2>
+
+      <p>
+        <strong>リテラル型</strong>は「特定の値のみ」を許容する型です。
+      </p>
+
+      <div class="card">
+<pre><code>// "success" または "error" のみ許容
+type Status = "success" | "error" | "pending";
+
+let status: Status;
+status = "success";  // OK
+status = "error";    // OK
+status = "complete"; // エラー！許可されていない値</code></pre>
+      </div>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✓</span>
+          リテラル型のメリット
+        </div>
+        <ul>
+          <li><strong>タイポ防止</strong>: 間違った文字列を書けない</li>
+          <li><strong>自動補完</strong>: IDEが候補を出してくれる</li>
+          <li><strong>意図が明確</strong>: 取りうる値が分かる</li>
+        </ul>
+      </div>
+
+      <h2>型の絞り込み（Narrowing）</h2>
+
+      <p>
+        Union型を使うと、実行時に<strong>どの型か判断</strong>が必要です。
+      </p>
+
+      <div class="card">
+<pre><code>function printId(id: string | number) {
+  // この時点では string か number か不明
+
+  if (typeof id === "string") {
+    // ここでは string と確定
+    console.log(id.toUpperCase());
+  } else {
+    // ここでは number と確定
+    console.log(id.toFixed(2));
+  }
+}</code></pre>
+      </div>
+
+      <p>
+        <code>typeof</code>で型をチェックすると、<br>
+        TypeScriptは自動的に型を<strong>絞り込み</strong>ます。
+      </p>
+
+      <div class="quiz" id="quiz-ts4">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>このコードでエラーになるのは？</p>
+<pre><code>type Color = "red" | "blue" | "green";
+let color: Color;</code></pre>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts4" style="display:none;">
+          A. color = "red";
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts4" style="display:none;">
+          B. color = "blue";
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts4" style="display:none;">
+          C. color = "yellow";
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts4')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('ts4')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 5: interface と type -->
+    <section id="ts5">
+      <h1>interface と type</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>interfaceの書き方</li>
+          <li>typeの書き方</li>
+          <li>使い分けの基準</li>
+        </ul>
+      </div>
+
+      <h2>interfaceとは</h2>
+
+      <p>
+        <strong>interface</strong>はオブジェクトの形を定義します。
+      </p>
+
+      <div class="card">
+<pre><code>// Userオブジェクトの形を定義
+interface User {
+  name: string;
+  age: number;
+  email?: string;  // ?は省略可能
+}
+
+// この形に従うオブジェクト
+const user: User = {
+  name: "田中",
+  age: 25
+  // emailは省略OK
+};</code></pre>
+      </div>
+
+      <h2>typeとは</h2>
+
+      <p>
+        <strong>type</strong>は型に別名を付けます。
+      </p>
+
+      <div class="card">
+<pre><code>// オブジェクトの形を定義（interfaceと同様）
+type User = {
+  name: string;
+  age: number;
+  email?: string;
+};
+
+// Union型やリテラル型にも使える
+type Status = "success" | "error" | "pending";
+type ID = string | number;</code></pre>
+      </div>
+
+      <h2>interface vs type</h2>
+
+      <div class="compare-box">
+        <div class="compare-blue">
+          <div class="compare-title">interface</div>
+<pre><code>// 宣言のマージ（拡張）ができる
+interface User {
+  name: string;
+}
+interface User {
+  age: number;
+}
+// { name: string; age: number } になる
+
+// extendsで継承
+interface Admin extends User {
+  role: string;
+}</code></pre>
+        </div>
+        <div class="compare-green">
+          <div class="compare-title">type</div>
+<pre><code>// Union型が作れる
+type ID = string | number;
+
+// リテラル型が作れる
+type Status = "ok" | "ng";
+
+// 交差型で合成
+type Admin = User & {
+  role: string;
+};</code></pre>
+        </div>
+      </div>
+
+      <h2>使い分けの基準</h2>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          実務でのルール
+        </div>
+        <ul>
+          <li><strong>オブジェクトの形</strong> → interface</li>
+          <li><strong>Union型、リテラル型</strong> → type</li>
+          <li><strong>迷ったら</strong> → interface</li>
+        </ul>
+        <p style="margin:0;">
+          多くのプロジェクトでは「基本はinterface、必要ならtype」です。
+        </p>
+      </div>
+
+      <h2>読み取り専用（readonly）</h2>
+
+      <p>
+        プロパティを<strong>変更不可</strong>にできます。
+      </p>
+
+      <div class="card">
+<pre><code>interface User {
+  readonly id: string;  // 変更不可
+  name: string;         // 変更可能
+}
+
+const user: User = {
+  id: "abc123",
+  name: "田中"
+};
+
+user.name = "山田";  // OK
+user.id = "xyz";     // エラー！readonlyは変更不可</code></pre>
+      </div>
+
+      <div class="quiz" id="quiz-ts5-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 1
+        </div>
+        <p>オブジェクトの形を定義するのに一般的に使うのは？</p>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts5-1" style="display:none;">
+          A. interface
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts5-1" style="display:none;">
+          B. type
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts5-1" style="display:none;">
+          C. class
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts5-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" id="quiz-ts5-2">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 2
+        </div>
+        <p>Union型を定義するのに使うのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts5-2" style="display:none;">
+          A. interface
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts5-2" style="display:none;">
+          B. type
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts5-2" style="display:none;">
+          C. enum
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts5-2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('ts5')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 6: ジェネリクス -->
+    <section id="ts6">
+      <h1>ジェネリクス</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>ジェネリクスとは何か</li>
+          <li>Array&lt;T&gt;、Promise&lt;T&gt;の読み方</li>
+          <li>関数のジェネリクス</li>
+        </ul>
+      </div>
+
+      <h2>ジェネリクスとは</h2>
+
+      <p>
+        <strong>ジェネリクス</strong>は「型の引数」です。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🏠</span>
+          たとえ話
+        </div>
+        <p>
+          関数に<strong>値の引数</strong>があるように、<br>
+          型にも<strong>型の引数</strong>があります。
+        </p>
+<pre><code>// 値の引数
+function greet(name: string) { ... }
+greet("田中");  // 引数に値を渡す
+
+// 型の引数（ジェネリクス）
+function identity&lt;T&gt;(value: T): T { ... }
+identity&lt;string&gt;("hello");  // 引数に型を渡す</code></pre>
+      </div>
+
+      <h2>Array&lt;T&gt;の読み方</h2>
+
+      <p>
+        <code>Array&lt;T&gt;</code>は「T型の配列」という意味です。
+      </p>
+
+      <div class="card">
+<pre><code>// T = string の場合
+const names: Array&lt;string&gt; = ["田中", "山田"];
+// string[] と同じ意味
+
+// T = number の場合
+const ages: Array&lt;number&gt; = [25, 30, 35];
+// number[] と同じ意味
+
+// T = User の場合
+const users: Array&lt;User&gt; = [
+  { name: "田中", age: 25 },
+  { name: "山田", age: 30 }
+];
+// User[] と同じ意味</code></pre>
+      </div>
+
+      <h2>Promise&lt;T&gt;の読み方</h2>
+
+      <p>
+        <code>Promise&lt;T&gt;</code>は「T型を返す非同期処理」です。
+      </p>
+
+      <div class="card">
+<pre><code>// string を返すPromise
+async function fetchName(): Promise&lt;string&gt; {
+  return "田中";
+}
+
+// User を返すPromise
+async function fetchUser(): Promise&lt;User&gt; {
+  return { name: "田中", age: 25 };
+}
+
+// 配列を返すPromise
+async function fetchUsers(): Promise&lt;User[]&gt; {
+  return [
+    { name: "田中", age: 25 },
+    { name: "山田", age: 30 }
+  ];
+}</code></pre>
+      </div>
+
+      <h2>関数のジェネリクス</h2>
+
+      <p>
+        自分でジェネリクスを使った関数も作れます。
+      </p>
+
+      <div class="card">
+<pre><code>// T は型のプレースホルダー
+function first&lt;T&gt;(items: T[]): T | undefined {
+  return items[0];
+}
+
+// 使うとき、T が自動的に決まる
+const num = first([1, 2, 3]);     // T = number
+const str = first(["a", "b"]);   // T = string
+
+// 明示的に指定もできる
+const num2 = first&lt;number&gt;([1, 2, 3]);</code></pre>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          読めればOK
+        </div>
+        <p style="margin:0;">
+          ジェネリクスを<strong>自分で書く</strong>ことは少ないです。<br>
+          ライブラリのコードを<strong>読める</strong>ことが重要です。
+        </p>
+      </div>
+
+      <div class="quiz" id="quiz-ts6">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>Promise&lt;User[]&gt; の意味は？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts6" style="display:none;">
+          A. User型を返す配列
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts6" style="display:none;">
+          B. User配列を返す非同期処理
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts6" style="display:none;">
+          C. Promiseの配列
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts6')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('ts6')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 7: 型ガード・Narrowing -->
+    <section id="ts7">
+      <h1>型ガード・Narrowing</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>型ガードとは何か</li>
+          <li>typeof / instanceof の使い方</li>
+          <li>in 演算子での判定</li>
+        </ul>
+      </div>
+
+      <h2>型ガードとは</h2>
+
+      <p>
+        <strong>型ガード</strong>は、型を安全に絞り込む方法です。
+      </p>
+
+      <div class="card">
+<pre><code>function process(value: string | number) {
+  // この時点では string か number か不明
+
+  // 型ガード: typeof でチェック
+  if (typeof value === "string") {
+    // ここでは value は string と確定
+    console.log(value.toUpperCase());
+  } else {
+    // ここでは value は number と確定
+    console.log(value.toFixed(2));
+  }
+}</code></pre>
+      </div>
+
+      <h2>typeofによる型ガード</h2>
+
+      <p>
+        <code>typeof</code>はプリミティブ型の判定に使います。
+      </p>
+
+      <div class="card">
+<pre><code>function format(value: string | number | boolean) {
+  if (typeof value === "string") {
+    return value.toUpperCase();
+  }
+  if (typeof value === "number") {
+    return value.toFixed(2);
+  }
+  // ここでは boolean と確定
+  return value ? "Yes" : "No";
+}
+
+// typeof で判定できる型
+// "string" | "number" | "boolean" | "undefined"
+// "object" | "function" | "symbol" | "bigint"</code></pre>
+      </div>
+
+      <h2>instanceofによる型ガード</h2>
+
+      <p>
+        <code>instanceof</code>はクラスのインスタンス判定に使います。
+      </p>
+
+      <div class="card">
+<pre><code>class Dog {
+  bark() { console.log("ワン！"); }
+}
+
+class Cat {
+  meow() { console.log("ニャー"); }
+}
+
+function speak(animal: Dog | Cat) {
+  if (animal instanceof Dog) {
+    // ここでは Dog と確定
+    animal.bark();
+  } else {
+    // ここでは Cat と確定
+    animal.meow();
+  }
+}</code></pre>
+      </div>
+
+      <h2>in演算子による型ガード</h2>
+
+      <p>
+        <code>in</code>はプロパティの存在確認に使います。
+      </p>
+
+      <div class="card">
+<pre><code>interface Bird {
+  fly(): void;
+}
+
+interface Fish {
+  swim(): void;
+}
+
+function move(animal: Bird | Fish) {
+  if ("fly" in animal) {
+    // fly プロパティがあれば Bird
+    animal.fly();
+  } else {
+    // なければ Fish
+    animal.swim();
+  }
+}</code></pre>
+      </div>
+
+      <h2>asアサーションの危険性</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔥</span>
+          asは「嘘をつく」可能性
+        </div>
+<pre><code>// ❌ 危険な型アサーション
+const element = document.getElementById("app") as HTMLDivElement;
+element.innerHTML = "Hello";  // nullなら実行時エラー！
+
+// ✓ 安全な型ガード
+const element = document.getElementById("app");
+if (element instanceof HTMLDivElement) {
+  element.innerHTML = "Hello";  // 安全
+}</code></pre>
+        <p style="margin:0;">
+          <strong>as</strong>を使うと型チェックを「スキップ」します。<br>
+          レビューで見つけたら、型ガードで書き直すべきか検討しましょう。
+        </p>
+      </div>
+
+      <div class="quiz" id="quiz-ts7-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 1
+        </div>
+        <p>typeof でプリミティブ型を判定するのに使えないのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts7-1" style="display:none;">
+          A. typeof x === "string"
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts7-1" style="display:none;">
+          B. typeof x === "number"
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts7-1" style="display:none;">
+          C. typeof x === "array"
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts7-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" id="quiz-ts7-2">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 2
+        </div>
+        <p>このコードの問題点は？</p>
+<pre><code>const data = JSON.parse(json) as User;</code></pre>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts7-2" style="display:none;">
+          A. asで型を強制しており、実行時エラーの可能性がある
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts7-2" style="display:none;">
+          B. JSON.parseの戻り値が間違っている
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts7-2" style="display:none;">
+          C. 問題はない
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts7-2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('ts7')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 8: ユーティリティ型 -->
+    <section id="ts8">
+      <h1>ユーティリティ型</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>Partial / Required</li>
+          <li>Pick / Omit</li>
+          <li>Record</li>
+        </ul>
+      </div>
+
+      <h2>ユーティリティ型とは</h2>
+
+      <p>
+        TypeScriptには<strong>便利な組み込み型</strong>があります。
+      </p>
+
+      <p>
+        既存の型を<strong>変換</strong>して新しい型を作れます。
+      </p>
+
+      <h2>Partial&lt;T&gt;</h2>
+
+      <p>
+        すべてのプロパティを<strong>省略可能</strong>にします。
+      </p>
+
+      <div class="card">
+<pre><code>interface User {
+  name: string;
+  age: number;
+  email: string;
+}
+
+// すべて省略可能になる
+type PartialUser = Partial&lt;User&gt;;
+// {
+//   name?: string;
+//   age?: number;
+//   email?: string;
+// }
+
+// 更新処理でよく使う
+function updateUser(id: string, data: Partial&lt;User&gt;) {
+  // 一部のプロパティだけ更新できる
+}
+
+updateUser("123", { name: "田中" }); // OK</code></pre>
+      </div>
+
+      <h2>Required&lt;T&gt;</h2>
+
+      <p>
+        すべてのプロパティを<strong>必須</strong>にします。
+      </p>
+
+      <div class="card">
+<pre><code>interface Config {
+  debug?: boolean;
+  timeout?: number;
+}
+
+// すべて必須になる
+type RequiredConfig = Required&lt;Config&gt;;
+// {
+//   debug: boolean;
+//   timeout: number;
+// }</code></pre>
+      </div>
+
+      <h2>Pick&lt;T, K&gt;</h2>
+
+      <p>
+        指定したプロパティだけ<strong>抽出</strong>します。
+      </p>
+
+      <div class="card">
+<pre><code>interface User {
+  id: string;
+  name: string;
+  age: number;
+  email: string;
+}
+
+// name と email だけ抽出
+type UserContact = Pick&lt;User, "name" | "email"&gt;;
+// {
+//   name: string;
+//   email: string;
+// }</code></pre>
+      </div>
+
+      <h2>Omit&lt;T, K&gt;</h2>
+
+      <p>
+        指定したプロパティを<strong>除外</strong>します。
+      </p>
+
+      <div class="card">
+<pre><code>interface User {
+  id: string;
+  name: string;
+  age: number;
+  password: string;
+}
+
+// password を除外
+type PublicUser = Omit&lt;User, "password"&gt;;
+// {
+//   id: string;
+//   name: string;
+//   age: number;
+// }
+
+// APIレスポンスで機密情報を除く時に便利</code></pre>
+      </div>
+
+      <h2>Record&lt;K, V&gt;</h2>
+
+      <p>
+        キーと値の型を指定した<strong>オブジェクト型</strong>を作ります。
+      </p>
+
+      <div class="card">
+<pre><code>// キーがstring、値がnumberのオブジェクト
+type Scores = Record&lt;string, number&gt;;
+
+const scores: Scores = {
+  math: 90,
+  english: 85,
+  science: 92
+};
+
+// キーをリテラル型で限定
+type StatusColors = Record&lt;"success" | "error" | "warning", string&gt;;
+
+const colors: StatusColors = {
+  success: "green",
+  error: "red",
+  warning: "orange"
+};</code></pre>
+      </div>
+
+      <h2>まとめ：よく使うユーティリティ型</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✓</span>
+          覚えておくべき5つ
+        </div>
+        <ul>
+          <li><strong>Partial&lt;T&gt;</strong>: すべて省略可能に</li>
+          <li><strong>Required&lt;T&gt;</strong>: すべて必須に</li>
+          <li><strong>Pick&lt;T, K&gt;</strong>: 指定プロパティを抽出</li>
+          <li><strong>Omit&lt;T, K&gt;</strong>: 指定プロパティを除外</li>
+          <li><strong>Record&lt;K, V&gt;</strong>: キーと値の型を指定</li>
+        </ul>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎉</span>
+          Phase 1 完了！
+        </div>
+        <p style="margin:0;">
+          TypeScriptの基本的な型を学びました。<br>
+          次のPhase 2では<strong>React</strong>の基礎を学びます。<br>
+          TypeScriptの型は、Reactでコンポーネントを読む時に必須の知識です。
+        </p>
+      </div>
+
+      <div class="quiz" id="quiz-ts8-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 1
+        </div>
+        <p>すべてのプロパティを省略可能にするユーティリティ型は？</p>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts8-1" style="display:none;">
+          A. Partial
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts8-1" style="display:none;">
+          B. Required
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts8-1" style="display:none;">
+          C. Optional
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts8-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" id="quiz-ts8-2">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 2
+        </div>
+        <p>Omit&lt;User, "password"&gt; の意味は？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts8-2" style="display:none;">
+          A. passwordだけを持つ型
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts8-2" style="display:none;">
+          B. passwordを除いた型
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts8-2" style="display:none;">
+          C. passwordを必須にした型
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts8-2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('ts8')">
+        <span class="icon">✓</span>
+        Phase 1を完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         Level 3 Phase 2: React基礎
+         ============================================ -->
+
+    <!-- react1: Reactとは -->
+    <section id="react1">
+      <h1>Reactとは</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>Reactの基本的な考え方</li>
+          <li>宣言的UIと命令的UIの違い</li>
+          <li>仮想DOM（Virtual DOM）</li>
+          <li>コンポーネント指向</li>
+        </ul>
+      </div>
+
+      <h2>Reactとは何か</h2>
+
+      <p>
+        <strong>React</strong>は、Facebookが開発した<strong>UIライブラリ</strong>です。
+      </p>
+
+      <p>
+        「ライブラリ」とは、特定の機能を提供するコードの集まりです。<br>
+        Reactは<strong>UIを作る</strong>ことに特化しています。
+      </p>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          Reactの3つの特徴
+        </div>
+        <ol>
+          <li><strong>宣言的（Declarative）</strong>: 「こう見せたい」を宣言する</li>
+          <li><strong>コンポーネント指向</strong>: UIを部品に分けて組み立てる</li>
+          <li><strong>仮想DOM</strong>: 効率的にUIを更新する仕組み</li>
+        </ol>
+      </div>
+
+      <h2>宣言的UI vs 命令的UI</h2>
+
+      <p>
+        Reactを理解する上で最も重要な概念が<strong>「宣言的」</strong>という考え方です。
+      </p>
+
+      <h3>命令的UI（従来のやり方）</h3>
+
+      <p>
+        <strong>「どうやって変えるか」を指示する</strong>方法です。
+      </p>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">❌</span>
+          命令的UI（DOM操作）
+        </div>
+<pre><code>// 手順を1つ1つ指示する
+const button = document.getElementById("btn");
+const counter = document.getElementById("counter");
+
+let count = 0;
+
+button.addEventListener("click", () => {
+  count++;
+  counter.textContent = count;  // DOM を直接操作
+});</code></pre>
+      </div>
+
+      <p>
+        問題点: 状態（count）とUI（counter.textContent）を<strong>手動で同期</strong>する必要がある。
+      </p>
+
+      <h3>宣言的UI（Reactのやり方）</h3>
+
+      <p>
+        <strong>「どう見えるべきか」を宣言する</strong>方法です。
+      </p>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✓</span>
+          宣言的UI（React）
+        </div>
+<pre><code>function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;{count}&lt;/p&gt;  {/* countが変われば自動で更新 */}
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;
+        +1
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+      </div>
+
+      <p>
+        <strong>ポイント</strong>: 「countの値をUIに表示する」と宣言するだけ。<br>
+        countが変わると、<strong>Reactが自動でUIを更新</strong>してくれる。
+      </p>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🍳</span>
+          たとえ話
+        </div>
+        <p style="margin:0;">
+          <strong>命令的</strong>: 「卵を割って、フライパンで焼いて、皿に盛って」（手順を指示）<br>
+          <strong>宣言的</strong>: 「目玉焼きください」（結果を宣言）
+        </p>
+      </div>
+
+      <h2>仮想DOM（Virtual DOM）</h2>
+
+      <p>
+        Reactの<strong>高速化の仕組み</strong>です。
+      </p>
+
+      <p>
+        <strong>DOM操作は遅い</strong>: ブラウザのDOMを直接変更すると、再描画が発生して遅い。
+      </p>
+
+      <p>
+        <strong>仮想DOM</strong>: JavaScriptのメモリ上に「仮のDOM」を作り、<br>
+        <strong>変更があった部分だけ</strong>を本物のDOMに反映する。
+      </p>
+
+      <div class="card">
+        <div class="card-title">仮想DOMの流れ</div>
+        <ol>
+          <li>状態が変化する</li>
+          <li>新しい仮想DOMを作成</li>
+          <li>前の仮想DOMと比較（差分検出）</li>
+          <li><strong>変更部分だけ</strong>本物のDOMを更新</li>
+        </ol>
+      </div>
+
+      <h2>コンポーネント指向</h2>
+
+      <p>
+        <strong>コンポーネント</strong> = UIの部品
+      </p>
+
+      <p>
+        Webページを<strong>部品に分けて</strong>考えます。
+      </p>
+
+      <div class="card">
+<pre><code>// Headerコンポーネント
+function Header() {
+  return &lt;header&gt;サイトタイトル&lt;/header&gt;;
+}
+
+// Buttonコンポーネント
+function Button() {
+  return &lt;button&gt;クリック&lt;/button&gt;;
+}
+
+// Appコンポーネント（他のコンポーネントを組み合わせる）
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Header /&gt;
+      &lt;Button /&gt;
+      &lt;Button /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+      </div>
+
+      <p>
+        <strong>利点</strong>:
+      </p>
+      <ul>
+        <li><strong>再利用</strong>: 同じ部品を何度も使える</li>
+        <li><strong>保守性</strong>: 部品ごとに修正できる</li>
+        <li><strong>テスト</strong>: 部品単位でテストできる</li>
+      </ul>
+
+      <div class="quiz" id="quiz-react1-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>Reactの「宣言的UI」の説明として正しいのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react1-1" style="display:none;">
+          A. DOMを直接操作して変更する方法
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-react1-1" style="display:none;">
+          B. 「UIがどう見えるべきか」を宣言し、変更を自動で反映する方法
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react1-1" style="display:none;">
+          C. サーバーでHTMLを生成する方法
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-react1-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('react1')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- react2: JSXの仕組み -->
+    <section id="react2">
+      <h1>JSXの仕組み</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>JSXとは何か</li>
+          <li>JSXがJavaScriptに変換される仕組み</li>
+          <li>JSX内での式の埋め込み</li>
+        </ul>
+      </div>
+
+      <h2>JSXとは</h2>
+
+      <p>
+        <strong>JSX</strong>（JavaScript XML）は、<strong>JavaScript内にHTMLっぽく書ける構文</strong>です。
+      </p>
+
+      <div class="card">
+<pre><code>// これがJSX
+const element = &lt;h1&gt;Hello, World!&lt;/h1&gt;;</code></pre>
+      </div>
+
+      <p>
+        見た目はHTMLですが、これは<strong>JavaScriptの一部</strong>です。
+      </p>
+
+      <h2>JSXはJavaScriptに変換される</h2>
+
+      <p>
+        JSXはブラウザが直接理解できません。<br>
+        ビルド時に<strong>React.createElement()の呼び出し</strong>に変換されます。
+      </p>
+
+      <div class="card">
+        <div class="card-title">変換の例</div>
+<pre><code>// JSX（書くコード）
+const element = &lt;h1 className="title"&gt;Hello&lt;/h1&gt;;
+
+// 変換後（実際に実行されるコード）
+const element = React.createElement(
+  'h1',
+  { className: 'title' },
+  'Hello'
+);</code></pre>
+      </div>
+
+      <p>
+        <strong>React.createElement(タグ名, 属性, 子要素)</strong>という関数呼び出しになります。
+      </p>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          なぜJSXを使う？
+        </div>
+        <p style="margin:0;">
+          createElement()を直接書くのは大変。<br>
+          JSXなら<strong>直感的にUIを書ける</strong>。
+        </p>
+      </div>
+
+      <h2>JSXのルール</h2>
+
+      <h3>1. classではなくclassName</h3>
+
+      <div class="card">
+<pre><code>// ❌ HTMLのclass属性は使えない
+&lt;div class="container"&gt;&lt;/div&gt;
+
+// ⭕ classNameを使う
+&lt;div className="container"&gt;&lt;/div&gt;</code></pre>
+      </div>
+
+      <p>
+        理由: <code>class</code>はJavaScriptの予約語（クラス定義に使う）だから。
+      </p>
+
+      <h3>2. 単一のルート要素が必要</h3>
+
+      <div class="card">
+<pre><code>// ❌ 複数のルート要素は不可
+return (
+  &lt;h1&gt;タイトル&lt;/h1&gt;
+  &lt;p&gt;本文&lt;/p&gt;
+);
+
+// ⭕ 1つの要素で囲む
+return (
+  &lt;div&gt;
+    &lt;h1&gt;タイトル&lt;/h1&gt;
+    &lt;p&gt;本文&lt;/p&gt;
+  &lt;/div&gt;
+);
+
+// ⭕ Fragment(&lt;&gt;&lt;/&gt;)でも可（余分なDOMを作らない）
+return (
+  &lt;&gt;
+    &lt;h1&gt;タイトル&lt;/h1&gt;
+    &lt;p&gt;本文&lt;/p&gt;
+  &lt;/&gt;
+);</code></pre>
+      </div>
+
+      <h3>3. タグは必ず閉じる</h3>
+
+      <div class="card">
+<pre><code>// ❌ 自己終了タグがない
+&lt;img src="image.png"&gt;
+&lt;input type="text"&gt;
+
+// ⭕ 自己終了タグが必要
+&lt;img src="image.png" /&gt;
+&lt;input type="text" /&gt;</code></pre>
+      </div>
+
+      <h2>式の埋め込み</h2>
+
+      <p>
+        <strong>{ }</strong>の中にJavaScriptの式を書けます。
+      </p>
+
+      <div class="card">
+<pre><code>const name = "田中";
+const age = 25;
+
+// 変数を埋め込む
+&lt;p&gt;名前: {name}&lt;/p&gt;
+
+// 計算を埋め込む
+&lt;p&gt;来年の年齢: {age + 1}&lt;/p&gt;
+
+// 関数呼び出しを埋め込む
+&lt;p&gt;大文字: {name.toUpperCase()}&lt;/p&gt;
+
+// 三項演算子（条件分岐）
+&lt;p&gt;{age &gt;= 20 ? "成人" : "未成年"}&lt;/p&gt;</code></pre>
+      </div>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          { }の中に書けないもの
+        </div>
+        <p>
+          <strong>文（statement）</strong>は書けません。<strong>式（expression）</strong>のみ。
+        </p>
+<pre><code>// ❌ if文は書けない
+&lt;p&gt;{if (age &gt;= 20) { "成人" }}&lt;/p&gt;
+
+// ⭕ 三項演算子（式）なら書ける
+&lt;p&gt;{age &gt;= 20 ? "成人" : "未成年"}&lt;/p&gt;</code></pre>
+      </div>
+
+      <div class="quiz" id="quiz-react2-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>JSXについて正しい説明は？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react2-1" style="display:none;">
+          A. JSXはブラウザが直接理解できる
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-react2-1" style="display:none;">
+          B. JSXはReact.createElement()に変換される
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react2-1" style="display:none;">
+          C. JSXではclass属性をそのまま使える
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-react2-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('react2')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- react3: コンポーネントとProps -->
+    <section id="react3">
+      <h1>コンポーネントとProps</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>関数コンポーネントの書き方</li>
+          <li>Props（親から子へのデータ渡し）</li>
+          <li>TypeScriptでのProps型定義</li>
+        </ul>
+      </div>
+
+      <h2>関数コンポーネント</h2>
+
+      <p>
+        コンポーネントは<strong>JSXを返す関数</strong>です。
+      </p>
+
+      <div class="card">
+<pre><code>// 最もシンプルなコンポーネント
+function Greeting() {
+  return &lt;h1&gt;こんにちは！&lt;/h1&gt;;
+}
+
+// 使い方
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Greeting /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+      </div>
+
+      <p>
+        <strong>ルール</strong>: コンポーネント名は<strong>大文字で始める</strong>（PascalCase）
+      </p>
+
+      <h2>Props（プロップス）</h2>
+
+      <p>
+        <strong>Props</strong> = 親コンポーネントから子コンポーネントに渡すデータ
+      </p>
+
+      <div class="card">
+<pre><code>// 子コンポーネント: propsを受け取る
+function Greeting({ name }) {
+  return &lt;h1&gt;こんにちは、{name}さん！&lt;/h1&gt;;
+}
+
+// 親コンポーネント: propsを渡す
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Greeting name="田中" /&gt;
+      &lt;Greeting name="佐藤" /&gt;
+    &lt;/div&gt;
+  );
+}
+
+// 結果:
+// こんにちは、田中さん！
+// こんにちは、佐藤さん！</code></pre>
+      </div>
+
+      <h2>Propsは読み取り専用</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          最重要ルール
+        </div>
+        <p style="margin:0;">
+          <strong>Propsを直接変更してはいけない</strong>
+        </p>
+      </div>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">❌</span>
+          絶対にやってはいけない
+        </div>
+<pre><code>function UserCard({ user }) {
+  // ❌ Propsを直接変更（Reactのルール違反）
+  user.name = "変更された名前";  // 絶対ダメ！
+
+  return &lt;p&gt;{user.name}&lt;/p&gt;;
+}</code></pre>
+      </div>
+
+      <p>
+        <strong>理由</strong>: Propsの変更は予測不能なバグを引き起こす。<br>
+        親から渡されたデータを勝手に変えると、他の部分にも影響する。
+      </p>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✓</span>
+          正しい方法: 親に変更を依頼する
+        </div>
+<pre><code>// 子コンポーネント
+function UserCard({ user, onUpdate }) {
+  const handleClick = () =&gt; {
+    // 親に変更を依頼（新しいオブジェクトを渡す）
+    onUpdate({ ...user, name: "新しい名前" });
+  };
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;{user.name}&lt;/p&gt;
+      &lt;button onClick={handleClick}&gt;名前変更&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+// 親コンポーネント
+function App() {
+  const [user, setUser] = useState({ name: "田中" });
+
+  return &lt;UserCard user={user} onUpdate={setUser} /&gt;;
+}</code></pre>
+      </div>
+
+      <h2>TypeScriptでのProps型定義</h2>
+
+      <p>
+        TypeScriptでは<strong>Propsの型を定義</strong>します。
+      </p>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✓</span>
+          推奨: interfaceでProps型を定義
+        </div>
+<pre><code>// Propsの型を定義
+interface ButtonProps {
+  label: string;
+  onClick: () =&gt; void;
+  disabled?: boolean;  // ?は省略可能
+}
+
+// 型を適用
+function Button({ label, onClick, disabled = false }: ButtonProps) {
+  return (
+    &lt;button onClick={onClick} disabled={disabled}&gt;
+      {label}
+    &lt;/button&gt;
+  );
+}</code></pre>
+      </div>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          レビューで指摘: Props型定義なし
+        </div>
+<pre><code>// ❌ 型定義なし（何が渡されるかわからない）
+function Button({ label, onClick, disabled }) {
+  // ...
+}
+
+// ⭕ 型定義あり（明確）
+function Button({ label, onClick, disabled }: ButtonProps) {
+  // ...
+}</code></pre>
+      </div>
+
+      <h2>childrenプロパティ</h2>
+
+      <p>
+        タグの中身は<strong>children</strong>というPropsで受け取れます。
+      </p>
+
+      <div class="card">
+<pre><code>interface CardProps {
+  title: string;
+  children: React.ReactNode;  // 子要素の型
+}
+
+function Card({ title, children }: CardProps) {
+  return (
+    &lt;div className="card"&gt;
+      &lt;h2&gt;{title}&lt;/h2&gt;
+      &lt;div&gt;{children}&lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+
+// 使い方
+&lt;Card title="お知らせ"&gt;
+  &lt;p&gt;ここがchildrenになる&lt;/p&gt;
+  &lt;p&gt;複数の要素もOK&lt;/p&gt;
+&lt;/Card&gt;</code></pre>
+      </div>
+
+      <div class="quiz" id="quiz-react3-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>Propsについて正しいのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react3-1" style="display:none;">
+          A. 子コンポーネント内でPropsを直接変更できる
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-react3-1" style="display:none;">
+          B. Propsは読み取り専用で、変更は親に依頼する
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react3-1" style="display:none;">
+          C. Propsは子から親にデータを渡す仕組み
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-react3-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('react3')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- react4: useState -->
+    <section id="react4">
+      <h1>useState</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>stateとは何か</li>
+          <li>useStateの使い方</li>
+          <li>状態更新の注意点</li>
+        </ul>
+      </div>
+
+      <h2>stateとは</h2>
+
+      <p>
+        <strong>state</strong>（状態）= コンポーネントが持つ「変更可能なデータ」
+      </p>
+
+      <p>
+        Propsは親から渡されて変更不可。<br>
+        <strong>stateは自分で持ち、自分で変更できる</strong>。
+      </p>
+
+      <div class="card">
+        <div class="card-title">Props vs State</div>
+        <table style="width:100%; border-collapse:collapse;">
+          <tr style="background:#f0f0f0;">
+            <th style="padding:8px; border:1px solid #ddd;">-</th>
+            <th style="padding:8px; border:1px solid #ddd;">Props</th>
+            <th style="padding:8px; border:1px solid #ddd;">State</th>
+          </tr>
+          <tr>
+            <td style="padding:8px; border:1px solid #ddd;">データの出所</td>
+            <td style="padding:8px; border:1px solid #ddd;">親から渡される</td>
+            <td style="padding:8px; border:1px solid #ddd;">自分で持つ</td>
+          </tr>
+          <tr>
+            <td style="padding:8px; border:1px solid #ddd;">変更</td>
+            <td style="padding:8px; border:1px solid #ddd;">できない（読み取り専用）</td>
+            <td style="padding:8px; border:1px solid #ddd;">できる（setXxxで更新）</td>
+          </tr>
+        </table>
+      </div>
+
+      <h2>useStateの基本</h2>
+
+      <div class="card">
+<pre><code>import { useState } from 'react';
+
+function Counter() {
+  // [現在の値, 更新関数] = useState(初期値)
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;カウント: {count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;
+        +1
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+      </div>
+
+      <p>
+        <strong>useState(初期値)</strong>は配列を返す:
+      </p>
+      <ol>
+        <li><strong>count</strong>: 現在の値</li>
+        <li><strong>setCount</strong>: 値を更新する関数</li>
+      </ol>
+
+      <h2>TypeScriptでの型指定</h2>
+
+      <div class="card">
+<pre><code>// 型推論が効く場合（初期値から推論）
+const [count, setCount] = useState(0);  // number型と推論
+
+// 明示的に型を指定
+const [name, setName] = useState&lt;string&gt;("");
+
+// nullを含む場合
+const [user, setUser] = useState&lt;User | null&gt;(null);
+
+// 配列の場合
+const [items, setItems] = useState&lt;string[]&gt;([]);</code></pre>
+      </div>
+
+      <h2>状態更新の重要ルール</h2>
+
+      <h3>1. 更新は非同期</h3>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          よくある間違い
+        </div>
+<pre><code>function Counter() {
+  const [count, setCount] = useState(0);
+
+  const handleClick = () =&gt; {
+    setCount(count + 1);
+    console.log(count);  // まだ0のまま！（更新は非同期）
+  };
+}</code></pre>
+      </div>
+
+      <p>
+        setCountを呼んでも、<strong>その時点ではcountは更新されていない</strong>。
+      </p>
+
+      <h3>2. 直接変更してはいけない</h3>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">❌</span>
+          絶対にやってはいけない
+        </div>
+<pre><code>const [items, setItems] = useState(["a", "b"]);
+
+// ❌ 配列を直接変更（Reactが変更を検知できない）
+items.push("c");  // ダメ！
+
+// ❌ オブジェクトを直接変更
+const [user, setUser] = useState({ name: "田中" });
+user.name = "佐藤";  // ダメ！</code></pre>
+      </div>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✓</span>
+          正しい方法: 新しい配列/オブジェクトを作る
+        </div>
+<pre><code>// ⭕ スプレッド構文で新しい配列を作る
+setItems([...items, "c"]);
+
+// ⭕ スプレッド構文で新しいオブジェクトを作る
+setUser({ ...user, name: "佐藤" });</code></pre>
+      </div>
+
+      <h3>3. 前の値を使う場合は関数形式</h3>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✓</span>
+          推奨: 関数形式のセッター
+        </div>
+<pre><code>// ❌ 古い値を参照する可能性
+setCount(count + 1);
+
+// ⭕ 前の値を確実に使える
+setCount(prev =&gt; prev + 1);
+
+// 連続で呼ぶ場合の違い
+// ❌ これは1しか増えない
+setCount(count + 1);
+setCount(count + 1);
+
+// ⭕ これは2増える
+setCount(prev =&gt; prev + 1);
+setCount(prev =&gt; prev + 1);</code></pre>
+      </div>
+
+      <div class="quiz" id="quiz-react4-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>以下のコードの問題点は？</p>
+<pre><code>const [items, setItems] = useState(["a", "b"]);
+
+const addItem = () =&gt; {
+  items.push("c");
+};</code></pre>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react4-1" style="display:none;">
+          A. useState の書き方が間違っている
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-react4-1" style="display:none;">
+          B. 配列を直接変更しており、setItemsを使っていない
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react4-1" style="display:none;">
+          C. 問題はない
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-react4-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('react4')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- react5: イベントハンドリング -->
+    <section id="react5">
+      <h1>イベントハンドリング</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>Reactでのイベント処理</li>
+          <li>onClick, onChange, onSubmit</li>
+          <li>よくある間違い</li>
+        </ul>
+      </div>
+
+      <h2>基本的なイベント処理</h2>
+
+      <div class="card">
+<pre><code>function Button() {
+  const handleClick = () =&gt; {
+    console.log("クリックされました");
+  };
+
+  return (
+    &lt;button onClick={handleClick}&gt;
+      クリック
+    &lt;/button&gt;
+  );
+}</code></pre>
+      </div>
+
+      <p>
+        <strong>ポイント</strong>: イベント名は<strong>camelCase</strong>（onClick, onChangeなど）
+      </p>
+
+      <h2>よく使うイベント</h2>
+
+      <div class="card">
+<pre><code>// クリック
+&lt;button onClick={handleClick}&gt;ボタン&lt;/button&gt;
+
+// 入力変更
+&lt;input onChange={handleChange} /&gt;
+
+// フォーム送信
+&lt;form onSubmit={handleSubmit}&gt;...&lt;/form&gt;
+
+// フォーカス
+&lt;input onFocus={handleFocus} onBlur={handleBlur} /&gt;
+
+// キー入力
+&lt;input onKeyDown={handleKeyDown} /&gt;</code></pre>
+      </div>
+
+      <h2>イベントオブジェクト</h2>
+
+      <div class="card">
+<pre><code>function Form() {
+  const [value, setValue] = useState("");
+
+  // event（イベントオブジェクト）を受け取る
+  const handleChange = (e: React.ChangeEvent&lt;HTMLInputElement&gt;) =&gt; {
+    setValue(e.target.value);  // 入力値を取得
+  };
+
+  const handleSubmit = (e: React.FormEvent&lt;HTMLFormElement&gt;) =&gt; {
+    e.preventDefault();  // デフォルト動作（ページ遷移）を防ぐ
+    console.log("送信:", value);
+  };
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;input value={value} onChange={handleChange} /&gt;
+      &lt;button type="submit"&gt;送信&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}</code></pre>
+      </div>
+
+      <h2>よくある間違い</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          最重要: 関数を渡す vs 関数を呼び出す
+        </div>
+<pre><code>// ❌ 関数を呼び出している（即座に実行される！）
+&lt;button onClick={handleClick()}&gt;クリック&lt;/button&gt;
+
+// ⭕ 関数を渡している（クリック時に実行）
+&lt;button onClick={handleClick}&gt;クリック&lt;/button&gt;</code></pre>
+      </div>
+
+      <p>
+        <strong>違い</strong>:
+      </p>
+      <ul>
+        <li><code>handleClick</code>: 関数そのものを渡す</li>
+        <li><code>handleClick()</code>: 関数を<strong>今すぐ実行</strong>して、その結果を渡す</li>
+      </ul>
+
+      <h3>引数を渡したい場合</h3>
+
+      <div class="card">
+<pre><code>// 引数を渡す場合はアロー関数で包む
+&lt;button onClick={() =&gt; handleDelete(item.id)}&gt;
+  削除
+&lt;/button&gt;
+
+// ❌ これは即座に実行される
+&lt;button onClick={handleDelete(item.id)}&gt;
+  削除
+&lt;/button&gt;</code></pre>
+      </div>
+
+      <h2>TypeScriptでのイベント型</h2>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          よく使うイベント型
+        </div>
+<pre><code>// クリックイベント
+React.MouseEvent&lt;HTMLButtonElement&gt;
+
+// 入力変更
+React.ChangeEvent&lt;HTMLInputElement&gt;
+
+// フォーム送信
+React.FormEvent&lt;HTMLFormElement&gt;
+
+// キーボード
+React.KeyboardEvent&lt;HTMLInputElement&gt;</code></pre>
+      </div>
+
+      <div class="quiz" id="quiz-react5-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>以下のコードの問題点は？</p>
+<pre><code>&lt;button onClick={handleClick()}&gt;
+  クリック
+&lt;/button&gt;</code></pre>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-react5-1" style="display:none;">
+          A. 関数を呼び出しているため、レンダリング時に即座に実行される
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react5-1" style="display:none;">
+          B. handleClickが定義されていない
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react5-1" style="display:none;">
+          C. 問題はない
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-react5-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('react5')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- react6: 条件付きレンダリング -->
+    <section id="react6">
+      <h1>条件付きレンダリング</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>条件によってUIを出し分ける方法</li>
+          <li>&amp;&amp; 演算子</li>
+          <li>三項演算子</li>
+          <li>early return</li>
+        </ul>
+      </div>
+
+      <h2>条件付きレンダリングとは</h2>
+
+      <p>
+        <strong>条件によって表示するUIを変える</strong>ことです。
+      </p>
+
+      <p>
+        例: ログイン状態によって表示を切り替える
+      </p>
+
+      <h2>&amp;&amp; 演算子</h2>
+
+      <p>
+        <strong>「条件がtrueの場合だけ表示」</strong>という場合に使います。
+      </p>
+
+      <div class="card">
+<pre><code>function Notification({ count }: { count: number }) {
+  return (
+    &lt;div&gt;
+      {/* countが0より大きい場合だけ表示 */}
+      {count &gt; 0 &amp;&amp; &lt;span&gt;{count}件の通知&lt;/span&gt;}
+    &lt;/div&gt;
+  );
+}
+
+// count = 3 の場合: "3件の通知" が表示
+// count = 0 の場合: 何も表示されない</code></pre>
+      </div>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          注意: 0 は falsy だが表示される
+        </div>
+<pre><code>// ❌ countが0の場合、"0" が表示されてしまう
+{count &amp;&amp; &lt;span&gt;{count}件&lt;/span&gt;}
+
+// ⭕ 明示的に比較する
+{count &gt; 0 &amp;&amp; &lt;span&gt;{count}件&lt;/span&gt;}</code></pre>
+      </div>
+
+      <h2>三項演算子</h2>
+
+      <p>
+        <strong>「条件によって2つのUIを切り替える」</strong>場合に使います。
+      </p>
+
+      <div class="card">
+<pre><code>function LoginStatus({ isLoggedIn }: { isLoggedIn: boolean }) {
+  return (
+    &lt;div&gt;
+      {isLoggedIn ? (
+        &lt;button&gt;ログアウト&lt;/button&gt;
+      ) : (
+        &lt;button&gt;ログイン&lt;/button&gt;
+      )}
+    &lt;/div&gt;
+  );
+}</code></pre>
+      </div>
+
+      <h2>early return</h2>
+
+      <p>
+        <strong>条件に合わない場合は早めにreturnする</strong>パターンです。
+      </p>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✓</span>
+          推奨: early return
+        </div>
+<pre><code>function UserProfile({ user }: { user: User | null }) {
+  // nullの場合は早めにreturn
+  if (!user) {
+    return &lt;p&gt;ユーザーが見つかりません&lt;/p&gt;;
+  }
+
+  // ここからはuserが必ず存在する
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;{user.name}&lt;/h1&gt;
+      &lt;p&gt;{user.email}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+      </div>
+
+      <p>
+        <strong>利点</strong>:
+      </p>
+      <ul>
+        <li>ネストが深くならない</li>
+        <li>コードが読みやすい</li>
+        <li>TypeScriptの型絞り込みが効く</li>
+      </ul>
+
+      <h2>使い分け</h2>
+
+      <div class="card">
+        <table style="width:100%; border-collapse:collapse;">
+          <tr style="background:#f0f0f0;">
+            <th style="padding:8px; border:1px solid #ddd;">パターン</th>
+            <th style="padding:8px; border:1px solid #ddd;">使う場面</th>
+          </tr>
+          <tr>
+            <td style="padding:8px; border:1px solid #ddd;">&amp;&amp;</td>
+            <td style="padding:8px; border:1px solid #ddd;">表示する/しないの2択</td>
+          </tr>
+          <tr>
+            <td style="padding:8px; border:1px solid #ddd;">三項演算子</td>
+            <td style="padding:8px; border:1px solid #ddd;">AかBかの2択</td>
+          </tr>
+          <tr>
+            <td style="padding:8px; border:1px solid #ddd;">early return</td>
+            <td style="padding:8px; border:1px solid #ddd;">異常系を先に処理</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="quiz" id="quiz-react6-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>以下のコードで count = 0 の場合、何が表示される？</p>
+<pre><code>{count &amp;&amp; &lt;span&gt;通知あり&lt;/span&gt;}</code></pre>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react6-1" style="display:none;">
+          A. "通知あり"
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-react6-1" style="display:none;">
+          B. "0"
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react6-1" style="display:none;">
+          C. 何も表示されない
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-react6-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('react6')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- react7: リストとkey -->
+    <section id="react7">
+      <h1>リストとkey</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>map()でリスト描画</li>
+          <li>keyの役割</li>
+          <li>key={index}が危険な理由</li>
+        </ul>
+      </div>
+
+      <h2>map()でリスト描画</h2>
+
+      <p>
+        配列のデータを<strong>map()</strong>でJSXに変換します。
+      </p>
+
+      <div class="card">
+<pre><code>interface Todo {
+  id: string;
+  text: string;
+}
+
+function TodoList({ todos }: { todos: Todo[] }) {
+  return (
+    &lt;ul&gt;
+      {todos.map(todo =&gt; (
+        &lt;li key={todo.id}&gt;{todo.text}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}</code></pre>
+      </div>
+
+      <h2>keyとは</h2>
+
+      <p>
+        <strong>key</strong>は、Reactが<strong>どの要素が変わったかを識別する</strong>ための属性です。
+      </p>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          なぜkeyが必要？
+        </div>
+        <p>
+          Reactは仮想DOMの差分を計算して効率的に更新します。<br>
+          keyがあると、<strong>どの要素が追加/削除/移動されたか</strong>を正確に判断できます。
+        </p>
+      </div>
+
+      <h2>key={index}は危険</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          レビューで必ず指摘: key={index}
+        </div>
+<pre><code>// ❌ indexをkeyにする（危険！）
+{todos.map((todo, index) =&gt; (
+  &lt;li key={index}&gt;{todo.text}&lt;/li&gt;
+))}
+
+// ⭕ 一意のIDをkeyにする
+{todos.map(todo =&gt; (
+  &lt;li key={todo.id}&gt;{todo.text}&lt;/li&gt;
+))}</code></pre>
+      </div>
+
+      <h3>なぜ危険か？</h3>
+
+      <div class="card">
+        <div class="card-title">index をkeyにした場合の問題</div>
+        <p>
+          リストの先頭に要素を追加した場合:
+        </p>
+<pre><code>// 追加前
+["A", "B", "C"]  // key: 0, 1, 2
+
+// 先頭に "X" を追加
+["X", "A", "B", "C"]  // key: 0, 1, 2, 3
+
+// Reactの解釈（indexがkey）:
+// key=0 が "A" → "X" に変わった（更新）
+// key=1 が "B" → "A" に変わった（更新）
+// key=2 が "C" → "B" に変わった（更新）
+// key=3 が新規追加（"C"）
+
+// 本当は "X" だけ追加すればいいのに、全部更新される！</code></pre>
+      </div>
+
+      <p>
+        <strong>問題点</strong>:
+      </p>
+      <ul>
+        <li>パフォーマンス低下（全要素が再レンダリング）</li>
+        <li>入力値やフォーカスが失われる</li>
+        <li>アニメーションが正しく動かない</li>
+      </ul>
+
+      <h2>正しいkeyの選び方</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✓</span>
+          keyにすべきもの
+        </div>
+        <ul>
+          <li>データベースのID（最も推奨）</li>
+          <li>uuid などで生成した一意の値</li>
+          <li>データの中で一意な値（メールアドレスなど）</li>
+        </ul>
+      </div>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          indexを使っていい場合（限定的）
+        </div>
+        <ul>
+          <li>リストが固定で変更されない</li>
+          <li>要素の並び替えがない</li>
+          <li>要素の追加・削除がない</li>
+        </ul>
+        <p style="margin:0;">
+          → 実務では<strong>一意のIDを使う方が安全</strong>
+        </p>
+      </div>
+
+      <div class="quiz" id="quiz-react7-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 1
+        </div>
+        <p>key={index}が問題になる場面は？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react7-1" style="display:none;">
+          A. リストを表示するだけの場合
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-react7-1" style="display:none;">
+          B. リストの並び替えや先頭への追加がある場合
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react7-1" style="display:none;">
+          C. リストの末尾に追加する場合
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-react7-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" id="quiz-react7-2">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 2
+        </div>
+        <p>keyに使うべきものとして最も適切なのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react7-2" style="display:none;">
+          A. 配列のindex
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react7-2" style="display:none;">
+          B. Math.random()で生成した値
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-react7-2" style="display:none;">
+          C. データベースのIDなど一意の値
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-react7-2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('react7')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- react8: コンポーネント設計 -->
+    <section id="react8">
+      <h1>コンポーネント設計</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>1コンポーネント1責務</li>
+          <li>コンポーネントの分割基準</li>
+          <li>props drilling問題</li>
+        </ul>
+      </div>
+
+      <h2>1コンポーネント1責務</h2>
+
+      <p>
+        <strong>1つのコンポーネントは1つのことだけ</strong>をすべき。
+      </p>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">❌</span>
+          悪い例: 責務が多すぎる
+        </div>
+<pre><code>// ❌ 1つのコンポーネントで全部やっている
+function UserPage() {
+  const [user, setUser] = useState(null);
+  const [posts, setPosts] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [newComment, setNewComment] = useState("");
+
+  // 200行以上のコード...
+
+  return (
+    &lt;div&gt;
+      {/* ユーザー情報 */}
+      {/* 投稿一覧 */}
+      {/* コメント一覧 */}
+      {/* コメント入力フォーム */}
+      {/* 編集モーダル */}
+    &lt;/div&gt;
+  );
+}</code></pre>
+      </div>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✓</span>
+          良い例: 責務を分離
+        </div>
+<pre><code>// ⭕ 責務ごとにコンポーネントを分割
+function UserPage() {
+  return (
+    &lt;div&gt;
+      &lt;UserProfile /&gt;
+      &lt;PostList /&gt;
+      &lt;CommentSection /&gt;
+    &lt;/div&gt;
+  );
+}
+
+function UserProfile() { /* ユーザー情報のみ */ }
+function PostList() { /* 投稿一覧のみ */ }
+function CommentSection() { /* コメント機能のみ */ }</code></pre>
+      </div>
+
+      <h2>コンポーネントを分割する基準</h2>
+
+      <div class="card">
+        <div class="card-title">分割を検討すべきとき</div>
+        <ul>
+          <li><strong>100行を超えた</strong>: 大きすぎる</li>
+          <li><strong>複数の責務がある</strong>: 表示と入力処理が混在など</li>
+          <li><strong>再利用したい</strong>: ボタン、カードなど</li>
+          <li><strong>条件分岐が複雑</strong>: 早期returnで分けられる</li>
+        </ul>
+      </div>
+
+      <h2>props drilling問題</h2>
+
+      <p>
+        <strong>props drilling</strong> = 深いコンポーネント階層でpropsをバケツリレーすること
+      </p>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          問題: バケツリレーが深い
+        </div>
+<pre><code>// App → Header → UserMenu → UserIcon と渡していく
+function App() {
+  const user = { name: "田中", avatar: "..." };
+  return &lt;Header user={user} /&gt;;
+}
+
+function Header({ user }) {
+  return &lt;UserMenu user={user} /&gt;;  // 中継するだけ
+}
+
+function UserMenu({ user }) {
+  return &lt;UserIcon user={user} /&gt;;  // 中継するだけ
+}
+
+function UserIcon({ user }) {
+  return &lt;img src={user.avatar} /&gt;;  // やっと使う
+}</code></pre>
+      </div>
+
+      <p>
+        <strong>問題点</strong>:
+      </p>
+      <ul>
+        <li>中間のコンポーネントが不要なpropsを受け取る</li>
+        <li>コードが冗長になる</li>
+        <li>propsの追加/変更が大変</li>
+      </ul>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✓</span>
+          解決策
+        </div>
+        <ul>
+          <li><strong>Context</strong>: グローバルに共有したいデータに使う</li>
+          <li><strong>状態管理ライブラリ</strong>: Zustand, Jotaiなど</li>
+          <li><strong>コンポーネント構造の見直し</strong>: 必要な場所で直接データを取得</li>
+        </ul>
+      </div>
+
+      <h2>まとめ: コンポーネント設計の指針</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✓</span>
+          設計のチェックリスト
+        </div>
+        <ul>
+          <li>1コンポーネント1責務になっているか</li>
+          <li>100行を大きく超えていないか</li>
+          <li>Propsの型が定義されているか</li>
+          <li>props drillingが深くなりすぎていないか</li>
+          <li>再利用可能な部品として設計されているか</li>
+        </ul>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎉</span>
+          Phase 2 完了！
+        </div>
+        <p style="margin:0;">
+          React基礎を学びました。<br>
+          次のPhase 3では<strong>Hooks</strong>を深掘りします。<br>
+          useEffect、useRef、カスタムHooksなど、実務で最もバグが多い領域です。
+        </p>
+      </div>
+
+      <div class="quiz" id="quiz-react8-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>コンポーネントを分割すべきタイミングとして適切なのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react8-1" style="display:none;">
+          A. コンポーネントが10行を超えたとき
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-react8-1" style="display:none;">
+          B. 複数の責務が混在しているとき
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-react8-1" style="display:none;">
+          C. TypeScriptの型を使いたいとき
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-react8-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('react8')">
+        <span class="icon">✓</span>
+        Phase 2を完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         Phase 3: Hooks深掘り
+         ============================================ -->
+
+    <!-- hooks1: useEffect基礎 -->
+    <section id="hooks1">
+      <h1>useEffect基礎</h1>
+
+      <p class="lead">
+        <strong>副作用（Side Effect）</strong>とは、コンポーネントの「レンダリング以外の処理」のことです。
+        データ取得、DOM操作、タイマー設定など。useEffectはこれらを安全に実行するためのHooksです。
+      </p>
+
+      <!-- 副作用とは -->
+      <div class="card">
+        <h2>副作用とは何か</h2>
+        <p><strong>純粋関数</strong>（Pure Function）= 同じ入力には常に同じ出力を返す関数</p>
+        <p><strong>副作用</strong>（Side Effect）= 関数の外部に影響を与える処理</p>
+
+        <div class="code-block">
+          <div class="code-header">純粋関数と副作用の例</div>
+          <pre><code>// 純粋関数：外部に影響しない
+function add(a, b) {
+  return a + b;
+}
+
+// 副作用を持つ関数：外部に影響する
+function logAndAdd(a, b) {
+  console.log(`計算中: ${a} + ${b}`);  // 副作用: コンソール出力
+  fetch('/api/log', { method: 'POST' }); // 副作用: ネットワーク通信
+  return a + b;
+}</code></pre>
+        </div>
+
+        <p><strong>Reactコンポーネントでの副作用の例：</strong></p>
+        <ul>
+          <li>API呼び出し（データフェッチ）</li>
+          <li>イベントリスナーの登録</li>
+          <li>タイマーの設定（setTimeout, setInterval）</li>
+          <li>ローカルストレージの読み書き</li>
+          <li>DOM要素への直接アクセス</li>
+        </ul>
+      </div>
+
+      <!-- useEffectの基本構文 -->
+      <div class="card">
+        <h2>useEffectの基本構文</h2>
+
+        <div class="code-block">
+          <div class="code-header">useEffectの構文</div>
+          <pre><code>import { useEffect } from 'react';
+
+function Component() {
+  useEffect(() => {
+    // 副作用の処理
+    console.log('コンポーネントがレンダリングされた');
+
+    // クリーンアップ関数（省略可）
+    return () => {
+      console.log('クリーンアップ実行');
+    };
+  }, [依存配列]); // 依存配列
+
+  return &lt;div&gt;...&lt;/div&gt;;
+}</code></pre>
+        </div>
+
+        <p><strong>3つの要素：</strong></p>
+        <ol>
+          <li><strong>副作用関数</strong>：実行したい処理</li>
+          <li><strong>クリーンアップ関数</strong>：副作用を解除する処理（return文）</li>
+          <li><strong>依存配列</strong>：いつ再実行するかを指定</li>
+        </ol>
+      </div>
+
+      <!-- 実行タイミング -->
+      <div class="card">
+        <h2>実行タイミング（依存配列の違い）</h2>
+
+        <div class="code-block">
+          <div class="code-header">依存配列による実行タイミングの違い</div>
+          <pre><code>// パターン1: 毎回実行（依存配列なし）
+useEffect(() => {
+  console.log('毎回のレンダリング後に実行');
+});
+
+// パターン2: マウント時のみ（空配列）
+useEffect(() => {
+  console.log('最初の1回だけ実行');
+}, []);
+
+// パターン3: 特定の値が変わったとき
+useEffect(() => {
+  console.log(`countが${count}に変わった`);
+}, [count]);
+
+// パターン4: 複数の値のどれかが変わったとき
+useEffect(() => {
+  console.log('countまたはnameが変わった');
+}, [count, name]);</code></pre>
+        </div>
+
+        <table class="table-responsive">
+          <thead>
+            <tr>
+              <th>依存配列</th>
+              <th>実行タイミング</th>
+              <th>使用例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>なし（省略）</td>
+              <td>毎回のレンダリング後</td>
+              <td>ほぼ使わない（パフォーマンス問題）</td>
+            </tr>
+            <tr>
+              <td>[]（空配列）</td>
+              <td>マウント時のみ</td>
+              <td>初期化処理、API初回呼び出し</td>
+            </tr>
+            <tr>
+              <td>[value]</td>
+              <td>valueが変わったとき</td>
+              <td>値に応じたデータ取得</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- レビューポイント -->
+      <div class="card card-danger">
+        <h2>レビューで指摘すべきポイント</h2>
+        <ul>
+          <li><strong>依存配列なし</strong> → 毎回実行され、パフォーマンス問題に</li>
+          <li><strong>空配列で値を使う</strong> → 値が更新されても反映されないバグ</li>
+          <li><strong>useEffectの位置</strong> → 必ずコンポーネントのトップレベルで呼ぶ</li>
+        </ul>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-hooks1-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>次のuseEffectはいつ実行されますか？</p>
+        <div class="code-block">
+          <pre><code>useEffect(() => {
+  console.log('実行');
+}, [userId]);</code></pre>
+        </div>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks1-1" style="display:none;">
+          A. コンポーネントがマウントされたときのみ
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks1-1" style="display:none;">
+          B. マウント時と、userIdが変わったとき
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks1-1" style="display:none;">
+          C. 毎回のレンダリング後
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks1-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('hooks1')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- hooks2: useEffect実践 -->
+    <section id="hooks2">
+      <h1>useEffect実践</h1>
+
+      <p class="lead">
+        useEffectの実践的なパターンを学びます。
+        データフェッチ、イベント購読、タイマーの3大ユースケースを押さえましょう。
+      </p>
+
+      <!-- データフェッチ -->
+      <div class="card">
+        <h2>データフェッチの例</h2>
+
+        <div class="code-block">
+          <div class="code-header">userIdに応じてデータを取得</div>
+          <pre><code>function UserProfile({ userId }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // フラグでマウント状態を追跡
+    let isMounted = true;
+
+    async function fetchUser() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(`/api/users/${userId}`);
+        const data = await response.json();
+
+        // アンマウント後にsetStateしない
+        if (isMounted) {
+          setUser(data);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err.message);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchUser();
+
+    // クリーンアップ：フラグをfalseに
+    return () => {
+      isMounted = false;
+    };
+  }, [userId]); // userIdが変わったら再取得
+
+  if (loading) return &lt;p&gt;読み込み中...&lt;/p&gt;;
+  if (error) return &lt;p&gt;エラー: {error}&lt;/p&gt;;
+  return &lt;p&gt;{user?.name}&lt;/p&gt;;
+}</code></pre>
+        </div>
+
+        <div class="card card-warning">
+          <h3>2026年の推奨：TanStack Query</h3>
+          <p>実務ではuseEffectで直接fetchせず、<strong>TanStack Query</strong>（旧React Query）を使うことが推奨されます。</p>
+          <p>理由：キャッシュ、再取得、ローディング状態の管理が自動化される</p>
+        </div>
+      </div>
+
+      <!-- イベント購読 -->
+      <div class="card">
+        <h2>購読（Subscription）の例</h2>
+
+        <div class="code-block">
+          <div class="code-header">ウィンドウリサイズの購読</div>
+          <pre><code>function WindowSize() {
+  const [size, setSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  useEffect(() => {
+    // イベントハンドラを定義
+    function handleResize() {
+      setSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+
+    // イベントリスナーを登録
+    window.addEventListener('resize', handleResize);
+
+    // クリーンアップ：リスナーを解除
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []); // マウント時に1回だけ登録
+
+  return &lt;p&gt;{size.width} x {size.height}&lt;/p&gt;;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- タイマー -->
+      <div class="card">
+        <h2>タイマーの例</h2>
+
+        <div class="code-block">
+          <div class="code-header">カウントダウンタイマー</div>
+          <pre><code>function Countdown({ initialSeconds }) {
+  const [seconds, setSeconds] = useState(initialSeconds);
+
+  useEffect(() => {
+    // 0以下なら何もしない
+    if (seconds &lt;= 0) return;
+
+    // 1秒ごとにカウントダウン
+    const timerId = setInterval(() => {
+      setSeconds(prev => prev - 1);
+    }, 1000);
+
+    // クリーンアップ：タイマーをクリア
+    return () => {
+      clearInterval(timerId);
+    };
+  }, [seconds]); // secondsが変わるたびに再設定
+
+  return &lt;p&gt;残り: {seconds}秒&lt;/p&gt;;
+}</code></pre>
+        </div>
+
+        <div class="card card-warning">
+          <h3>注意：setIntervalの罠</h3>
+          <p>上の例は正しいですが、依存配列に<code>seconds</code>を入れると毎秒クリア＆再設定されます。</p>
+          <p>より効率的な実装は<code>useRef</code>を使う方法（後述）です。</p>
+        </div>
+      </div>
+
+      <!-- レビューポイント -->
+      <div class="card card-danger">
+        <h2>レビューで指摘すべきポイント</h2>
+        <ul>
+          <li><strong>isMountedフラグなし</strong> → アンマウント後のsetStateでWarning</li>
+          <li><strong>クリーンアップなし</strong> → イベントリスナー、タイマーの蓄積（メモリリーク）</li>
+          <li><strong>useEffect内で直接async</strong> → 非推奨（内部で関数定義すべき）</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-header">よくある間違い：useEffectを直接asyncにする</div>
+          <pre><code>// ❌ useEffectにasyncを直接つけるのはNG
+useEffect(async () => {
+  const data = await fetch('/api/data');
+  // ...
+}, []);
+
+// ⭕ 内部で関数を定義して呼び出す
+useEffect(() => {
+  async function fetchData() {
+    const data = await fetch('/api/data');
+    // ...
+  }
+  fetchData();
+}, []);</code></pre>
+        </div>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-hooks2-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>イベントリスナーを登録するuseEffectで、クリーンアップ関数を書かないと何が起こりますか？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks2-1" style="display:none;">
+          A. TypeScriptのコンパイルエラー
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks2-1" style="display:none;">
+          B. イベントリスナーが重複登録され、メモリリークの原因になる
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks2-1" style="display:none;">
+          C. 特に問題は起こらない
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks2-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('hooks2')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- hooks3: useEffectの罠（★最重要） -->
+    <section id="hooks3">
+      <h1>useEffectの罠（★最重要）</h1>
+
+      <p class="lead">
+        useEffectは<strong>最もバグを生みやすいHooks</strong>です。
+        レビューで最も指摘が多い問題を徹底的に学びます。
+      </p>
+
+      <!-- 罠1：依存配列の欠落 -->
+      <div class="card card-danger">
+        <h2>罠1：依存配列の欠落（最も多いバグ）</h2>
+
+        <div class="code-block">
+          <div class="code-header">依存配列の欠落の例</div>
+          <pre><code>// ❌ 依存配列が空：userIdが変わっても再実行されない
+function UserProfile({ userId }) {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    fetchUser(userId).then(setUser);
+  }, []); // ← userIdが欠落！
+
+  return &lt;p&gt;{user?.name}&lt;/p&gt;;
+}
+
+// ⭕ 依存配列にuserIdを追加
+useEffect(() => {
+  fetchUser(userId).then(setUser);
+}, [userId]); // ← userIdが変わったら再実行</code></pre>
+        </div>
+
+        <p><strong>結果：</strong>userIdが「1」から「2」に変わっても、古いuser（ID=1）が表示されたまま</p>
+        <p><strong>発見方法：</strong>ESLintの<code>react-hooks/exhaustive-deps</code>ルールを有効にする</p>
+      </div>
+
+      <!-- 罠2：無限ループ -->
+      <div class="card card-danger">
+        <h2>罠2：無限ループ（オブジェクトを依存配列に入れる）</h2>
+
+        <div class="code-block">
+          <div class="code-header">無限ループの例</div>
+          <pre><code>// ❌ 毎回新しいオブジェクトが生成される
+function Parent() {
+  const options = { sortBy: 'name' }; // 毎レンダリングで新しい参照
+
+  return &lt;Child options={options} /&gt;;
+}
+
+function Child({ options }) {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetchData(options).then(setData);
+  }, [options]); // ← optionsが毎回「違う」と判定される
+
+  return &lt;ul&gt;{data.map(...)}&lt;/ul&gt;;
+}
+// 結果：レンダリング → useEffect → setData → 再レンダリング → 無限ループ</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">解決策：useMemoで参照を安定させる</div>
+          <pre><code>// ⭕ useMemoでオブジェクトの参照を安定させる
+function Parent() {
+  const options = useMemo(() => ({ sortBy: 'name' }), []);
+  return &lt;Child options={options} /&gt;;
+}
+
+// または、個別のプリミティブ値を依存配列に
+useEffect(() => {
+  fetchData({ sortBy: options.sortBy });
+}, [options.sortBy]); // プリミティブ値なら安定</code></pre>
+        </div>
+
+        <p><strong>なぜ起こる？</strong>JavaScriptでは<code>{} !== {}</code>（オブジェクトは参照で比較）</p>
+      </div>
+
+      <!-- 罠3：クリーンアップ忘れ -->
+      <div class="card card-danger">
+        <h2>罠3：クリーンアップ忘れ（メモリリーク）</h2>
+
+        <div class="code-block">
+          <div class="code-header">クリーンアップ忘れの例</div>
+          <pre><code>// ❌ クリーンアップなし：タイマーが残り続ける
+function Timer() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setCount(c => c + 1);
+    }, 1000);
+    // return がない！
+  }, []);
+
+  return &lt;p&gt;{count}&lt;/p&gt;;
+}
+
+// ⭕ クリーンアップでタイマーを解除
+useEffect(() => {
+  const id = setInterval(() => {
+    setCount(c => c + 1);
+  }, 1000);
+
+  return () => clearInterval(id); // クリーンアップ
+}, []);</code></pre>
+        </div>
+
+        <p><strong>結果：</strong>コンポーネントがアンマウントされてもタイマーが動き続ける（メモリリーク）</p>
+        <p><strong>クリーンアップが必要なケース：</strong></p>
+        <ul>
+          <li>イベントリスナー（addEventListener）</li>
+          <li>タイマー（setInterval, setTimeout）</li>
+          <li>WebSocket接続</li>
+          <li>購読（subscription）</li>
+        </ul>
+      </div>
+
+      <!-- Hooksのルール -->
+      <div class="card card-danger">
+        <h2>Hooksのルール違反</h2>
+
+        <div class="code-block">
+          <div class="code-header">条件の中でHooksを呼ぶ（NG）</div>
+          <pre><code>// ❌ 条件の中でHooks（Reactのルール違反）
+function Component({ isLoggedIn }) {
+  if (isLoggedIn) {
+    useEffect(() => {
+      // ...
+    }, []);
+  }
+  // Reactはエラーを出すか、予測不能な動作に
+}
+
+// ⭕ Hooksはトップレベルで呼び、条件は内部で
+function Component({ isLoggedIn }) {
+  useEffect(() => {
+    if (isLoggedIn) {
+      // ...
+    }
+  }, [isLoggedIn]);
+}</code></pre>
+        </div>
+
+        <p><strong>なぜNG？</strong>ReactはHooksの呼び出し順で状態を管理している。条件分岐で順序が変わると壊れる。</p>
+      </div>
+
+      <!-- レビューポイント -->
+      <div class="card card-danger">
+        <h2>レビューで必ず確認すべきポイント</h2>
+        <table class="table-responsive">
+          <thead>
+            <tr>
+              <th>問題</th>
+              <th>指摘例</th>
+              <th>危険度</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>依存配列の欠落</td>
+              <td>「〇〇を依存配列に追加すべき」</td>
+              <td>🔴 最高</td>
+            </tr>
+            <tr>
+              <td>クリーンアップなし</td>
+              <td>「return文でクリーンアップすべき」</td>
+              <td>🔴 最高</td>
+            </tr>
+            <tr>
+              <td>条件内でHooks</td>
+              <td>「Hooksはトップレベルで呼ぶべき」</td>
+              <td>🔴 最高</td>
+            </tr>
+            <tr>
+              <td>オブジェクトを依存配列に</td>
+              <td>「useMemoで参照を安定させるべき」</td>
+              <td>高</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- クイズ1 -->
+      <div class="quiz" id="quiz-hooks3-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 1
+        </div>
+        <p>次のコードの問題点は何ですか？</p>
+        <div class="code-block">
+          <pre><code>function SearchResults({ query }) {
+  const [results, setResults] = useState([]);
+
+  useEffect(() => {
+    fetch(`/api/search?q=${query}`)
+      .then(res => res.json())
+      .then(setResults);
+  }, []);
+
+  return &lt;ul&gt;{results.map(...)}&lt;/ul&gt;;
+}</code></pre>
+        </div>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks3-1" style="display:none;">
+          A. 依存配列にqueryが欠落している
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks3-1" style="display:none;">
+          B. クリーンアップ関数がない
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks3-1" style="display:none;">
+          C. async/awaitを使うべき
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks3-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="quiz-hooks3-2">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 2
+        </div>
+        <p>次のコードが無限ループを起こす理由は？</p>
+        <div class="code-block">
+          <pre><code>function Component() {
+  const [data, setData] = useState([]);
+  const config = { page: 1, limit: 10 };
+
+  useEffect(() => {
+    fetchData(config).then(setData);
+  }, [config]);
+
+  return &lt;div&gt;{data.length}件&lt;/div&gt;;
+}</code></pre>
+        </div>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks3-2" style="display:none;">
+          A. setDataが再レンダリングを引き起こすから
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks3-2" style="display:none;">
+          B. configが毎回新しいオブジェクト（新しい参照）になるから
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks3-2" style="display:none;">
+          C. fetchDataがPromiseを返すから
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks3-2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('hooks3')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- hooks4: useRef -->
+    <section id="hooks4">
+      <h1>useRef</h1>
+
+      <p class="lead">
+        <strong>useRef</strong>は「再レンダリングを引き起こさない」値を保持するためのHooksです。
+        DOM要素への参照や、レンダリング間で保持したい値に使います。
+      </p>
+
+      <!-- useRefの基本 -->
+      <div class="card">
+        <h2>useRefの基本</h2>
+
+        <div class="code-block">
+          <div class="code-header">useRefの構文</div>
+          <pre><code>import { useRef } from 'react';
+
+function Component() {
+  // 初期値を設定
+  const countRef = useRef(0);
+
+  // .current プロパティで値にアクセス
+  console.log(countRef.current); // 0
+
+  // 値を更新（再レンダリングは起こらない）
+  countRef.current = 1;
+
+  return &lt;div&gt;...&lt;/div&gt;;
+}</code></pre>
+        </div>
+
+        <p><strong>useStateとの違い：</strong></p>
+        <table class="table-responsive">
+          <thead>
+            <tr>
+              <th>特性</th>
+              <th>useState</th>
+              <th>useRef</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>値の更新</td>
+              <td>再レンダリングを引き起こす</td>
+              <td>再レンダリングしない</td>
+            </tr>
+            <tr>
+              <td>用途</td>
+              <td>UIに反映する値</td>
+              <td>UIに反映しない値、DOM参照</td>
+            </tr>
+            <tr>
+              <td>アクセス方法</td>
+              <td>直接（value）</td>
+              <td>.current経由</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- DOM要素へのアクセス -->
+      <div class="card">
+        <h2>ユースケース1：DOM要素へのアクセス</h2>
+
+        <div class="code-block">
+          <div class="code-header">input要素にフォーカスを当てる</div>
+          <pre><code>function TextInput() {
+  const inputRef = useRef&lt;HTMLInputElement&gt;(null);
+
+  const handleClick = () => {
+    // DOM要素に直接アクセス
+    inputRef.current?.focus();
+  };
+
+  return (
+    &lt;&gt;
+      &lt;input ref={inputRef} type="text" /&gt;
+      &lt;button onClick={handleClick}&gt;フォーカス&lt;/button&gt;
+    &lt;/&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p><strong>TypeScriptでの型：</strong></p>
+        <ul>
+          <li><code>useRef&lt;HTMLInputElement&gt;(null)</code> - input要素</li>
+          <li><code>useRef&lt;HTMLDivElement&gt;(null)</code> - div要素</li>
+          <li><code>useRef&lt;HTMLButtonElement&gt;(null)</code> - button要素</li>
+        </ul>
+      </div>
+
+      <!-- 値の保持 -->
+      <div class="card">
+        <h2>ユースケース2：値の保持（再レンダリングなし）</h2>
+
+        <div class="code-block">
+          <div class="code-header">前回の値を保持する</div>
+          <pre><code>function Counter() {
+  const [count, setCount] = useState(0);
+  const prevCountRef = useRef&lt;number&gt;();
+
+  useEffect(() => {
+    // レンダリング後に前回の値を保存
+    prevCountRef.current = count;
+  });
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;現在: {count}&lt;/p&gt;
+      &lt;p&gt;前回: {prevCountRef.current}&lt;/p&gt;
+      &lt;button onClick={() => setCount(c => c + 1)}&gt;
+        増やす
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">タイマーIDを保持する</div>
+          <pre><code>function Stopwatch() {
+  const [time, setTime] = useState(0);
+  const timerRef = useRef&lt;number | null&gt;(null);
+
+  const start = () => {
+    // すでに動いていたら何もしない
+    if (timerRef.current !== null) return;
+
+    timerRef.current = setInterval(() => {
+      setTime(t => t + 1);
+    }, 1000);
+  };
+
+  const stop = () => {
+    if (timerRef.current !== null) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;{time}秒&lt;/p&gt;
+      &lt;button onClick={start}&gt;開始&lt;/button&gt;
+      &lt;button onClick={stop}&gt;停止&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- レビューポイント -->
+      <div class="card card-danger">
+        <h2>レビューで指摘すべきポイント</h2>
+        <ul>
+          <li><strong>UIに反映する値にuseRef</strong> → useStateを使うべき</li>
+          <li><strong>.currentの初期値null忘れ</strong> → DOM参照は初期値nullにする</li>
+          <li><strong>ref.currentを依存配列に入れる</strong> → 意味がない（変更を検知しない）</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-header">間違い例：UIに反映する値にuseRef</div>
+          <pre><code>// ❌ UIに表示する値にuseRefは不適切
+function Counter() {
+  const countRef = useRef(0);
+
+  const increment = () => {
+    countRef.current += 1;
+    // UIは更新されない！
+  };
+
+  return &lt;p&gt;{countRef.current}&lt;/p&gt;; // 常に初期値0
+}
+
+// ⭕ UIに反映するならuseState
+function Counter() {
+  const [count, setCount] = useState(0);
+  return &lt;p&gt;{count}&lt;/p&gt;;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-hooks4-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>useRefとuseStateの違いとして正しいのはどれですか？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks4-1" style="display:none;">
+          A. useRefは文字列のみ、useStateは全ての型を保持できる
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks4-1" style="display:none;">
+          B. useRefの値の更新は再レンダリングを引き起こさない
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks4-1" style="display:none;">
+          C. useRefはDOM操作専用で、他の用途には使えない
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks4-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('hooks4')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- hooks5: useContext -->
+    <section id="hooks5">
+      <h1>useContext</h1>
+
+      <p class="lead">
+        <strong>useContext</strong>は、コンポーネントツリー全体でデータを共有するためのHooksです。
+        「Props drilling」（深いバケツリレー）を解消します。
+      </p>
+
+      <!-- Contextとは -->
+      <div class="card">
+        <h2>Contextとは（グローバル状態共有）</h2>
+
+        <p><strong>Props drilling の問題：</strong></p>
+        <div class="code-block">
+          <div class="code-header">Props drilling の例</div>
+          <pre><code>// ❌ 深いバケツリレー
+function App() {
+  const [theme, setTheme] = useState('light');
+  return &lt;Header theme={theme} /&gt;;
+}
+
+function Header({ theme }) {
+  return &lt;Nav theme={theme} /&gt;; // 使わないのに渡す
+}
+
+function Nav({ theme }) {
+  return &lt;Button theme={theme} /&gt;; // 使わないのに渡す
+}
+
+function Button({ theme }) {
+  return &lt;button className={theme}&gt;Click&lt;/button&gt;; // ここで使う
+}</code></pre>
+        </div>
+
+        <p><strong>Contextで解決：</strong></p>
+        <div class="code-block">
+          <div class="code-header">Context を使った例</div>
+          <pre><code>// ⭕ Contextで直接アクセス
+const ThemeContext = createContext('light');
+
+function App() {
+  const [theme, setTheme] = useState('light');
+  return (
+    &lt;ThemeContext.Provider value={theme}&gt;
+      &lt;Header /&gt; {/* themeを渡さない */}
+    &lt;/ThemeContext.Provider&gt;
+  );
+}
+
+function Button() {
+  const theme = useContext(ThemeContext); // 直接取得
+  return &lt;button className={theme}&gt;Click&lt;/button&gt;;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- 3ステップ -->
+      <div class="card">
+        <h2>Context の3ステップ</h2>
+
+        <div class="code-block">
+          <div class="code-header">Step 1: createContext で作成</div>
+          <pre><code>import { createContext } from 'react';
+
+// 初期値を設定（型推論のため）
+interface User {
+  id: number;
+  name: string;
+}
+
+const UserContext = createContext&lt;User | null&gt;(null);</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">Step 2: Provider で値を提供</div>
+          <pre><code>function App() {
+  const [user, setUser] = useState&lt;User | null&gt;({
+    id: 1,
+    name: 'Alice'
+  });
+
+  return (
+    &lt;UserContext.Provider value={user}&gt;
+      &lt;Dashboard /&gt;
+    &lt;/UserContext.Provider&gt;
+  );
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">Step 3: useContext で取得</div>
+          <pre><code>function UserProfile() {
+  const user = useContext(UserContext);
+
+  if (!user) return &lt;p&gt;ログインしてください&lt;/p&gt;;
+
+  return &lt;p&gt;{user.name}さん、こんにちは&lt;/p&gt;;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- 注意点 -->
+      <div class="card card-warning">
+        <h2>Context の注意点（パフォーマンス）</h2>
+
+        <p><strong>問題：</strong>Context の値が変わると、useContext を使っている<strong>全てのコンポーネント</strong>が再レンダリングされる</p>
+
+        <div class="code-block">
+          <div class="code-header">パフォーマンス問題の例</div>
+          <pre><code>// ❌ 全ての値を1つのContextに入れる
+const AppContext = createContext({
+  user: null,
+  theme: 'light',
+  notifications: [],
+  // ...大量の状態
+});
+
+// themeだけ変わっても、user や notifications を使うコンポーネントも再レンダリング</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">解決策：Contextを分割する</div>
+          <pre><code>// ⭕ 関連する状態ごとにContextを分ける
+const UserContext = createContext(null);
+const ThemeContext = createContext('light');
+const NotificationContext = createContext([]);
+
+// themeが変わっても、UserContextを使うコンポーネントは再レンダリングされない</code></pre>
+        </div>
+
+        <p><strong>実務では：</strong>高頻度で更新される状態は、ZustandやJotaiなどの状態管理ライブラリを使う</p>
+      </div>
+
+      <!-- レビューポイント -->
+      <div class="card card-danger">
+        <h2>レビューで指摘すべきポイント</h2>
+        <ul>
+          <li><strong>巨大なContext</strong> → 分割を検討すべき</li>
+          <li><strong>高頻度更新をContextで</strong> → Zustand等を検討すべき</li>
+          <li><strong>Provider外でuseContext</strong> → undefinedになる</li>
+        </ul>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-hooks5-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>Contextのパフォーマンス問題を軽減する方法として適切なのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks5-1" style="display:none;">
+          A. useEffectでContextの値をキャッシュする
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks5-1" style="display:none;">
+          B. 関連する状態ごとにContextを分割する
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks5-1" style="display:none;">
+          C. useRefでContextの値を保持する
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks5-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('hooks5')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- hooks6: useReducer -->
+    <section id="hooks6">
+      <h1>useReducer</h1>
+
+      <p class="lead">
+        <strong>useReducer</strong>は、複雑な状態更新ロジックを管理するためのHooksです。
+        Reduxパターンに基づいた「action」と「reducer」を使います。
+      </p>
+
+      <!-- 複雑な状態更新 -->
+      <div class="card">
+        <h2>複雑な状態更新の問題</h2>
+
+        <div class="code-block">
+          <div class="code-header">useStateで複雑な状態を扱う問題</div>
+          <pre><code>// ❌ 複数のsetStateが散らばる
+function ShoppingCart() {
+  const [items, setItems] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [discount, setDiscount] = useState(0);
+
+  const addItem = (item) => {
+    setItems([...items, item]);
+    setTotal(total + item.price);
+    // discountも再計算...
+  };
+
+  const removeItem = (id) => {
+    setItems(items.filter(i => i.id !== id));
+    // totalも再計算...
+  };
+
+  // 状態更新ロジックがバラバラで管理しづらい
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- useReducerの構文 -->
+      <div class="card">
+        <h2>useReducerの構文</h2>
+
+        <div class="code-block">
+          <div class="code-header">useReducerの基本形</div>
+          <pre><code>import { useReducer } from 'react';
+
+// 状態の型
+interface State {
+  count: number;
+}
+
+// アクションの型
+type Action =
+  | { type: 'increment' }
+  | { type: 'decrement' }
+  | { type: 'reset'; payload: number };
+
+// reducer関数：現在の状態とアクションから新しい状態を返す
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case 'increment':
+      return { count: state.count + 1 };
+    case 'decrement':
+      return { count: state.count - 1 };
+    case 'reset':
+      return { count: action.payload };
+    default:
+      return state;
+  }
+}
+
+function Counter() {
+  // useReducer(reducer関数, 初期状態)
+  const [state, dispatch] = useReducer(reducer, { count: 0 });
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;{state.count}&lt;/p&gt;
+      &lt;button onClick={() => dispatch({ type: 'increment' })}&gt;
+        +1
+      &lt;/button&gt;
+      &lt;button onClick={() => dispatch({ type: 'decrement' })}&gt;
+        -1
+      &lt;/button&gt;
+      &lt;button onClick={() => dispatch({ type: 'reset', payload: 0 })}&gt;
+        リセット
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p><strong>3つの要素：</strong></p>
+        <ol>
+          <li><strong>state</strong>：現在の状態</li>
+          <li><strong>dispatch</strong>：アクションを発行する関数</li>
+          <li><strong>reducer</strong>：状態の更新ロジックをまとめた関数</li>
+        </ol>
+      </div>
+
+      <!-- 使い分け -->
+      <div class="card">
+        <h2>useStateとの使い分け</h2>
+
+        <table class="table-responsive">
+          <thead>
+            <tr>
+              <th>状況</th>
+              <th>推奨</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>単純な値（数値、文字列、真偽値）</td>
+              <td>useState</td>
+            </tr>
+            <tr>
+              <td>オブジェクト・配列（少数のプロパティ）</td>
+              <td>useState</td>
+            </tr>
+            <tr>
+              <td>複数の状態が連動して更新される</td>
+              <td>useReducer</td>
+            </tr>
+            <tr>
+              <td>更新ロジックが複雑（複数のswitch分岐）</td>
+              <td>useReducer</td>
+            </tr>
+            <tr>
+              <td>状態更新を別ファイルでテストしたい</td>
+              <td>useReducer</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p><strong>実務での判断：</strong>「3つ以上のsetStateが連動する」or「更新パターンが3種類以上」ならuseReducer検討</p>
+      </div>
+
+      <!-- レビューポイント -->
+      <div class="card card-danger">
+        <h2>レビューで指摘すべきポイント</h2>
+        <ul>
+          <li><strong>reducer内で副作用</strong> → 純粋関数であるべき（fetchやconsole.logはNG）</li>
+          <li><strong>stateを直接変更</strong> → 新しいオブジェクトを返すべき</li>
+          <li><strong>過度に複雑なreducer</strong> → 分割を検討</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-header">間違い例：reducer内で副作用</div>
+          <pre><code>// ❌ reducer内で副作用（fetchはNG）
+function reducer(state, action) {
+  switch (action.type) {
+    case 'fetch':
+      fetch('/api/data'); // NG: 副作用
+      return state;
+  }
+}
+
+// ⭕ 副作用はuseEffectかイベントハンドラで
+const handleFetch = async () => {
+  const data = await fetch('/api/data');
+  dispatch({ type: 'setData', payload: data });
+};</code></pre>
+        </div>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-hooks6-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>useReducerを使うべき状況として最も適切なのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks6-1" style="display:none;">
+          A. 単純なカウンターを実装するとき
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks6-1" style="display:none;">
+          B. 複数の状態が連動して更新される複雑なフォーム
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks6-1" style="display:none;">
+          C. APIからデータを取得するとき
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks6-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('hooks6')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- hooks7: useMemo/useCallback -->
+    <section id="hooks7">
+      <h1>useMemo / useCallback</h1>
+
+      <p class="lead">
+        <strong>useMemo</strong>と<strong>useCallback</strong>は、パフォーマンス最適化のためのHooksです。
+        計算結果や関数を「メモ化」して、不要な再計算・再生成を防ぎます。
+      </p>
+
+      <!-- メモ化とは -->
+      <div class="card">
+        <h2>メモ化（Memoization）とは</h2>
+
+        <p><strong>メモ化</strong> = 計算結果をキャッシュして、同じ入力なら再計算せずに返す</p>
+
+        <div class="code-block">
+          <div class="code-header">メモ化の概念</div>
+          <pre><code>// メモ化なし：毎回計算
+function slowCalculation(n) {
+  // 重い処理...
+  return result;
+}
+
+// メモ化あり：同じnなら前回の結果を返す
+const cache = new Map();
+function memoizedCalculation(n) {
+  if (cache.has(n)) {
+    return cache.get(n); // キャッシュから返す
+  }
+  const result = slowCalculation(n);
+  cache.set(n, result);
+  return result;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- useMemo -->
+      <div class="card">
+        <h2>useMemo：計算結果のメモ化</h2>
+
+        <div class="code-block">
+          <div class="code-header">useMemoの例</div>
+          <pre><code>import { useMemo } from 'react';
+
+function FilteredList({ items, filter }) {
+  // ❌ 毎回フィルタリングが実行される
+  // const filteredItems = items.filter(item => item.includes(filter));
+
+  // ⭕ items または filter が変わったときだけ再計算
+  const filteredItems = useMemo(() => {
+    console.log('フィルタリング実行');
+    return items.filter(item => item.includes(filter));
+  }, [items, filter]);
+
+  return (
+    &lt;ul&gt;
+      {filteredItems.map(item => &lt;li key={item}&gt;{item}&lt;/li&gt;)}
+    &lt;/ul&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p><strong>いつ使う？</strong></p>
+        <ul>
+          <li>計算コストが高い処理（大量のデータのフィルタリング・ソート）</li>
+          <li>オブジェクト・配列の参照を安定させたいとき</li>
+        </ul>
+      </div>
+
+      <!-- useCallback -->
+      <div class="card">
+        <h2>useCallback：関数のメモ化</h2>
+
+        <div class="code-block">
+          <div class="code-header">useCallbackの例</div>
+          <pre><code>import { useCallback } from 'react';
+
+function Parent() {
+  const [count, setCount] = useState(0);
+
+  // ❌ 毎回新しい関数が生成される
+  // const handleClick = () => setCount(c => c + 1);
+
+  // ⭕ 依存配列の値が変わらない限り同じ関数を返す
+  const handleClick = useCallback(() => {
+    setCount(c => c + 1);
+  }, []); // setCountは安定しているので依存不要
+
+  return &lt;ExpensiveChild onClick={handleClick} /&gt;;
+}
+
+// memo()でラップされた子コンポーネント
+const ExpensiveChild = memo(function ExpensiveChild({ onClick }) {
+  console.log('ExpensiveChild レンダリング');
+  return &lt;button onClick={onClick}&gt;Click&lt;/button&gt;;
+});</code></pre>
+        </div>
+
+        <p><strong>いつ使う？</strong></p>
+        <ul>
+          <li><code>memo()</code>でラップした子コンポーネントに関数を渡すとき</li>
+          <li>useEffectの依存配列に関数を入れるとき</li>
+        </ul>
+      </div>
+
+      <!-- React Compiler -->
+      <div class="card card-success">
+        <h2>2026年の豆知識：React Compiler</h2>
+
+        <p><strong>React Compiler</strong>（旧React Forget）が正式リリースされ、
+        useMemo/useCallbackを<strong>自動的に挿入</strong>してくれるようになりました。</p>
+
+        <p>つまり：</p>
+        <ul>
+          <li>新規プロジェクトでは手動のメモ化は<strong>不要</strong>になりつつある</li>
+          <li>既存コードでは、過剰なuseMemo/useCallbackを削除してシンプルに</li>
+          <li>ただし「いつメモ化が必要か」を理解することは依然として重要</li>
+        </ul>
+      </div>
+
+      <!-- レビューポイント -->
+      <div class="card card-danger">
+        <h2>レビューで指摘すべきポイント</h2>
+        <ul>
+          <li><strong>過剰なメモ化</strong> → シンプルな計算には不要（オーバーヘッドになる）</li>
+          <li><strong>依存配列の欠落</strong> → 古い値を参照してバグに</li>
+          <li><strong>memo()なしでuseCallback</strong> → 子が毎回レンダリングされるなら意味なし</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-header">過剰なメモ化の例</div>
+          <pre><code>// ❌ シンプルな計算にuseMemoは不要
+const doubled = useMemo(() => count * 2, [count]);
+
+// ⭕ 直接計算で十分
+const doubled = count * 2;</code></pre>
+        </div>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-hooks7-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>useMemoとuseCallbackの違いとして正しいのは？</p>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks7-1" style="display:none;">
+          A. useMemoは計算結果を、useCallbackは関数をメモ化する
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks7-1" style="display:none;">
+          B. useMemoは同期処理用、useCallbackは非同期処理用
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks7-1" style="display:none;">
+          C. useMemoはクラスコンポーネント用、useCallbackは関数コンポーネント用
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks7-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('hooks7')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- hooks8: カスタムHooks -->
+    <section id="hooks8">
+      <h1>カスタムHooks</h1>
+
+      <p class="lead">
+        <strong>カスタムHooks</strong>は、再利用可能なロジックを抽出するためのパターンです。
+        「use」から始まる名前で、他のHooksを組み合わせて作ります。
+      </p>
+
+      <!-- カスタムHooksとは -->
+      <div class="card">
+        <h2>カスタムHooksとは</h2>
+
+        <p><strong>問題：</strong>同じロジックが複数のコンポーネントで重複する</p>
+
+        <div class="code-block">
+          <div class="code-header">ロジックの重複</div>
+          <pre><code>// ComponentA.tsx
+function ComponentA() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/dataA').then(res => res.json()).then(setData);
+    setLoading(false);
+  }, []);
+  // ...
+}
+
+// ComponentB.tsx
+function ComponentB() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/dataB').then(res => res.json()).then(setData);
+    setLoading(false);
+  }, []);
+  // ... 同じパターンの繰り返し
+}</code></pre>
+        </div>
+
+        <p><strong>解決：</strong>カスタムHooksでロジックを抽出</p>
+
+        <div class="code-block">
+          <div class="code-header">カスタムHooksで抽出</div>
+          <pre><code>// useFetch.ts（カスタムHooks）
+function useFetch&lt;T&gt;(url: string) {
+  const [data, setData] = useState&lt;T | null&gt;(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState&lt;Error | null&gt;(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        if (isMounted) setData(data);
+      })
+      .catch(err => {
+        if (isMounted) setError(err);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => { isMounted = false; };
+  }, [url]);
+
+  return { data, loading, error };
+}
+
+// 使用する側
+function ComponentA() {
+  const { data, loading, error } = useFetch('/api/dataA');
+  if (loading) return &lt;p&gt;読み込み中...&lt;/p&gt;;
+  return &lt;p&gt;{data?.name}&lt;/p&gt;;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- 命名規則 -->
+      <div class="card">
+        <h2>命名規則：「use」から始める</h2>
+
+        <p><strong>必須ルール：</strong>カスタムHooksは<code>use</code>から始まる名前にする</p>
+
+        <div class="code-block">
+          <div class="code-header">命名の例</div>
+          <pre><code>// ⭕ 正しい命名
+function useLocalStorage(key) { ... }
+function useWindowSize() { ... }
+function useDebounce(value, delay) { ... }
+function useOnClickOutside(ref, handler) { ... }
+
+// ❌ 間違った命名（Hooksと認識されない）
+function getLocalStorage(key) { ... }
+function windowSizeHook() { ... }</code></pre>
+        </div>
+
+        <p><strong>なぜ重要？</strong></p>
+        <ul>
+          <li>ESLintがHooksのルール違反を検出できる</li>
+          <li>他の開発者が「これはHooksだ」と認識できる</li>
+          <li>内部でuseState等を使っていることが分かる</li>
+        </ul>
+      </div>
+
+      <!-- 実用例 -->
+      <div class="card">
+        <h2>よく使われるカスタムHooksの例</h2>
+
+        <div class="code-block">
+          <div class="code-header">useLocalStorage</div>
+          <pre><code>function useLocalStorage&lt;T&gt;(key: string, initialValue: T) {
+  const [value, setValue] = useState&lt;T&gt;(() => {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : initialValue;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(value));
+  }, [key, value]);
+
+  return [value, setValue] as const;
+}
+
+// 使用例
+function Settings() {
+  const [theme, setTheme] = useLocalStorage('theme', 'light');
+  return &lt;button onClick={() => setTheme('dark')}&gt;ダークモード&lt;/button&gt;;
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">useDebounce</div>
+          <pre><code>function useDebounce&lt;T&gt;(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+// 使用例：検索入力の遅延
+function Search() {
+  const [query, setQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 300);
+  // debouncedQueryが変わったときだけAPI呼び出し
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- レビューポイント -->
+      <div class="card card-danger">
+        <h2>レビューで指摘すべきポイント</h2>
+        <ul>
+          <li><strong>useで始まらない名前</strong> → Hooksの命名規則違反</li>
+          <li><strong>コンポーネント内で定義</strong> → ファイル外に抽出すべき</li>
+          <li><strong>過度に複雑なカスタムHooks</strong> → 分割を検討</li>
+          <li><strong>同じロジックが複数箇所に</strong> → カスタムHooksに抽出すべき</li>
+        </ul>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-hooks8-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>カスタムHooksの命名規則として正しいのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks8-1" style="display:none;">
+          A. 「hook」で終わる（例：localStorageHook）
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks8-1" style="display:none;">
+          B. 「use」で始まる（例：useLocalStorage）
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks8-1" style="display:none;">
+          C. 任意の名前でよい
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks8-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Phase 3完了メッセージ -->
+      <div class="card card-success">
+        <h2>Phase 3 完了！</h2>
+        <p>Hooks深掘りを完了しました。以下を習得しました：</p>
+        <ul>
+          <li>useEffectの基礎と罠（依存配列、クリーンアップ、無限ループ）</li>
+          <li>useRef（DOM参照、値の保持）</li>
+          <li>useContext（グローバル状態共有）</li>
+          <li>useReducer（複雑な状態管理）</li>
+          <li>useMemo/useCallback（メモ化）</li>
+          <li>カスタムHooks（ロジックの再利用）</li>
+        </ul>
+        <p>次はPhase 4「実践パターン」でモダンReact（Server Components等）を学びます。</p>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('hooks8')">
+        <span class="icon">✓</span>
+        Phase 3を完了
+      </button>
+    </section>
+
   </main>
 
   <script>
@@ -11491,6 +16039,14 @@ user.greet();</code></pre>
       const level2Count = completed.filter(s => level2Sections.includes(s)).length;
       const level2Progress = document.getElementById('level2-progress');
       if (level2Progress) level2Progress.value = level2Count;
+
+      // Level 3
+      const level3Sections = ['ts1','ts2','ts3','ts4','ts5','ts6','ts7','ts8',
+                              'react1','react2','react3','react4','react5','react6','react7','react8',
+                              'hooks1','hooks2','hooks3','hooks4','hooks5','hooks6','hooks7','hooks8'];
+      const level3Count = completed.filter(s => level3Sections.includes(s)).length;
+      const level3Progress = document.getElementById('level3-progress');
+      if (level3Progress) level3Progress.value = level3Count;
     }
 
     // 初期化

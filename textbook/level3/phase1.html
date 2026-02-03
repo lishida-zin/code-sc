@@ -1,0 +1,1350 @@
+<section id="ts1">
+      <h1>TypeScriptとは？</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>TypeScriptとJavaScriptの違い</li>
+          <li>型システムの意義</li>
+          <li>コンパイル時チェックの恩恵</li>
+        </ul>
+      </div>
+
+      <h2>JavaScriptに「型」を追加した言語</h2>
+
+      <p>
+        TypeScriptは<strong>JavaScriptのスーパーセット</strong>です。
+      </p>
+
+      <p>
+        「スーパーセット」とは、JavaScriptの機能をすべて含み、<br>
+        さらに「型」という機能を追加したものです。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🏠</span>
+          たとえ話
+        </div>
+        <p>
+          JavaScript = 普通の家<br>
+          TypeScript = <strong>セキュリティシステム付きの家</strong>
+        </p>
+        <p style="margin:0;">
+          セキュリティ（型チェック）があると、<br>
+          「泥棒（バグ）」が入りにくくなります。
+        </p>
+      </div>
+
+      <h2>型とは何か？</h2>
+
+      <p>
+        「型」とは、<strong>データの種類</strong>のことです。
+      </p>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-title">JavaScript（型なし）</div>
+<pre><code>// 何でも入る（危険）
+let name = "田中";
+name = 123;  // エラーにならない！
+
+// 実行時に壊れる
+console.log(name.toUpperCase());
+// TypeError: toUpperCase is not a function</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-title">TypeScript（型あり）</div>
+<pre><code>// 文字列だけ入る（安全）
+let name: string = "田中";
+name = 123;  // コンパイルエラー！
+
+// 実行前にミスが分かる</code></pre>
+        </div>
+      </div>
+
+      <h2>コンパイル時チェック</h2>
+
+      <p>
+        TypeScriptは<strong>コードを実行する前</strong>にエラーを見つけます。
+      </p>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✓</span>
+          コンパイル時チェックの恩恵
+        </div>
+        <ul>
+          <li><strong>早期発見</strong>: 書いた瞬間にエラーが分かる</li>
+          <li><strong>自動補完</strong>: IDEが賢くなる</li>
+          <li><strong>リファクタリング安全</strong>: 変更の影響が分かる</li>
+          <li><strong>ドキュメント</strong>: 型が仕様を語る</li>
+        </ul>
+      </div>
+
+      <h2>2026年、TypeScriptは必須</h2>
+
+      <p>
+        2026年現在、<strong>新規プロジェクトのほとんどがTypeScript</strong>です。
+      </p>
+
+      <ul>
+        <li>React/Next.js → TypeScript推奨</li>
+        <li>Vue/Nuxt → TypeScript推奨</li>
+        <li>Node.js → TypeScript利用が一般的</li>
+      </ul>
+
+      <p>
+        AIが書くコードも多くがTypeScriptです。<br>
+        <strong>型を読めないと、コードレビューができません。</strong>
+      </p>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔍</span>
+          コードレビューの観点
+        </div>
+        <p style="margin:0;">
+          「TypeScriptを使っているのにanyだらけ」は最も多い問題です。<br>
+          Phase 1では、<strong>型を正しく読み、問題を見抜く力</strong>を身につけます。
+        </p>
+      </div>
+
+      <div class="quiz" id="quiz-ts1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>TypeScriptの最大の利点は？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts1" style="display:none;">
+          A. JavaScriptより実行速度が速い
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts1" style="display:none;">
+          B. コンパイル時にエラーを発見できる
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts1" style="display:none;">
+          C. ブラウザで直接実行できる
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('ts1')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 2: 基本の型 -->
+    <section id="ts2">
+      <h1>基本の型</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>プリミティブ型（string / number / boolean）</li>
+          <li>null と undefined の違い</li>
+          <li>any の危険性</li>
+        </ul>
+      </div>
+
+      <h2>プリミティブ型</h2>
+
+      <p>
+        TypeScriptの基本的な型は<strong>3つ</strong>です。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">📦</span>
+          基本の3型
+        </div>
+<pre><code>// 文字列
+const name: string = "田中";
+
+// 数値（整数も小数も同じ）
+const age: number = 25;
+const price: number = 1980.5;
+
+// 真偽値
+const isActive: boolean = true;</code></pre>
+      </div>
+
+      <h2>null と undefined</h2>
+
+      <p>
+        「値がない」ことを表す型が2つあります。
+      </p>
+
+      <div class="compare-box">
+        <div class="compare-blue">
+          <div class="compare-title">undefined</div>
+          <p>「まだ値が設定されていない」</p>
+<pre><code>let user: string | undefined;
+console.log(user); // undefined
+
+// 変数を宣言しただけの状態</code></pre>
+        </div>
+        <div class="compare-orange">
+          <div class="compare-title">null</div>
+          <p>「意図的に空にした」</p>
+<pre><code>let user: string | null = null;
+console.log(user); // null
+
+// 明示的に「なし」と設定</code></pre>
+        </div>
+      </div>
+
+      <h2>any の危険性</h2>
+
+      <p>
+        <code>any</code>は「どんな型でもOK」という意味です。
+      </p>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔥</span>
+          any = 型チェック放棄
+        </div>
+<pre><code>// ❌ any を使うと型チェックが無効化
+function process(data: any) {
+  // 何をしてもエラーにならない
+  return data.name.toUpperCase();
+}
+
+process(123); // 実行時エラー！
+// TypeError: Cannot read property 'toUpperCase' of undefined</code></pre>
+        <p style="margin:0;">
+          <strong>any</strong>はTypeScriptの恩恵を捨てることを意味します。<br>
+          レビューで見つけたら、必ず指摘しましょう。
+        </p>
+      </div>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-title">❌ anyの乱用</div>
+<pre><code>function getUser(id: any): any {
+  // 何が入って何が出るか不明
+}
+
+const result: any = getUser("abc");
+result.name.first; // 実行時まで分からない</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-title">✓ 具体的な型</div>
+<pre><code>interface User {
+  name: string;
+  age: number;
+}
+
+function getUser(id: string): User {
+  // 入力と出力が明確
+}
+
+const result = getUser("abc");
+result.name; // 自動補完が効く</code></pre>
+        </div>
+      </div>
+
+      <h2>配列の型</h2>
+
+      <p>
+        配列の型は2つの書き方があります。
+      </p>
+
+      <div class="card">
+<pre><code>// 書き方1: type[]
+const numbers: number[] = [1, 2, 3];
+const names: string[] = ["田中", "山田"];
+
+// 書き方2: Array&lt;type&gt;
+const numbers2: Array&lt;number&gt; = [1, 2, 3];
+const names2: Array&lt;string&gt; = ["田中", "山田"];
+
+// 両方とも同じ意味</code></pre>
+      </div>
+
+      <div class="quiz" id="quiz-ts2">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>このコードの問題点は？</p>
+<pre><code>function calculate(value: any) {
+  return value * 2;
+}</code></pre>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts2" style="display:none;">
+          A. 関数名が不適切
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts2" style="display:none;">
+          B. any型で型チェックが無効化されている
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts2" style="display:none;">
+          C. 戻り値の型がない
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('ts2')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 3: 型推論 -->
+    <section id="ts3">
+      <h1>型推論</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>型推論の仕組み</li>
+          <li>明示的型注釈との違い</li>
+          <li>いつ型注釈が必要か</li>
+        </ul>
+      </div>
+
+      <h2>TypeScriptは賢い</h2>
+
+      <p>
+        TypeScriptは値から<strong>型を推測</strong>できます。
+      </p>
+
+      <div class="card">
+<pre><code>// 型注釈なしでも型が付く
+const name = "田中";   // string と推論
+const age = 25;        // number と推論
+const isActive = true; // boolean と推論
+
+// 型注釈を書いたのと同じ効果
+// const name: string = "田中";</code></pre>
+      </div>
+
+      <p>
+        これを<strong>型推論</strong>（Type Inference）と呼びます。
+      </p>
+
+      <h2>型推論 vs 明示的型注釈</h2>
+
+      <div class="compare-box">
+        <div class="compare-blue">
+          <div class="compare-title">型推論（暗黙）</div>
+<pre><code>// コンパイラが自動で型を付ける
+const user = {
+  name: "田中",
+  age: 25
+};
+// { name: string; age: number } と推論</code></pre>
+          <p>✓ コードが簡潔</p>
+        </div>
+        <div class="compare-green">
+          <div class="compare-title">型注釈（明示）</div>
+<pre><code>// 開発者が明示的に型を書く
+const user: {
+  name: string;
+  age: number;
+} = {
+  name: "田中",
+  age: 25
+};</code></pre>
+          <p>✓ 意図が明確</p>
+        </div>
+      </div>
+
+      <h2>型注釈が必要な場面</h2>
+
+      <p>
+        型推論に頼れない場面があります。
+      </p>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          型注釈が必要なケース
+        </div>
+        <ul>
+          <li><strong>関数の引数</strong>: 推論できない</li>
+          <li><strong>空の配列</strong>: any[]になってしまう</li>
+          <li><strong>API の戻り値</strong>: 型が不明</li>
+          <li><strong>意図を明示したい</strong>: 可読性のため</li>
+        </ul>
+      </div>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-title">❌ 型注釈なし</div>
+<pre><code>// 引数の型が不明
+function greet(name) {
+  return "Hello, " + name;
+}
+
+// 何でも渡せてしまう
+greet(123); // エラーにならない</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-title">✓ 型注釈あり</div>
+<pre><code>// 引数の型が明確
+function greet(name: string) {
+  return "Hello, " + name;
+}
+
+// 間違いがすぐ分かる
+greet(123); // コンパイルエラー</code></pre>
+        </div>
+      </div>
+
+      <h2>関数の戻り値の型推論</h2>
+
+      <p>
+        関数の戻り値は<strong>推論される</strong>ことが多いです。
+      </p>
+
+      <div class="card">
+<pre><code>// 戻り値は string と推論される
+function greet(name: string) {
+  return "Hello, " + name;
+}
+
+// 戻り値は number と推論される
+function add(a: number, b: number) {
+  return a + b;
+}
+
+// 明示的に書くこともできる
+function greet(name: string): string {
+  return "Hello, " + name;
+}</code></pre>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          実務でのルール
+        </div>
+        <p style="margin:0;">
+          多くのプロジェクトでは<strong>関数の引数は必須</strong>、<br>
+          <strong>戻り値は省略OK</strong>というルールを採用しています。
+        </p>
+      </div>
+
+      <div class="quiz" id="quiz-ts3">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>このコードで count の型は？</p>
+<pre><code>const count = 0;</code></pre>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts3" style="display:none;">
+          A. any
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts3" style="display:none;">
+          B. number
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts3" style="display:none;">
+          C. 型がない
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts3')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('ts3')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 4: Union型・リテラル型 -->
+    <section id="ts4">
+      <h1>Union型・リテラル型</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>Union型（複数の型を許容）</li>
+          <li>リテラル型（特定の値のみ許容）</li>
+          <li>型の絞り込み</li>
+        </ul>
+      </div>
+
+      <h2>Union型とは</h2>
+
+      <p>
+        <strong>Union型</strong>は「AまたはB」という型です。
+      </p>
+
+      <div class="card">
+<pre><code>// string または number
+let value: string | number;
+
+value = "hello";  // OK
+value = 123;      // OK
+value = true;     // エラー！boolean は許可されていない</code></pre>
+      </div>
+
+      <p>
+        <code>|</code>（パイプ）で型を繋げます。
+      </p>
+
+      <h2>よく使うUnion型</h2>
+
+      <div class="card">
+<pre><code>// nullを許容する型（Nullable）
+let user: User | null = null;
+
+// undefinedを許容する型（Optional）
+let name: string | undefined;
+
+// 複数の型を許容
+function format(value: string | number | boolean): string {
+  return String(value);
+}</code></pre>
+      </div>
+
+      <h2>リテラル型とは</h2>
+
+      <p>
+        <strong>リテラル型</strong>は「特定の値のみ」を許容する型です。
+      </p>
+
+      <div class="card">
+<pre><code>// "success" または "error" のみ許容
+type Status = "success" | "error" | "pending";
+
+let status: Status;
+status = "success";  // OK
+status = "error";    // OK
+status = "complete"; // エラー！許可されていない値</code></pre>
+      </div>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✓</span>
+          リテラル型のメリット
+        </div>
+        <ul>
+          <li><strong>タイポ防止</strong>: 間違った文字列を書けない</li>
+          <li><strong>自動補完</strong>: IDEが候補を出してくれる</li>
+          <li><strong>意図が明確</strong>: 取りうる値が分かる</li>
+        </ul>
+      </div>
+
+      <h2>型の絞り込み（Narrowing）</h2>
+
+      <p>
+        Union型を使うと、実行時に<strong>どの型か判断</strong>が必要です。
+      </p>
+
+      <div class="card">
+<pre><code>function printId(id: string | number) {
+  // この時点では string か number か不明
+
+  if (typeof id === "string") {
+    // ここでは string と確定
+    console.log(id.toUpperCase());
+  } else {
+    // ここでは number と確定
+    console.log(id.toFixed(2));
+  }
+}</code></pre>
+      </div>
+
+      <p>
+        <code>typeof</code>で型をチェックすると、<br>
+        TypeScriptは自動的に型を<strong>絞り込み</strong>ます。
+      </p>
+
+      <div class="quiz" id="quiz-ts4">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>このコードでエラーになるのは？</p>
+<pre><code>type Color = "red" | "blue" | "green";
+let color: Color;</code></pre>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts4" style="display:none;">
+          A. color = "red";
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts4" style="display:none;">
+          B. color = "blue";
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts4" style="display:none;">
+          C. color = "yellow";
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts4')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('ts4')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 5: interface と type -->
+    <section id="ts5">
+      <h1>interface と type</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>interfaceの書き方</li>
+          <li>typeの書き方</li>
+          <li>使い分けの基準</li>
+        </ul>
+      </div>
+
+      <h2>interfaceとは</h2>
+
+      <p>
+        <strong>interface</strong>はオブジェクトの形を定義します。
+      </p>
+
+      <div class="card">
+<pre><code>// Userオブジェクトの形を定義
+interface User {
+  name: string;
+  age: number;
+  email?: string;  // ?は省略可能
+}
+
+// この形に従うオブジェクト
+const user: User = {
+  name: "田中",
+  age: 25
+  // emailは省略OK
+};</code></pre>
+      </div>
+
+      <h2>typeとは</h2>
+
+      <p>
+        <strong>type</strong>は型に別名を付けます。
+      </p>
+
+      <div class="card">
+<pre><code>// オブジェクトの形を定義（interfaceと同様）
+type User = {
+  name: string;
+  age: number;
+  email?: string;
+};
+
+// Union型やリテラル型にも使える
+type Status = "success" | "error" | "pending";
+type ID = string | number;</code></pre>
+      </div>
+
+      <h2>interface vs type</h2>
+
+      <div class="compare-box">
+        <div class="compare-blue">
+          <div class="compare-title">interface</div>
+<pre><code>// 宣言のマージ（拡張）ができる
+interface User {
+  name: string;
+}
+interface User {
+  age: number;
+}
+// { name: string; age: number } になる
+
+// extendsで継承
+interface Admin extends User {
+  role: string;
+}</code></pre>
+        </div>
+        <div class="compare-green">
+          <div class="compare-title">type</div>
+<pre><code>// Union型が作れる
+type ID = string | number;
+
+// リテラル型が作れる
+type Status = "ok" | "ng";
+
+// 交差型で合成
+type Admin = User & {
+  role: string;
+};</code></pre>
+        </div>
+      </div>
+
+      <h2>使い分けの基準</h2>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          実務でのルール
+        </div>
+        <ul>
+          <li><strong>オブジェクトの形</strong> → interface</li>
+          <li><strong>Union型、リテラル型</strong> → type</li>
+          <li><strong>迷ったら</strong> → interface</li>
+        </ul>
+        <p style="margin:0;">
+          多くのプロジェクトでは「基本はinterface、必要ならtype」です。
+        </p>
+      </div>
+
+      <h2>読み取り専用（readonly）</h2>
+
+      <p>
+        プロパティを<strong>変更不可</strong>にできます。
+      </p>
+
+      <div class="card">
+<pre><code>interface User {
+  readonly id: string;  // 変更不可
+  name: string;         // 変更可能
+}
+
+const user: User = {
+  id: "abc123",
+  name: "田中"
+};
+
+user.name = "山田";  // OK
+user.id = "xyz";     // エラー！readonlyは変更不可</code></pre>
+      </div>
+
+      <div class="quiz" id="quiz-ts5-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 1
+        </div>
+        <p>オブジェクトの形を定義するのに一般的に使うのは？</p>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts5-1" style="display:none;">
+          A. interface
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts5-1" style="display:none;">
+          B. type
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts5-1" style="display:none;">
+          C. class
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts5-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" id="quiz-ts5-2">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 2
+        </div>
+        <p>Union型を定義するのに使うのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts5-2" style="display:none;">
+          A. interface
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts5-2" style="display:none;">
+          B. type
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts5-2" style="display:none;">
+          C. enum
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts5-2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('ts5')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 6: ジェネリクス -->
+    <section id="ts6">
+      <h1>ジェネリクス</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>ジェネリクスとは何か</li>
+          <li>Array&lt;T&gt;、Promise&lt;T&gt;の読み方</li>
+          <li>関数のジェネリクス</li>
+        </ul>
+      </div>
+
+      <h2>ジェネリクスとは</h2>
+
+      <p>
+        <strong>ジェネリクス</strong>は「型の引数」です。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🏠</span>
+          たとえ話
+        </div>
+        <p>
+          関数に<strong>値の引数</strong>があるように、<br>
+          型にも<strong>型の引数</strong>があります。
+        </p>
+<pre><code>// 値の引数
+function greet(name: string) { ... }
+greet("田中");  // 引数に値を渡す
+
+// 型の引数（ジェネリクス）
+function identity&lt;T&gt;(value: T): T { ... }
+identity&lt;string&gt;("hello");  // 引数に型を渡す</code></pre>
+      </div>
+
+      <h2>Array&lt;T&gt;の読み方</h2>
+
+      <p>
+        <code>Array&lt;T&gt;</code>は「T型の配列」という意味です。
+      </p>
+
+      <div class="card">
+<pre><code>// T = string の場合
+const names: Array&lt;string&gt; = ["田中", "山田"];
+// string[] と同じ意味
+
+// T = number の場合
+const ages: Array&lt;number&gt; = [25, 30, 35];
+// number[] と同じ意味
+
+// T = User の場合
+const users: Array&lt;User&gt; = [
+  { name: "田中", age: 25 },
+  { name: "山田", age: 30 }
+];
+// User[] と同じ意味</code></pre>
+      </div>
+
+      <h2>Promise&lt;T&gt;の読み方</h2>
+
+      <p>
+        <code>Promise&lt;T&gt;</code>は「T型を返す非同期処理」です。
+      </p>
+
+      <div class="card">
+<pre><code>// string を返すPromise
+async function fetchName(): Promise&lt;string&gt; {
+  return "田中";
+}
+
+// User を返すPromise
+async function fetchUser(): Promise&lt;User&gt; {
+  return { name: "田中", age: 25 };
+}
+
+// 配列を返すPromise
+async function fetchUsers(): Promise&lt;User[]&gt; {
+  return [
+    { name: "田中", age: 25 },
+    { name: "山田", age: 30 }
+  ];
+}</code></pre>
+      </div>
+
+      <h2>関数のジェネリクス</h2>
+
+      <p>
+        自分でジェネリクスを使った関数も作れます。
+      </p>
+
+      <div class="card">
+<pre><code>// T は型のプレースホルダー
+function first&lt;T&gt;(items: T[]): T | undefined {
+  return items[0];
+}
+
+// 使うとき、T が自動的に決まる
+const num = first([1, 2, 3]);     // T = number
+const str = first(["a", "b"]);   // T = string
+
+// 明示的に指定もできる
+const num2 = first&lt;number&gt;([1, 2, 3]);</code></pre>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          読めればOK
+        </div>
+        <p style="margin:0;">
+          ジェネリクスを<strong>自分で書く</strong>ことは少ないです。<br>
+          ライブラリのコードを<strong>読める</strong>ことが重要です。
+        </p>
+      </div>
+
+      <div class="quiz" id="quiz-ts6">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>Promise&lt;User[]&gt; の意味は？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts6" style="display:none;">
+          A. User型を返す配列
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts6" style="display:none;">
+          B. User配列を返す非同期処理
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts6" style="display:none;">
+          C. Promiseの配列
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts6')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('ts6')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 7: 型ガード・Narrowing -->
+    <section id="ts7">
+      <h1>型ガード・Narrowing</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>型ガードとは何か</li>
+          <li>typeof / instanceof の使い方</li>
+          <li>in 演算子での判定</li>
+        </ul>
+      </div>
+
+      <h2>型ガードとは</h2>
+
+      <p>
+        <strong>型ガード</strong>は、型を安全に絞り込む方法です。
+      </p>
+
+      <div class="card">
+<pre><code>function process(value: string | number) {
+  // この時点では string か number か不明
+
+  // 型ガード: typeof でチェック
+  if (typeof value === "string") {
+    // ここでは value は string と確定
+    console.log(value.toUpperCase());
+  } else {
+    // ここでは value は number と確定
+    console.log(value.toFixed(2));
+  }
+}</code></pre>
+      </div>
+
+      <h2>typeofによる型ガード</h2>
+
+      <p>
+        <code>typeof</code>はプリミティブ型の判定に使います。
+      </p>
+
+      <div class="card">
+<pre><code>function format(value: string | number | boolean) {
+  if (typeof value === "string") {
+    return value.toUpperCase();
+  }
+  if (typeof value === "number") {
+    return value.toFixed(2);
+  }
+  // ここでは boolean と確定
+  return value ? "Yes" : "No";
+}
+
+// typeof で判定できる型
+// "string" | "number" | "boolean" | "undefined"
+// "object" | "function" | "symbol" | "bigint"</code></pre>
+      </div>
+
+      <h2>instanceofによる型ガード</h2>
+
+      <p>
+        <code>instanceof</code>はクラスのインスタンス判定に使います。
+      </p>
+
+      <div class="card">
+<pre><code>class Dog {
+  bark() { console.log("ワン！"); }
+}
+
+class Cat {
+  meow() { console.log("ニャー"); }
+}
+
+function speak(animal: Dog | Cat) {
+  if (animal instanceof Dog) {
+    // ここでは Dog と確定
+    animal.bark();
+  } else {
+    // ここでは Cat と確定
+    animal.meow();
+  }
+}</code></pre>
+      </div>
+
+      <h2>in演算子による型ガード</h2>
+
+      <p>
+        <code>in</code>はプロパティの存在確認に使います。
+      </p>
+
+      <div class="card">
+<pre><code>interface Bird {
+  fly(): void;
+}
+
+interface Fish {
+  swim(): void;
+}
+
+function move(animal: Bird | Fish) {
+  if ("fly" in animal) {
+    // fly プロパティがあれば Bird
+    animal.fly();
+  } else {
+    // なければ Fish
+    animal.swim();
+  }
+}</code></pre>
+      </div>
+
+      <h2>asアサーションの危険性</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔥</span>
+          asは「嘘をつく」可能性
+        </div>
+<pre><code>// ❌ 危険な型アサーション
+const element = document.getElementById("app") as HTMLDivElement;
+element.innerHTML = "Hello";  // nullなら実行時エラー！
+
+// ✓ 安全な型ガード
+const element = document.getElementById("app");
+if (element instanceof HTMLDivElement) {
+  element.innerHTML = "Hello";  // 安全
+}</code></pre>
+        <p style="margin:0;">
+          <strong>as</strong>を使うと型チェックを「スキップ」します。<br>
+          レビューで見つけたら、型ガードで書き直すべきか検討しましょう。
+        </p>
+      </div>
+
+      <div class="quiz" id="quiz-ts7-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 1
+        </div>
+        <p>typeof でプリミティブ型を判定するのに使えないのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts7-1" style="display:none;">
+          A. typeof x === "string"
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts7-1" style="display:none;">
+          B. typeof x === "number"
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts7-1" style="display:none;">
+          C. typeof x === "array"
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts7-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" id="quiz-ts7-2">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 2
+        </div>
+        <p>このコードの問題点は？</p>
+<pre><code>const data = JSON.parse(json) as User;</code></pre>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts7-2" style="display:none;">
+          A. asで型を強制しており、実行時エラーの可能性がある
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts7-2" style="display:none;">
+          B. JSON.parseの戻り値が間違っている
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts7-2" style="display:none;">
+          C. 問題はない
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts7-2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('ts7')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- Lesson 8: ユーティリティ型 -->
+    <section id="ts8">
+      <h1>ユーティリティ型</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>Partial / Required</li>
+          <li>Pick / Omit</li>
+          <li>Record</li>
+        </ul>
+      </div>
+
+      <h2>ユーティリティ型とは</h2>
+
+      <p>
+        TypeScriptには<strong>便利な組み込み型</strong>があります。
+      </p>
+
+      <p>
+        既存の型を<strong>変換</strong>して新しい型を作れます。
+      </p>
+
+      <h2>Partial&lt;T&gt;</h2>
+
+      <p>
+        すべてのプロパティを<strong>省略可能</strong>にします。
+      </p>
+
+      <div class="card">
+<pre><code>interface User {
+  name: string;
+  age: number;
+  email: string;
+}
+
+// すべて省略可能になる
+type PartialUser = Partial&lt;User&gt;;
+// {
+//   name?: string;
+//   age?: number;
+//   email?: string;
+// }
+
+// 更新処理でよく使う
+function updateUser(id: string, data: Partial&lt;User&gt;) {
+  // 一部のプロパティだけ更新できる
+}
+
+updateUser("123", { name: "田中" }); // OK</code></pre>
+      </div>
+
+      <h2>Required&lt;T&gt;</h2>
+
+      <p>
+        すべてのプロパティを<strong>必須</strong>にします。
+      </p>
+
+      <div class="card">
+<pre><code>interface Config {
+  debug?: boolean;
+  timeout?: number;
+}
+
+// すべて必須になる
+type RequiredConfig = Required&lt;Config&gt;;
+// {
+//   debug: boolean;
+//   timeout: number;
+// }</code></pre>
+      </div>
+
+      <h2>Pick&lt;T, K&gt;</h2>
+
+      <p>
+        指定したプロパティだけ<strong>抽出</strong>します。
+      </p>
+
+      <div class="card">
+<pre><code>interface User {
+  id: string;
+  name: string;
+  age: number;
+  email: string;
+}
+
+// name と email だけ抽出
+type UserContact = Pick&lt;User, "name" | "email"&gt;;
+// {
+//   name: string;
+//   email: string;
+// }</code></pre>
+      </div>
+
+      <h2>Omit&lt;T, K&gt;</h2>
+
+      <p>
+        指定したプロパティを<strong>除外</strong>します。
+      </p>
+
+      <div class="card">
+<pre><code>interface User {
+  id: string;
+  name: string;
+  age: number;
+  password: string;
+}
+
+// password を除外
+type PublicUser = Omit&lt;User, "password"&gt;;
+// {
+//   id: string;
+//   name: string;
+//   age: number;
+// }
+
+// APIレスポンスで機密情報を除く時に便利</code></pre>
+      </div>
+
+      <h2>Record&lt;K, V&gt;</h2>
+
+      <p>
+        キーと値の型を指定した<strong>オブジェクト型</strong>を作ります。
+      </p>
+
+      <div class="card">
+<pre><code>// キーがstring、値がnumberのオブジェクト
+type Scores = Record&lt;string, number&gt;;
+
+const scores: Scores = {
+  math: 90,
+  english: 85,
+  science: 92
+};
+
+// キーをリテラル型で限定
+type StatusColors = Record&lt;"success" | "error" | "warning", string&gt;;
+
+const colors: StatusColors = {
+  success: "green",
+  error: "red",
+  warning: "orange"
+};</code></pre>
+      </div>
+
+      <h2>まとめ：よく使うユーティリティ型</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✓</span>
+          覚えておくべき5つ
+        </div>
+        <ul>
+          <li><strong>Partial&lt;T&gt;</strong>: すべて省略可能に</li>
+          <li><strong>Required&lt;T&gt;</strong>: すべて必須に</li>
+          <li><strong>Pick&lt;T, K&gt;</strong>: 指定プロパティを抽出</li>
+          <li><strong>Omit&lt;T, K&gt;</strong>: 指定プロパティを除外</li>
+          <li><strong>Record&lt;K, V&gt;</strong>: キーと値の型を指定</li>
+        </ul>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎉</span>
+          Phase 1 完了！
+        </div>
+        <p style="margin:0;">
+          TypeScriptの基本的な型を学びました。<br>
+          次のPhase 2では<strong>React</strong>の基礎を学びます。<br>
+          TypeScriptの型は、Reactでコンポーネントを読む時に必須の知識です。
+        </p>
+      </div>
+
+      <div class="quiz" id="quiz-ts8-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 1
+        </div>
+        <p>すべてのプロパティを省略可能にするユーティリティ型は？</p>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts8-1" style="display:none;">
+          A. Partial
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts8-1" style="display:none;">
+          B. Required
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts8-1" style="display:none;">
+          C. Optional
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts8-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz" id="quiz-ts8-2">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ 2
+        </div>
+        <p>Omit&lt;User, "password"&gt; の意味は？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts8-2" style="display:none;">
+          A. passwordだけを持つ型
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-ts8-2" style="display:none;">
+          B. passwordを除いた型
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-ts8-2" style="display:none;">
+          C. passwordを必須にした型
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-ts8-2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('ts8')">
+        <span class="icon">✓</span>
+        Phase 1を完了
+      </button>
+    </section>
+
+    <!-- ============================================
+         Level 3 Phase 2: React基礎
+         ============================================ -->
+
+    <!-- react1: Reactとは -->

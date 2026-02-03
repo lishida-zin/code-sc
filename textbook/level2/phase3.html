@@ -1,0 +1,2071 @@
+<section id="async1">
+      <h1>16. 同期と非同期</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎯</span>
+          このレッスンで読めるようになること
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>同期処理と非同期処理の違いがわかる</li>
+          <li>なぜ非同期処理が必要なのか説明できる</li>
+          <li>ブロッキングとノンブロッキングを理解できる</li>
+        </ul>
+      </div>
+
+      <h2>同期処理とは？</h2>
+
+      <p>
+        <strong>同期処理（Synchronous）</strong>とは、<br>
+        <strong>「上から順番に、1つずつ実行する」</strong>処理方式です。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🍳</span>
+          たとえ話：料理で考える
+        </div>
+        <p>
+          <strong>同期処理 = 1品ずつ作る</strong>
+        </p>
+        <ol>
+          <li>ご飯を炊く（10分待つ）</li>
+          <li>炊き終わったら味噌汁を作る（5分待つ）</li>
+          <li>作り終わったら焼き魚を焼く（7分待つ）</li>
+        </ol>
+        <p>
+          合計：<strong>22分</strong>かかる
+        </p>
+      </div>
+
+      <pre><code>// 同期処理のコード例
+console.log('1番目');
+console.log('2番目');
+console.log('3番目');
+
+// 出力:
+// 1番目
+// 2番目
+// 3番目</code></pre>
+
+      <p>
+        同期処理では、前の行が<strong>完了するまで次の行に進みません</strong>。
+      </p>
+
+      <h2>非同期処理とは？</h2>
+
+      <p>
+        <strong>非同期処理（Asynchronous）</strong>とは、<br>
+        <strong>「待っている間に、別の処理を進める」</strong>方式です。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🍳</span>
+          たとえ話：効率的な料理
+        </div>
+        <p>
+          <strong>非同期処理 = 同時進行で作る</strong>
+        </p>
+        <ol>
+          <li>ご飯を炊飯器にセット（待たない！）</li>
+          <li>その間に味噌汁を作り始める</li>
+          <li>味噌汁を煮込む間に魚を焼き始める</li>
+        </ol>
+        <p>
+          合計：<strong>10分程度</strong>で完成！
+        </p>
+      </div>
+
+      <pre><code>// 非同期処理のコード例
+console.log('1番目');
+
+setTimeout(() => {
+  console.log('2番目（1秒後）');
+}, 1000);
+
+console.log('3番目');
+
+// 出力:
+// 1番目
+// 3番目      ← 先に出る！
+// 2番目（1秒後）  ← 後から出る</code></pre>
+
+      <h2>なぜ非同期処理が必要？</h2>
+
+      <p>
+        ブラウザは<strong>シングルスレッド</strong>（1つの処理しかできない）です。<br>
+        もし同期処理だけだと...
+      </p>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          同期処理だけの問題点
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>サーバーからデータ取得中 → 画面がフリーズ</li>
+          <li>大きなファイル読み込み中 → 操作不能</li>
+          <li>ユーザー体験が最悪になる</li>
+        </ul>
+      </div>
+
+      <h2>ブロッキングとノンブロッキング</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>用語</th>
+            <th>意味</th>
+            <th>例</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ブロッキング</strong></td>
+            <td>処理が終わるまで止まる</td>
+            <td>同期処理</td>
+          </tr>
+          <tr>
+            <td><strong>ノンブロッキング</strong></td>
+            <td>待たずに次に進む</td>
+            <td>非同期処理</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>JavaScriptの非同期処理の例</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>処理</th>
+            <th>用途</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>setTimeout</code></td>
+            <td>指定時間後に実行</td>
+          </tr>
+          <tr>
+            <td><code>fetch</code></td>
+            <td>サーバーからデータ取得</td>
+          </tr>
+          <tr>
+            <td><code>addEventListener</code></td>
+            <td>ユーザー操作を待つ</td>
+          </tr>
+          <tr>
+            <td>ファイル読み込み</td>
+            <td>ファイルを読む</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>イベントループ（超重要）</h2>
+
+      <p>
+        JavaScriptが非同期処理を実現する仕組みが<strong>イベントループ</strong>です。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🔄</span>
+          イベントループの動き（簡略版）
+        </div>
+        <ol style="margin-bottom:0;">
+          <li><strong>コールスタック</strong>で同期処理を実行</li>
+          <li>非同期処理は<strong>タスクキュー</strong>に登録される</li>
+          <li>コールスタックが<strong>空になったら</strong>キューから取り出して実行</li>
+        </ol>
+      </div>
+
+      <pre><code>console.log('1');        // → コールスタックで即実行
+
+setTimeout(() => {
+  console.log('2');      // → タスクキューに登録
+}, 0);
+
+console.log('3');        // → コールスタックで即実行
+
+// 結果: 1 → 3 → 2
+// 理由: 同期処理(1,3)が全部終わってからキュー(2)を実行</code></pre>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          覚えておくこと
+        </div>
+        <p style="margin:0;">
+          <strong>「同期処理が全部終わってから、非同期処理が実行される」</strong><br>
+          これがJavaScript非同期処理の基本原則です。
+        </p>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="async1-q1">
+        <p class="quiz-question">
+          <strong>クイズ：</strong>次のコードの出力順は？
+        </p>
+        <pre><code>console.log('A');
+setTimeout(() => console.log('B'), 0);
+console.log('C');</code></pre>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async1-q1" value="1">
+            <span>A → B → C</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async1-q1" value="2">
+            <span>A → C → B</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async1-q1" value="3">
+            <span>B → A → C</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async1-q1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async1-q1">
+          <strong>解説：</strong>setTimeoutは0ミリ秒でも非同期です。
+          JavaScriptは「同期処理をすべて終えてから非同期処理を実行」します。
+          だからA→C（同期）が先に出て、B（非同期）が最後になります。
+        </div>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><strong>同期</strong> = 上から順番に、1つずつ実行</li>
+          <li><strong>非同期</strong> = 待っている間に別の処理を進める</li>
+          <li>イベントループが「同期→非同期」の順序を管理</li>
+          <li>UIをブロックしないために非同期処理は必須</li>
+        </ul>
+      </div>
+
+      <h2>レビューで指摘すべきポイント</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          よくある問題
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>問題</th>
+              <th>指摘例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>重い処理を同期で実行</td>
+              <td>「非同期化してUIをブロックしないように」</td>
+            </tr>
+            <tr>
+              <td>非同期の順序を理解していない</td>
+              <td>「コールバックの実行順を確認」</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('async1')">
+        <span class="icon">✓</span> 完了してナビに戻る
+      </button>
+    </section>
+
+    <!-- async2: コールバック -->
+    <section id="async2">
+      <h1>17. コールバック</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎯</span>
+          このレッスンで読めるようになること
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>コールバック関数とは何かを説明できる</li>
+          <li>コールバック地獄を識別できる</li>
+          <li>なぜPromiseが生まれたか理解できる</li>
+        </ul>
+      </div>
+
+      <h2>コールバック関数とは？</h2>
+
+      <p>
+        <strong>コールバック（Callback）</strong>とは、<br>
+        <strong>「あとで呼び出してもらう関数」</strong>のことです。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">📞</span>
+          語源：Call Back = 折り返し電話
+        </div>
+        <p>
+          「処理が終わったら、この関数を呼んでね」と<br>
+          事前に関数を渡しておく仕組みです。
+        </p>
+      </div>
+
+      <pre><code>// コールバックの基本形
+function doSomething(callback) {
+  console.log('処理中...');
+  callback();  // 処理後にコールバックを呼ぶ
+}
+
+// 使い方
+doSomething(() => {
+  console.log('終わったよ！');
+});
+
+// 出力:
+// 処理中...
+// 終わったよ！</code></pre>
+
+      <h2>非同期処理とコールバック</h2>
+
+      <p>
+        非同期処理では、<strong>「終わったら何をするか」</strong>を<br>
+        コールバックで指定します。
+      </p>
+
+      <pre><code>// setTimeout のコールバック
+setTimeout(() => {
+  console.log('1秒経ちました');
+}, 1000);
+
+// addEventListener のコールバック
+button.addEventListener('click', () => {
+  console.log('クリックされました');
+});</code></pre>
+
+      <h2>コールバック地獄（Callback Hell）</h2>
+
+      <p>
+        非同期処理を連続で行うと、<br>
+        <strong>コールバックが入れ子になって読みにくくなります。</strong>
+      </p>
+
+      <pre><code>// ❌ コールバック地獄（読みにくい！）
+getUser(userId, (user) => {
+  getOrders(user.id, (orders) => {
+    getOrderDetails(orders[0].id, (details) => {
+      getPaymentInfo(details.paymentId, (payment) => {
+        console.log(payment);
+        // さらに深くなる...
+      });
+    });
+  });
+});</code></pre>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          コールバック地獄の問題点
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><strong>読みにくい</strong> - インデントが深くなる</li>
+          <li><strong>保守しにくい</strong> - 変更が困難</li>
+          <li><strong>エラー処理が複雑</strong> - 各階層で処理が必要</li>
+        </ul>
+      </div>
+
+      <h2>エラー処理の問題</h2>
+
+      <pre><code>// 各コールバックでエラー処理が必要
+getUser(userId, (error, user) => {
+  if (error) {
+    console.error('ユーザー取得失敗');
+    return;
+  }
+  getOrders(user.id, (error, orders) => {
+    if (error) {
+      console.error('注文取得失敗');
+      return;
+    }
+    // さらに続く...
+  });
+});</code></pre>
+
+      <p>
+        この問題を解決するために、<br>
+        <strong>Promise</strong>が生まれました。
+      </p>
+
+      <!-- クイズ -->
+      <div class="quiz" id="async2-q1">
+        <p class="quiz-question">
+          <strong>クイズ：</strong>コールバック地獄の最大の問題点は？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async2-q1" value="1">
+            <span>実行速度が遅くなる</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async2-q1" value="2">
+            <span>メモリを大量に消費する</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async2-q1" value="3">
+            <span>コードが読みにくく保守困難になる</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async2-q1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async2-q1">
+          <strong>解説：</strong>コールバック地獄は実行速度やメモリには影響しません。
+          問題は「人間が読みにくい」こと。深いインデント、エラー処理の分散、
+          流れの追いにくさが保守を困難にします。
+        </div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="async2-q2">
+        <p class="quiz-question">
+          <strong>クイズ2：</strong>コールバック地獄を解消する現代的な方法は？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async2-q2" value="1">
+            <span>関数を分割する</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async2-q2" value="2">
+            <span>Promise / async-await を使う</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async2-q2" value="3">
+            <span>コメントを増やす</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async2-q2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async2-q2">
+          <strong>解説：</strong>Promise/async-awaitを使うと、ネストなしで
+          非同期処理を順番に書けます。これがES2015以降の標準的な方法です。
+        </div>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><strong>コールバック</strong> = 「あとで呼んでね」と渡す関数</li>
+          <li>非同期処理の結果を受け取る古い方法</li>
+          <li>ネストが深くなると<strong>コールバック地獄</strong></li>
+          <li>この問題を解決するために<strong>Promise</strong>が生まれた</li>
+        </ul>
+      </div>
+
+      <h2>レビューで指摘すべきポイント</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          コールバック地獄を見つけたら
+        </div>
+        <p style="margin:0;">
+          <strong>指摘：</strong>「3段以上のネストはPromise/async-awaitで書き直すべき」
+        </p>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('async2')">
+        <span class="icon">✓</span> 完了してナビに戻る
+      </button>
+    </section>
+
+    <!-- async3: Promise基礎 -->
+    <section id="async3">
+      <h1>18. Promise基礎</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎯</span>
+          このレッスンで読めるようになること
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>Promiseとは何かを説明できる</li>
+          <li>then/catch/finallyの役割がわかる</li>
+          <li>Promiseの3つの状態を理解できる</li>
+        </ul>
+      </div>
+
+      <h2>Promiseとは？</h2>
+
+      <p>
+        <strong>Promise（プロミス）</strong>とは、<br>
+        <strong>「非同期処理の結果を約束するオブジェクト」</strong>です。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          語源：Promise = 約束
+        </div>
+        <p>
+          「今は結果がないけど、あとで必ず結果を返すよ」<br>
+          という<strong>約束</strong>を表すオブジェクトです。
+        </p>
+      </div>
+
+      <h2>Promiseの3つの状態</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>状態</th>
+            <th>意味</th>
+            <th>日本語</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>pending</strong></td>
+            <td>処理中（まだ結果がない）</td>
+            <td>保留中</td>
+          </tr>
+          <tr>
+            <td><strong>fulfilled</strong></td>
+            <td>成功（結果が得られた）</td>
+            <td>成功</td>
+          </tr>
+          <tr>
+            <td><strong>rejected</strong></td>
+            <td>失敗（エラーが発生）</td>
+            <td>拒否</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">📦</span>
+          たとえ話：通販の荷物追跡
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><strong>pending</strong> = 配送中</li>
+          <li><strong>fulfilled</strong> = 届いた！</li>
+          <li><strong>rejected</strong> = 配送失敗...</li>
+        </ul>
+      </div>
+
+      <h2>Promiseの基本構文</h2>
+
+      <pre><code>// Promiseを作る
+const promise = new Promise((resolve, reject) => {
+  // 非同期処理
+  const success = true;
+
+  if (success) {
+    resolve('成功しました');  // 成功時
+  } else {
+    reject('失敗しました');   // 失敗時
+  }
+});
+
+// Promiseを使う
+promise
+  .then(result => {
+    console.log(result);  // '成功しました'
+  })
+  .catch(error => {
+    console.log(error);   // '失敗しました'
+  });</code></pre>
+
+      <h2>then / catch / finally</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>メソッド</th>
+            <th>呼ばれるタイミング</th>
+            <th>用途</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>.then()</code></td>
+            <td>成功時（fulfilled）</td>
+            <td>結果を受け取る</td>
+          </tr>
+          <tr>
+            <td><code>.catch()</code></td>
+            <td>失敗時（rejected）</td>
+            <td>エラーを処理</td>
+          </tr>
+          <tr>
+            <td><code>.finally()</code></td>
+            <td>成功でも失敗でも</td>
+            <td>後片付け</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <pre><code>fetch('/api/user')
+  .then(response => {
+    console.log('成功:', response);
+  })
+  .catch(error => {
+    console.log('失敗:', error);
+  })
+  .finally(() => {
+    console.log('ローディング終了');
+  });</code></pre>
+
+      <h2>すぐにPromiseを作るショートカット</h2>
+
+      <p>
+        テストやシンプルな処理では、すぐに解決/拒否するPromiseが便利です。
+      </p>
+
+      <pre><code>// すぐに成功するPromise
+const success = Promise.resolve('成功！');
+success.then(msg => console.log(msg));  // '成功！'
+
+// すぐに失敗するPromise
+const fail = Promise.reject('失敗...');
+fail.catch(err => console.log(err));  // '失敗...'
+
+// new Promiseを使わなくてOK
+// これと同じ:
+// new Promise(resolve => resolve('成功！'))</code></pre>
+
+      <h2>コールバック地獄との比較</h2>
+
+      <pre><code>// ❌ コールバック地獄
+getUser(id, (user) => {
+  getOrders(user.id, (orders) => {
+    getDetails(orders[0].id, (details) => {
+      console.log(details);
+    });
+  });
+});
+
+// ⭕ Promiseで書き直し
+getUser(id)
+  .then(user => getOrders(user.id))
+  .then(orders => getDetails(orders[0].id))
+  .then(details => console.log(details))
+  .catch(error => console.error(error));</code></pre>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>Promiseは「あとで結果を返す約束」</li>
+          <li>状態は <code>pending</code> → <code>fulfilled</code> or <code>rejected</code></li>
+          <li><code>.then()</code>で成功、<code>.catch()</code>で失敗を処理</li>
+          <li><code>.finally()</code>は成功でも失敗でも実行</li>
+        </ul>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="async3-q1">
+        <p class="quiz-question">
+          <strong>クイズ：</strong>Promiseの状態として<strong>存在しない</strong>のは？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async3-q1" value="1">
+            <span>pending</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async3-q1" value="2">
+            <span>fulfilled</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async3-q1" value="3">
+            <span>cancelled</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async3-q1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async3-q1">
+          <strong>解説：</strong>Promiseの状態はpending/fulfilled/rejectedの3つだけ。
+          「cancelled」は存在しません。実は標準のPromiseはキャンセルできません。
+          これはPromiseの設計上の制限として知られています。
+        </div>
+      </div>
+
+      <h2>レビューで指摘すべきポイント</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          よくある問題
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>問題</th>
+              <th>指摘例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>.catch() がない</td>
+              <td>「エラーハンドリングを追加すべき」</td>
+            </tr>
+            <tr>
+              <td>Promiseを返さない</td>
+              <td>「return がないとチェーンが切れる」</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('async3')">
+        <span class="icon">✓</span> 完了してナビに戻る
+      </button>
+    </section>
+
+    <!-- async4: Promiseチェーン -->
+    <section id="async4">
+      <h1>19. Promiseチェーン</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎯</span>
+          このレッスンで読めるようになること
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>Promiseチェーンの流れを追える</li>
+          <li>thenの戻り値がどう伝わるか理解できる</li>
+          <li>エラーがどこでキャッチされるか把握できる</li>
+        </ul>
+      </div>
+
+      <h2>Promiseチェーンとは？</h2>
+
+      <p>
+        <code>.then()</code>は<strong>新しいPromiseを返す</strong>ので、<br>
+        連続して繋げることができます。これが<strong>チェーン</strong>です。
+      </p>
+
+      <pre><code>// 基本のチェーン
+Promise.resolve(1)
+  .then(x => x + 1)   // 2
+  .then(x => x * 2)   // 4
+  .then(x => console.log(x));  // 4</code></pre>
+
+      <h2>チェーンの流れを追う</h2>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🔗</span>
+          チェーンのルール
+        </div>
+        <ol style="margin-bottom:0;">
+          <li>前の<code>.then()</code>の<strong>戻り値</strong>が次の引数になる</li>
+          <li>Promiseを返すと、それが<strong>解決されてから</strong>次に進む</li>
+          <li>エラーが起きると<code>.catch()</code>まで<strong>スキップ</strong></li>
+        </ol>
+      </div>
+
+      <pre><code>// 実践的な例
+fetch('/api/user')
+  .then(response => response.json())   // JSONに変換
+  .then(user => fetch(`/api/orders/${user.id}`))  // 次のリクエスト
+  .then(response => response.json())
+  .then(orders => console.log(orders))
+  .catch(error => console.error(error));</code></pre>
+
+      <h2>よくある間違い：returnを忘れる</h2>
+
+      <pre><code>// ❌ return がない → undefined が渡る
+fetch('/api/user')
+  .then(response => {
+    response.json();  // return がない！
+  })
+  .then(data => {
+    console.log(data);  // undefined
+  });
+
+// ⭕ 正しい
+fetch('/api/user')
+  .then(response => {
+    return response.json();  // return が必要
+  })
+  .then(data => {
+    console.log(data);  // 正しいデータ
+  });
+
+// ⭕ アロー関数なら省略可
+fetch('/api/user')
+  .then(response => response.json())  // 暗黙のreturn
+  .then(data => console.log(data));</code></pre>
+
+      <h2>エラーの伝播</h2>
+
+      <pre><code>// エラーは.catch()まで伝播する
+Promise.resolve()
+  .then(() => {
+    throw new Error('エラー発生！');
+  })
+  .then(() => {
+    console.log('ここは実行されない');
+  })
+  .then(() => {
+    console.log('ここも実行されない');
+  })
+  .catch(error => {
+    console.log('キャッチ:', error.message);
+  });</code></pre>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          ポイント
+        </div>
+        <p style="margin:0;">
+          エラーが発生すると、途中の<code>.then()</code>は<strong>すべてスキップ</strong>され、<br>
+          最初の<code>.catch()</code>に到達します。
+        </p>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="async4-q1">
+        <p class="quiz-question">
+          <strong>クイズ：</strong>次のコードの出力は？
+        </p>
+        <pre><code>Promise.resolve(10)
+  .then(x => x * 2)
+  .then(x => { x + 5; })  // ここに注目
+  .then(x => console.log(x));</code></pre>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async4-q1" value="1">
+            <span>25</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async4-q1" value="2">
+            <span>20</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async4-q1" value="3">
+            <span>undefined</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async4-q1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async4-q1">
+          <strong>解説：</strong><code>{ x + 5; }</code>は波括弧があるので、
+          returnがないと戻り値はundefinedになります。
+          <code>x => x + 5</code>（括弧なし）なら25ですが、
+          <code>x => { x + 5; }</code>（波括弧あり）は明示的なreturnが必要です。
+        </div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="async4-q2">
+        <p class="quiz-question">
+          <strong>クイズ2：</strong>Promiseチェーンでエラーが発生した場合、どこまで伝播する？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async4-q2" value="1">
+            <span>次の.then()で止まる</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async4-q2" value="2">
+            <span>.catch()まで伝播する</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async4-q2" value="3">
+            <span>すべての.then()を実行してから.catch()</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async4-q2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async4-q2">
+          <strong>解説：</strong>Promiseチェーンでエラーが発生すると、
+          途中の.then()をスキップして.catch()まで一気に伝播します。
+          これがPromiseのエラー伝播の仕組みです。
+        </div>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><code>.then()</code>は新しいPromiseを返す → チェーン可能</li>
+          <li>前の<code>.then()</code>の戻り値が次の引数になる</li>
+          <li><strong>returnを忘れるとundefinedが伝わる</strong>（超重要）</li>
+          <li>エラーは<code>.catch()</code>までスキップして伝播</li>
+        </ul>
+      </div>
+
+      <h2>レビューで指摘すべきポイント</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          よくある問題
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>問題</th>
+              <th>指摘例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>thenでreturn忘れ</td>
+              <td>「returnがないとundefinedが伝わる」</td>
+            </tr>
+            <tr>
+              <td>チェーンの途中でcatch</td>
+              <td>「catchの位置でエラー処理範囲が変わる」</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('async4')">
+        <span class="icon">✓</span> 完了してナビに戻る
+      </button>
+    </section>
+
+    <!-- async5: async/await -->
+    <section id="async5">
+      <h1>20. async/await</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎯</span>
+          このレッスンで読めるようになること
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>async/awaitの構文を読める</li>
+          <li>Promiseとの関係を理解できる</li>
+          <li><strong>await忘れ</strong>のバグを見抜ける</li>
+        </ul>
+      </div>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          最重要セクション
+        </div>
+        <p style="margin:0;">
+          async/awaitは2026年最もバグが多い領域です。<br>
+          このセクションは特に集中して学んでください。
+        </p>
+      </div>
+
+      <h2>async/awaitとは？</h2>
+
+      <p>
+        <strong>async/await</strong>は、<br>
+        <strong>「Promiseを同期処理のように書ける」</strong>構文です。
+      </p>
+
+      <pre><code>// Promiseチェーン
+fetch('/api/user')
+  .then(response => response.json())
+  .then(user => console.log(user));
+
+// ⭕ async/await（同じ処理）
+async function getUser() {
+  const response = await fetch('/api/user');
+  const user = await response.json();
+  console.log(user);
+}</code></pre>
+
+      <h2>async関数の特徴</h2>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          asyncのルール
+        </div>
+        <ol style="margin-bottom:0;">
+          <li>関数の前に<code>async</code>をつける</li>
+          <li>async関数は<strong>常にPromiseを返す</strong></li>
+          <li>async関数の中でだけ<code>await</code>が使える</li>
+        </ol>
+      </div>
+
+      <pre><code>// async関数は常にPromiseを返す
+async function hello() {
+  return 'Hello';
+}
+
+// 以下と同じ
+function hello() {
+  return Promise.resolve('Hello');
+}
+
+// だから.then()で受け取れる
+hello().then(msg => console.log(msg));  // 'Hello'</code></pre>
+
+      <h2>awaitの動作</h2>
+
+      <p>
+        <code>await</code>は<strong>Promiseが解決するまで待つ</strong>キーワードです。
+      </p>
+
+      <pre><code>async function example() {
+  console.log('1. 開始');
+
+  const result = await someAsyncTask();  // ここで一時停止
+
+  console.log('2. 完了:', result);  // Promiseが解決してから実行
+}</code></pre>
+
+      <h2>⚠️ 致命的バグ：await忘れ</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          最も多いバグ
+        </div>
+        <p style="margin:0;">
+          awaitを忘れると、<strong>Promiseオブジェクト自体</strong>が変数に入ります。
+        </p>
+      </div>
+
+      <pre><code>async function getUser() {
+  // ❌ awaitを忘れた
+  const user = fetchUser();
+  console.log(user.name);  // undefined（userはPromise）
+
+  // ⭕ 正しい
+  const user = await fetchUser();
+  console.log(user.name);  // "太郎"
+}</code></pre>
+
+      <h2>⚠️ 致命的バグ：forEach + async</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          絶対に覚えるべきバグ
+        </div>
+        <p style="margin:0;">
+          <code>forEach</code>の中で<code>await</code>を使っても<strong>待ってくれません</strong>。
+        </p>
+      </div>
+
+      <pre><code>// ❌ forEachは待たない！
+async function processItems(items) {
+  items.forEach(async (item) => {
+    await processItem(item);  // 待たない！
+  });
+  console.log('完了');  // 処理中に出力される
+}
+
+// ⭕ for...of を使う
+async function processItems(items) {
+  for (const item of items) {
+    await processItem(item);  // ちゃんと待つ
+  }
+  console.log('完了');  // 全部終わってから出力
+}
+
+// ⭕ 並列で実行したいなら
+async function processItems(items) {
+  await Promise.all(items.map(item => processItem(item)));
+  console.log('完了');
+}</code></pre>
+
+      <!-- クイズ1 -->
+      <div class="quiz" id="async5-q1">
+        <p class="quiz-question">
+          <strong>クイズ1：</strong>次のコードの問題点は？
+        </p>
+        <pre><code>async function getData() {
+  const response = fetch('/api/data');
+  const data = response.json();
+  return data;
+}</code></pre>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async5-q1" value="1">
+            <span>問題なし</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async5-q1" value="2">
+            <span>awaitが2箇所足りない</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async5-q1" value="3">
+            <span>asyncが不要</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async5-q1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async5-q1">
+          <strong>解説：</strong><code>fetch()</code>も<code>.json()</code>も
+          Promiseを返すので、両方にawaitが必要です。
+          awaitがないと、responseはPromiseオブジェクト、
+          <code>Promise.json()</code>はエラーになります。
+        </div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="async5-q2">
+        <p class="quiz-question">
+          <strong>クイズ2：</strong>配列の各要素を順番に処理したい。正しいのは？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async5-q2" value="1">
+            <span>items.forEach(async (item) => await process(item))</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async5-q2" value="2">
+            <span>for (const item of items) await process(item)</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async5-q2" value="3">
+            <span>items.map(item => process(item))</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async5-q2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async5-q2">
+          <strong>解説：</strong>forEachはawaitを待ちません（コールバックを同期的に呼ぶだけ）。
+          <code>for...of</code>ならawaitが正しく動作します。
+          mapはPromise配列を返すだけで、awaitがありません。
+        </div>
+      </div>
+
+      <!-- クイズ3 -->
+      <div class="quiz" id="async5-q3">
+        <p class="quiz-question">
+          <strong>クイズ3：</strong>async関数の戻り値は？
+        </p>
+        <pre><code>async function test() {
+  return 42;
+}</code></pre>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async5-q3" value="1">
+            <span>42（数値）</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async5-q3" value="2">
+            <span>Promise（42で解決される）</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async5-q3" value="3">
+            <span>undefined</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async5-q3')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async5-q3">
+          <strong>解説：</strong>async関数は<strong>常にPromiseを返します</strong>。
+          <code>return 42</code>は<code>return Promise.resolve(42)</code>と同じです。
+          だから<code>test().then(n => ...)</code>で受け取ります。
+        </div>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><code>async</code>関数は常にPromiseを返す</li>
+          <li><code>await</code>はPromiseが解決するまで待つ</li>
+          <li><strong>await忘れ</strong> = Promiseオブジェクトがそのまま使われる（最頻出バグ）</li>
+          <li><strong>forEach + async</strong> = 待たない（for...ofを使う）</li>
+        </ul>
+      </div>
+
+      <h2>レビューで指摘すべきポイント</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          最高危険度の問題
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>問題</th>
+              <th>指摘例</th>
+              <th>危険度</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>await忘れ</td>
+              <td>「awaitが必要。Promiseがそのまま使われている」</td>
+              <td>🔴最高</td>
+            </tr>
+            <tr>
+              <td>forEach + async</td>
+              <td>「forEachはawaitを待たない。for...ofを使うべき」</td>
+              <td>🔴最高</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('async5')">
+        <span class="icon">✓</span> 完了してナビに戻る
+      </button>
+    </section>
+
+    <!-- async6: エラーハンドリング -->
+    <section id="async6">
+      <h1>21. エラーハンドリング</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎯</span>
+          このレッスンで読めるようになること
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>try/catch/finallyの使い方がわかる</li>
+          <li>非同期処理でのエラー処理を理解できる</li>
+          <li>エラーハンドリング漏れを指摘できる</li>
+        </ul>
+      </div>
+
+      <h2>なぜエラーハンドリングが重要？</h2>
+
+      <p>
+        非同期処理は<strong>失敗する可能性が高い</strong>です。
+      </p>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          失敗する原因
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>ネットワークエラー（サーバーに繋がらない）</li>
+          <li>タイムアウト（応答が遅い）</li>
+          <li>サーバーエラー（500エラー）</li>
+          <li>認証エラー（ログイン切れ）</li>
+        </ul>
+      </div>
+
+      <h2>try/catch/finally</h2>
+
+      <pre><code>async function fetchData() {
+  try {
+    // 成功するかもしれない処理
+    const response = await fetch('/api/data');
+    const data = await response.json();
+    return data;
+
+  } catch (error) {
+    // エラーが起きたら実行
+    console.error('エラー:', error.message);
+    return null;
+
+  } finally {
+    // 成功でも失敗でも必ず実行
+    console.log('処理終了');
+  }
+}</code></pre>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ブロック</th>
+            <th>実行タイミング</th>
+            <th>用途</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>try</code></td>
+            <td>最初に実行</td>
+            <td>メイン処理</td>
+          </tr>
+          <tr>
+            <td><code>catch</code></td>
+            <td>エラー時のみ</td>
+            <td>エラー処理</td>
+          </tr>
+          <tr>
+            <td><code>finally</code></td>
+            <td>必ず最後に</td>
+            <td>後片付け</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>finallyの使いどころ</h2>
+
+      <pre><code>async function loadData() {
+  const loading = document.getElementById('loading');
+  loading.style.display = 'block';  // ローディング表示
+
+  try {
+    const data = await fetchData();
+    displayData(data);
+  } catch (error) {
+    showError(error);
+  } finally {
+    // 成功でも失敗でもローディングを消す
+    loading.style.display = 'none';
+  }
+}</code></pre>
+
+      <h2>❌ よくある間違い</h2>
+
+      <pre><code>// ❌ try/catch がない
+async function getData() {
+  const response = await fetch('/api/data');  // エラーで落ちる
+  return response.json();
+}
+
+// ❌ catchで何もしない
+async function getData() {
+  try {
+    const response = await fetch('/api/data');
+    return response.json();
+  } catch (error) {
+    // 何もしない → 問題が隠れる
+  }
+}
+
+// ⭕ 適切なエラー処理
+async function getData() {
+  try {
+    const response = await fetch('/api/data');
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error('データ取得失敗:', error);
+    throw error;  // 上位に伝播させる or 代替値を返す
+  }
+}</code></pre>
+
+      <h2>エラーの再スロー</h2>
+
+      <pre><code>async function processData() {
+  try {
+    const data = await fetchData();
+    return transform(data);
+  } catch (error) {
+    // ログを残して再スロー
+    console.error('processData failed:', error);
+    throw error;  // 呼び出し元でも処理できる
+  }
+}</code></pre>
+
+      <h2>errorオブジェクトの構造</h2>
+
+      <p>
+        catchで受け取る<code>error</code>には便利なプロパティがあります。
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>プロパティ</th>
+            <th>内容</th>
+            <th>例</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>error.message</code></td>
+            <td>エラーメッセージ</td>
+            <td>"Failed to fetch"</td>
+          </tr>
+          <tr>
+            <td><code>error.name</code></td>
+            <td>エラーの種類</td>
+            <td>"TypeError"</td>
+          </tr>
+          <tr>
+            <td><code>error.stack</code></td>
+            <td>発生場所の追跡情報</td>
+            <td>デバッグ用</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <pre><code>try {
+  await fetch('/api/data');
+} catch (error) {
+  console.log(error.name);     // "TypeError"
+  console.log(error.message);  // "Failed to fetch"
+  console.log(error.stack);    // 詳細なスタックトレース
+}</code></pre>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><code>try</code>で危険な処理を囲む</li>
+          <li><code>catch</code>でエラーを適切に処理（握り潰さない）</li>
+          <li><code>finally</code>でクリーンアップ（ローディング解除など）</li>
+          <li>必要に応じて<code>throw</code>で再スロー</li>
+        </ul>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="async6-q1">
+        <p class="quiz-question">
+          <strong>クイズ：</strong>finallyブロックが実行されるのは？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async6-q1" value="1">
+            <span>tryが成功した時だけ</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async6-q1" value="2">
+            <span>catchが実行された時だけ</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async6-q1" value="3">
+            <span>成功でも失敗でも必ず</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async6-q1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async6-q1">
+          <strong>解説：</strong>finallyは「最終的に」という意味。
+          tryが成功してもcatchが実行されても、<strong>必ず最後に実行</strong>されます。
+          ローディング表示の解除やリソースの解放に使います。
+        </div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="async6-q2">
+        <p class="quiz-question">
+          <strong>クイズ2：</strong>このコードの問題点は？
+          <pre><code>try {
+  const data = await fetchData();
+} catch (error) {
+  // 何もしない
+}</code></pre>
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async6-q2" value="1">
+            <span>問題なし</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async6-q2" value="2">
+            <span>エラーを握り潰している</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async6-q2" value="3">
+            <span>finallyがない</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async6-q2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async6-q2">
+          <strong>解説：</strong>catchで何もしないと、エラーが「握り潰され」ます。
+          バグの原因がわからなくなるため、最低限console.errorでログ出力するか、
+          必要に応じてthrowで再スローすべきです。
+        </div>
+      </div>
+
+      <h2>レビューで指摘すべきポイント</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          よくある問題
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>問題</th>
+              <th>指摘例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>try/catchがない</td>
+              <td>「エラーハンドリングが必要」</td>
+            </tr>
+            <tr>
+              <td>catchで握り潰し</td>
+              <td>「エラーを隠さずログ出力 or 再スローすべき」</td>
+            </tr>
+            <tr>
+              <td>finallyがない</td>
+              <td>「リソース解放にfinallyを使うべき」</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('async6')">
+        <span class="icon">✓</span> 完了してナビに戻る
+      </button>
+    </section>
+
+    <!-- async7: 並列・直列実行 -->
+    <section id="async7">
+      <h1>22. 並列・直列実行</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎯</span>
+          このレッスンで読めるようになること
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>Promise.all / allSettled / race を読める</li>
+          <li>並列と直列の違いを理解できる</li>
+          <li>不要な直列実行を指摘できる</li>
+        </ul>
+      </div>
+
+      <h2>直列 vs 並列</h2>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🍳</span>
+          たとえ話：朝食を作る
+        </div>
+        <p>
+          <strong>直列</strong> = トースト焼く → 卵焼く → コーヒー淹れる（順番に）<br>
+          <strong>並列</strong> = 3つ同時に進行！
+        </p>
+      </div>
+
+      <pre><code>// ❌ 直列（遅い）- 1つずつ待つ
+async function slow() {
+  const user = await fetchUser();      // 1秒
+  const orders = await fetchOrders();  // 1秒
+  const products = await fetchProducts(); // 1秒
+  // 合計: 3秒
+}
+
+// ⭕ 並列（速い）- 同時に実行
+async function fast() {
+  const [user, orders, products] = await Promise.all([
+    fetchUser(),      // 同時に開始
+    fetchOrders(),    // 同時に開始
+    fetchProducts()   // 同時に開始
+  ]);
+  // 合計: 1秒（最も遅い処理の時間）
+}</code></pre>
+
+      <h2>Promise.all</h2>
+
+      <p>
+        <strong>すべてのPromiseが成功</strong>したら、結果の配列を返します。<br>
+        <strong>1つでも失敗</strong>したら、即座にrejectされます。
+      </p>
+
+      <pre><code>// 全部成功 → 結果の配列
+const results = await Promise.all([
+  Promise.resolve(1),
+  Promise.resolve(2),
+  Promise.resolve(3)
+]);
+console.log(results);  // [1, 2, 3]
+
+// 1つでも失敗 → 即座にエラー
+await Promise.all([
+  Promise.resolve(1),
+  Promise.reject('失敗'),
+  Promise.resolve(3)
+]);  // Error: 失敗</code></pre>
+
+      <h2>Promise.allSettled</h2>
+
+      <p>
+        <strong>すべてのPromiseが完了</strong>するまで待ちます。<br>
+        成功・失敗の<strong>両方の結果</strong>を取得できます。
+      </p>
+
+      <pre><code>const results = await Promise.allSettled([
+  Promise.resolve('成功1'),
+  Promise.reject('失敗'),
+  Promise.resolve('成功2')
+]);
+
+console.log(results);
+// [
+//   { status: 'fulfilled', value: '成功1' },
+//   { status: 'rejected', reason: '失敗' },
+//   { status: 'fulfilled', value: '成功2' }
+// ]</code></pre>
+
+      <h2>Promise.race</h2>
+
+      <p>
+        <strong>最初に完了した</strong>Promiseの結果を返します。
+      </p>
+
+      <pre><code>// タイムアウト実装の例
+const result = await Promise.race([
+  fetch('/api/data'),
+  new Promise((_, reject) =>
+    setTimeout(() => reject('タイムアウト'), 5000)
+  )
+]);</code></pre>
+
+      <h2>使い分け早見表</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>メソッド</th>
+            <th>動作</th>
+            <th>使いどころ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>Promise.all</code></td>
+            <td>全成功 or 1つ失敗で終了</td>
+            <td>全部必要な時</td>
+          </tr>
+          <tr>
+            <td><code>Promise.allSettled</code></td>
+            <td>全完了まで待つ</td>
+            <td>失敗も知りたい時</td>
+          </tr>
+          <tr>
+            <td><code>Promise.race</code></td>
+            <td>最初の1つで終了</td>
+            <td>タイムアウト実装</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>直列が正しい場合もある</h2>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          注意：何でも並列化すればいいわけではない
+        </div>
+        <p style="margin:0;">
+          <strong>依存関係がある場合</strong>は直列が正しい選択です。
+        </p>
+      </div>
+
+      <pre><code>// ⭕ 直列が正しい例（依存関係あり）
+async function checkout() {
+  // 1. まずユーザー情報を取得
+  const user = await getUser();
+
+  // 2. ユーザーIDを使って注文を作成（依存！）
+  const order = await createOrder(user.id);
+
+  // 3. 注文IDを使って支払い処理（依存！）
+  const payment = await processPayment(order.id);
+
+  return payment;
+}
+
+// ❌ 間違い：依存関係があるのに並列化
+// createOrderにはuser.idが必要なので、
+// Promise.allにはできない！</code></pre>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>依存関係がない → <code>Promise.all</code>で並列化</li>
+          <li>依存関係がある → 直列（await を連続）</li>
+          <li>失敗しても続けたい → <code>Promise.allSettled</code></li>
+          <li>最速の1つでOK → <code>Promise.race</code></li>
+        </ul>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="async7-q1">
+        <p class="quiz-question">
+          <strong>クイズ：</strong>次のコードの問題点は？
+        </p>
+        <pre><code>async function getData() {
+  const user = await fetchUser();
+  const posts = await fetchPosts();
+  const comments = await fetchComments();
+  return { user, posts, comments };
+}</code></pre>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async7-q1" value="1">
+            <span>問題なし</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async7-q1" value="2">
+            <span>try/catchがない</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async7-q1" value="3">
+            <span>不要な直列実行（Promise.allで並列化すべき）</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async7-q1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async7-q1">
+          <strong>解説：</strong>3つの処理に依存関係がないなら、
+          直列に待つ必要はありません。Promise.allで並列実行すれば、
+          3倍速くなる可能性があります。パフォーマンスレビューで必ず指摘すべき点です。
+        </div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="async7-q2">
+        <p class="quiz-question">
+          <strong>クイズ2：</strong>Promise.all と Promise.allSettled の違いは？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async7-q2" value="1">
+            <span>違いはない</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async7-q2" value="2">
+            <span>allは1つでも失敗すると即エラー、allSettledは全結果を返す</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async7-q2" value="3">
+            <span>allSettledは速い</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async7-q2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async7-q2">
+          <strong>解説：</strong>Promise.allは1つでも失敗すると即座にrejectされます。
+          一方、Promise.allSettledは全Promiseが完了するのを待ち、
+          成功・失敗の両方を含む結果配列を返します。用途に応じて使い分けましょう。
+        </div>
+      </div>
+
+      <h2>レビューで指摘すべきポイント</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          よくある問題
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>問題</th>
+              <th>指摘例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>不要な直列実行</td>
+              <td>「依存関係がないならPromise.allで並列化すべき」</td>
+            </tr>
+            <tr>
+              <td>Promise.allで部分失敗</td>
+              <td>「allSettledで全結果を取得すべきかも」</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('async7')">
+        <span class="icon">✓</span> 完了してナビに戻る
+      </button>
+    </section>
+
+    <!-- async8: Fetch API -->
+    <section id="async8">
+      <h1>23. Fetch API</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🎯</span>
+          このレッスンで読めるようになること
+        </div>
+        <ul style="margin-bottom:0;">
+          <li>fetch()の基本的な使い方を読める</li>
+          <li>HTTPメソッド（GET/POST）を理解できる</li>
+          <li>レスポンスの処理方法がわかる</li>
+        </ul>
+      </div>
+
+      <h2>Fetch APIとは？</h2>
+
+      <p>
+        <strong>Fetch API</strong>は、<br>
+        <strong>サーバーとHTTP通信するためのAPI</strong>です。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">📮</span>
+          たとえ話：郵便局
+        </div>
+        <p style="margin:0;">
+          <strong>fetch</strong> = 手紙を送って、返事を待つ<br>
+          ブラウザからサーバーに「リクエスト」を送り、「レスポンス」を受け取ります。
+        </p>
+      </div>
+
+      <h2>基本的なGETリクエスト</h2>
+
+      <pre><code>// 最もシンプルな形
+const response = await fetch('/api/users');
+const users = await response.json();
+console.log(users);</code></pre>
+
+      <h2>fetchの2段階処理</h2>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          重要：2回awaitが必要
+        </div>
+        <ol style="margin-bottom:0;">
+          <li><code>await fetch()</code> → Responseオブジェクトを取得</li>
+          <li><code>await response.json()</code> → 本文をJSONに変換</li>
+        </ol>
+      </div>
+
+      <pre><code>// ❌ よくある間違い
+const data = await fetch('/api/users');  // これはResponseオブジェクト
+console.log(data.name);  // undefined
+
+// ⭕ 正しい
+const response = await fetch('/api/users');
+const data = await response.json();  // JSONに変換
+console.log(data.name);  // "太郎"</code></pre>
+
+      <h2>POSTリクエスト</h2>
+
+      <pre><code>const response = await fetch('/api/users', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: '太郎',
+    email: 'taro@example.com'
+  })
+});
+
+const result = await response.json();</code></pre>
+
+      <h2>HTTPメソッド一覧</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>メソッド</th>
+            <th>用途</th>
+            <th>例</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>GET</code></td>
+            <td>データ取得</td>
+            <td>ユーザー一覧を取得</td>
+          </tr>
+          <tr>
+            <td><code>POST</code></td>
+            <td>新規作成</td>
+            <td>ユーザーを登録</td>
+          </tr>
+          <tr>
+            <td><code>PUT</code></td>
+            <td>全体更新</td>
+            <td>ユーザー情報を更新</td>
+          </tr>
+          <tr>
+            <td><code>PATCH</code></td>
+            <td>部分更新</td>
+            <td>名前だけ変更</td>
+          </tr>
+          <tr>
+            <td><code>DELETE</code></td>
+            <td>削除</td>
+            <td>ユーザーを削除</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>レスポンスのチェック</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          超重要：fetchはHTTPエラーでスローしない！
+        </div>
+        <p style="margin:0;">
+          <code>fetch()</code>は<strong>404や500でもエラーを投げません</strong>。<br>
+          エラーになるのは<strong>ネットワーク障害</strong>の時だけです。
+        </p>
+      </div>
+
+      <pre><code>// ❌ これだけでは不十分！
+try {
+  const response = await fetch('/api/not-found');
+  const data = await response.json();  // 404でもここに来る！
+} catch (error) {
+  // ネットワークエラーのみキャッチ
+  // 404, 500などはキャッチされない！
+}
+
+// ⭕ 正しいエラーチェック
+const response = await fetch('/api/users');
+
+if (!response.ok) {
+  // 400番台、500番台のエラー
+  throw new Error(`HTTP error: ${response.status}`);
+}
+
+const data = await response.json();</code></pre>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          response.okとは
+        </div>
+        <p style="margin:0;">
+          <code>response.ok</code>は、ステータスコードが<strong>200-299</strong>の場合にtrue。<br>
+          404や500の場合はfalseなので、<strong>必ずチェック</strong>しましょう。
+        </p>
+      </div>
+
+      <h2>完全なエラーハンドリング例</h2>
+
+      <pre><code>async function fetchUsers() {
+  try {
+    const response = await fetch('/api/users');
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+
+    const users = await response.json();
+    return users;
+
+  } catch (error) {
+    if (error.name === 'TypeError') {
+      // ネットワークエラー
+      console.error('ネットワークに接続できません');
+    } else {
+      console.error('エラー:', error.message);
+    }
+    return [];
+  }
+}</code></pre>
+
+      <!-- クイズ -->
+      <div class="quiz" id="async8-q1">
+        <p class="quiz-question">
+          <strong>クイズ：</strong>fetch()のレスポンスでJSONを取得するには？
+        </p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="async8-q1" value="1">
+            <span>response.data</span>
+          </label>
+          <label class="quiz-option" data-correct="true">
+            <input type="radio" name="async8-q1" value="2">
+            <span>await response.json()</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="async8-q1" value="3">
+            <span>JSON.parse(response)</span>
+          </label>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('async8-q1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+        <div class="quiz-explanation" data-explanation="async8-q1">
+          <strong>解説：</strong><code>response.json()</code>はPromiseを返すので、
+          awaitが必要です。<code>response.data</code>は存在せず、
+          <code>JSON.parse()</code>はResponseオブジェクトには使えません。
+        </div>
+      </div>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📝</span>
+          まとめ
+        </div>
+        <ul style="margin-bottom:0;">
+          <li><code>fetch()</code>はPromiseを返す（2回awaitが必要）</li>
+          <li><strong>HTTPエラー(404,500)ではスローしない</strong> → <code>response.ok</code>をチェック</li>
+          <li>ネットワークエラーはtry/catchでキャッチ</li>
+          <li>POSTは<code>method</code>, <code>headers</code>, <code>body</code>を指定</li>
+        </ul>
+      </div>
+
+      <h2>レビューで指摘すべきポイント</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">🔴</span>
+          よくある問題
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>問題</th>
+              <th>指摘例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>response.okのチェックなし</td>
+              <td>「fetchはHTTPエラーでスローしない。okチェック必須」</td>
+            </tr>
+            <tr>
+              <td>.json()のawait忘れ</td>
+              <td>「Promiseが返る。awaitが必要」</td>
+            </tr>
+            <tr>
+              <td>try/catchなし</td>
+              <td>「ネットワークエラーのハンドリングが必要」</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card card-success" style="margin-top:40px;">
+        <div class="card-title">
+          <span class="icon">🎉</span>
+          Phase 3 完了！
+        </div>
+        <p style="margin:0;">
+          非同期処理の基礎を学び終えました！<br>
+          これでJavaScriptの「最もバグが多い領域」を理解できました。
+        </p>
+        <p style="margin:0;">
+          次のPhase 4では<strong>モダンJS・実践</strong>を学びます。<br>
+          分割代入、スプレッド構文、モジュール、クロージャなど。
+        </p>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('async8')">
+        <span class="icon">✓</span> 完了してナビに戻る
+      </button>
+    </section>
+
+    <!-- ============================================
+         Phase 4: モダンJS・実践
+         ============================================ -->
+
+    <!-- modern1: 分割代入 -->

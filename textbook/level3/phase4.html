@@ -1,0 +1,1456 @@
+<section id="advanced1">
+      <h1>Server Components</h1>
+
+      <p class="lead">
+        <strong>Server Components</strong>はReact 18で導入された革新的な機能です。
+        コンポーネントを「サーバーで実行」することで、バンドルサイズ削減とパフォーマンス向上を実現します。
+      </p>
+
+      <!-- Server vs Client -->
+      <div class="card">
+        <h2>Server Components vs Client Components</h2>
+
+        <p><strong>2026年のReact = Server Components + Client Components</strong></p>
+        <p>Next.js App Routerでは、<strong>デフォルトがServer Component</strong>です。</p>
+
+        <table class="table-responsive">
+          <thead>
+            <tr>
+              <th>項目</th>
+              <th>Server Components</th>
+              <th>Client Components</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>実行場所</td>
+              <td>サーバーのみ</td>
+              <td>ブラウザ（+サーバーでSSR）</td>
+            </tr>
+            <tr>
+              <td>JSバンドル</td>
+              <td>含まれない（軽量）</td>
+              <td>含まれる</td>
+            </tr>
+            <tr>
+              <td>DB/ファイルアクセス</td>
+              <td>直接可能</td>
+              <td>不可（API経由のみ）</td>
+            </tr>
+            <tr>
+              <td>useState/useEffect</td>
+              <td>使用不可</td>
+              <td>使用可能</td>
+            </tr>
+            <tr>
+              <td>イベントハンドラ</td>
+              <td>使用不可</td>
+              <td>使用可能</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- use client ディレクティブ -->
+      <div class="card">
+        <h2>"use client" ディレクティブ</h2>
+
+        <p><strong>"use client"</strong>はClient Componentを宣言するためのディレクティブです。</p>
+
+        <div class="code-block">
+          <div class="code-header">Server Component（デフォルト）</div>
+          <pre><code>// app/users/page.tsx
+// "use client" がない = Server Component
+
+async function UsersPage() {
+  // サーバーでDB直アクセス可能
+  const users = await db.query('SELECT * FROM users');
+
+  return (
+    &lt;ul&gt;
+      {users.map(user => (
+        &lt;li key={user.id}&gt;{user.name}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">Client Component</div>
+          <pre><code>'use client'; // ← ファイルの先頭に宣言
+
+import { useState } from 'react';
+
+function Counter() {
+  // useStateが使える
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;button onClick={() => setCount(c => c + 1)}&gt;
+      {count}
+    &lt;/button&gt;
+  );
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- よくある間違い -->
+      <div class="card card-danger">
+        <h2>レビューで指摘すべきポイント</h2>
+
+        <p><strong>最も危険なミス：Client ComponentでDB直アクセス</strong></p>
+
+        <div class="code-block">
+          <div class="code-header">絶対NGのパターン</div>
+          <pre><code>'use client';
+
+// ❌ Client ComponentでDB直アクセス（実行時エラー）
+async function UserList() {
+  const users = await db.query('SELECT * FROM users');
+  // サーバー専用のdbオブジェクトはブラウザで動作しない！
+  return &lt;ul&gt;...&lt;/ul&gt;;
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">正しいパターン</div>
+          <pre><code>// ⭕ Server Componentでデータ取得
+// app/users/page.tsx (Server Component)
+async function UsersPage() {
+  const users = await db.query('SELECT * FROM users');
+  return &lt;UserListClient users={users} /&gt;;
+}
+
+// components/UserListClient.tsx (Client Component)
+'use client';
+function UserListClient({ users }) {
+  const [filter, setFilter] = useState('');
+  // インタラクティブな処理はこちらで
+  return &lt;ul&gt;...&lt;/ul&gt;;
+}</code></pre>
+        </div>
+
+        <table class="table-responsive">
+          <thead>
+            <tr>
+              <th>問題</th>
+              <th>指摘例</th>
+              <th>危険度</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Client ComponentでDB/fsアクセス</td>
+              <td>「Server Componentに移動すべき」</td>
+              <td>最高</td>
+            </tr>
+            <tr>
+              <td>不要な"use client"</td>
+              <td>「Server Componentで十分」</td>
+              <td>中</td>
+            </tr>
+            <tr>
+              <td>全てをClient Componentに</td>
+              <td>「バンドルサイズ増加、最適化を検討」</td>
+              <td>高</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-advanced1-1">
+        <div class="quiz-title">
+          <span class="icon">?</span>
+          確認クイズ
+        </div>
+        <p>Next.js App Routerでコンポーネントに何も指定しない場合、どちらになりますか？</p>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-advanced1-1" style="display:none;">
+          A. Server Component（デフォルト）
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced1-1" style="display:none;">
+          B. Client Component
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced1-1" style="display:none;">
+          C. エラーになる
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-advanced1-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('advanced1')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- advanced2: データフェッチング -->
+    <section id="advanced2">
+      <h1>データフェッチング</h1>
+
+      <p class="lead">
+        2026年のデータフェッチングは大きく変わりました。
+        <strong>useEffect内でのfetchは「古いパターン」</strong>です。
+        Server ComponentsとTanStack Queryを使い分けましょう。
+      </p>
+
+      <!-- Server Componentsでのfetch -->
+      <div class="card">
+        <h2>Server Componentsでのfetch（推奨）</h2>
+
+        <p>Server Componentでは、<strong>async/awaitで直接fetchできます</strong>。</p>
+
+        <div class="code-block">
+          <div class="code-header">Server Componentでのデータ取得</div>
+          <pre><code>// app/posts/page.tsx (Server Component)
+async function PostsPage() {
+  // Server Componentでは直接fetchできる
+  const response = await fetch('https://api.example.com/posts', {
+    next: { revalidate: 3600 } // 1時間キャッシュ
+  });
+  const posts = await response.json();
+
+  return (
+    &lt;ul&gt;
+      {posts.map(post => (
+        &lt;li key={post.id}&gt;{post.title}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p><strong>メリット：</strong></p>
+        <ul>
+          <li>ローディング状態の管理が不要</li>
+          <li>自動的にキャッシュされる</li>
+          <li>クライアントJSバンドルに含まれない</li>
+        </ul>
+      </div>
+
+      <!-- TanStack Query -->
+      <div class="card">
+        <h2>TanStack Query（Client Component向け）</h2>
+
+        <p><strong>TanStack Query</strong>（旧React Query）は、Client Componentでのデータフェッチに最適なライブラリです。</p>
+
+        <div class="code-block">
+          <div class="code-header">TanStack Queryの基本的な使い方</div>
+          <pre><code>'use client';
+
+import { useQuery } from '@tanstack/react-query';
+
+function UserProfile({ userId }: { userId: string }) {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['user', userId],
+    queryFn: () => fetch(`/api/users/${userId}`).then(res => res.json()),
+  });
+
+  if (isLoading) return &lt;p&gt;読み込み中...&lt;/p&gt;;
+  if (error) return &lt;p&gt;エラーが発生しました&lt;/p&gt;;
+
+  return &lt;p&gt;{data.name}&lt;/p&gt;;
+}</code></pre>
+        </div>
+
+        <p><strong>TanStack Queryの利点：</strong></p>
+        <ul>
+          <li>キャッシュ管理の自動化</li>
+          <li>バックグラウンド再フェッチ</li>
+          <li>ローディング・エラー状態の統一管理</li>
+          <li>楽観的更新（Optimistic Updates）</li>
+        </ul>
+      </div>
+
+      <!-- 古いパターン -->
+      <div class="card card-danger">
+        <h2>古いパターン：useEffect内でfetch</h2>
+
+        <div class="code-block">
+          <div class="code-header">2022年以前のパターン（非推奨）</div>
+          <pre><code>'use client';
+
+// ❌ 古いパターン（問題が多い）
+function UserProfile({ userId }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+
+    fetch(`/api/users/${userId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (isMounted) setUser(data);
+      })
+      .catch(err => {
+        if (isMounted) setError(err);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => { isMounted = false; };
+  }, [userId]);
+
+  // ... 30行以上のボイラープレート
+}</code></pre>
+        </div>
+
+        <p><strong>問題点：</strong></p>
+        <ul>
+          <li>ボイラープレートが多い</li>
+          <li>キャッシュ管理がない</li>
+          <li>レースコンディションのリスク</li>
+          <li>エラーハンドリングが複雑</li>
+        </ul>
+      </div>
+
+      <!-- 使い分け -->
+      <div class="card card-info">
+        <h2>データフェッチの選択フローチャート</h2>
+        <pre><code>データ取得が必要？
+├─ 初期表示時に必要（SEO重要）
+│   └─ Server Components で fetch
+│
+└─ インタラクション後に必要（検索、フィルタ等）
+    └─ TanStack Query を使用</code></pre>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-advanced2-1">
+        <div class="quiz-title">
+          <span class="icon">?</span>
+          確認クイズ
+        </div>
+        <p>2026年のReactでデータフェッチの推奨パターンとして正しいのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced2-1" style="display:none;">
+          A. useEffect内でfetchしてuseStateに保存
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-advanced2-1" style="display:none;">
+          B. Server Componentsで直接fetch、またはTanStack Query
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced2-1" style="display:none;">
+          C. Reduxでグローバル状態として管理
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-advanced2-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('advanced2')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- advanced3: 状態管理選択 -->
+    <section id="advanced3">
+      <h1>状態管理選択</h1>
+
+      <p class="lead">
+        2026年の状態管理は「適材適所」が重要です。
+        <strong>Redux一強の時代は終わり</strong>、用途に応じたライブラリを選択します。
+      </p>
+
+      <!-- 選択フローチャート -->
+      <div class="card">
+        <h2>状態管理の選択フローチャート</h2>
+
+        <div class="code-block">
+          <div class="code-header">どの状態管理を使うべきか？</div>
+          <pre><code>グローバル状態が必要？
+├─ No → useState / useReducer（ローカル状態で十分）
+│
+└─ Yes → サーバー状態？（API/DBからのデータ）
+          │
+          ├─ Yes → TanStack Query（キャッシュ・再取得を自動化）
+          │
+          └─ No → クライアント状態
+                  │
+                  ├─ シンプル → Zustand（学習コスト低）
+                  │
+                  └─ 細かい制御 → Jotai（atom単位）</code></pre>
+        </div>
+      </div>
+
+      <!-- Zustand -->
+      <div class="card">
+        <h2>Zustand（シンプルな状態管理）</h2>
+
+        <p><strong>Zustand</strong>は、最小限のAPI、最小限のボイラープレートで状態管理ができるライブラリです。</p>
+
+        <div class="code-block">
+          <div class="code-header">Zustandの基本的な使い方</div>
+          <pre><code>import { create } from 'zustand';
+
+// ストアを作成
+interface CounterStore {
+  count: number;
+  increment: () => void;
+  decrement: () => void;
+}
+
+const useCounterStore = create&lt;CounterStore&gt;((set) => ({
+  count: 0,
+  increment: () => set((state) => ({ count: state.count + 1 })),
+  decrement: () => set((state) => ({ count: state.count - 1 })),
+}));
+
+// コンポーネントで使用
+function Counter() {
+  const { count, increment, decrement } = useCounterStore();
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;{count}&lt;/p&gt;
+      &lt;button onClick={increment}&gt;+&lt;/button&gt;
+      &lt;button onClick={decrement}&gt;-&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p><strong>Zustandの特徴：</strong></p>
+        <ul>
+          <li>Providerが不要（Contextのラップなし）</li>
+          <li>TypeScriptと相性が良い</li>
+          <li>バンドルサイズが小さい（約1KB）</li>
+        </ul>
+      </div>
+
+      <!-- Jotai -->
+      <div class="card">
+        <h2>Jotai（atom単位の状態管理）</h2>
+
+        <p><strong>Jotai</strong>は、atomという最小単位で状態を管理します。Recoilに似た思想です。</p>
+
+        <div class="code-block">
+          <div class="code-header">Jotaiの基本的な使い方</div>
+          <pre><code>import { atom, useAtom } from 'jotai';
+
+// atomを定義
+const countAtom = atom(0);
+const doubledAtom = atom((get) => get(countAtom) * 2); // 派生atom
+
+// コンポーネントで使用
+function Counter() {
+  const [count, setCount] = useAtom(countAtom);
+  const [doubled] = useAtom(doubledAtom);
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Count: {count}&lt;/p&gt;
+      &lt;p&gt;Doubled: {doubled}&lt;/p&gt;
+      &lt;button onClick={() => setCount(c => c + 1)}&gt;+&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p><strong>Jotaiの特徴：</strong></p>
+        <ul>
+          <li>atom単位で状態を分割（細かい再レンダリング制御）</li>
+          <li>派生状態（computed）が簡単</li>
+          <li>非同期atomのサポート</li>
+        </ul>
+      </div>
+
+      <!-- Contextの注意点 -->
+      <div class="card card-warning">
+        <h2>Contextの注意点</h2>
+
+        <p><strong>高頻度更新にContextは不向き</strong>です。</p>
+
+        <div class="code-block">
+          <div class="code-header">Contextの問題</div>
+          <pre><code>// ❌ 高頻度更新をContextで管理
+const MousePositionContext = createContext({ x: 0, y: 0 });
+
+function App() {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handler = (e) => setPosition({ x: e.clientX, y: e.clientY });
+    window.addEventListener('mousemove', handler);
+    return () => window.removeEventListener('mousemove', handler);
+  }, []);
+
+  return (
+    &lt;MousePositionContext.Provider value={position}&gt;
+      {/* 全ての子コンポーネントが毎フレーム再レンダリング！ */}
+      &lt;App /&gt;
+    &lt;/MousePositionContext.Provider&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p><strong>Contextが適している場面：</strong></p>
+        <ul>
+          <li>テーマ（ライト/ダーク）</li>
+          <li>認証状態（ログインユーザー情報）</li>
+          <li>ロケール（言語設定）</li>
+        </ul>
+        <p>→ <strong>変更頻度が低い</strong>データに最適</p>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-advanced3-1">
+        <div class="quiz-title">
+          <span class="icon">?</span>
+          確認クイズ
+        </div>
+        <p>APIから取得したデータ（サーバー状態）を管理するのに最適なのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced3-1" style="display:none;">
+          A. useContext
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-advanced3-1" style="display:none;">
+          B. TanStack Query
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced3-1" style="display:none;">
+          C. useState
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-advanced3-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('advanced3')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- advanced4: フォーム管理 -->
+    <section id="advanced4">
+      <h1>フォーム管理</h1>
+
+      <p class="lead">
+        フォーム管理は<strong>React Hook Form</strong>が標準です。
+        Next.jsでは<strong>Server Actions</strong>も選択肢に加わりました。
+      </p>
+
+      <!-- React Hook Form -->
+      <div class="card">
+        <h2>React Hook Form</h2>
+
+        <p><strong>React Hook Form</strong>は、パフォーマンスに優れたフォーム管理ライブラリです。</p>
+
+        <div class="code-block">
+          <div class="code-header">React Hook Formの基本</div>
+          <pre><code>'use client';
+
+import { useForm } from 'react-hook-form';
+
+interface LoginForm {
+  email: string;
+  password: string;
+}
+
+function LoginPage() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm&lt;LoginForm&gt;();
+
+  const onSubmit = async (data: LoginForm) => {
+    // サーバーに送信
+    await fetch('/api/login', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  };
+
+  return (
+    &lt;form onSubmit={handleSubmit(onSubmit)}&gt;
+      &lt;div&gt;
+        &lt;input
+          {...register('email', {
+            required: 'メールアドレスは必須です',
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: '有効なメールアドレスを入力してください'
+            }
+          })}
+          placeholder="メールアドレス"
+        /&gt;
+        {errors.email && &lt;span&gt;{errors.email.message}&lt;/span&gt;}
+      &lt;/div&gt;
+
+      &lt;div&gt;
+        &lt;input
+          type="password"
+          {...register('password', {
+            required: 'パスワードは必須です',
+            minLength: { value: 8, message: '8文字以上必要です' }
+          })}
+          placeholder="パスワード"
+        /&gt;
+        {errors.password && &lt;span&gt;{errors.password.message}&lt;/span&gt;}
+      &lt;/div&gt;
+
+      &lt;button type="submit" disabled={isSubmitting}&gt;
+        {isSubmitting ? '送信中...' : 'ログイン'}
+      &lt;/button&gt;
+    &lt;/form&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p><strong>React Hook Formの利点：</strong></p>
+        <ul>
+          <li>非制御コンポーネントベースで高パフォーマンス</li>
+          <li>TypeScriptと相性が良い</li>
+          <li>バリデーション（Zod連携も可）</li>
+          <li>再レンダリングを最小化</li>
+        </ul>
+      </div>
+
+      <!-- Server Actions -->
+      <div class="card">
+        <h2>Server Actions（Next.js）</h2>
+
+        <p><strong>Server Actions</strong>は、フォーム送信をサーバーで直接処理する機能です。</p>
+
+        <div class="code-block">
+          <div class="code-header">Server Actionsの例</div>
+          <pre><code>// app/actions.ts
+'use server';
+
+export async function createUser(formData: FormData) {
+  const name = formData.get('name') as string;
+  const email = formData.get('email') as string;
+
+  // サーバーでDB操作
+  await db.user.create({ data: { name, email } });
+
+  // リダイレクトやrevalidate
+  revalidatePath('/users');
+}
+
+// app/new-user/page.tsx
+import { createUser } from './actions';
+
+function NewUserPage() {
+  return (
+    &lt;form action={createUser}&gt;
+      &lt;input name="name" placeholder="名前" required /&gt;
+      &lt;input name="email" type="email" placeholder="メール" required /&gt;
+      &lt;button type="submit"&gt;作成&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p><strong>Server Actionsの利点：</strong></p>
+        <ul>
+          <li>クライアントJSなしでフォーム送信</li>
+          <li>プログレッシブエンハンスメント（JS無効でも動作）</li>
+          <li>サーバー関数を直接呼び出せる</li>
+        </ul>
+      </div>
+
+      <!-- 古いパターン -->
+      <div class="card card-danger">
+        <h2>古いパターン：useState連打</h2>
+
+        <div class="code-block">
+          <div class="code-header">非推奨パターン</div>
+          <pre><code>// ❌ 古いパターン（useStateを各フィールドに）
+function LoginForm() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 各入力でuseStateを更新 → 毎回再レンダリング
+  // バリデーションロジックも手書き...
+}</code></pre>
+        </div>
+
+        <p><strong>問題点：</strong></p>
+        <ul>
+          <li>入力ごとに再レンダリング</li>
+          <li>バリデーションロジックが散らばる</li>
+          <li>状態管理が複雑</li>
+        </ul>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-advanced4-1">
+        <div class="quiz-title">
+          <span class="icon">?</span>
+          確認クイズ
+        </div>
+        <p>React Hook Formが高パフォーマンスな理由は？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced4-1" style="display:none;">
+          A. useReducerを内部で使っているから
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-advanced4-1" style="display:none;">
+          B. 非制御コンポーネントベースで再レンダリングを最小化するから
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced4-1" style="display:none;">
+          C. Server Componentsで動作するから
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-advanced4-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('advanced4')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- advanced5: Error Boundary -->
+    <section id="advanced5">
+      <h1>Error Boundary</h1>
+
+      <p class="lead">
+        <strong>Error Boundary</strong>は、コンポーネントツリー内のJavaScriptエラーをキャッチし、
+        フォールバックUIを表示する仕組みです。
+      </p>
+
+      <!-- Error Boundaryとは -->
+      <div class="card">
+        <h2>Error Boundaryとは</h2>
+
+        <p><strong>問題：</strong>コンポーネント内でエラーが発生すると、アプリ全体が壊れる</p>
+
+        <div class="code-block">
+          <div class="code-header">エラーが発生するコンポーネント</div>
+          <pre><code>function BuggyComponent() {
+  // このエラーで画面全体が真っ白に...
+  throw new Error('何かがおかしい！');
+  return &lt;div&gt;正常&lt;/div&gt;;
+}</code></pre>
+        </div>
+
+        <p><strong>解決：</strong>Error Boundaryでエラーをキャッチし、フォールバックUIを表示</p>
+
+        <div class="code-block">
+          <div class="code-header">Error Boundaryでラップ</div>
+          <pre><code>&lt;ErrorBoundary fallback={&lt;p&gt;エラーが発生しました&lt;/p&gt;}&gt;
+  &lt;BuggyComponent /&gt;
+&lt;/ErrorBoundary&gt;
+
+{/* BuggyComponentがエラーを出しても、
+    他の部分は正常に表示される */}</code></pre>
+        </div>
+      </div>
+
+      <!-- クラスコンポーネントでの実装 -->
+      <div class="card">
+        <h2>クラスコンポーネントでの実装</h2>
+
+        <p>Error Boundaryは<strong>クラスコンポーネントでのみ</strong>実装できます（Hooksでは不可）。</p>
+
+        <div class="code-block">
+          <div class="code-header">Error Boundaryの実装</div>
+          <pre><code>import { Component, ReactNode } from 'react';
+
+interface Props {
+  children: ReactNode;
+  fallback: ReactNode;
+}
+
+interface State {
+  hasError: boolean;
+}
+
+class ErrorBoundary extends Component&lt;Props, State&gt; {
+  constructor(props: Props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  // エラー発生時に呼ばれる
+  static getDerivedStateFromError(_: Error): State {
+    return { hasError: true };
+  }
+
+  // エラーログを記録
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error:', error, errorInfo);
+    // エラー監視サービスに送信
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- react-error-boundary -->
+      <div class="card card-success">
+        <h2>react-error-boundary ライブラリ</h2>
+
+        <p>実務では<strong>react-error-boundary</strong>ライブラリを使うのが一般的です。</p>
+
+        <div class="code-block">
+          <div class="code-header">react-error-boundaryの使用例</div>
+          <pre><code>import { ErrorBoundary } from 'react-error-boundary';
+
+function ErrorFallback({ error, resetErrorBoundary }) {
+  return (
+    &lt;div role="alert"&gt;
+      &lt;p&gt;エラーが発生しました：&lt;/p&gt;
+      &lt;pre&gt;{error.message}&lt;/pre&gt;
+      &lt;button onClick={resetErrorBoundary}&gt;再試行&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+function App() {
+  return (
+    &lt;ErrorBoundary
+      FallbackComponent={ErrorFallback}
+      onReset={() => {
+        // 状態をリセット
+      }}
+    &gt;
+      &lt;MyComponent /&gt;
+    &lt;/ErrorBoundary&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p><strong>利点：</strong></p>
+        <ul>
+          <li>リセット機能が組み込み</li>
+          <li>エラー情報をフォールバックに渡せる</li>
+          <li>useErrorBoundary Hooksも提供</li>
+        </ul>
+      </div>
+
+      <!-- レビューポイント -->
+      <div class="card card-danger">
+        <h2>レビューで指摘すべきポイント</h2>
+        <ul>
+          <li><strong>Error Boundaryなし</strong> → 「エラー時のフォールバックUIを用意すべき」</li>
+          <li><strong>アプリ全体を1つでラップ</strong> → 「機能単位で分割して影響範囲を限定すべき」</li>
+          <li><strong>エラーログなし</strong> → 「監視サービスへの送信を検討」</li>
+        </ul>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-advanced5-1">
+        <div class="quiz-title">
+          <span class="icon">?</span>
+          確認クイズ
+        </div>
+        <p>Error Boundaryについて正しいのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced5-1" style="display:none;">
+          A. 関数コンポーネントとHooksで実装できる
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-advanced5-1" style="display:none;">
+          B. クラスコンポーネントでのみ実装できる
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced5-1" style="display:none;">
+          C. Server Componentsでのみ使用できる
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-advanced5-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('advanced5')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- advanced6: パフォーマンス最適化 -->
+    <section id="advanced6">
+      <h1>パフォーマンス最適化</h1>
+
+      <p class="lead">
+        パフォーマンス問題を発見・解決するためのツールと手法を学びます。
+        <strong>React DevTools</strong>が必須ツールです。
+      </p>
+
+      <!-- React DevTools -->
+      <div class="card">
+        <h2>React DevToolsの使い方</h2>
+
+        <p><strong>React DevTools</strong>はChrome/Firefox拡張機能で、Reactアプリのデバッグに必須です。</p>
+
+        <p><strong>主な機能：</strong></p>
+        <ul>
+          <li><strong>Components</strong>タブ：コンポーネントツリーの確認、Props/Stateの検査</li>
+          <li><strong>Profiler</strong>タブ：レンダリングのパフォーマンス計測</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-header">Profilerでの計測手順</div>
+          <pre><code>1. DevToolsのProfilerタブを開く
+2. 「Record」ボタンをクリック
+3. アプリを操作
+4. 「Stop」をクリック
+5. 各コンポーネントのレンダリング時間を確認
+
+確認すべきポイント：
+- 頻繁にレンダリングされるコンポーネント
+- レンダリングに時間がかかるコンポーネント
+- 不要な再レンダリング</code></pre>
+        </div>
+      </div>
+
+      <!-- 再レンダリング検出 -->
+      <div class="card">
+        <h2>不要な再レンダリングの検出と対策</h2>
+
+        <div class="code-block">
+          <div class="code-header">再レンダリングの原因を特定</div>
+          <pre><code>// 方法1：console.logで確認
+function MyComponent({ data }) {
+  console.log('MyComponent rendered');
+  return &lt;div&gt;{data.name}&lt;/div&gt;;
+}
+
+// 方法2：DevToolsの「Highlight updates」オプション
+// → 再レンダリングされたコンポーネントが光る
+
+// 方法3：why-did-you-render ライブラリ
+// → 不要な再レンダリングの原因を詳細に表示</code></pre>
+        </div>
+
+        <p><strong>よくある原因と対策：</strong></p>
+        <table class="table-responsive">
+          <thead>
+            <tr>
+              <th>原因</th>
+              <th>対策</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>親の再レンダリング</td>
+              <td>React.memo()で子をメモ化</td>
+            </tr>
+            <tr>
+              <td>新しいオブジェクト/配列をPropsに</td>
+              <td>useMemoで参照を安定</td>
+            </tr>
+            <tr>
+              <td>新しい関数をPropsに</td>
+              <td>useCallbackで関数をメモ化</td>
+            </tr>
+            <tr>
+              <td>Context全体の更新</td>
+              <td>Contextの分割、または状態管理ライブラリ</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- React Compiler -->
+      <div class="card card-success">
+        <h2>React Compiler（2026年）</h2>
+
+        <p><strong>React Compiler</strong>（旧React Forget）が正式リリースされ、
+        メモ化を<strong>自動的に行う</strong>ようになりました。</p>
+
+        <div class="code-block">
+          <div class="code-header">React Compilerの効果</div>
+          <pre><code>// 手動メモ化が不要に
+// Before: useMemo/useCallbackを手書き
+const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
+const memoizedCallback = useCallback(() => doSomething(a, b), [a, b]);
+
+// After: React Compilerが自動でメモ化
+const memoizedValue = computeExpensiveValue(a, b);
+const memoizedCallback = () => doSomething(a, b);
+// コンパイル時に自動的に最適化される</code></pre>
+        </div>
+
+        <p><strong>注意：</strong>React Compilerを使っていても、
+        パフォーマンス問題の<strong>発見・診断能力</strong>は依然として重要です。</p>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-advanced6-1">
+        <div class="quiz-title">
+          <span class="icon">?</span>
+          確認クイズ
+        </div>
+        <p>React DevToolsのProfilerで確認できることは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced6-1" style="display:none;">
+          A. ネットワークリクエストの詳細
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-advanced6-1" style="display:none;">
+          B. 各コンポーネントのレンダリング時間と頻度
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced6-1" style="display:none;">
+          C. CSSのスタイル計算時間
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-advanced6-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('advanced6')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- advanced7: テスト -->
+    <section id="advanced7">
+      <h1>テスト</h1>
+
+      <p class="lead">
+        Reactコンポーネントのテストには<strong>Testing Library</strong>を使います。
+        「ユーザー視点」でテストを書くのがポイントです。
+      </p>
+
+      <!-- Testing Library -->
+      <div class="card">
+        <h2>Testing Library</h2>
+
+        <p><strong>Testing Library</strong>は、「実装の詳細ではなく、ユーザーの行動をテストする」という思想のライブラリです。</p>
+
+        <div class="code-block">
+          <div class="code-header">基本的なテストの書き方</div>
+          <pre><code>import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import Counter from './Counter';
+
+describe('Counter', () => {
+  test('初期値が0で表示される', () => {
+    render(&lt;Counter /&gt;);
+
+    // ユーザーに見えるテキストで要素を取得
+    expect(screen.getByText('Count: 0')).toBeInTheDocument();
+  });
+
+  test('ボタンをクリックするとカウントが増える', async () => {
+    const user = userEvent.setup();
+    render(&lt;Counter /&gt;);
+
+    // ユーザーの操作をシミュレート
+    await user.click(screen.getByRole('button', { name: '+' }));
+
+    expect(screen.getByText('Count: 1')).toBeInTheDocument();
+  });
+});</code></pre>
+        </div>
+      </div>
+
+      <!-- userEvent -->
+      <div class="card">
+        <h2>userEvent（ユーザー操作のシミュレーション）</h2>
+
+        <p><strong>userEvent</strong>は、実際のユーザー操作をより現実的にシミュレートします。</p>
+
+        <div class="code-block">
+          <div class="code-header">userEventの使い方</div>
+          <pre><code>import userEvent from '@testing-library/user-event';
+
+test('フォーム入力と送信', async () => {
+  const user = userEvent.setup();
+  const onSubmit = vi.fn();
+
+  render(&lt;LoginForm onSubmit={onSubmit} /&gt;);
+
+  // テキスト入力
+  await user.type(
+    screen.getByLabelText('メールアドレス'),
+    'test@example.com'
+  );
+
+  // パスワード入力
+  await user.type(
+    screen.getByLabelText('パスワード'),
+    'password123'
+  );
+
+  // ボタンクリック
+  await user.click(screen.getByRole('button', { name: 'ログイン' }));
+
+  // コールバックが呼ばれたか確認
+  expect(onSubmit).toHaveBeenCalledWith({
+    email: 'test@example.com',
+    password: 'password123'
+  });
+});</code></pre>
+        </div>
+
+        <p><strong>fireEventとの違い：</strong></p>
+        <ul>
+          <li><strong>fireEvent</strong>：単一のイベントを発火（低レベル）</li>
+          <li><strong>userEvent</strong>：実際のユーザー操作をシミュレート（高レベル、推奨）</li>
+        </ul>
+      </div>
+
+      <!-- モック -->
+      <div class="card">
+        <h2>モック（Mock）</h2>
+
+        <p><strong>モック</strong>は、テスト対象の依存関係を偽物に置き換える手法です。</p>
+
+        <div class="code-block">
+          <div class="code-header">API呼び出しのモック</div>
+          <pre><code>import { vi } from 'vitest';
+
+// fetchをモック
+global.fetch = vi.fn();
+
+test('データ取得成功時にリストが表示される', async () => {
+  // モックの戻り値を設定
+  (fetch as Mock).mockResolvedValue({
+    json: () => Promise.resolve([
+      { id: 1, name: 'Alice' },
+      { id: 2, name: 'Bob' },
+    ]),
+  });
+
+  render(&lt;UserList /&gt;);
+
+  // 非同期でデータが表示されるのを待つ
+  expect(await screen.findByText('Alice')).toBeInTheDocument();
+  expect(screen.getByText('Bob')).toBeInTheDocument();
+});</code></pre>
+        </div>
+
+        <p><strong>モックすべきもの：</strong></p>
+        <ul>
+          <li>API呼び出し（fetch, axios）</li>
+          <li>外部ライブラリ</li>
+          <li>ブラウザAPI（localStorage, window.location）</li>
+        </ul>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-advanced7-1">
+        <div class="quiz-title">
+          <span class="icon">?</span>
+          確認クイズ
+        </div>
+        <p>Testing Libraryの思想として正しいのは？</p>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-advanced7-1" style="display:none;">
+          A. 実装の詳細ではなく、ユーザーの行動をテストする
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced7-1" style="display:none;">
+          B. コンポーネントの内部状態を直接検証する
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced7-1" style="display:none;">
+          C. スナップショットテストを中心に行う
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-advanced7-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('advanced7')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
+
+    <!-- advanced8: 総合レビュー演習 -->
+    <section id="advanced8">
+      <h1>総合レビュー演習</h1>
+
+      <p class="lead">
+        Level 3の総まとめです。実務レベルのコードをレビューし、
+        問題点を指摘できるかテストします。
+      </p>
+
+      <!-- レビュー対象コード -->
+      <div class="card">
+        <h2>レビュー対象コード</h2>
+
+        <p>以下のコードには複数の問題があります。全て見つけられますか？</p>
+
+        <div class="code-block">
+          <div class="code-header">問題のあるコード</div>
+          <pre><code>'use client';
+
+import { useState, useEffect } from 'react';
+
+function UserDashboard({ userId }) {
+  const [user, setUser] = useState(null);
+  const [posts, setPosts] = useState([]);
+
+  // 問題1: 依存配列が空
+  useEffect(() => {
+    fetch(`/api/users/${userId}`)
+      .then(res => res.json())
+      .then(setUser);
+  }, []);
+
+  // 問題2: useEffect内でオブジェクトを依存配列に
+  const config = { sortBy: 'date', limit: 10 };
+  useEffect(() => {
+    fetch(`/api/posts?sort=${config.sortBy}&limit=${config.limit}`)
+      .then(res => res.json())
+      .then(setPosts);
+  }, [config]);
+
+  // 問題3: イベントリスナーのクリーンアップなし
+  useEffect(() => {
+    window.addEventListener('scroll', () => {
+      console.log('scrolled');
+    });
+  }, []);
+
+  // 問題4: key={index}
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;{user?.name}&lt;/h1&gt;
+      &lt;ul&gt;
+        {posts.map((post, index) => (
+          &lt;li key={index}&gt;{post.title}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- 問題点の解説 -->
+      <div class="card card-danger">
+        <h2>問題点の解説</h2>
+
+        <table class="table-responsive">
+          <thead>
+            <tr>
+              <th>問題</th>
+              <th>指摘内容</th>
+              <th>修正方法</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1. 依存配列が空</td>
+              <td>userIdが変わってもデータが更新されない</td>
+              <td>[userId]を依存配列に追加</td>
+            </tr>
+            <tr>
+              <td>2. configオブジェクト</td>
+              <td>毎回新しい参照で無限ループ</td>
+              <td>useMemoでconfigをメモ化、またはプリミティブ値を依存に</td>
+            </tr>
+            <tr>
+              <td>3. クリーンアップなし</td>
+              <td>スクロールリスナーが蓄積（メモリリーク）</td>
+              <td>return文でremoveEventListener</td>
+            </tr>
+            <tr>
+              <td>4. key={index}</td>
+              <td>リストの並び替え・削除で予期しない動作</td>
+              <td>key={post.id}を使用</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 修正後のコード -->
+      <div class="card card-success">
+        <h2>修正後のコード</h2>
+
+        <div class="code-block">
+          <div class="code-header">正しいコード</div>
+          <pre><code>'use client';
+
+import { useState, useEffect, useMemo, useCallback } from 'react';
+
+function UserDashboard({ userId }: { userId: string }) {
+  const [user, setUser] = useState&lt;User | null&gt;(null);
+  const [posts, setPosts] = useState&lt;Post[]&gt;([]);
+
+  // 修正1: userIdを依存配列に
+  useEffect(() => {
+    let isMounted = true;
+    fetch(`/api/users/${userId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (isMounted) setUser(data);
+      });
+    return () => { isMounted = false; };
+  }, [userId]);
+
+  // 修正2: configをuseMemoでメモ化
+  const config = useMemo(() => ({ sortBy: 'date', limit: 10 }), []);
+  useEffect(() => {
+    fetch(`/api/posts?sort=${config.sortBy}&limit=${config.limit}`)
+      .then(res => res.json())
+      .then(setPosts);
+  }, [config]);
+
+  // 修正3: クリーンアップを追加
+  useEffect(() => {
+    const handleScroll = () => console.log('scrolled');
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // 修正4: 一意のIDをkeyに
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;{user?.name}&lt;/h1&gt;
+      &lt;ul&gt;
+        {posts.map(post => (
+          &lt;li key={post.id}&gt;{post.title}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- レビューチェックリスト -->
+      <div class="card card-info">
+        <h2>Level 3 レビューチェックリスト</h2>
+
+        <p><strong>TypeScript</strong></p>
+        <ul>
+          <li>any / @ts-ignore を使っていないか</li>
+          <li>関数の引数・戻り値に型があるか</li>
+          <li>asアサーションを乱用していないか</li>
+        </ul>
+
+        <p><strong>コンポーネント設計</strong></p>
+        <ul>
+          <li>1コンポーネント1責務になっているか</li>
+          <li>Propsの型が定義されているか</li>
+          <li>keyに一意のIDを使っているか</li>
+        </ul>
+
+        <p><strong>Hooks</strong></p>
+        <ul>
+          <li>useEffectの依存配列は正しいか</li>
+          <li>クリーンアップが必要な処理にreturnがあるか</li>
+          <li>条件の中でHooksを呼んでいないか</li>
+        </ul>
+
+        <p><strong>Server/Client境界</strong></p>
+        <ul>
+          <li>"use client"が必要最小限か</li>
+          <li>Client ComponentでDB/fsアクセスしていないか</li>
+        </ul>
+      </div>
+
+      <!-- クイズ1 -->
+      <div class="quiz" id="quiz-advanced8-1">
+        <div class="quiz-title">
+          <span class="icon">?</span>
+          総合クイズ 1
+        </div>
+        <p>以下のコードの最も深刻な問題は？</p>
+        <div class="code-block">
+          <pre><code>'use client';
+
+async function ProductList() {
+  const products = await db.products.findMany();
+  return &lt;ul&gt;{products.map(p => &lt;li&gt;{p.name}&lt;/li&gt;)}&lt;/ul&gt;;
+}</code></pre>
+        </div>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced8-1" style="display:none;">
+          A. asyncコンポーネントは使えない
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-advanced8-1" style="display:none;">
+          B. Client ComponentでDB直アクセスしている
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced8-1" style="display:none;">
+          C. keyが設定されていない
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-advanced8-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- クイズ2 -->
+      <div class="quiz" id="quiz-advanced8-2">
+        <div class="quiz-title">
+          <span class="icon">?</span>
+          総合クイズ 2
+        </div>
+        <p>2026年のReactでデータフェッチの推奨パターンは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced8-2" style="display:none;">
+          A. useEffect内でfetchしてuseStateで管理
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-advanced8-2" style="display:none;">
+          B. Reduxでグローバル状態として管理
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-advanced8-2" style="display:none;">
+          C. Server Componentsで直接fetch、またはTanStack Query
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-advanced8-2')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <!-- Level 3 完了メッセージ -->
+      <div class="card card-success">
+        <h2>Level 3 完了！</h2>
+        <p>React/TypeScriptの学習を完了しました。以下を習得しました：</p>
+
+        <p><strong>Phase 1: TypeScript基礎</strong></p>
+        <ul>
+          <li>基本の型、Union型、interface/type</li>
+          <li>ジェネリクス、型ガード、ユーティリティ型</li>
+        </ul>
+
+        <p><strong>Phase 2: React基礎</strong></p>
+        <ul>
+          <li>コンポーネント、Props、useState</li>
+          <li>条件付きレンダリング、リストとkey</li>
+        </ul>
+
+        <p><strong>Phase 3: Hooks深掘り</strong></p>
+        <ul>
+          <li>useEffect（依存配列、クリーンアップ、罠）</li>
+          <li>useRef、useContext、useReducer</li>
+          <li>useMemo/useCallback、カスタムHooks</li>
+        </ul>
+
+        <p><strong>Phase 4: 実践パターン</strong></p>
+        <ul>
+          <li>Server Components / Client Components</li>
+          <li>データフェッチング、状態管理選択</li>
+          <li>フォーム管理、Error Boundary</li>
+          <li>パフォーマンス最適化、テスト</li>
+        </ul>
+
+        <p><strong>次のステップ → Level 4: API/DB</strong></p>
+        <p>バックエンド開発（Node.js、データベース、API設計）を学びます。</p>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('advanced8')">
+        <span class="icon">✓</span>
+        Level 3を完了
+      </button>
+    </section>
