@@ -159,7 +159,75 @@ const sectionMapping = {
   'test5': 'level4/phase5.html',
   'test6': 'level4/phase5.html',
   'test7': 'level4/phase5.html',
-  'test8': 'level4/phase5.html'
+  'test8': 'level4/phase5.html',
+
+  // Level 5 - Phase 1: Docker基礎
+  'docker1': 'level5/phase1.html',
+  'docker2': 'level5/phase1.html',
+  'docker3': 'level5/phase1.html',
+  'docker4': 'level5/phase1.html',
+  'docker5': 'level5/phase1.html',
+  'docker6': 'level5/phase1.html',
+  'docker7': 'level5/phase1.html',
+  'docker8': 'level5/phase1.html',
+  'docker9': 'level5/phase1.html',
+  'docker10': 'level5/phase1.html',
+
+  // Level 5 - Phase 2: Kubernetes基礎
+  'k8s1': 'level5/phase2.html',
+  'k8s2': 'level5/phase2.html',
+  'k8s3': 'level5/phase2.html',
+  'k8s4': 'level5/phase2.html',
+  'k8s5': 'level5/phase2.html',
+  'k8s6': 'level5/phase2.html',
+  'k8s7': 'level5/phase2.html',
+  'k8s8': 'level5/phase2.html',
+  'k8s9': 'level5/phase2.html',
+  'k8s10': 'level5/phase2.html',
+
+  // Level 5 - Phase 3: クラウド入門 AWS
+  'aws1': 'level5/phase3.html',
+  'aws2': 'level5/phase3.html',
+  'aws3': 'level5/phase3.html',
+  'aws4': 'level5/phase3.html',
+  'aws5': 'level5/phase3.html',
+  'aws6': 'level5/phase3.html',
+  'aws7': 'level5/phase3.html',
+  'aws8': 'level5/phase3.html',
+  'aws9': 'level5/phase3.html',
+  'aws10': 'level5/phase3.html',
+
+  // Level 5 - Phase 4: Terraform
+  'tf1': 'level5/phase4.html',
+  'tf2': 'level5/phase4.html',
+  'tf3': 'level5/phase4.html',
+  'tf4': 'level5/phase4.html',
+  'tf5': 'level5/phase4.html',
+  'tf6': 'level5/phase4.html',
+  'tf7': 'level5/phase4.html',
+  'tf8': 'level5/phase4.html',
+  'tf9': 'level5/phase4.html',
+  'tf10': 'level5/phase4.html',
+
+  // Level 5 - Phase 5: GitHub Actions
+  'cicd1': 'level5/phase5.html',
+  'cicd2': 'level5/phase5.html',
+  'cicd3': 'level5/phase5.html',
+  'cicd4': 'level5/phase5.html',
+  'cicd5': 'level5/phase5.html',
+  'cicd6': 'level5/phase5.html',
+  'cicd7': 'level5/phase5.html',
+  'cicd8': 'level5/phase5.html',
+
+  // Level 5 - Phase 6: 可観測性
+  'obs1': 'level5/phase6.html',
+  'obs2': 'level5/phase6.html',
+  'obs3': 'level5/phase6.html',
+  'obs4': 'level5/phase6.html',
+  'obs5': 'level5/phase6.html',
+  'obs6': 'level5/phase6.html',
+  'obs7': 'level5/phase6.html',
+  'obs8': 'level5/phase6.html'
 };
 
 // 読み込み済みファイルを追跡
@@ -499,6 +567,17 @@ function updateProgress() {
   const level4Count = completed.filter(s => level4Sections.includes(s)).length;
   const level4Progress = document.getElementById('level4-progress');
   if (level4Progress) level4Progress.value = level4Count;
+
+  // Level 5
+  const level5Sections = ['docker1','docker2','docker3','docker4','docker5','docker6','docker7','docker8','docker9','docker10',
+                          'k8s1','k8s2','k8s3','k8s4','k8s5','k8s6','k8s7','k8s8','k8s9','k8s10',
+                          'aws1','aws2','aws3','aws4','aws5','aws6','aws7','aws8','aws9','aws10',
+                          'tf1','tf2','tf3','tf4','tf5','tf6','tf7','tf8','tf9','tf10',
+                          'cicd1','cicd2','cicd3','cicd4','cicd5','cicd6','cicd7','cicd8',
+                          'obs1','obs2','obs3','obs4','obs5','obs6','obs7','obs8'];
+  const level5Count = completed.filter(s => level5Sections.includes(s)).length;
+  const level5Progress = document.getElementById('level5-progress');
+  if (level5Progress) level5Progress.value = level5Count;
 }
 
 // 初期化

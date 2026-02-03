@@ -1,0 +1,1978 @@
+<!-- ============================================
+     Level 5 Phase 3: クラウド入門 AWS
+     ============================================ -->
+
+<section id="aws1">
+  <h1>1. AWSの全体像</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>AWSのリージョン/AZ構成と主要サービスの分類を理解する</p>
+  </div>
+
+  <h2>AWS（Amazon Web Services）とは？</h2>
+  <p>
+    <strong>AWS</strong>は、Amazonが提供する世界最大のクラウドプラットフォームです。<br>
+    2006年にサービス開始し、2026年現在<strong>世界シェア約32%</strong>でトップを維持しています。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> たとえ話</div>
+    <p>
+      AWSは<strong>「巨大なレンタルサーバー倉庫」</strong>のようなものです。<br>
+      自分でサーバーを買って管理する代わりに、必要な分だけ借りて使います。<br>
+      電気代・冷房・セキュリティはAmazonが管理してくれます。
+    </p>
+  </div>
+
+  <h2>リージョンとアベイラビリティゾーン（AZ）</h2>
+
+  <!-- SVG図解: リージョンとAZ -->
+  <svg viewBox="0 0 700 320" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <defs>
+      <linearGradient id="regionGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#3498db;stop-opacity:0.2"/>
+        <stop offset="100%" style="stop-color:#3498db;stop-opacity:0.1"/>
+      </linearGradient>
+    </defs>
+
+    <!-- 世界地図の簡略表現 -->
+    <text x="350" y="25" font-size="16" fill="#333" text-anchor="middle" font-weight="bold">AWSグローバルインフラストラクチャ</text>
+
+    <!-- 東京リージョン -->
+    <g transform="translate(30, 50)">
+      <rect x="0" y="0" width="200" height="240" rx="10" fill="url(#regionGrad)" stroke="#3498db" stroke-width="2"/>
+      <text x="100" y="25" font-size="14" fill="#2980b9" text-anchor="middle" font-weight="bold">東京リージョン</text>
+      <text x="100" y="42" font-size="11" fill="#666" text-anchor="middle">ap-northeast-1</text>
+
+      <!-- AZ-a -->
+      <g transform="translate(15, 55)">
+        <rect x="0" y="0" width="170" height="50" rx="5" fill="#27ae60" opacity="0.3" stroke="#27ae60"/>
+        <text x="85" y="20" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">AZ-a</text>
+        <text x="85" y="38" font-size="10" fill="#666" text-anchor="middle">データセンター群</text>
+      </g>
+
+      <!-- AZ-c -->
+      <g transform="translate(15, 115)">
+        <rect x="0" y="0" width="170" height="50" rx="5" fill="#27ae60" opacity="0.3" stroke="#27ae60"/>
+        <text x="85" y="20" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">AZ-c</text>
+        <text x="85" y="38" font-size="10" fill="#666" text-anchor="middle">データセンター群</text>
+      </g>
+
+      <!-- AZ-d -->
+      <g transform="translate(15, 175)">
+        <rect x="0" y="0" width="170" height="50" rx="5" fill="#27ae60" opacity="0.3" stroke="#27ae60"/>
+        <text x="85" y="20" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">AZ-d</text>
+        <text x="85" y="38" font-size="10" fill="#666" text-anchor="middle">データセンター群</text>
+      </g>
+    </g>
+
+    <!-- 大阪リージョン -->
+    <g transform="translate(250, 50)">
+      <rect x="0" y="0" width="180" height="180" rx="10" fill="url(#regionGrad)" stroke="#3498db" stroke-width="2"/>
+      <text x="90" y="25" font-size="14" fill="#2980b9" text-anchor="middle" font-weight="bold">大阪リージョン</text>
+      <text x="90" y="42" font-size="11" fill="#666" text-anchor="middle">ap-northeast-3</text>
+
+      <!-- AZ-a -->
+      <g transform="translate(15, 55)">
+        <rect x="0" y="0" width="150" height="50" rx="5" fill="#27ae60" opacity="0.3" stroke="#27ae60"/>
+        <text x="75" y="20" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">AZ-a</text>
+        <text x="75" y="38" font-size="10" fill="#666" text-anchor="middle">データセンター群</text>
+      </g>
+
+      <!-- AZ-b -->
+      <g transform="translate(15, 115)">
+        <rect x="0" y="0" width="150" height="50" rx="5" fill="#27ae60" opacity="0.3" stroke="#27ae60"/>
+        <text x="75" y="20" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">AZ-b</text>
+        <text x="75" y="38" font-size="10" fill="#666" text-anchor="middle">データセンター群</text>
+      </g>
+    </g>
+
+    <!-- 説明 -->
+    <g transform="translate(460, 60)">
+      <text x="0" y="0" font-size="13" fill="#333" font-weight="bold">用語解説</text>
+
+      <rect x="0" y="15" width="210" height="60" rx="5" fill="#3498db" opacity="0.1"/>
+      <text x="10" y="35" font-size="11" fill="#333" font-weight="bold">リージョン（Region）</text>
+      <text x="10" y="52" font-size="10" fill="#666">地理的に離れた独立したエリア</text>
+      <text x="10" y="67" font-size="10" fill="#666">例: 東京、大阪、米国東部</text>
+
+      <rect x="0" y="85" width="210" height="75" rx="5" fill="#27ae60" opacity="0.1"/>
+      <text x="10" y="105" font-size="11" fill="#333" font-weight="bold">AZ（Availability Zone）</text>
+      <text x="10" y="122" font-size="10" fill="#666">リージョン内の独立したDC群</text>
+      <text x="10" y="137" font-size="10" fill="#666">電源・ネットワークが独立</text>
+      <text x="10" y="152" font-size="10" fill="#27ae60" font-weight="bold">複数AZで高可用性を実現</text>
+
+      <rect x="0" y="170" width="210" height="50" rx="5" fill="#e74c3c" opacity="0.1"/>
+      <text x="10" y="190" font-size="11" fill="#333" font-weight="bold">なぜ分散？</text>
+      <text x="10" y="207" font-size="10" fill="#666">1つのAZが停止しても継続可能</text>
+    </g>
+
+    <!-- 接続線 -->
+    <line x1="230" y1="170" x2="250" y2="170" stroke="#3498db" stroke-width="2" stroke-dasharray="5,3"/>
+    <text x="240" y="190" font-size="9" fill="#3498db" text-anchor="middle">低遅延接続</text>
+  </svg>
+
+  <h2>主要サービスの分類</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>カテゴリ</th>
+        <th>サービス</th>
+        <th>用途</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>コンピューティング</strong></td>
+        <td>EC2, Lambda, ECS, Fargate</td>
+        <td>サーバー、コンテナ、サーバーレス</td>
+      </tr>
+      <tr>
+        <td><strong>ストレージ</strong></td>
+        <td>S3, EBS, EFS</td>
+        <td>オブジェクト、ブロック、ファイル</td>
+      </tr>
+      <tr>
+        <td><strong>データベース</strong></td>
+        <td>RDS, Aurora, DynamoDB</td>
+        <td>リレーショナル、NoSQL</td>
+      </tr>
+      <tr>
+        <td><strong>ネットワーク</strong></td>
+        <td>VPC, Route 53, CloudFront</td>
+        <td>仮想ネットワーク、DNS、CDN</td>
+      </tr>
+      <tr>
+        <td><strong>セキュリティ</strong></td>
+        <td>IAM, KMS, WAF</td>
+        <td>認証認可、暗号化、ファイアウォール</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quiz" id="quiz-aws1">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 高可用性を実現するために、アプリケーションを配置すべき場所は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws1" value="a">
+        <span>1つのAZに集中配置</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="複数のAZに分散配置することで、1つのAZが障害で停止しても、他のAZでサービスを継続できます。これがAWSの高可用性設計の基本です。">
+        <input type="radio" name="q-aws1" value="b">
+        <span>複数のAZに分散配置</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws1" value="c">
+        <span>リージョンは関係ない</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-aws1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('aws1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="aws2">
+  <h1>2. IAM基礎</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>IAMのユーザー/グループ/ロール/ポリシーの関係を理解する</p>
+  </div>
+
+  <h2>IAM（Identity and Access Management）とは？</h2>
+  <p>
+    <strong>IAM</strong>は、「誰が」「何を」「どこで」できるかを管理するサービスです。<br>
+    AWSセキュリティの<strong>最も重要な基盤</strong>です。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> たとえ話</div>
+    <p>
+      IAMは<strong>「会社のセキュリティカードシステム」</strong>のようなものです。<br>
+      社員証（ユーザー）を持っていても、すべての部屋に入れるわけではない。<br>
+      部署（グループ）によって入れる部屋（権限）が違います。
+    </p>
+  </div>
+
+  <h2>IAMの4つの要素</h2>
+
+  <!-- SVG図解: IAM構成 -->
+  <svg viewBox="0 0 700 350" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- ユーザー -->
+    <g transform="translate(30, 30)">
+      <rect x="0" y="0" width="140" height="120" rx="8" fill="#3498db" opacity="0.2" stroke="#3498db" stroke-width="2"/>
+      <text x="70" y="25" font-size="13" fill="#2980b9" text-anchor="middle" font-weight="bold">IAMユーザー</text>
+
+      <circle cx="40" cy="65" r="18" fill="#3498db" opacity="0.5"/>
+      <text x="40" y="70" font-size="20" text-anchor="middle">👤</text>
+      <text x="40" y="95" font-size="9" fill="#333" text-anchor="middle">田中</text>
+
+      <circle cx="100" cy="65" r="18" fill="#3498db" opacity="0.5"/>
+      <text x="100" y="70" font-size="20" text-anchor="middle">👤</text>
+      <text x="100" y="95" font-size="9" fill="#333" text-anchor="middle">佐藤</text>
+
+      <text x="70" y="115" font-size="9" fill="#666" text-anchor="middle">個人のAWSアカウント</text>
+    </g>
+
+    <!-- グループ -->
+    <g transform="translate(200, 30)">
+      <rect x="0" y="0" width="140" height="120" rx="8" fill="#27ae60" opacity="0.2" stroke="#27ae60" stroke-width="2"/>
+      <text x="70" y="25" font-size="13" fill="#27ae60" text-anchor="middle" font-weight="bold">IAMグループ</text>
+
+      <rect x="15" y="40" width="110" height="35" rx="5" fill="#27ae60" opacity="0.3"/>
+      <text x="70" y="62" font-size="10" fill="#333" text-anchor="middle">開発者グループ</text>
+
+      <rect x="15" y="80" width="110" height="35" rx="5" fill="#27ae60" opacity="0.3"/>
+      <text x="70" y="102" font-size="10" fill="#333" text-anchor="middle">管理者グループ</text>
+    </g>
+
+    <!-- ロール -->
+    <g transform="translate(370, 30)">
+      <rect x="0" y="0" width="140" height="120" rx="8" fill="#9b59b6" opacity="0.2" stroke="#9b59b6" stroke-width="2"/>
+      <text x="70" y="25" font-size="13" fill="#9b59b6" text-anchor="middle" font-weight="bold">IAMロール</text>
+
+      <rect x="15" y="40" width="110" height="35" rx="5" fill="#9b59b6" opacity="0.3"/>
+      <text x="70" y="62" font-size="10" fill="#333" text-anchor="middle">EC2用ロール</text>
+
+      <rect x="15" y="80" width="110" height="35" rx="5" fill="#9b59b6" opacity="0.3"/>
+      <text x="70" y="102" font-size="10" fill="#333" text-anchor="middle">Lambda用ロール</text>
+    </g>
+
+    <!-- ポリシー -->
+    <g transform="translate(540, 30)">
+      <rect x="0" y="0" width="140" height="120" rx="8" fill="#e74c3c" opacity="0.2" stroke="#e74c3c" stroke-width="2"/>
+      <text x="70" y="25" font-size="13" fill="#e74c3c" text-anchor="middle" font-weight="bold">IAMポリシー</text>
+
+      <rect x="10" y="40" width="120" height="70" rx="5" fill="white" stroke="#e74c3c" stroke-dasharray="3,2"/>
+      <text x="70" y="58" font-size="9" fill="#333" text-anchor="middle">{</text>
+      <text x="70" y="72" font-size="9" fill="#333" text-anchor="middle">"Effect": "Allow",</text>
+      <text x="70" y="86" font-size="9" fill="#333" text-anchor="middle">"Action": "s3:*",</text>
+      <text x="70" y="100" font-size="9" fill="#333" text-anchor="middle">}</text>
+    </g>
+
+    <!-- 関係の矢印と説明 -->
+    <g transform="translate(30, 180)">
+      <rect x="0" y="0" width="650" height="150" rx="8" fill="#f8f9fa" stroke="#dee2e6"/>
+      <text x="325" y="25" font-size="14" fill="#333" text-anchor="middle" font-weight="bold">各要素の関係</text>
+
+      <!-- ユーザー説明 -->
+      <text x="20" y="55" font-size="11" fill="#3498db" font-weight="bold">ユーザー</text>
+      <text x="20" y="75" font-size="10" fill="#666">人間がAWSを操作するためのID</text>
+      <text x="20" y="90" font-size="10" fill="#666">パスワード/アクセスキーで認証</text>
+
+      <!-- グループ説明 -->
+      <text x="180" y="55" font-size="11" fill="#27ae60" font-weight="bold">グループ</text>
+      <text x="180" y="75" font-size="10" fill="#666">ユーザーの集まり</text>
+      <text x="180" y="90" font-size="10" fill="#666">権限を一括管理</text>
+
+      <!-- ロール説明 -->
+      <text x="340" y="55" font-size="11" fill="#9b59b6" font-weight="bold">ロール</text>
+      <text x="340" y="75" font-size="10" fill="#666">サービスやアプリが使う権限</text>
+      <text x="340" y="90" font-size="10" fill="#666">一時的な認証情報を発行</text>
+
+      <!-- ポリシー説明 -->
+      <text x="500" y="55" font-size="11" fill="#e74c3c" font-weight="bold">ポリシー</text>
+      <text x="500" y="75" font-size="10" fill="#666">「何ができるか」の定義</text>
+      <text x="500" y="90" font-size="10" fill="#666">JSON形式で記述</text>
+
+      <!-- 重要ポイント -->
+      <rect x="20" y="105" width="610" height="35" rx="5" fill="#e74c3c" opacity="0.1"/>
+      <text x="325" y="127" font-size="11" fill="#c0392b" text-anchor="middle" font-weight="bold">⚠️ rootユーザー（アカウント作成時のユーザー）は日常業務で使わない！IAMユーザーを作成して使う</text>
+    </g>
+  </svg>
+
+  <h2>ユーザー vs ロール</h2>
+
+  <div class="compare-container">
+    <div class="compare-good">
+      <div class="compare-title">IAMユーザー</div>
+      <ul>
+        <li><strong>人間</strong>がAWSを操作する時に使う</li>
+        <li>パスワードやアクセスキーで認証</li>
+        <li>長期的な認証情報</li>
+        <li>例: 開発者、運用担当者</li>
+      </ul>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">IAMロール</div>
+      <ul>
+        <li><strong>サービスやアプリ</strong>が使う</li>
+        <li>一時的な認証情報を自動発行</li>
+        <li>アクセスキー不要でセキュア</li>
+        <li>例: EC2、Lambda、外部サービス</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: rootユーザー使用</div>
+    <p>
+      <strong>rootユーザー</strong>（AWSアカウント作成時のユーザー）を
+      日常業務で使っているコードや設定は<strong>即座にNG</strong>です。<br>
+      rootには全権限があり、誤操作や漏洩時の被害が甚大です。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-aws2">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: EC2インスタンスからS3にアクセスする場合、どの方法が推奨？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws2" value="a">
+        <span>IAMユーザーのアクセスキーをEC2に保存</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="IAMロールを使うと、EC2は自動的に一時的な認証情報を取得できます。アクセスキーを保存する必要がなく、セキュリティリスクを大幅に軽減できます。">
+        <input type="radio" name="q-aws2" value="b">
+        <span>IAMロールをEC2にアタッチ</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws2" value="c">
+        <span>rootユーザーの認証情報を使う</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-aws2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('aws2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="aws3">
+  <h1>3. IAMベストプラクティス</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>最小権限の原則とIAMセキュリティのベストプラクティスを理解する</p>
+  </div>
+
+  <h2>最小権限の原則（Principle of Least Privilege）</h2>
+  <p>
+    <strong>必要最小限の権限のみを付与する</strong>というセキュリティの基本原則です。<br>
+    「念のため全部許可」は<strong>最大のアンチパターン</strong>です。
+  </p>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">危険: 過剰な権限</div>
+      <pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": "*",
+    "Resource": "*"
+  }]
+}</code></pre>
+      <p>全サービス全操作を許可 = 管理者権限と同等</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">安全: 最小権限</div>
+      <pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": [
+      "s3:GetObject",
+      "s3:PutObject"
+    ],
+    "Resource": "arn:aws:s3:::my-bucket/*"
+  }]
+}</code></pre>
+      <p>特定バケットの読み書きのみ許可</p>
+    </div>
+  </div>
+
+  <h2>IAMセキュリティベストプラクティス</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>項目</th>
+        <th>推奨事項</th>
+        <th>理由</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>rootユーザー</strong></td>
+        <td>日常使用禁止、MFA必須</td>
+        <td>全権限があり被害が甚大</td>
+      </tr>
+      <tr>
+        <td><strong>MFA</strong></td>
+        <td>全IAMユーザーに設定</td>
+        <td>パスワード漏洩時の防御</td>
+      </tr>
+      <tr>
+        <td><strong>アクセスキー</strong></td>
+        <td>ロールで代替、定期ローテーション</td>
+        <td>長期キーは漏洩リスク高</td>
+      </tr>
+      <tr>
+        <td><strong>ポリシー</strong></td>
+        <td>AWS管理ポリシー優先</td>
+        <td>AWSが最新のベストプラクティスを反映</td>
+      </tr>
+      <tr>
+        <td><strong>グループ</strong></td>
+        <td>ユーザーに直接権限付与しない</td>
+        <td>管理が煩雑になる</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>MFA（多要素認証）の重要性</h2>
+
+  <!-- SVG図解: MFA -->
+  <svg viewBox="0 0 600 150" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- Step 1 -->
+    <g transform="translate(30, 30)">
+      <rect x="0" y="0" width="120" height="90" rx="6" fill="#3498db" opacity="0.2" stroke="#3498db"/>
+      <text x="60" y="25" font-size="12" fill="#333" text-anchor="middle" font-weight="bold">第1要素</text>
+      <text x="60" y="50" font-size="24" text-anchor="middle">🔑</text>
+      <text x="60" y="75" font-size="10" fill="#666" text-anchor="middle">パスワード</text>
+      <text x="60" y="88" font-size="9" fill="#666" text-anchor="middle">知っているもの</text>
+    </g>
+
+    <!-- + -->
+    <text x="175" y="75" font-size="24" fill="#333" text-anchor="middle">+</text>
+
+    <!-- Step 2 -->
+    <g transform="translate(210, 30)">
+      <rect x="0" y="0" width="120" height="90" rx="6" fill="#27ae60" opacity="0.2" stroke="#27ae60"/>
+      <text x="60" y="25" font-size="12" fill="#333" text-anchor="middle" font-weight="bold">第2要素</text>
+      <text x="60" y="50" font-size="24" text-anchor="middle">📱</text>
+      <text x="60" y="75" font-size="10" fill="#666" text-anchor="middle">認証アプリ/デバイス</text>
+      <text x="60" y="88" font-size="9" fill="#666" text-anchor="middle">持っているもの</text>
+    </g>
+
+    <!-- = -->
+    <text x="355" y="75" font-size="24" fill="#333" text-anchor="middle">=</text>
+
+    <!-- 結果 -->
+    <g transform="translate(390, 30)">
+      <rect x="0" y="0" width="170" height="90" rx="6" fill="#27ae60" opacity="0.3" stroke="#27ae60" stroke-width="2"/>
+      <text x="85" y="30" font-size="12" fill="#27ae60" text-anchor="middle" font-weight="bold">セキュアな認証</text>
+      <text x="85" y="55" font-size="10" fill="#333" text-anchor="middle">パスワードが漏洩しても</text>
+      <text x="85" y="72" font-size="10" fill="#333" text-anchor="middle">第2要素がなければ</text>
+      <text x="85" y="89" font-size="10" fill="#333" text-anchor="middle">ログインできない</text>
+    </g>
+  </svg>
+
+  <h2>アクセスキーの管理</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">危険: アクセスキーをコードに埋め込み</div>
+      <pre><code>// 絶対NG！
+const AWS = require('aws-sdk');
+AWS.config.update({
+  accessKeyId: 'AKIAIOSFODNN7EXAMPLE',
+  secretAccessKey: 'wJalrXUtnFEMI...'
+});</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">安全: 環境変数 or IAMロール</div>
+      <pre><code>// EC2/Lambda: IAMロールを使用（推奨）
+const AWS = require('aws-sdk');
+// 自動的にロールの認証情報を使用
+
+// ローカル開発: 環境変数
+// AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+// を環境変数に設定（コードに書かない）</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-aws3-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: 以下のIAMポリシーの問題点は？</strong></p>
+    <pre><code>{
+  "Effect": "Allow",
+  "Action": "s3:*",
+  "Resource": "*"
+}</code></pre>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws3-1" value="a">
+        <span>S3しか許可していないので安全</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="s3:* は全S3操作（削除、公開設定変更含む）を許可し、Resource: * は全バケットに適用されます。特定のバケットと必要な操作のみに限定すべきです。">
+        <input type="radio" name="q-aws3-1" value="b">
+        <span>全S3操作・全バケットを許可している</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws3-1" value="c">
+        <span>JSON形式が間違っている</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-aws3-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-aws3-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: IAMユーザーのアクセスキーをGitHubにコミットしてしまった場合、最初にすべきことは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws3-2" value="a">
+        <span>リポジトリを非公開にする</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws3-2" value="b">
+        <span>コミットを削除して履歴を書き換える</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="漏洩したキーは即座に無効化することが最優先です。GitHubの履歴からは完全に削除できず、既にスキャンボットが検知している可能性が高いため、キーの無効化が先です。">
+        <input type="radio" name="q-aws3-2" value="c">
+        <span>IAMコンソールでアクセスキーを即座に無効化/削除</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-aws3-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('aws3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="aws4">
+  <h1>4. EC2基礎</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>EC2のインスタンスタイプ、AMI、セキュリティグループを理解する</p>
+  </div>
+
+  <h2>EC2（Elastic Compute Cloud）とは？</h2>
+  <p>
+    <strong>EC2</strong>は、AWSで仮想サーバーを起動できるサービスです。<br>
+    数分でサーバーを起動し、使った分だけ課金されます。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> たとえ話</div>
+    <p>
+      EC2は<strong>「レンタルパソコン」</strong>のようなものです。<br>
+      必要なスペックのPCを必要な時間だけ借りられます。<br>
+      使い終わったら返却（停止/終了）すれば料金が止まります。
+    </p>
+  </div>
+
+  <h2>インスタンスタイプ</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ファミリー</th>
+        <th>用途</th>
+        <th>例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>t系</strong>（汎用バースト）</td>
+        <td>開発環境、小規模サイト</td>
+        <td>t3.micro, t3.small</td>
+      </tr>
+      <tr>
+        <td><strong>m系</strong>（汎用）</td>
+        <td>Webサーバー、アプリサーバー</td>
+        <td>m6i.large, m7g.xlarge</td>
+      </tr>
+      <tr>
+        <td><strong>c系</strong>（コンピューティング最適化）</td>
+        <td>CPU負荷の高い処理</td>
+        <td>c6i.xlarge</td>
+      </tr>
+      <tr>
+        <td><strong>r系</strong>（メモリ最適化）</td>
+        <td>データベース、キャッシュ</td>
+        <td>r6i.large</td>
+      </tr>
+      <tr>
+        <td><strong>g/p系</strong>（GPU）</td>
+        <td>機械学習、動画処理</td>
+        <td>g5.xlarge, p4d.24xlarge</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>AMI（Amazon Machine Image）</h2>
+  <p>
+    <strong>AMI</strong>は、EC2の「テンプレート」です。<br>
+    OS + 必要なソフトウェアがインストール済みの状態を保存したものです。
+  </p>
+
+  <pre><code># よく使うAMI
+Amazon Linux 2023    # AWS推奨、軽量、無料
+Ubuntu 22.04 LTS     # 人気のLinuxディストリビューション
+Windows Server 2022  # Windows環境が必要な場合</code></pre>
+
+  <h2>セキュリティグループ</h2>
+  <p>
+    <strong>セキュリティグループ</strong>は、EC2の<strong>仮想ファイアウォール</strong>です。<br>
+    許可するトラフィック（ポート、IPアドレス）を定義します。
+  </p>
+
+  <!-- SVG図解: セキュリティグループ -->
+  <svg viewBox="0 0 650 200" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- インターネット -->
+    <g transform="translate(30, 70)">
+      <ellipse cx="50" cy="40" rx="45" ry="35" fill="#95a5a6" opacity="0.3"/>
+      <text x="50" y="35" font-size="24" text-anchor="middle">🌐</text>
+      <text x="50" y="55" font-size="10" fill="#333" text-anchor="middle">インターネット</text>
+    </g>
+
+    <!-- 矢印と説明 -->
+    <g transform="translate(130, 80)">
+      <line x1="0" y1="30" x2="80" y2="30" stroke="#27ae60" stroke-width="3" marker-end="url(#arrowGreen2)"/>
+      <text x="40" y="20" font-size="9" fill="#27ae60" text-anchor="middle">許可: 443</text>
+
+      <line x1="0" y1="50" x2="50" y2="50" stroke="#e74c3c" stroke-width="3"/>
+      <line x1="45" y1="45" x2="55" y2="55" stroke="#e74c3c" stroke-width="3"/>
+      <line x1="55" y1="45" x2="45" y2="55" stroke="#e74c3c" stroke-width="3"/>
+      <text x="40" y="70" font-size="9" fill="#e74c3c" text-anchor="middle">拒否: 22</text>
+    </g>
+
+    <!-- セキュリティグループ -->
+    <g transform="translate(220, 30)">
+      <rect x="0" y="0" width="200" height="140" rx="8" fill="#e74c3c" opacity="0.1" stroke="#e74c3c" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="100" y="25" font-size="12" fill="#c0392b" text-anchor="middle" font-weight="bold">セキュリティグループ</text>
+
+      <!-- EC2 -->
+      <rect x="40" y="40" width="120" height="80" rx="6" fill="#3498db" opacity="0.3" stroke="#3498db"/>
+      <text x="100" y="65" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">EC2</text>
+      <text x="100" y="85" font-size="10" fill="#666" text-anchor="middle">Webサーバー</text>
+      <text x="100" y="105" font-size="9" fill="#666" text-anchor="middle">:443 (HTTPS)</text>
+    </g>
+
+    <!-- インバウンドルール -->
+    <g transform="translate(450, 30)">
+      <rect x="0" y="0" width="170" height="140" rx="6" fill="#f8f9fa" stroke="#dee2e6"/>
+      <text x="85" y="22" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">インバウンドルール</text>
+
+      <rect x="10" y="35" width="150" height="30" rx="3" fill="#27ae60" opacity="0.2"/>
+      <text x="85" y="55" font-size="9" fill="#333" text-anchor="middle">HTTPS (443) from 0.0.0.0/0</text>
+
+      <rect x="10" y="70" width="150" height="30" rx="3" fill="#27ae60" opacity="0.2"/>
+      <text x="85" y="90" font-size="9" fill="#333" text-anchor="middle">SSH (22) from 10.0.0.0/8</text>
+
+      <text x="85" y="120" font-size="9" fill="#666" text-anchor="middle">明示的に許可したもののみ通過</text>
+      <text x="85" y="135" font-size="9" fill="#e74c3c" text-anchor="middle">デフォルトは全拒否</text>
+    </g>
+
+    <defs>
+      <marker id="arrowGreen2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#27ae60"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">危険: 全ポート全世界開放</div>
+      <pre><code># セキュリティグループ（インバウンド）
+Type: All traffic
+Source: 0.0.0.0/0   # 全世界からアクセス可能</code></pre>
+      <p>攻撃者が任意のポートにアクセス可能</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">安全: 必要最小限のポート</div>
+      <pre><code># セキュリティグループ（インバウンド）
+Type: HTTPS (443)
+Source: 0.0.0.0/0   # Webは全世界OK
+
+Type: SSH (22)
+Source: 10.0.0.0/8  # SSHは社内ネットワークのみ</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: セキュリティグループ</div>
+    <ul style="margin-bottom:0;">
+      <li><strong>0.0.0.0/0</strong>（全世界）からSSH(22)やRDP(3389)を許可していないか</li>
+      <li>全ポート開放（-1 または 0-65535）していないか</li>
+      <li>不要なポートが開いていないか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-aws4">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 以下のセキュリティグループ設定の問題点は？</strong></p>
+    <pre><code>Inbound:
+  - SSH (22): 0.0.0.0/0
+  - All traffic: 0.0.0.0/0</code></pre>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws4" value="a">
+        <span>SSHを許可しているのが問題</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="0.0.0.0/0は全世界からのアクセスを意味します。SSHを全世界に開放するとブルートフォース攻撃の標的になり、All trafficは全ポートを開放するため非常に危険です。">
+        <input type="radio" name="q-aws4" value="b">
+        <span>全世界（0.0.0.0/0）にSSHと全ポートを開放している</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws4" value="c">
+        <span>HTTPSが含まれていない</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-aws4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('aws4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="aws5">
+  <h1>5. VPC基礎</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>VPCのサブネット、ルートテーブル、NAT Gatewayを理解する</p>
+  </div>
+
+  <h2>VPC（Virtual Private Cloud）とは？</h2>
+  <p>
+    <strong>VPC</strong>は、AWS上に作成する<strong>自分専用の仮想ネットワーク</strong>です。<br>
+    IPアドレス範囲、サブネット、ルーティングを自由に設計できます。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> たとえ話</div>
+    <p>
+      VPCは<strong>「自社ビル」</strong>のようなものです。<br>
+      パブリックサブネット = 1階の受付（外部からアクセス可能）<br>
+      プライベートサブネット = 上階のオフィス（関係者のみ）<br>
+      NAT Gateway = 社員が外出するための出口
+    </p>
+  </div>
+
+  <h2>VPC構成の基本</h2>
+
+  <!-- SVG図解: VPC構成 -->
+  <svg viewBox="0 0 700 400" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- VPC全体 -->
+    <rect x="30" y="50" width="640" height="340" rx="10" fill="#3498db" opacity="0.1" stroke="#3498db" stroke-width="2"/>
+    <text x="350" y="75" font-size="14" fill="#2980b9" text-anchor="middle" font-weight="bold">VPC (10.0.0.0/16)</text>
+
+    <!-- Internet Gateway -->
+    <g transform="translate(310, 10)">
+      <rect x="0" y="0" width="80" height="35" rx="5" fill="#f39c12" stroke="#e67e22" stroke-width="2"/>
+      <text x="40" y="22" font-size="10" fill="white" text-anchor="middle" font-weight="bold">IGW</text>
+    </g>
+    <line x1="350" y1="45" x2="350" y2="95" stroke="#f39c12" stroke-width="2"/>
+
+    <!-- AZ-a -->
+    <g transform="translate(50, 95)">
+      <rect x="0" y="0" width="280" height="280" rx="8" fill="#27ae60" opacity="0.1" stroke="#27ae60" stroke-dasharray="5,3"/>
+      <text x="140" y="25" font-size="12" fill="#27ae60" text-anchor="middle" font-weight="bold">AZ-a</text>
+
+      <!-- パブリックサブネット -->
+      <g transform="translate(15, 40)">
+        <rect x="0" y="0" width="250" height="100" rx="6" fill="#27ae60" opacity="0.2" stroke="#27ae60"/>
+        <text x="125" y="20" font-size="11" fill="#27ae60" text-anchor="middle" font-weight="bold">パブリックサブネット</text>
+        <text x="125" y="35" font-size="9" fill="#666" text-anchor="middle">10.0.1.0/24</text>
+
+        <!-- ALB -->
+        <rect x="20" y="50" width="90" height="40" rx="4" fill="#3498db" opacity="0.5"/>
+        <text x="65" y="75" font-size="9" fill="#333" text-anchor="middle">ALB</text>
+
+        <!-- NAT Gateway -->
+        <rect x="140" y="50" width="90" height="40" rx="4" fill="#f39c12" opacity="0.5"/>
+        <text x="185" y="75" font-size="9" fill="#333" text-anchor="middle">NAT GW</text>
+      </g>
+
+      <!-- プライベートサブネット -->
+      <g transform="translate(15, 155)">
+        <rect x="0" y="0" width="250" height="110" rx="6" fill="#9b59b6" opacity="0.2" stroke="#9b59b6"/>
+        <text x="125" y="20" font-size="11" fill="#9b59b6" text-anchor="middle" font-weight="bold">プライベートサブネット</text>
+        <text x="125" y="35" font-size="9" fill="#666" text-anchor="middle">10.0.10.0/24</text>
+
+        <!-- EC2 -->
+        <rect x="20" y="50" width="70" height="45" rx="4" fill="#3498db" opacity="0.5"/>
+        <text x="55" y="78" font-size="9" fill="#333" text-anchor="middle">EC2</text>
+
+        <!-- RDS -->
+        <rect x="100" y="50" width="70" height="45" rx="4" fill="#e74c3c" opacity="0.5"/>
+        <text x="135" y="78" font-size="9" fill="#333" text-anchor="middle">RDS</text>
+
+        <!-- Lambda -->
+        <rect x="180" y="50" width="55" height="45" rx="4" fill="#f39c12" opacity="0.5"/>
+        <text x="207" y="78" font-size="8" fill="#333" text-anchor="middle">Lambda</text>
+      </g>
+    </g>
+
+    <!-- AZ-c -->
+    <g transform="translate(370, 95)">
+      <rect x="0" y="0" width="280" height="280" rx="8" fill="#27ae60" opacity="0.1" stroke="#27ae60" stroke-dasharray="5,3"/>
+      <text x="140" y="25" font-size="12" fill="#27ae60" text-anchor="middle" font-weight="bold">AZ-c</text>
+
+      <!-- パブリックサブネット -->
+      <g transform="translate(15, 40)">
+        <rect x="0" y="0" width="250" height="100" rx="6" fill="#27ae60" opacity="0.2" stroke="#27ae60"/>
+        <text x="125" y="20" font-size="11" fill="#27ae60" text-anchor="middle" font-weight="bold">パブリックサブネット</text>
+        <text x="125" y="35" font-size="9" fill="#666" text-anchor="middle">10.0.2.0/24</text>
+
+        <!-- ALB -->
+        <rect x="80" y="50" width="90" height="40" rx="4" fill="#3498db" opacity="0.5"/>
+        <text x="125" y="75" font-size="9" fill="#333" text-anchor="middle">ALB</text>
+      </g>
+
+      <!-- プライベートサブネット -->
+      <g transform="translate(15, 155)">
+        <rect x="0" y="0" width="250" height="110" rx="6" fill="#9b59b6" opacity="0.2" stroke="#9b59b6"/>
+        <text x="125" y="20" font-size="11" fill="#9b59b6" text-anchor="middle" font-weight="bold">プライベートサブネット</text>
+        <text x="125" y="35" font-size="9" fill="#666" text-anchor="middle">10.0.20.0/24</text>
+
+        <!-- EC2 -->
+        <rect x="40" y="50" width="70" height="45" rx="4" fill="#3498db" opacity="0.5"/>
+        <text x="75" y="78" font-size="9" fill="#333" text-anchor="middle">EC2</text>
+
+        <!-- RDS -->
+        <rect x="140" y="50" width="70" height="45" rx="4" fill="#e74c3c" opacity="0.5"/>
+        <text x="175" y="78" font-size="9" fill="#333" text-anchor="middle">RDS</text>
+      </g>
+    </g>
+  </svg>
+
+  <h2>サブネットの種類</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>種類</th>
+        <th>インターネット接続</th>
+        <th>用途</th>
+        <th>配置するもの</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>パブリックサブネット</strong></td>
+        <td>直接可能（IGW経由）</td>
+        <td>外部公開が必要なリソース</td>
+        <td>ALB, NAT Gateway, 踏み台</td>
+      </tr>
+      <tr>
+        <td><strong>プライベートサブネット</strong></td>
+        <td>NAT経由で外向きのみ</td>
+        <td>外部から隠すリソース</td>
+        <td>EC2, RDS, Lambda</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>NAT Gateway</h2>
+  <p>
+    <strong>NAT Gateway</strong>は、プライベートサブネットのリソースが
+    インターネットにアクセスするための出口です。<br>
+    外からの接続は受け付けず、内からの接続のみ許可します。
+  </p>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">危険: DBをパブリックサブネットに配置</div>
+      <pre><code># RDSをパブリックサブネットに配置
+# インターネットから直接アクセス可能
+Publicly accessible: Yes</code></pre>
+      <p>DBが攻撃対象になる</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">安全: DBはプライベートサブネット</div>
+      <pre><code># RDSをプライベートサブネットに配置
+# EC2経由でのみアクセス可能
+Publicly accessible: No
+Subnet: private-subnet-a, private-subnet-c</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: VPCセキュリティ</div>
+    <ul style="margin-bottom:0;">
+      <li><strong>RDS</strong>がパブリックサブネットにないか</li>
+      <li><strong>EC2</strong>に不必要にパブリックIPが付与されていないか</li>
+      <li>複数AZに分散されているか（高可用性）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-aws5">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: RDSインスタンスを配置すべき場所は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws5" value="a">
+        <span>パブリックサブネット（直接アクセスできて便利）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="データベースはインターネットから直接アクセスする必要がなく、むしろ隔離すべきです。プライベートサブネットに配置し、アプリケーションサーバー経由でのみアクセスさせます。">
+        <input type="radio" name="q-aws5" value="b">
+        <span>プライベートサブネット（インターネットから隔離）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws5" value="c">
+        <span>VPCの外（AWS管理なので安全）</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-aws5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('aws5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="aws6">
+  <h1>6. S3（Simple Storage Service）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>S3のバケット、アクセス制御、暗号化を理解する</p>
+  </div>
+
+  <h2>S3とは？</h2>
+  <p>
+    <strong>S3</strong>は、AWSのオブジェクトストレージサービスです。<br>
+    ファイル（画像、動画、バックアップなど）を保存し、
+    <strong>99.999999999%（イレブンナイン）</strong>の耐久性を提供します。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> たとえ話</div>
+    <p>
+      S3は<strong>「無限に拡張できるクラウドのUSBメモリ」</strong>です。<br>
+      バケット = フォルダ（ファイルを入れる箱）<br>
+      オブジェクト = ファイル<br>
+      キー = ファイルパス（ファイル名）
+    </p>
+  </div>
+
+  <h2>S3の基本概念</h2>
+
+  <!-- SVG図解: S3構成 -->
+  <svg viewBox="0 0 600 200" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- バケット -->
+    <g transform="translate(30, 30)">
+      <rect x="0" y="0" width="200" height="150" rx="8" fill="#f39c12" opacity="0.2" stroke="#f39c12" stroke-width="2"/>
+      <text x="100" y="25" font-size="13" fill="#d68910" text-anchor="middle" font-weight="bold">S3バケット</text>
+      <text x="100" y="42" font-size="10" fill="#666" text-anchor="middle">my-app-bucket-2026</text>
+
+      <!-- オブジェクト -->
+      <g transform="translate(15, 55)">
+        <rect x="0" y="0" width="170" height="30" rx="4" fill="white" stroke="#f39c12"/>
+        <text x="85" y="20" font-size="10" fill="#333" text-anchor="middle">images/logo.png</text>
+      </g>
+      <g transform="translate(15, 90)">
+        <rect x="0" y="0" width="170" height="30" rx="4" fill="white" stroke="#f39c12"/>
+        <text x="85" y="20" font-size="10" fill="#333" text-anchor="middle">uploads/2026/02/file.pdf</text>
+      </g>
+      <g transform="translate(15, 125)">
+        <rect x="0" y="0" width="170" height="20" rx="4" fill="#ddd"/>
+        <text x="85" y="14" font-size="9" fill="#666" text-anchor="middle">...（無制限に保存可能）</text>
+      </g>
+    </g>
+
+    <!-- 説明 -->
+    <g transform="translate(270, 40)">
+      <text x="0" y="0" font-size="12" fill="#333" font-weight="bold">S3の特徴</text>
+      <text x="0" y="25" font-size="11" fill="#666">・容量無制限</text>
+      <text x="0" y="45" font-size="11" fill="#666">・99.999999999% の耐久性</text>
+      <text x="0" y="65" font-size="11" fill="#666">・グローバルにユニークなバケット名</text>
+      <text x="0" y="85" font-size="11" fill="#666">・オブジェクト単位でアクセス制御</text>
+      <text x="0" y="105" font-size="11" fill="#666">・バージョニング対応</text>
+      <text x="0" y="125" font-size="11" fill="#666">・静的Webサイトホスティング</text>
+    </g>
+  </svg>
+
+  <h2>アクセス制御</h2>
+
+  <p>S3のアクセス制御は複数のレイヤーがあります。</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>レイヤー</th>
+        <th>説明</th>
+        <th>優先度</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ブロックパブリックアクセス</strong></td>
+        <td>バケット全体のパブリックアクセスを一括ブロック</td>
+        <td>最優先（推奨ON）</td>
+      </tr>
+      <tr>
+        <td><strong>バケットポリシー</strong></td>
+        <td>バケット単位のJSON形式ポリシー</td>
+        <td>高</td>
+      </tr>
+      <tr>
+        <td><strong>IAMポリシー</strong></td>
+        <td>IAMユーザー/ロールへの権限付与</td>
+        <td>中</td>
+      </tr>
+      <tr>
+        <td><strong>ACL（非推奨）</strong></td>
+        <td>レガシーなアクセス制御リスト</td>
+        <td>低（使わない）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">危険: パブリックバケット</div>
+      <pre><code># ブロックパブリックアクセスが無効
+Block all public access: OFF
+
+# バケットポリシーで全世界に公開
+{
+  "Effect": "Allow",
+  "Principal": "*",
+  "Action": "s3:GetObject",
+  "Resource": "arn:aws:s3:::my-bucket/*"
+}</code></pre>
+      <p>機密データが全世界に公開される</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">安全: プライベートバケット</div>
+      <pre><code># ブロックパブリックアクセスが有効
+Block all public access: ON
+
+# IAMロール経由でのみアクセス
+{
+  "Effect": "Allow",
+  "Principal": {
+    "AWS": "arn:aws:iam::123456789:role/AppRole"
+  },
+  "Action": ["s3:GetObject", "s3:PutObject"],
+  "Resource": "arn:aws:s3:::my-bucket/*"
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>暗号化</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>種類</th>
+        <th>説明</th>
+        <th>用途</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>SSE-S3</strong></td>
+        <td>S3管理キーで暗号化（デフォルト）</td>
+        <td>一般的な用途</td>
+      </tr>
+      <tr>
+        <td><strong>SSE-KMS</strong></td>
+        <td>KMSキーで暗号化、監査ログ取得可能</td>
+        <td>コンプライアンス要件</td>
+      </tr>
+      <tr>
+        <td><strong>SSE-C</strong></td>
+        <td>顧客管理キーで暗号化</td>
+        <td>独自キー管理が必要な場合</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: S3セキュリティ</div>
+    <ul style="margin-bottom:0;">
+      <li><strong>ブロックパブリックアクセス</strong>が有効か</li>
+      <li>バケットポリシーに<code>"Principal": "*"</code>がないか</li>
+      <li>暗号化が有効か（2023年以降デフォルトON）</li>
+      <li>バージョニングが有効か（誤削除対策）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-aws6-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: S3バケットをパブリックにする最大のリスクは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws6-1" value="a">
+        <span>アクセス速度が遅くなる</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="パブリックバケットは全世界から誰でもアクセスできます。顧客データ、認証情報、社内文書などが漏洩する事故が実際に多発しています。">
+        <input type="radio" name="q-aws6-1" value="b">
+        <span>機密データが全世界に公開される可能性</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws6-1" value="c">
+        <span>ストレージ料金が高くなる</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-aws6-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-aws6-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: S3バケットを作成したら、最初に確認すべき設定は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="ブロックパブリックアクセスは、誤ってパブリック設定をしてしまうことを防ぐ最も重要な設定です。新規バケットはデフォルトでONですが、既存バケットや設定変更時に確認が必要です。">
+        <input type="radio" name="q-aws6-2" value="a">
+        <span>ブロックパブリックアクセスが有効か</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws6-2" value="b">
+        <span>バケット名が長すぎないか</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws6-2" value="c">
+        <span>リージョンが日本か</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-aws6-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('aws6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="aws7">
+  <h1>7. RDS / Aurora</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>マネージドDBのRDS/Aurora、Multi-AZ、リードレプリカを理解する</p>
+  </div>
+
+  <h2>RDS（Relational Database Service）とは？</h2>
+  <p>
+    <strong>RDS</strong>は、AWSのマネージドリレーショナルデータベースサービスです。<br>
+    バックアップ、パッチ適用、レプリケーションをAWSが自動管理します。
+  </p>
+
+  <h2>対応エンジン</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>エンジン</th>
+        <th>特徴</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Amazon Aurora</strong></td>
+        <td>AWS独自開発、MySQL/PostgreSQL互換、高性能</td>
+      </tr>
+      <tr>
+        <td><strong>PostgreSQL</strong></td>
+        <td>高機能、拡張性が高い</td>
+      </tr>
+      <tr>
+        <td><strong>MySQL</strong></td>
+        <td>最も普及、情報が多い</td>
+      </tr>
+      <tr>
+        <td><strong>MariaDB</strong></td>
+        <td>MySQLからフォーク、オープンソース</td>
+      </tr>
+      <tr>
+        <td><strong>SQL Server</strong></td>
+        <td>Microsoft製、Windows環境向け</td>
+      </tr>
+      <tr>
+        <td><strong>Oracle</strong></td>
+        <td>エンタープライズ向け、ライセンス持ち込み可</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Multi-AZ（高可用性）</h2>
+
+  <!-- SVG図解: Multi-AZ -->
+  <svg viewBox="0 0 600 220" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- AZ-a -->
+    <g transform="translate(30, 30)">
+      <rect x="0" y="0" width="180" height="170" rx="8" fill="#27ae60" opacity="0.1" stroke="#27ae60" stroke-dasharray="5,3"/>
+      <text x="90" y="25" font-size="12" fill="#27ae60" text-anchor="middle" font-weight="bold">AZ-a</text>
+
+      <!-- プライマリ -->
+      <rect x="20" y="45" width="140" height="100" rx="6" fill="#3498db" opacity="0.3" stroke="#3498db" stroke-width="2"/>
+      <text x="90" y="70" font-size="12" fill="#333" text-anchor="middle" font-weight="bold">プライマリ</text>
+      <text x="90" y="90" font-size="10" fill="#666" text-anchor="middle">読み書き可能</text>
+      <text x="90" y="130" font-size="20" text-anchor="middle">🔵</text>
+    </g>
+
+    <!-- 同期レプリケーション -->
+    <g transform="translate(220, 100)">
+      <line x1="0" y1="0" x2="80" y2="0" stroke="#27ae60" stroke-width="3"/>
+      <polygon points="75,-5 85,0 75,5" fill="#27ae60"/>
+      <text x="40" y="-10" font-size="10" fill="#27ae60" text-anchor="middle" font-weight="bold">同期</text>
+      <text x="40" y="20" font-size="9" fill="#666" text-anchor="middle">自動フェイルオーバー</text>
+    </g>
+
+    <!-- AZ-c -->
+    <g transform="translate(310, 30)">
+      <rect x="0" y="0" width="180" height="170" rx="8" fill="#27ae60" opacity="0.1" stroke="#27ae60" stroke-dasharray="5,3"/>
+      <text x="90" y="25" font-size="12" fill="#27ae60" text-anchor="middle" font-weight="bold">AZ-c</text>
+
+      <!-- スタンバイ -->
+      <rect x="20" y="45" width="140" height="100" rx="6" fill="#95a5a6" opacity="0.3" stroke="#95a5a6" stroke-width="2"/>
+      <text x="90" y="70" font-size="12" fill="#333" text-anchor="middle" font-weight="bold">スタンバイ</text>
+      <text x="90" y="90" font-size="10" fill="#666" text-anchor="middle">障害時に自動昇格</text>
+      <text x="90" y="130" font-size="20" text-anchor="middle">⚪</text>
+    </g>
+
+    <!-- 説明 -->
+    <g transform="translate(510, 60)">
+      <text x="0" y="0" font-size="11" fill="#333" font-weight="bold">Multi-AZの利点</text>
+      <text x="0" y="22" font-size="10" fill="#666">・自動フェイルオーバー</text>
+      <text x="0" y="40" font-size="10" fill="#666">・ダウンタイム最小化</text>
+      <text x="0" y="58" font-size="10" fill="#666">・データ損失なし</text>
+      <text x="0" y="80" font-size="10" fill="#e74c3c">本番環境は必須!</text>
+    </g>
+  </svg>
+
+  <h2>リードレプリカ（読み取り性能向上）</h2>
+
+  <p>
+    <strong>リードレプリカ</strong>は、読み取り専用のコピーです。<br>
+    読み取り処理を分散し、プライマリの負荷を軽減します。
+  </p>
+
+  <pre><code>// アプリケーションでの使い分け
+// 書き込み → プライマリ
+const primary = 'db-primary.xxx.rds.amazonaws.com';
+await primary.query('INSERT INTO users VALUES (...)');
+
+// 読み取り → リードレプリカ
+const replica = 'db-replica.xxx.rds.amazonaws.com';
+await replica.query('SELECT * FROM users WHERE ...');</code></pre>
+
+  <h2>RDS vs Aurora</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>観点</th>
+        <th>RDS</th>
+        <th>Aurora</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>性能</strong></td>
+        <td>標準</td>
+        <td>MySQL比5倍、PostgreSQL比3倍</td>
+      </tr>
+      <tr>
+        <td><strong>ストレージ</strong></td>
+        <td>手動拡張（最大64TB）</td>
+        <td>自動拡張（最大128TB）</td>
+      </tr>
+      <tr>
+        <td><strong>レプリカ</strong></td>
+        <td>最大5台</td>
+        <td>最大15台</td>
+      </tr>
+      <tr>
+        <td><strong>コスト</strong></td>
+        <td>安い</td>
+        <td>約20%高い</td>
+      </tr>
+      <tr>
+        <td><strong>推奨用途</strong></td>
+        <td>小〜中規模、コスト重視</td>
+        <td>大規模、性能重視</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: RDS/Aurora</div>
+    <ul style="margin-bottom:0;">
+      <li>本番環境で<strong>Multi-AZ</strong>が無効になっていないか（Single-AZ = 単一障害点）</li>
+      <li><strong>自動バックアップ</strong>が有効か、保持期間は適切か</li>
+      <li><strong>暗号化</strong>が有効か（作成後は変更不可）</li>
+      <li>パブリックアクセスが<strong>無効</strong>か</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-aws7">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 本番環境のRDSでMulti-AZを有効にする主な理由は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws7" value="a">
+        <span>読み取り性能が向上するから</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws7" value="b">
+        <span>コストが削減できるから</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Multi-AZは高可用性のための機能です。プライマリDBに障害が発生した場合、自動的にスタンバイに切り替わり、ダウンタイムを最小化します。読み取り性能向上はリードレプリカの役割です。">
+        <input type="radio" name="q-aws7" value="c">
+        <span>障害時の自動フェイルオーバーでダウンタイムを最小化</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-aws7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('aws7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="aws8">
+  <h1>8. Lambda（サーバーレス）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>サーバーレスの概念とLambdaの制限事項を理解する</p>
+  </div>
+
+  <h2>Lambdaとは？</h2>
+  <p>
+    <strong>Lambda</strong>は、サーバーを管理せずにコードを実行できるサービスです。<br>
+    イベント（HTTPリクエスト、S3アップロードなど）をトリガーに実行されます。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> たとえ話</div>
+    <p>
+      Lambdaは<strong>「タクシー」</strong>のようなものです。<br>
+      自分で車（サーバー）を持つ必要がなく、必要な時だけ呼んで使います。<br>
+      使った距離（実行時間）だけ料金が発生します。
+    </p>
+  </div>
+
+  <h2>サーバーレス vs サーバーあり</h2>
+
+  <!-- SVG図解: サーバーレス比較 -->
+  <svg viewBox="0 0 650 180" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- 従来のサーバー -->
+    <g transform="translate(30, 20)">
+      <text x="120" y="0" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">従来のサーバー（EC2）</text>
+
+      <rect x="0" y="15" width="240" height="140" rx="6" fill="#e74c3c" opacity="0.1" stroke="#e74c3c"/>
+
+      <rect x="10" y="30" width="220" height="25" rx="3" fill="#e74c3c" opacity="0.3"/>
+      <text x="120" y="48" font-size="10" fill="#333" text-anchor="middle">24時間365日稼働</text>
+
+      <rect x="10" y="60" width="220" height="25" rx="3" fill="#e74c3c" opacity="0.3"/>
+      <text x="120" y="78" font-size="10" fill="#333" text-anchor="middle">OS/ミドルウェアの管理が必要</text>
+
+      <rect x="10" y="90" width="220" height="25" rx="3" fill="#e74c3c" opacity="0.3"/>
+      <text x="120" y="108" font-size="10" fill="#333" text-anchor="middle">使っていなくても料金発生</text>
+
+      <rect x="10" y="120" width="220" height="25" rx="3" fill="#e74c3c" opacity="0.3"/>
+      <text x="120" y="138" font-size="10" fill="#333" text-anchor="middle">スケーリングは手動設定</text>
+    </g>
+
+    <!-- Lambda -->
+    <g transform="translate(340, 20)">
+      <text x="120" y="0" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">サーバーレス（Lambda）</text>
+
+      <rect x="0" y="15" width="240" height="140" rx="6" fill="#27ae60" opacity="0.1" stroke="#27ae60"/>
+
+      <rect x="10" y="30" width="220" height="25" rx="3" fill="#27ae60" opacity="0.3"/>
+      <text x="120" y="48" font-size="10" fill="#333" text-anchor="middle">イベント発生時のみ実行</text>
+
+      <rect x="10" y="60" width="220" height="25" rx="3" fill="#27ae60" opacity="0.3"/>
+      <text x="120" y="78" font-size="10" fill="#333" text-anchor="middle">インフラ管理不要</text>
+
+      <rect x="10" y="90" width="220" height="25" rx="3" fill="#27ae60" opacity="0.3"/>
+      <text x="120" y="108" font-size="10" fill="#333" text-anchor="middle">実行時間のみ課金（ミリ秒単位）</text>
+
+      <rect x="10" y="120" width="220" height="25" rx="3" fill="#27ae60" opacity="0.3"/>
+      <text x="120" y="138" font-size="10" fill="#333" text-anchor="middle">自動スケーリング（0→数千同時）</text>
+    </g>
+  </svg>
+
+  <h2>Lambdaのイベントソース</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>イベントソース</th>
+        <th>用途例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>API Gateway</strong></td>
+        <td>REST API、WebSocket</td>
+      </tr>
+      <tr>
+        <td><strong>S3</strong></td>
+        <td>ファイルアップロード時の処理（リサイズ等）</td>
+      </tr>
+      <tr>
+        <td><strong>DynamoDB Streams</strong></td>
+        <td>データ変更時のトリガー</td>
+      </tr>
+      <tr>
+        <td><strong>SQS</strong></td>
+        <td>メッセージキュー処理</td>
+      </tr>
+      <tr>
+        <td><strong>EventBridge（CloudWatch Events）</strong></td>
+        <td>スケジュール実行（cron）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Lambdaの制限事項（重要）</h2>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> Lambdaの主な制限</div>
+    <table>
+      <thead>
+        <tr>
+          <th>項目</th>
+          <th>制限</th>
+          <th>注意点</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>実行時間</strong></td>
+          <td>最大15分</td>
+          <td>長時間処理には不向き</td>
+        </tr>
+        <tr>
+          <td><strong>メモリ</strong></td>
+          <td>128MB〜10GB</td>
+          <td>メモリに応じてCPUも増加</td>
+        </tr>
+        <tr>
+          <td><strong>同時実行数</strong></td>
+          <td>デフォルト1000/リージョン</td>
+          <td>引き上げ申請可能</td>
+        </tr>
+        <tr>
+          <td><strong>デプロイパッケージ</strong></td>
+          <td>50MB（直接）/ 250MB（S3経由）</td>
+          <td>レイヤーで分割可能</td>
+        </tr>
+        <tr>
+          <td><strong>/tmp領域</strong></td>
+          <td>512MB〜10GB</td>
+          <td>一時ファイル用</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>コールドスタート</h2>
+  <p>
+    <strong>コールドスタート</strong>とは、しばらく実行されていないLambdaが
+    初めて呼び出される際に発生する遅延（数百ms〜数秒）です。
+  </p>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">コールドスタートが問題になるケース</div>
+      <ul>
+        <li>レイテンシに厳しいAPI</li>
+        <li>大きなデプロイパッケージ</li>
+        <li>VPC内Lambda（ENI作成に時間）</li>
+      </ul>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">対策</div>
+      <ul>
+        <li><strong>Provisioned Concurrency</strong>: 事前にウォーム状態を維持</li>
+        <li>パッケージサイズの最小化</li>
+        <li>定期的なウォームアップ呼び出し</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-aws8">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 以下の処理でLambdaが不適切なのは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws8" value="a">
+        <span>S3にアップロードされた画像のリサイズ</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Lambdaの最大実行時間は15分です。30分の処理はタイムアウトします。このような長時間処理にはECS/Fargate、EC2、または処理を分割してStep Functionsで連携する必要があります。">
+        <input type="radio" name="q-aws8" value="b">
+        <span>30分かかる動画エンコード処理</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws8" value="c">
+        <span>毎日深夜に実行するバッチ処理（5分）</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-aws8')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('aws8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="aws9">
+  <h1>9. ECS / Fargate</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>ECS/Fargateでのコンテナオーケストレーションとタスク定義を理解する</p>
+  </div>
+
+  <h2>ECS（Elastic Container Service）とは？</h2>
+  <p>
+    <strong>ECS</strong>は、AWSのコンテナオーケストレーションサービスです。<br>
+    Dockerコンテナを簡単にデプロイ、管理、スケールできます。
+  </p>
+
+  <h2>起動タイプ: EC2 vs Fargate</h2>
+
+  <!-- SVG図解: EC2 vs Fargate -->
+  <svg viewBox="0 0 650 220" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- EC2起動タイプ -->
+    <g transform="translate(30, 20)">
+      <text x="120" y="0" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">EC2起動タイプ</text>
+
+      <rect x="0" y="15" width="240" height="180" rx="6" fill="#3498db" opacity="0.1" stroke="#3498db"/>
+
+      <!-- EC2インスタンス -->
+      <g transform="translate(10, 30)">
+        <rect x="0" y="0" width="100" height="120" rx="4" fill="#3498db" opacity="0.3" stroke="#3498db"/>
+        <text x="50" y="20" font-size="10" fill="#333" text-anchor="middle" font-weight="bold">EC2</text>
+
+        <rect x="10" y="35" width="80" height="30" rx="3" fill="#2ecc71" opacity="0.5"/>
+        <text x="50" y="55" font-size="9" fill="#333" text-anchor="middle">Container</text>
+
+        <rect x="10" y="75" width="80" height="30" rx="3" fill="#2ecc71" opacity="0.5"/>
+        <text x="50" y="95" font-size="9" fill="#333" text-anchor="middle">Container</text>
+      </g>
+
+      <g transform="translate(120, 30)">
+        <rect x="0" y="0" width="100" height="120" rx="4" fill="#3498db" opacity="0.3" stroke="#3498db"/>
+        <text x="50" y="20" font-size="10" fill="#333" text-anchor="middle" font-weight="bold">EC2</text>
+
+        <rect x="10" y="35" width="80" height="30" rx="3" fill="#2ecc71" opacity="0.5"/>
+        <text x="50" y="55" font-size="9" fill="#333" text-anchor="middle">Container</text>
+      </g>
+
+      <text x="120" y="175" font-size="10" fill="#666" text-anchor="middle">自分でEC2を管理</text>
+      <text x="120" y="190" font-size="10" fill="#e74c3c" text-anchor="middle">サーバー管理が必要</text>
+    </g>
+
+    <!-- Fargate起動タイプ -->
+    <g transform="translate(340, 20)">
+      <text x="120" y="0" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">Fargate起動タイプ</text>
+
+      <rect x="0" y="15" width="240" height="180" rx="6" fill="#27ae60" opacity="0.1" stroke="#27ae60"/>
+
+      <!-- Fargateタスク -->
+      <g transform="translate(10, 30)">
+        <rect x="0" y="0" width="70" height="60" rx="4" fill="#2ecc71" opacity="0.5" stroke="#27ae60"/>
+        <text x="35" y="25" font-size="9" fill="#333" text-anchor="middle" font-weight="bold">Task</text>
+        <text x="35" y="45" font-size="8" fill="#666" text-anchor="middle">Container</text>
+      </g>
+
+      <g transform="translate(85, 30)">
+        <rect x="0" y="0" width="70" height="60" rx="4" fill="#2ecc71" opacity="0.5" stroke="#27ae60"/>
+        <text x="35" y="25" font-size="9" fill="#333" text-anchor="middle" font-weight="bold">Task</text>
+        <text x="35" y="45" font-size="8" fill="#666" text-anchor="middle">Container</text>
+      </g>
+
+      <g transform="translate(160, 30)">
+        <rect x="0" y="0" width="70" height="60" rx="4" fill="#2ecc71" opacity="0.5" stroke="#27ae60"/>
+        <text x="35" y="25" font-size="9" fill="#333" text-anchor="middle" font-weight="bold">Task</text>
+        <text x="35" y="45" font-size="8" fill="#666" text-anchor="middle">Container</text>
+      </g>
+
+      <rect x="10" y="100" width="220" height="50" rx="4" fill="#27ae60" opacity="0.2"/>
+      <text x="120" y="120" font-size="10" fill="#333" text-anchor="middle">AWS Fargate</text>
+      <text x="120" y="135" font-size="9" fill="#666" text-anchor="middle">（インフラはAWS管理）</text>
+
+      <text x="120" y="175" font-size="10" fill="#666" text-anchor="middle">サーバーレスコンテナ</text>
+      <text x="120" y="190" font-size="10" fill="#27ae60" text-anchor="middle">サーバー管理不要</text>
+    </g>
+  </svg>
+
+  <table>
+    <thead>
+      <tr>
+        <th>観点</th>
+        <th>EC2起動タイプ</th>
+        <th>Fargate</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>サーバー管理</strong></td>
+        <td>必要（パッチ、スケーリング等）</td>
+        <td>不要（AWS管理）</td>
+      </tr>
+      <tr>
+        <td><strong>コスト</strong></td>
+        <td>安い（大規模時）</td>
+        <td>やや高い</td>
+      </tr>
+      <tr>
+        <td><strong>柔軟性</strong></td>
+        <td>高い（GPU等特殊要件対応）</td>
+        <td>制限あり</td>
+      </tr>
+      <tr>
+        <td><strong>推奨用途</strong></td>
+        <td>大規模、特殊要件</td>
+        <td>一般的なWebアプリ（推奨）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>ECSの主要概念</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>概念</th>
+        <th>説明</th>
+        <th>K8sとの対応</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>クラスター</strong></td>
+        <td>タスクを実行する論理的なグループ</td>
+        <td>Cluster</td>
+      </tr>
+      <tr>
+        <td><strong>タスク定義</strong></td>
+        <td>コンテナの設計図（イメージ、CPU、メモリ等）</td>
+        <td>Pod定義</td>
+      </tr>
+      <tr>
+        <td><strong>タスク</strong></td>
+        <td>タスク定義から起動された実行インスタンス</td>
+        <td>Pod</td>
+      </tr>
+      <tr>
+        <td><strong>サービス</strong></td>
+        <td>タスクの実行数を維持、ロードバランサー連携</td>
+        <td>Deployment + Service</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>タスク定義の例</h2>
+
+  <pre><code>{
+  "family": "my-app",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "containerDefinitions": [
+    {
+      "name": "app",
+      "image": "123456789.dkr.ecr.ap-northeast-1.amazonaws.com/my-app:1.0.0",
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "NODE_ENV",
+          "value": "production"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "DATABASE_URL",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:123456789:secret:db-url"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/my-app",
+          "awslogs-region": "ap-northeast-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: ECS/Fargate</div>
+    <ul style="margin-bottom:0;">
+      <li><strong>latestタグ</strong>を使っていないか（追跡困難）</li>
+      <li>シークレットが<strong>環境変数に直書き</strong>されていないか</li>
+      <li>ログ設定（awslogs）が有効か</li>
+      <li>ヘルスチェックが設定されているか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-aws9">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 新規プロジェクトでコンテナをAWSで動かす場合、最初に検討すべき選択肢は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws9" value="a">
+        <span>EC2起動タイプ（細かく制御できる）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Fargateはサーバー管理が不要で、運用負荷が低く、セキュリティパッチもAWSが対応します。特殊な要件（GPU、大規模）がない限り、まずFargateを検討すべきです。">
+        <input type="radio" name="q-aws9" value="b">
+        <span>Fargate（サーバーレスで運用負荷が低い）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws9" value="c">
+        <span>EC2に直接Dockerを入れる</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-aws9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('aws9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="aws10">
+  <h1>10. コスト管理</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>AWSの料金モデル、Cost Explorer、予算アラートを理解する</p>
+  </div>
+
+  <h2>AWSの料金モデル</h2>
+  <p>
+    AWSは基本的に<strong>従量課金</strong>です。<br>
+    使った分だけ支払いますが、<strong>放置すると予想外の請求</strong>が来ることも。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> たとえ話</div>
+    <p>
+      AWSの料金は<strong>「電気代」</strong>のようなものです。<br>
+      使った分だけ請求されますが、エアコンを消し忘れると大変なことに。<br>
+      AWSでも、リソースを消し忘れると高額請求のリスクがあります。
+    </p>
+  </div>
+
+  <h2>主なコスト要因</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>サービス</th>
+        <th>課金要素</th>
+        <th>注意点</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>EC2</strong></td>
+        <td>インスタンス稼働時間</td>
+        <td>停止忘れ、不要なインスタンス</td>
+      </tr>
+      <tr>
+        <td><strong>RDS</strong></td>
+        <td>インスタンス稼働時間、ストレージ</td>
+        <td>Multi-AZは2倍、スナップショット</td>
+      </tr>
+      <tr>
+        <td><strong>S3</strong></td>
+        <td>ストレージ量、リクエスト数、転送量</td>
+        <td>古いバージョンの蓄積</td>
+      </tr>
+      <tr>
+        <td><strong>Lambda</strong></td>
+        <td>実行回数、実行時間、メモリ</td>
+        <td>無限ループ、過剰なメモリ設定</td>
+      </tr>
+      <tr>
+        <td><strong>NAT Gateway</strong></td>
+        <td>稼働時間、転送量</td>
+        <td>意外と高額（約4,000円/月〜）</td>
+      </tr>
+      <tr>
+        <td><strong>データ転送</strong></td>
+        <td>アウトバウンド転送量</td>
+        <td>リージョン間、インターネット転送</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>購入オプション（EC2/RDS）</h2>
+
+  <!-- SVG図解: 購入オプション -->
+  <svg viewBox="0 0 650 160" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- オンデマンド -->
+    <g transform="translate(30, 20)">
+      <rect x="0" y="0" width="140" height="120" rx="6" fill="#e74c3c" opacity="0.2" stroke="#e74c3c"/>
+      <text x="70" y="25" font-size="12" fill="#c0392b" text-anchor="middle" font-weight="bold">オンデマンド</text>
+      <text x="70" y="50" font-size="10" fill="#666" text-anchor="middle">定価</text>
+      <text x="70" y="70" font-size="10" fill="#666" text-anchor="middle">いつでも開始/停止</text>
+      <text x="70" y="90" font-size="10" fill="#666" text-anchor="middle">コミットメント不要</text>
+      <text x="70" y="110" font-size="10" fill="#e74c3c" text-anchor="middle">割引なし</text>
+    </g>
+
+    <!-- リザーブド -->
+    <g transform="translate(190, 20)">
+      <rect x="0" y="0" width="140" height="120" rx="6" fill="#f39c12" opacity="0.2" stroke="#f39c12"/>
+      <text x="70" y="25" font-size="12" fill="#d68910" text-anchor="middle" font-weight="bold">リザーブド</text>
+      <text x="70" y="50" font-size="10" fill="#666" text-anchor="middle">1年/3年契約</text>
+      <text x="70" y="70" font-size="10" fill="#666" text-anchor="middle">前払いで割引</text>
+      <text x="70" y="90" font-size="10" fill="#666" text-anchor="middle">安定した利用向け</text>
+      <text x="70" y="110" font-size="10" fill="#27ae60" text-anchor="middle" font-weight="bold">最大72%割引</text>
+    </g>
+
+    <!-- Savings Plans -->
+    <g transform="translate(350, 20)">
+      <rect x="0" y="0" width="140" height="120" rx="6" fill="#27ae60" opacity="0.2" stroke="#27ae60"/>
+      <text x="70" y="25" font-size="12" fill="#27ae60" text-anchor="middle" font-weight="bold">Savings Plans</text>
+      <text x="70" y="50" font-size="10" fill="#666" text-anchor="middle">1年/3年契約</text>
+      <text x="70" y="70" font-size="10" fill="#666" text-anchor="middle">使用量コミット</text>
+      <text x="70" y="90" font-size="10" fill="#666" text-anchor="middle">柔軟性が高い</text>
+      <text x="70" y="110" font-size="10" fill="#27ae60" text-anchor="middle" font-weight="bold">最大66%割引</text>
+    </g>
+
+    <!-- スポット -->
+    <g transform="translate(510, 20)">
+      <rect x="0" y="0" width="140" height="120" rx="6" fill="#3498db" opacity="0.2" stroke="#3498db"/>
+      <text x="70" y="25" font-size="12" fill="#2980b9" text-anchor="middle" font-weight="bold">スポット</text>
+      <text x="70" y="50" font-size="10" fill="#666" text-anchor="middle">余剰キャパシティ</text>
+      <text x="70" y="70" font-size="10" fill="#666" text-anchor="middle">中断リスクあり</text>
+      <text x="70" y="90" font-size="10" fill="#666" text-anchor="middle">バッチ処理向け</text>
+      <text x="70" y="110" font-size="10" fill="#27ae60" text-anchor="middle" font-weight="bold">最大90%割引</text>
+    </g>
+  </svg>
+
+  <h2>コスト管理ツール</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ツール</th>
+        <th>用途</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Cost Explorer</strong></td>
+        <td>コストの可視化、分析、予測</td>
+      </tr>
+      <tr>
+        <td><strong>AWS Budgets</strong></td>
+        <td>予算設定、アラート通知</td>
+      </tr>
+      <tr>
+        <td><strong>Cost Anomaly Detection</strong></td>
+        <td>異常なコスト増加の自動検出</td>
+      </tr>
+      <tr>
+        <td><strong>Trusted Advisor</strong></td>
+        <td>未使用リソースの検出、最適化提案</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>予算アラートの設定（必須）</h2>
+
+  <pre><code># AWS CLIで予算アラートを作成
+aws budgets create-budget \
+  --account-id 123456789012 \
+  --budget '{
+    "BudgetName": "Monthly-Budget",
+    "BudgetLimit": {
+      "Amount": "100",
+      "Unit": "USD"
+    },
+    "BudgetType": "COST",
+    "TimeUnit": "MONTHLY"
+  }' \
+  --notifications-with-subscribers '[{
+    "Notification": {
+      "NotificationType": "ACTUAL",
+      "ComparisonOperator": "GREATER_THAN",
+      "Threshold": 80
+    },
+    "Subscribers": [{
+      "SubscriptionType": "EMAIL",
+      "Address": "your-email@example.com"
+    }]
+  }]'</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: コスト管理</div>
+    <ul style="margin-bottom:0;">
+      <li><strong>予算アラート</strong>が設定されているか（設定なし = 野放し）</li>
+      <li>開発環境のEC2/RDSが<strong>夜間・週末に停止</strong>されているか</li>
+      <li><strong>タグ</strong>が適切に付与されているか（コスト配分に必要）</li>
+      <li>不要なリソース（スナップショット、古いAMI等）が残っていないか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-aws10-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: AWSアカウントを作成したら、最初にすべきコスト管理は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="予算アラートを設定しないと、リソースの消し忘れや予期せぬ使用量増加に気づけません。月額上限と閾値アラートを最初に設定することで、高額請求を防げます。">
+        <input type="radio" name="q-aws10-1" value="a">
+        <span>AWS Budgetsで予算アラートを設定</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws10-1" value="b">
+        <span>全サービスをリザーブドインスタンスで購入</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws10-1" value="c">
+        <span>Cost Explorerで過去のコストを分析</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-aws10-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-aws10-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: EC2を24時間365日安定して使う場合、最もコスト効率が良いのは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws10-2" value="a">
+        <span>オンデマンド（いつでも停止できる）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="安定した利用が見込める場合、リザーブドインスタンスまたはSavings Plansを使うことで最大72%のコスト削減が可能です。1年または3年のコミットメントが必要ですが、長期的には大幅な節約になります。">
+        <input type="radio" name="q-aws10-2" value="b">
+        <span>リザーブドインスタンスまたはSavings Plans</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws10-2" value="c">
+        <span>スポットインスタンス</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-aws10-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('aws10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

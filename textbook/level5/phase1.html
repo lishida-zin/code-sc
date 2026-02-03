@@ -1,0 +1,1422 @@
+<!-- ============================================
+     Level 5 Phase 1: Docker基礎
+     ============================================ -->
+
+<section id="docker1">
+  <h1>1. コンテナとは？</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>コンテナと仮想マシン（VM）の違いを説明できる</p>
+  </div>
+
+  <h2>コンテナを一言で</h2>
+  <p>
+    <strong>コンテナ</strong>とは、アプリケーションとその実行環境を
+    <strong>「箱」にまとめて持ち運べる</strong>技術です。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> たとえ話</div>
+    <p>
+      コンテナは<strong>「お弁当箱」</strong>のようなものです。<br>
+      お弁当箱には、ご飯、おかず、お箸がすべて入っている。<br>
+      どこに持っていっても、同じご飯が食べられます。
+    </p>
+    <p>
+      同様に、コンテナにはアプリと必要なライブラリがすべて入っている。<br>
+      どのサーバーでも、同じように動きます。
+    </p>
+  </div>
+
+  <h2>なぜコンテナが必要？</h2>
+  <p>開発者の永遠の悩み「<strong>自分のPCでは動くのに...</strong>」を解決します。</p>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">コンテナなしの問題</div>
+      <ul>
+        <li>開発環境と本番環境で動作が違う</li>
+        <li>「Node 18で動かない」「ライブラリが古い」</li>
+        <li>環境構築に何時間もかかる</li>
+        <li>チームメンバー間で環境がバラバラ</li>
+      </ul>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">コンテナありの解決</div>
+      <ul>
+        <li>どこでも同じ環境で動く</li>
+        <li>必要なものがすべてコンテナ内に</li>
+        <li>環境構築は<code>docker run</code>だけ</li>
+        <li>チーム全員が同じ環境</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>コンテナ vs 仮想マシン（VM）</h2>
+
+  <!-- SVG図解: コンテナ vs VM -->
+  <svg viewBox="0 0 700 320" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <defs>
+      <linearGradient id="vmGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#e74c3c;stop-opacity:0.8"/>
+        <stop offset="100%" style="stop-color:#c0392b;stop-opacity:0.9"/>
+      </linearGradient>
+      <linearGradient id="containerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#3498db;stop-opacity:0.8"/>
+        <stop offset="100%" style="stop-color:#2980b9;stop-opacity:0.9"/>
+      </linearGradient>
+    </defs>
+
+    <!-- 左側: VM構成 -->
+    <g transform="translate(20, 20)">
+      <text x="130" y="0" font-size="16" font-weight="bold" fill="#333" text-anchor="middle">仮想マシン（VM）</text>
+
+      <!-- インフラ層 -->
+      <rect x="10" y="240" width="240" height="40" rx="4" fill="#95a5a6"/>
+      <text x="130" y="265" font-size="14" fill="white" text-anchor="middle">インフラ（サーバー）</text>
+
+      <!-- ハイパーバイザ -->
+      <rect x="10" y="195" width="240" height="40" rx="4" fill="#7f8c8d"/>
+      <text x="130" y="220" font-size="14" fill="white" text-anchor="middle">ハイパーバイザ</text>
+
+      <!-- VM 1 -->
+      <g transform="translate(15, 30)">
+        <rect x="0" y="0" width="70" height="160" rx="4" fill="url(#vmGrad)" stroke="#c0392b" stroke-width="2"/>
+        <rect x="5" y="10" width="60" height="30" rx="2" fill="white" opacity="0.9"/>
+        <text x="35" y="30" font-size="10" fill="#333" text-anchor="middle">App 1</text>
+        <rect x="5" y="45" width="60" height="30" rx="2" fill="white" opacity="0.7"/>
+        <text x="35" y="65" font-size="10" fill="#333" text-anchor="middle">Bins/Libs</text>
+        <rect x="5" y="80" width="60" height="70" rx="2" fill="#e74c3c" opacity="0.5"/>
+        <text x="35" y="110" font-size="10" fill="white" text-anchor="middle">Guest</text>
+        <text x="35" y="125" font-size="10" fill="white" text-anchor="middle">OS</text>
+        <text x="35" y="140" font-size="9" fill="white" text-anchor="middle">(数GB)</text>
+      </g>
+
+      <!-- VM 2 -->
+      <g transform="translate(95, 30)">
+        <rect x="0" y="0" width="70" height="160" rx="4" fill="url(#vmGrad)" stroke="#c0392b" stroke-width="2"/>
+        <rect x="5" y="10" width="60" height="30" rx="2" fill="white" opacity="0.9"/>
+        <text x="35" y="30" font-size="10" fill="#333" text-anchor="middle">App 2</text>
+        <rect x="5" y="45" width="60" height="30" rx="2" fill="white" opacity="0.7"/>
+        <text x="35" y="65" font-size="10" fill="#333" text-anchor="middle">Bins/Libs</text>
+        <rect x="5" y="80" width="60" height="70" rx="2" fill="#e74c3c" opacity="0.5"/>
+        <text x="35" y="110" font-size="10" fill="white" text-anchor="middle">Guest</text>
+        <text x="35" y="125" font-size="10" fill="white" text-anchor="middle">OS</text>
+        <text x="35" y="140" font-size="9" fill="white" text-anchor="middle">(数GB)</text>
+      </g>
+
+      <!-- VM 3 -->
+      <g transform="translate(175, 30)">
+        <rect x="0" y="0" width="70" height="160" rx="4" fill="url(#vmGrad)" stroke="#c0392b" stroke-width="2"/>
+        <rect x="5" y="10" width="60" height="30" rx="2" fill="white" opacity="0.9"/>
+        <text x="35" y="30" font-size="10" fill="#333" text-anchor="middle">App 3</text>
+        <rect x="5" y="45" width="60" height="30" rx="2" fill="white" opacity="0.7"/>
+        <text x="35" y="65" font-size="10" fill="#333" text-anchor="middle">Bins/Libs</text>
+        <rect x="5" y="80" width="60" height="70" rx="2" fill="#e74c3c" opacity="0.5"/>
+        <text x="35" y="110" font-size="10" fill="white" text-anchor="middle">Guest</text>
+        <text x="35" y="125" font-size="10" fill="white" text-anchor="middle">OS</text>
+        <text x="35" y="140" font-size="9" fill="white" text-anchor="middle">(数GB)</text>
+      </g>
+    </g>
+
+    <!-- 右側: コンテナ構成 -->
+    <g transform="translate(380, 20)">
+      <text x="130" y="0" font-size="16" font-weight="bold" fill="#333" text-anchor="middle">コンテナ</text>
+
+      <!-- インフラ層 -->
+      <rect x="10" y="240" width="240" height="40" rx="4" fill="#95a5a6"/>
+      <text x="130" y="265" font-size="14" fill="white" text-anchor="middle">インフラ（サーバー）</text>
+
+      <!-- ホストOS -->
+      <rect x="10" y="195" width="240" height="40" rx="4" fill="#27ae60"/>
+      <text x="130" y="220" font-size="14" fill="white" text-anchor="middle">ホストOS</text>
+
+      <!-- Docker Engine -->
+      <rect x="10" y="150" width="240" height="40" rx="4" fill="#2980b9"/>
+      <text x="130" y="175" font-size="14" fill="white" text-anchor="middle">Docker Engine</text>
+
+      <!-- コンテナ 1 -->
+      <g transform="translate(15, 55)">
+        <rect x="0" y="0" width="70" height="90" rx="4" fill="url(#containerGrad)" stroke="#2980b9" stroke-width="2"/>
+        <rect x="5" y="10" width="60" height="30" rx="2" fill="white" opacity="0.9"/>
+        <text x="35" y="30" font-size="10" fill="#333" text-anchor="middle">App 1</text>
+        <rect x="5" y="45" width="60" height="35" rx="2" fill="white" opacity="0.7"/>
+        <text x="35" y="65" font-size="10" fill="#333" text-anchor="middle">Bins/Libs</text>
+        <text x="35" y="78" font-size="8" fill="#333" text-anchor="middle">(数MB)</text>
+      </g>
+
+      <!-- コンテナ 2 -->
+      <g transform="translate(95, 55)">
+        <rect x="0" y="0" width="70" height="90" rx="4" fill="url(#containerGrad)" stroke="#2980b9" stroke-width="2"/>
+        <rect x="5" y="10" width="60" height="30" rx="2" fill="white" opacity="0.9"/>
+        <text x="35" y="30" font-size="10" fill="#333" text-anchor="middle">App 2</text>
+        <rect x="5" y="45" width="60" height="35" rx="2" fill="white" opacity="0.7"/>
+        <text x="35" y="65" font-size="10" fill="#333" text-anchor="middle">Bins/Libs</text>
+        <text x="35" y="78" font-size="8" fill="#333" text-anchor="middle">(数MB)</text>
+      </g>
+
+      <!-- コンテナ 3 -->
+      <g transform="translate(175, 55)">
+        <rect x="0" y="0" width="70" height="90" rx="4" fill="url(#containerGrad)" stroke="#2980b9" stroke-width="2"/>
+        <rect x="5" y="10" width="60" height="30" rx="2" fill="white" opacity="0.9"/>
+        <text x="35" y="30" font-size="10" fill="#333" text-anchor="middle">App 3</text>
+        <rect x="5" y="45" width="60" height="35" rx="2" fill="white" opacity="0.7"/>
+        <text x="35" y="65" font-size="10" fill="#333" text-anchor="middle">Bins/Libs</text>
+        <text x="35" y="78" font-size="8" fill="#333" text-anchor="middle">(数MB)</text>
+      </g>
+    </g>
+
+    <!-- 比較の矢印と説明 -->
+    <text x="350" y="310" font-size="12" fill="#27ae60" text-anchor="middle" font-weight="bold">OSを共有 = 軽量・高速</text>
+  </svg>
+
+  <table>
+    <thead>
+      <tr>
+        <th>観点</th>
+        <th>仮想マシン（VM）</th>
+        <th>コンテナ</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>OS</strong></td>
+        <td>各VMに専用OS（ゲストOS）</td>
+        <td>ホストOSを共有</td>
+      </tr>
+      <tr>
+        <td><strong>サイズ</strong></td>
+        <td>数GB〜数十GB</td>
+        <td>数MB〜数百MB</td>
+      </tr>
+      <tr>
+        <td><strong>起動時間</strong></td>
+        <td>数分</td>
+        <td>数秒</td>
+      </tr>
+      <tr>
+        <td><strong>リソース</strong></td>
+        <td>重い（OS分のオーバーヘッド）</td>
+        <td>軽い（OSを共有）</td>
+      </tr>
+      <tr>
+        <td><strong>隔離レベル</strong></td>
+        <td>強い（完全なOS分離）</td>
+        <td>やや弱い（カーネル共有）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quiz" id="quiz-docker1">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: コンテナがVMより軽量で高速な最大の理由は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker1" value="a">
+        <span>コンテナはWindowsでしか動かないから</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="コンテナはホストOSのカーネルを共有するため、各コンテナにOSをインストールする必要がなく、数秒で起動できます。">
+        <input type="radio" name="q-docker1" value="b">
+        <span>ホストOSのカーネルを共有するから</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker1" value="c">
+        <span>コンテナはネットワーク機能がないから</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-docker1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('docker1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="docker2">
+  <h1>2. Dockerの仕組み</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>イメージ・コンテナ・レジストリの関係を説明できる</p>
+  </div>
+
+  <h2>Docker = コンテナ技術の標準</h2>
+  <p>
+    <strong>Docker</strong>は2013年に登場したコンテナプラットフォームです。<br>
+    2026年現在、<strong>92%のIT専門家</strong>がDockerを使用しています。
+  </p>
+
+  <h2>3つの重要概念</h2>
+
+  <!-- SVG図解: イメージとコンテナ -->
+  <svg viewBox="0 0 700 280" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <defs>
+      <linearGradient id="imageGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#9b59b6;stop-opacity:0.9"/>
+        <stop offset="100%" style="stop-color:#8e44ad;stop-opacity:1"/>
+      </linearGradient>
+    </defs>
+
+    <!-- イメージ（設計図） -->
+    <g transform="translate(50, 30)">
+      <rect x="0" y="0" width="150" height="180" rx="8" fill="url(#imageGrad)" stroke="#8e44ad" stroke-width="3"/>
+      <text x="75" y="30" font-size="16" fill="white" text-anchor="middle" font-weight="bold">イメージ</text>
+      <text x="75" y="55" font-size="12" fill="white" text-anchor="middle">（設計図）</text>
+
+      <!-- レイヤー表現 -->
+      <rect x="15" y="70" width="120" height="25" rx="3" fill="white" opacity="0.9"/>
+      <text x="75" y="87" font-size="10" fill="#333" text-anchor="middle">Layer: Node.js 22</text>
+
+      <rect x="15" y="100" width="120" height="25" rx="3" fill="white" opacity="0.8"/>
+      <text x="75" y="117" font-size="10" fill="#333" text-anchor="middle">Layer: npm packages</text>
+
+      <rect x="15" y="130" width="120" height="25" rx="3" fill="white" opacity="0.7"/>
+      <text x="75" y="147" font-size="10" fill="#333" text-anchor="middle">Layer: App code</text>
+
+      <text x="75" y="170" font-size="11" fill="white" text-anchor="middle">読み取り専用</text>
+    </g>
+
+    <!-- 矢印 -->
+    <g transform="translate(220, 100)">
+      <path d="M0,20 L60,20" stroke="#333" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+      <text x="30" y="50" font-size="12" fill="#333" text-anchor="middle">docker run</text>
+    </g>
+
+    <!-- コンテナ（実体） -->
+    <g transform="translate(300, 30)">
+      <rect x="0" y="0" width="120" height="180" rx="8" fill="#3498db" stroke="#2980b9" stroke-width="3"/>
+      <text x="60" y="30" font-size="14" fill="white" text-anchor="middle" font-weight="bold">コンテナ1</text>
+      <text x="60" y="50" font-size="11" fill="white" text-anchor="middle">（実行中）</text>
+      <rect x="10" y="65" width="100" height="100" rx="3" fill="white" opacity="0.2"/>
+      <text x="60" y="100" font-size="10" fill="white" text-anchor="middle">プロセス実行中</text>
+      <text x="60" y="120" font-size="10" fill="white" text-anchor="middle">ポート:3000</text>
+      <text x="60" y="165" font-size="10" fill="white" text-anchor="middle">書き込み可能</text>
+    </g>
+
+    <g transform="translate(440, 30)">
+      <rect x="0" y="0" width="120" height="180" rx="8" fill="#3498db" stroke="#2980b9" stroke-width="3"/>
+      <text x="60" y="30" font-size="14" fill="white" text-anchor="middle" font-weight="bold">コンテナ2</text>
+      <text x="60" y="50" font-size="11" fill="white" text-anchor="middle">（実行中）</text>
+      <rect x="10" y="65" width="100" height="100" rx="3" fill="white" opacity="0.2"/>
+      <text x="60" y="100" font-size="10" fill="white" text-anchor="middle">プロセス実行中</text>
+      <text x="60" y="120" font-size="10" fill="white" text-anchor="middle">ポート:3001</text>
+      <text x="60" y="165" font-size="10" fill="white" text-anchor="middle">書き込み可能</text>
+    </g>
+
+    <g transform="translate(580, 30)">
+      <rect x="0" y="0" width="100" height="180" rx="8" fill="#95a5a6" stroke="#7f8c8d" stroke-width="3" stroke-dasharray="5,5"/>
+      <text x="50" y="90" font-size="12" fill="#666" text-anchor="middle">停止中</text>
+      <text x="50" y="110" font-size="12" fill="#666" text-anchor="middle">コンテナ</text>
+    </g>
+
+    <!-- 説明テキスト -->
+    <text x="125" y="240" font-size="12" fill="#8e44ad" text-anchor="middle" font-weight="bold">1つのイメージから</text>
+    <text x="125" y="258" font-size="12" fill="#8e44ad" text-anchor="middle" font-weight="bold">複数コンテナを作成</text>
+
+    <!-- 矢印マーカー定義 -->
+    <defs>
+      <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <table>
+    <thead>
+      <tr>
+        <th>概念</th>
+        <th>説明</th>
+        <th>たとえ</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>イメージ</strong></td>
+        <td>コンテナの設計図。読み取り専用。</td>
+        <td>料理のレシピ</td>
+      </tr>
+      <tr>
+        <td><strong>コンテナ</strong></td>
+        <td>イメージから作られた実行環境。</td>
+        <td>レシピから作った料理</td>
+      </tr>
+      <tr>
+        <td><strong>レジストリ</strong></td>
+        <td>イメージの保管場所（Docker Hub等）</td>
+        <td>レシピ本の図書館</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>レイヤー構造</h2>
+  <p>
+    Dockerイメージは<strong>レイヤー（層）</strong>で構成されています。<br>
+    各レイヤーは差分のみを保存するため、効率的です。
+  </p>
+
+  <pre><code># 各行が1レイヤーになる
+FROM node:22-alpine     # レイヤー1: Node.js基盤
+WORKDIR /app            # レイヤー2: 作業ディレクトリ
+COPY package*.json ./   # レイヤー3: 依存定義
+RUN npm ci              # レイヤー4: 依存インストール
+COPY . .                # レイヤー5: アプリコード</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> 重要：キャッシュの仕組み</div>
+    <p>
+      レイヤーは上から順に実行され、<strong>変更があったレイヤー以降は再ビルド</strong>されます。<br>
+      そのため、<strong>変更頻度が低いもの（依存）を先に</strong>、
+      <strong>変更頻度が高いもの（コード）を後に</strong>書くのがベストプラクティスです。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-docker2">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 1つのDockerイメージから、いくつコンテナを作れる？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker2" value="a">
+        <span>1つだけ</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker2" value="b">
+        <span>最大10個まで</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="イメージは設計図なので、同じイメージから何個でもコンテナを作成できます。これがスケーリングを容易にする理由です。">
+        <input type="radio" name="q-docker2" value="c">
+        <span>何個でも作れる</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-docker2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('docker2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="docker3">
+  <h1>3. Dockerfile基礎</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>Dockerfileの主要な命令を理解し、読めるようになる</p>
+  </div>
+
+  <h2>Dockerfileとは？</h2>
+  <p>
+    <strong>Dockerfile</strong>は、イメージの作り方を記述したテキストファイルです。<br>
+    「このイメージをベースに、これをインストールして、これを実行する」という手順を書きます。
+  </p>
+
+  <h2>主要な命令</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>命令</th>
+        <th>説明</th>
+        <th>例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>FROM</code></td>
+        <td>ベースイメージを指定</td>
+        <td><code>FROM node:22-alpine</code></td>
+      </tr>
+      <tr>
+        <td><code>WORKDIR</code></td>
+        <td>作業ディレクトリを設定</td>
+        <td><code>WORKDIR /app</code></td>
+      </tr>
+      <tr>
+        <td><code>COPY</code></td>
+        <td>ファイルをコピー</td>
+        <td><code>COPY . .</code></td>
+      </tr>
+      <tr>
+        <td><code>RUN</code></td>
+        <td>コマンドを実行（ビルド時）</td>
+        <td><code>RUN npm install</code></td>
+      </tr>
+      <tr>
+        <td><code>CMD</code></td>
+        <td>コンテナ起動時のコマンド</td>
+        <td><code>CMD ["node", "index.js"]</code></td>
+      </tr>
+      <tr>
+        <td><code>EXPOSE</code></td>
+        <td>公開ポートを宣言</td>
+        <td><code>EXPOSE 3000</code></td>
+      </tr>
+      <tr>
+        <td><code>ENV</code></td>
+        <td>環境変数を設定</td>
+        <td><code>ENV NODE_ENV=production</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>基本的なDockerfile</h2>
+
+  <pre><code># ベースイメージ（Node.js 22のAlpine版）
+FROM node:22-alpine
+
+# 作業ディレクトリを設定
+WORKDIR /app
+
+# 依存関係ファイルをコピー
+COPY package*.json ./
+
+# 依存関係をインストール
+RUN npm ci --only=production
+
+# アプリケーションコードをコピー
+COPY . .
+
+# ポート3000を公開
+EXPOSE 3000
+
+# アプリケーションを起動
+CMD ["node", "index.js"]</code></pre>
+
+  <h2>CMD vs ENTRYPOINT</h2>
+
+  <div class="compare-container">
+    <div class="compare-good">
+      <div class="compare-title">CMD</div>
+      <p>コンテナ起動時のデフォルトコマンド。<br>
+      <code>docker run</code>で上書き可能。</p>
+      <pre><code>CMD ["node", "index.js"]
+# docker run myapp npm test で上書き可能</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">ENTRYPOINT</div>
+      <p>必ず実行されるコマンド。<br>
+      CMDは引数として渡される。</p>
+      <pre><code>ENTRYPOINT ["node"]
+CMD ["index.js"]
+# docker run myapp test.js で引数変更</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-docker3">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: <code>RUN</code>と<code>CMD</code>の違いは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker3" value="a">
+        <span>どちらも同じ（エイリアス）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="RUNはイメージビルド時に実行（レイヤーとして保存）、CMDはコンテナ起動時に実行されます。">
+        <input type="radio" name="q-docker3" value="b">
+        <span>RUNはビルド時、CMDはコンテナ起動時</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker3" value="c">
+        <span>RUNはLinux用、CMDはWindows用</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-docker3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('docker3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="docker4">
+  <h1>4. イメージ最適化</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>レイヤーキャッシュを活かす書き方を理解する</p>
+  </div>
+
+  <h2>なぜ最適化が必要？</h2>
+  <p>
+    最適化されていないDockerfileは、<strong>ビルド時間が長く</strong>、
+    <strong>イメージサイズが大きく</strong>なります。
+  </p>
+
+  <h2>キャッシュを活かす順序</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">非効率（キャッシュ無効化）</div>
+      <pre><code>FROM node:22
+COPY . .
+RUN npm install</code></pre>
+      <p>コード変更のたびに<code>npm install</code>が再実行される</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">効率的（キャッシュ活用）</div>
+      <pre><code>FROM node:22
+COPY package*.json ./
+RUN npm install
+COPY . .</code></pre>
+      <p><code>package.json</code>が変わらなければキャッシュ利用</p>
+    </div>
+  </div>
+
+  <h2>.dockerignoreファイル</h2>
+  <p>
+    <code>.dockerignore</code>は、イメージに含めないファイルを指定します。<br>
+    <code>.gitignore</code>のDocker版です。
+  </p>
+
+  <pre><code># .dockerignore
+node_modules
+.git
+.gitignore
+*.md
+.env
+.env.*
+dist
+coverage
+.DS_Store</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点</div>
+    <p>
+      <code>node_modules</code>をイメージにコピーするのは<strong>アンチパターン</strong>です。<br>
+      OS間の互換性問題が発生し、イメージサイズも肥大化します。
+    </p>
+  </div>
+
+  <h2>RUN命令の最適化</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">レイヤーが増える</div>
+      <pre><code>RUN apt-get update
+RUN apt-get install -y curl
+RUN apt-get clean</code></pre>
+      <p>3つのレイヤーが作成される</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">1つのレイヤーにまとめる</div>
+      <pre><code>RUN apt-get update && \
+    apt-get install -y curl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*</code></pre>
+      <p>1つのレイヤーで完結</p>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-docker4">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: <code>.dockerignore</code>に<code>node_modules</code>を入れるべき理由は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker4" value="a">
+        <span>node_modulesはDockerで使えないから</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ローカルのnode_modulesはOS依存のバイナリを含むことがあり、コンテナ内で動作しない場合があります。また、サイズが大きくビルドが遅くなります。">
+        <input type="radio" name="q-docker4" value="b">
+        <span>OS互換性問題とイメージサイズ肥大化を防ぐため</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker4" value="c">
+        <span>セキュリティ上の理由で禁止されているから</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-docker4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('docker4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="docker5">
+  <h1>5. マルチステージビルド</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>マルチステージビルドで軽量イメージを作る方法を理解する</p>
+  </div>
+
+  <h2>マルチステージビルドとは？</h2>
+  <p>
+    <strong>マルチステージビルド</strong>は、複数の<code>FROM</code>を使って、
+    ビルド環境と実行環境を分離する手法です。
+  </p>
+
+  <!-- SVG図解: マルチステージビルド -->
+  <svg viewBox="0 0 700 250" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- ビルドステージ -->
+    <g transform="translate(30, 30)">
+      <rect x="0" y="0" width="200" height="180" rx="8" fill="#e74c3c" opacity="0.1" stroke="#e74c3c" stroke-width="2"/>
+      <text x="100" y="25" font-size="14" fill="#e74c3c" text-anchor="middle" font-weight="bold">ビルドステージ</text>
+
+      <rect x="15" y="40" width="170" height="25" rx="3" fill="#e74c3c" opacity="0.3"/>
+      <text x="100" y="57" font-size="11" fill="#333" text-anchor="middle">node:22 (1GB)</text>
+
+      <rect x="15" y="70" width="170" height="25" rx="3" fill="#e74c3c" opacity="0.3"/>
+      <text x="100" y="87" font-size="11" fill="#333" text-anchor="middle">TypeScript, ESLint, etc</text>
+
+      <rect x="15" y="100" width="170" height="25" rx="3" fill="#e74c3c" opacity="0.3"/>
+      <text x="100" y="117" font-size="11" fill="#333" text-anchor="middle">devDependencies</text>
+
+      <rect x="15" y="130" width="170" height="25" rx="3" fill="#27ae60" opacity="0.5"/>
+      <text x="100" y="147" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">ビルド成果物 (dist/)</text>
+
+      <text x="100" y="175" font-size="12" fill="#e74c3c" text-anchor="middle">破棄される</text>
+    </g>
+
+    <!-- 矢印 -->
+    <g transform="translate(250, 120)">
+      <path d="M0,0 L80,0" stroke="#27ae60" stroke-width="4" fill="none" marker-end="url(#arrowGreen)"/>
+      <text x="40" y="25" font-size="11" fill="#27ae60" text-anchor="middle" font-weight="bold">COPYで</text>
+      <text x="40" y="40" font-size="11" fill="#27ae60" text-anchor="middle" font-weight="bold">必要なものだけ</text>
+    </g>
+
+    <!-- 実行ステージ -->
+    <g transform="translate(350, 30)">
+      <rect x="0" y="0" width="200" height="180" rx="8" fill="#27ae60" opacity="0.1" stroke="#27ae60" stroke-width="2"/>
+      <text x="100" y="25" font-size="14" fill="#27ae60" text-anchor="middle" font-weight="bold">実行ステージ</text>
+
+      <rect x="15" y="40" width="170" height="25" rx="3" fill="#27ae60" opacity="0.3"/>
+      <text x="100" y="57" font-size="11" fill="#333" text-anchor="middle">distroless (30MB)</text>
+
+      <rect x="15" y="70" width="170" height="25" rx="3" fill="#27ae60" opacity="0.3"/>
+      <text x="100" y="87" font-size="11" fill="#333" text-anchor="middle">ビルド成果物のみ</text>
+
+      <rect x="15" y="100" width="170" height="25" rx="3" fill="#27ae60" opacity="0.3"/>
+      <text x="100" y="117" font-size="11" fill="#333" text-anchor="middle">production deps</text>
+
+      <text x="100" y="160" font-size="14" fill="#27ae60" text-anchor="middle" font-weight="bold">最終イメージ</text>
+      <text x="100" y="175" font-size="12" fill="#27ae60" text-anchor="middle">〜50-100MB</text>
+    </g>
+
+    <!-- 比較 -->
+    <g transform="translate(580, 80)">
+      <text x="0" y="0" font-size="12" fill="#333" font-weight="bold">サイズ比較</text>
+      <text x="0" y="25" font-size="11" fill="#e74c3c">単一: 1GB+</text>
+      <text x="0" y="45" font-size="11" fill="#27ae60">マルチ: 50MB</text>
+      <text x="0" y="70" font-size="14" fill="#27ae60" font-weight="bold">95%削減!</text>
+    </g>
+
+    <defs>
+      <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#27ae60"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <h2>実際のマルチステージDockerfile</h2>
+
+  <pre><code># ========== ビルドステージ ==========
+FROM node:22-alpine AS builder
+WORKDIR /app
+
+# 依存関係をインストール
+COPY package*.json ./
+RUN npm ci
+
+# ソースコードをコピーしてビルド
+COPY . .
+RUN npm run build
+
+# ========== 実行ステージ ==========
+FROM gcr.io/distroless/nodejs22-debian12
+WORKDIR /app
+
+# ビルド成果物のみをコピー
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+
+# 実行
+CMD ["dist/index.js"]</code></pre>
+
+  <h2>ベースイメージの選択</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>イメージ</th>
+        <th>サイズ</th>
+        <th>用途</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>node:22</code></td>
+        <td>〜1GB</td>
+        <td>開発環境、フル機能が必要な場合</td>
+      </tr>
+      <tr>
+        <td><code>node:22-alpine</code></td>
+        <td>〜50MB</td>
+        <td>軽量、ほとんどの本番環境</td>
+      </tr>
+      <tr>
+        <td><code>node:22-slim</code></td>
+        <td>〜200MB</td>
+        <td>alpineで動かない場合のバランス</td>
+      </tr>
+      <tr>
+        <td><code>distroless</code></td>
+        <td>〜30MB</td>
+        <td>最小構成、セキュリティ重視</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点</div>
+    <p>
+      本番イメージに<strong>devDependencies</strong>や
+      <strong>ビルドツール</strong>が含まれていないかチェック。<br>
+      マルチステージビルドを使わない場合、これらが残り、
+      セキュリティリスクとサイズ増加の原因になります。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-docker5">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: マルチステージビルドの主なメリットは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker5" value="a">
+        <span>ビルド時間が長くなるが安全になる</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ビルドに必要なツール（TypeScript、ESLint等）を最終イメージに含めないことで、サイズを大幅に削減し、攻撃対象も減らせます。">
+        <input type="radio" name="q-docker5" value="b">
+        <span>最終イメージを軽量化し、セキュリティも向上</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker5" value="c">
+        <span>複数のアプリを1つのコンテナで動かせる</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-docker5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('docker5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="docker6">
+  <h1>6. Docker Compose V2</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>Docker Composeで複数コンテナを管理する方法を理解する</p>
+  </div>
+
+  <h2>Docker Composeとは？</h2>
+  <p>
+    <strong>Docker Compose</strong>は、複数のコンテナをまとめて管理するツールです。<br>
+    アプリ + DB + Redis のような構成を1コマンドで起動できます。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> V1 vs V2</div>
+    <p>
+      旧: <code>docker-compose up</code>（V1、ハイフンあり）<br>
+      新: <code>docker compose up</code>（V2、スペース）<br>
+      <strong>2026年現在、V1は非推奨</strong>です。V2を使いましょう。
+    </p>
+  </div>
+
+  <h2>compose.yaml の例</h2>
+
+  <pre><code># compose.yaml（旧 docker-compose.yml）
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgres://user:pass@db:5432/myapp
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: myapp
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:</code></pre>
+
+  <h2>主要な設定</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>設定</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>build</code></td>
+        <td>Dockerfileからビルド</td>
+      </tr>
+      <tr>
+        <td><code>image</code></td>
+        <td>既存イメージを使用</td>
+      </tr>
+      <tr>
+        <td><code>ports</code></td>
+        <td>ポートマッピング（ホスト:コンテナ）</td>
+      </tr>
+      <tr>
+        <td><code>environment</code></td>
+        <td>環境変数</td>
+      </tr>
+      <tr>
+        <td><code>volumes</code></td>
+        <td>データ永続化、ホストマウント</td>
+      </tr>
+      <tr>
+        <td><code>depends_on</code></td>
+        <td>起動順序の依存関係</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>よく使うコマンド</h2>
+
+  <pre><code># 起動（バックグラウンド）
+docker compose up -d
+
+# ログを見る
+docker compose logs -f app
+
+# 停止
+docker compose down
+
+# 停止してボリュームも削除
+docker compose down -v
+
+# 再ビルドして起動
+docker compose up -d --build</code></pre>
+
+  <div class="quiz" id="quiz-docker6">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: Docker Compose V2の正しいコマンドは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker6" value="a">
+        <span><code>docker-compose up</code>（ハイフン）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Docker Compose V2ではハイフンではなくスペースを使います。V1（docker-compose）は非推奨です。">
+        <input type="radio" name="q-docker6" value="b">
+        <span><code>docker compose up</code>（スペース）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker6" value="c">
+        <span><code>dockercompose up</code>（つなげる）</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-docker6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('docker6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="docker7">
+  <h1>7. ボリュームとネットワーク</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>データ永続化とコンテナ間通信の仕組みを理解する</p>
+  </div>
+
+  <h2>ボリューム（Volume）</h2>
+  <p>
+    コンテナは<strong>一時的</strong>です。停止・削除するとデータも消えます。<br>
+    <strong>ボリューム</strong>を使うと、データをコンテナ外に永続化できます。
+  </p>
+
+  <!-- SVG図解: ボリューム -->
+  <svg viewBox="0 0 600 200" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- コンテナ1 -->
+    <g transform="translate(50, 20)">
+      <rect x="0" y="0" width="120" height="100" rx="6" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+      <text x="60" y="30" font-size="12" fill="white" text-anchor="middle" font-weight="bold">コンテナA</text>
+      <text x="60" y="50" font-size="10" fill="white" text-anchor="middle">PostgreSQL</text>
+      <text x="60" y="70" font-size="10" fill="white" text-anchor="middle">/var/lib/postgresql</text>
+      <text x="60" y="90" font-size="9" fill="white" text-anchor="middle" opacity="0.7">削除すると消える</text>
+    </g>
+
+    <!-- コンテナ2 -->
+    <g transform="translate(200, 20)">
+      <rect x="0" y="0" width="120" height="100" rx="6" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+      <text x="60" y="30" font-size="12" fill="white" text-anchor="middle" font-weight="bold">コンテナB</text>
+      <text x="60" y="50" font-size="10" fill="white" text-anchor="middle">PostgreSQL</text>
+      <text x="60" y="70" font-size="10" fill="white" text-anchor="middle">/var/lib/postgresql</text>
+    </g>
+
+    <!-- 矢印 -->
+    <line x1="110" y1="120" x2="110" y2="150" stroke="#27ae60" stroke-width="2"/>
+    <line x1="260" y1="120" x2="260" y2="150" stroke="#27ae60" stroke-width="2"/>
+    <line x1="110" y1="150" x2="260" y2="150" stroke="#27ae60" stroke-width="2"/>
+    <line x1="185" y1="150" x2="185" y2="170" stroke="#27ae60" stroke-width="2"/>
+
+    <!-- ボリューム -->
+    <g transform="translate(100, 170)">
+      <rect x="0" y="0" width="170" height="30" rx="4" fill="#27ae60"/>
+      <text x="85" y="20" font-size="12" fill="white" text-anchor="middle" font-weight="bold">Volume: postgres_data</text>
+    </g>
+
+    <!-- 説明 -->
+    <g transform="translate(380, 50)">
+      <text x="0" y="0" font-size="12" fill="#333" font-weight="bold">ボリュームの利点</text>
+      <text x="0" y="25" font-size="11" fill="#333">・コンテナ削除後もデータが残る</text>
+      <text x="0" y="45" font-size="11" fill="#333">・複数コンテナで共有可能</text>
+      <text x="0" y="65" font-size="11" fill="#333">・バックアップが容易</text>
+    </g>
+  </svg>
+
+  <h2>ボリュームの種類</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>種類</th>
+        <th>書き方</th>
+        <th>用途</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>名前付きボリューム</strong></td>
+        <td><code>postgres_data:/var/lib/postgresql</code></td>
+        <td>本番環境、データ永続化</td>
+      </tr>
+      <tr>
+        <td><strong>バインドマウント</strong></td>
+        <td><code>./src:/app/src</code></td>
+        <td>開発環境、ホットリロード</td>
+      </tr>
+      <tr>
+        <td><strong>匿名ボリューム</strong></td>
+        <td><code>/app/node_modules</code></td>
+        <td>一時データ、キャッシュ</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>ネットワーク</h2>
+  <p>
+    Docker Composeでは、<strong>サービス名でコンテナ間通信</strong>ができます。
+  </p>
+
+  <pre><code># appコンテナからdbコンテナへ接続
+# IPアドレスではなくサービス名「db」を使う
+DATABASE_URL=postgres://user:pass@db:5432/myapp
+#                             ↑ サービス名</code></pre>
+
+  <div class="quiz" id="quiz-docker7">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: データベースのデータを永続化するには？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker7" value="a">
+        <span>コンテナを停止しないようにする</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ボリュームを使うことで、コンテナが削除されてもデータは保持されます。本番環境では必須の設定です。">
+        <input type="radio" name="q-docker7" value="b">
+        <span>ボリュームを設定してホストに保存する</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker7" value="c">
+        <span>毎回バックアップを取る</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-docker7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('docker7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="docker8">
+  <h1>8. セキュリティ基礎</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>コンテナセキュリティの基本原則を理解する</p>
+  </div>
+
+  <h2>コンテナセキュリティの原則</h2>
+  <ol>
+    <li><strong>最小権限の原則</strong>: 必要最小限の権限で実行</li>
+    <li><strong>最小イメージの原則</strong>: 必要最小限のものだけ含める</li>
+    <li><strong>不変性の原則</strong>: イメージは変更せず、新しいバージョンを作る</li>
+  </ol>
+
+  <h2>非rootユーザーで実行</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">危険: rootで実行</div>
+      <pre><code>FROM node:22-alpine
+# USER指定なし = root
+CMD ["node", "index.js"]</code></pre>
+      <p>脆弱性があると、ホストに影響する可能性</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">安全: 非rootユーザー</div>
+      <pre><code>FROM node:22-alpine
+RUN addgroup -S app && \
+    adduser -S app -G app
+USER app
+CMD ["node", "index.js"]</code></pre>
+      <p>権限が制限され、被害を最小化</p>
+    </div>
+  </div>
+
+  <h2>読み取り専用ファイルシステム</h2>
+
+  <pre><code># docker run で読み取り専用にする
+docker run --read-only --tmpfs /tmp myapp
+
+# compose.yaml で設定
+services:
+  app:
+    image: myapp
+    read_only: true
+    tmpfs:
+      - /tmp</code></pre>
+
+  <h2>シークレット管理</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">危険: イメージに埋め込み</div>
+      <pre><code>ENV DATABASE_PASSWORD=secret123
+# イメージに残り続ける</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">安全: 実行時に渡す</div>
+      <pre><code># .envファイルを使用
+docker compose --env-file .env up
+
+# または環境変数で渡す
+docker run -e DATABASE_PASSWORD myapp</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: セキュリティチェックリスト</div>
+    <ul style="margin-bottom:0;">
+      <li>rootユーザーで実行していないか</li>
+      <li>シークレットがDockerfileに含まれていないか</li>
+      <li>不要なパッケージがインストールされていないか</li>
+      <li>ベースイメージは信頼できるものか</li>
+      <li>リソース制限（CPU/メモリ）が設定されているか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-docker8-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: コンテナを非rootユーザーで実行する理由は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker8-1" value="a">
+        <span>パフォーマンスが向上するから</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="rootで実行すると、コンテナ内の脆弱性を悪用された際にホストシステムに影響を与える可能性があります。非rootユーザーで権限を制限することで被害を最小化できます。">
+        <input type="radio" name="q-docker8-1" value="b">
+        <span>脆弱性を悪用された際の被害を最小化するため</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker8-1" value="c">
+        <span>Dockerの仕様で必須だから</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-docker8-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-docker8-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: 次のDockerfileの問題点は？</strong></p>
+    <pre><code>FROM node:22
+ENV DB_PASSWORD=mypassword123
+COPY . .
+CMD ["node", "index.js"]</code></pre>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker8-2" value="a">
+        <span>node:22は古いバージョン</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="パスワードをENVでハードコードすると、イメージに永続的に残ります。docker historyで誰でも見れてしまいます。シークレットは実行時に環境変数で渡すべきです。">
+        <input type="radio" name="q-docker8-2" value="b">
+        <span>パスワードがイメージに埋め込まれている</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker8-2" value="c">
+        <span>CMDの書き方が間違っている</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-docker8-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('docker8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="docker9">
+  <h1>9. 脆弱性スキャン</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>コンテナイメージの脆弱性スキャン方法を理解する</p>
+  </div>
+
+  <h2>なぜスキャンが必要？</h2>
+  <p>
+    2026年の調査によると、<strong>約87%のコンテナイメージ</strong>に
+    高/重大な脆弱性が存在しています。<br>
+    定期的なスキャンは必須です。
+  </p>
+
+  <h2>主要なスキャンツール</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ツール</th>
+        <th>特徴</th>
+        <th>使い方</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Trivy</strong></td>
+        <td>OSS、高速、包括的</td>
+        <td><code>trivy image myapp:latest</code></td>
+      </tr>
+      <tr>
+        <td><strong>Docker Scout</strong></td>
+        <td>Docker公式、Docker Desktop統合</td>
+        <td><code>docker scout cves myapp:latest</code></td>
+      </tr>
+      <tr>
+        <td><strong>Grype</strong></td>
+        <td>OSS、Anchore製、SBOM対応</td>
+        <td><code>grype myapp:latest</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Trivyの使い方</h2>
+
+  <pre><code># イメージをスキャン
+trivy image node:22-alpine
+
+# 高・重大な脆弱性のみ表示
+trivy image --severity HIGH,CRITICAL myapp:latest
+
+# CI/CDで使う（脆弱性があれば失敗）
+trivy image --exit-code 1 --severity HIGH,CRITICAL myapp:latest</code></pre>
+
+  <h2>CI/CD統合の例（GitHub Actions）</h2>
+
+  <pre><code>name: Security Scan
+
+on: push
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t myapp:${{ github.sha }} .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: myapp:${{ github.sha }}
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点</div>
+    <p>
+      CI/CDパイプラインに<strong>脆弱性スキャンが組み込まれているか</strong>確認。<br>
+      スキャンなしで本番デプロイされているのはリスクです。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-docker9">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: コンテナイメージのスキャンはいつ行うべき？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker9" value="a">
+        <span>年に1回、定期監査の時だけ</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker9" value="b">
+        <span>本番にデプロイした後</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="CI/CDパイプラインに組み込み、ビルドのたびにスキャンすることで、脆弱性のあるイメージがデプロイされることを防げます。">
+        <input type="radio" name="q-docker9" value="c">
+        <span>CI/CDでビルドするたび（デプロイ前）</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-docker9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('docker9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="docker10">
+  <h1>10. 本番運用</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>本番環境でのコンテナ運用ベストプラクティスを理解する</p>
+  </div>
+
+  <h2>ヘルスチェック</h2>
+  <p>
+    <strong>HEALTHCHECK</strong>命令で、コンテナの健全性を監視できます。<br>
+    異常を検知すると、オーケストレーターが自動で再起動します。
+  </p>
+
+  <pre><code>FROM node:22-alpine
+# ... 省略 ...
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
+
+CMD ["node", "index.js"]</code></pre>
+
+  <h2>リソース制限</h2>
+  <p>
+    リソース制限がないと、1つのコンテナがホストの全リソースを消費する可能性があります。
+  </p>
+
+  <pre><code># docker run でリソース制限
+docker run --memory=512m --cpus=0.5 myapp
+
+# compose.yaml で設定
+services:
+  app:
+    image: myapp
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'</code></pre>
+
+  <h2>ログ管理</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">アンチパターン</div>
+      <pre><code>// ファイルにログ出力
+fs.appendFileSync('/app/logs/app.log', msg);</code></pre>
+      <p>コンテナ内のファイルはコンテナと共に消える</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">ベストプラクティス</div>
+      <pre><code>// 標準出力にログ出力
+console.log(JSON.stringify({
+  level: 'info',
+  message: 'Request received',
+  timestamp: new Date().toISOString()
+}));</code></pre>
+      <p>Docker/K8sがログを収集・転送</p>
+    </div>
+  </div>
+
+  <h2>本番Dockerfileテンプレート</h2>
+
+  <pre><code># ========== ビルドステージ ==========
+FROM node:22-alpine AS builder
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+# ========== 実行ステージ ==========
+FROM gcr.io/distroless/nodejs22-debian12
+
+# 非rootユーザー（distrolessはデフォルトで非root）
+WORKDIR /app
+
+# ビルド成果物のみコピー
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+
+# ヘルスチェック（distrolessではcurl/wget使えないので別途対応）
+# Kubernetesの場合はlivenessProbeで代替
+
+# 環境変数のデフォルト
+ENV NODE_ENV=production
+ENV PORT=3000
+
+EXPOSE 3000
+
+CMD ["dist/index.js"]</code></pre>
+
+  <div class="quiz" id="quiz-docker10">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: コンテナからのログ出力で推奨される方法は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker10" value="a">
+        <span>コンテナ内のファイルに書き込む</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Docker/Kubernetesは標準出力（stdout/stderr）を自動的に収集します。ファイルに書くとコンテナ削除時に失われます。">
+        <input type="radio" name="q-docker10" value="b">
+        <span>標準出力（stdout/stderr）に出力する</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-docker10" value="c">
+        <span>ログは出力しない方が高速</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-docker10')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('docker10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

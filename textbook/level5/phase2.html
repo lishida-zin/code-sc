@@ -1,0 +1,2136 @@
+<!-- ============================================
+     Level 5 Phase 2: Kubernetes基礎
+     ============================================ -->
+
+<section id="k8s1">
+  <h1>1. Kubernetesとは？</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>Kubernetesが必要な理由を説明できる</p>
+  </div>
+
+  <h2>コンテナオーケストレーションとは</h2>
+  <p>
+    <strong>Kubernetes</strong>（クバネティス、K8s）は、
+    <strong>コンテナオーケストレーション</strong>のためのプラットフォームです。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> たとえ話</div>
+    <p>
+      Dockerが「船（コンテナ）」だとすると、<br>
+      Kubernetesは「港の管理システム」です。<br>
+      どの船をどの港に停めるか、船が壊れたら代わりを用意する、<br>
+      荷物（トラフィック）を適切に振り分ける。<br>
+      これらを<strong>自動で</strong>やってくれます。
+    </p>
+  </div>
+
+  <h2>なぜKubernetesが必要？</h2>
+  <p>コンテナが1〜2個なら手動で管理できます。しかし本番環境では...</p>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">コンテナ手動管理の問題</div>
+      <ul>
+        <li>数十〜数百のコンテナを管理できない</li>
+        <li>1台のサーバーがダウンしたら？</li>
+        <li>アクセス増加時のスケーリングは？</li>
+        <li>新バージョンへの更新をどうする？</li>
+        <li>コンテナ間のネットワークは？</li>
+      </ul>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">Kubernetesが解決</div>
+      <ul>
+        <li>宣言的に「3台動かして」と書くだけ</li>
+        <li>ダウンしたら自動で別サーバーに再配置</li>
+        <li>負荷に応じて自動スケーリング</li>
+        <li>ローリングアップデートで無停止更新</li>
+        <li>サービスディスカバリで自動接続</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Kubernetesの主な機能</h2>
+
+  <!-- SVG図解: K8sの機能 -->
+  <svg viewBox="0 0 700 300" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <defs>
+      <linearGradient id="k8sGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#326ce5;stop-opacity:0.9"/>
+        <stop offset="100%" style="stop-color:#2456b3;stop-opacity:1"/>
+      </linearGradient>
+    </defs>
+
+    <!-- 中央: K8s -->
+    <g transform="translate(300, 120)">
+      <circle cx="50" cy="50" r="60" fill="url(#k8sGrad)" stroke="#2456b3" stroke-width="3"/>
+      <text x="50" y="45" font-size="14" fill="white" text-anchor="middle" font-weight="bold">Kubernetes</text>
+      <text x="50" y="65" font-size="12" fill="white" text-anchor="middle">(K8s)</text>
+    </g>
+
+    <!-- 機能1: 自己修復 -->
+    <g transform="translate(50, 30)">
+      <rect x="0" y="0" width="140" height="60" rx="6" fill="#27ae60" opacity="0.9"/>
+      <text x="70" y="25" font-size="12" fill="white" text-anchor="middle" font-weight="bold">自己修復</text>
+      <text x="70" y="45" font-size="10" fill="white" text-anchor="middle">障害時に自動復旧</text>
+      <line x1="140" y1="30" x2="240" y2="100" stroke="#27ae60" stroke-width="2"/>
+    </g>
+
+    <!-- 機能2: スケーリング -->
+    <g transform="translate(510, 30)">
+      <rect x="0" y="0" width="140" height="60" rx="6" fill="#e74c3c" opacity="0.9"/>
+      <text x="70" y="25" font-size="12" fill="white" text-anchor="middle" font-weight="bold">スケーリング</text>
+      <text x="70" y="45" font-size="10" fill="white" text-anchor="middle">負荷に応じて増減</text>
+      <line x1="0" y1="30" x2="100" y2="100" stroke="#e74c3c" stroke-width="2"/>
+    </g>
+
+    <!-- 機能3: ローリングアップデート -->
+    <g transform="translate(50, 210)">
+      <rect x="0" y="0" width="140" height="60" rx="6" fill="#9b59b6" opacity="0.9"/>
+      <text x="70" y="25" font-size="12" fill="white" text-anchor="middle" font-weight="bold">無停止更新</text>
+      <text x="70" y="45" font-size="10" fill="white" text-anchor="middle">ローリングアップデート</text>
+      <line x1="140" y1="30" x2="240" y2="100" stroke="#9b59b6" stroke-width="2"/>
+    </g>
+
+    <!-- 機能4: サービスディスカバリ -->
+    <g transform="translate(510, 210)">
+      <rect x="0" y="0" width="140" height="60" rx="6" fill="#f39c12" opacity="0.9"/>
+      <text x="70" y="25" font-size="12" fill="white" text-anchor="middle" font-weight="bold">サービスディスカバリ</text>
+      <text x="70" y="45" font-size="10" fill="white" text-anchor="middle">DNS/ロードバランス</text>
+      <line x1="0" y1="30" x2="100" y2="100" stroke="#f39c12" stroke-width="2"/>
+    </g>
+  </svg>
+
+  <table>
+    <thead>
+      <tr>
+        <th>機能</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>自己修復</strong></td>
+        <td>コンテナが落ちたら自動で再起動・再配置</td>
+      </tr>
+      <tr>
+        <td><strong>水平スケーリング</strong></td>
+        <td>CPU/メモリ使用率に応じて自動でPod数を増減</td>
+      </tr>
+      <tr>
+        <td><strong>ローリングアップデート</strong></td>
+        <td>サービス無停止で新バージョンに更新</td>
+      </tr>
+      <tr>
+        <td><strong>サービスディスカバリ</strong></td>
+        <td>DNS名でコンテナ間通信、自動ロードバランス</td>
+      </tr>
+      <tr>
+        <td><strong>設定/シークレット管理</strong></td>
+        <td>環境変数や機密情報を安全に注入</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>K8s = Kubernetes の名前の由来</h2>
+  <p>
+    「K8s」は、Kubernetesの略称です。<br>
+    「K」と「s」の間に<strong>8文字</strong>あるので「K8s」。<br>
+    （internationalization → i18n と同じ発想）
+  </p>
+  <p>
+    Kubernetesは<strong>ギリシャ語で「舵取り」「操舵士」</strong>という意味。<br>
+    コンテナという「船」を操縦する存在、というわけです。
+  </p>
+
+  <div class="quiz" id="quiz-k8s1">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: Kubernetesの主な役割は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s1" value="a">
+        <span>Dockerイメージをビルドする</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Kubernetesはコンテナのデプロイ、スケーリング、管理を自動化するオーケストレーションツールです。イメージのビルドはDockerの役割です。">
+        <input type="radio" name="q-k8s1" value="b">
+        <span>コンテナのデプロイ・スケーリング・管理を自動化する</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s1" value="c">
+        <span>仮想マシンを作成する</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-k8s1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('k8s1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="k8s2">
+  <h1>2. Kubernetesアーキテクチャ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>Control Plane と Worker Node の役割を説明できる</p>
+  </div>
+
+  <h2>クラスターの構成</h2>
+  <p>
+    Kubernetesは<strong>クラスター</strong>という単位で動作します。<br>
+    クラスターは、<strong>Control Plane</strong>（管理側）と
+    <strong>Worker Node</strong>（実行側）で構成されます。
+  </p>
+
+  <!-- SVG図解: K8sアーキテクチャ -->
+  <svg viewBox="0 0 750 450" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <defs>
+      <linearGradient id="cpGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#326ce5;stop-opacity:0.9"/>
+        <stop offset="100%" style="stop-color:#2456b3;stop-opacity:1"/>
+      </linearGradient>
+      <linearGradient id="nodeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#27ae60;stop-opacity:0.9"/>
+        <stop offset="100%" style="stop-color:#1e8449;stop-opacity:1"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Control Plane -->
+    <g transform="translate(20, 20)">
+      <rect x="0" y="0" width="300" height="200" rx="10" fill="url(#cpGrad)" stroke="#2456b3" stroke-width="3"/>
+      <text x="150" y="30" font-size="16" fill="white" text-anchor="middle" font-weight="bold">Control Plane（管理）</text>
+
+      <!-- API Server -->
+      <rect x="20" y="50" width="120" height="40" rx="4" fill="white" opacity="0.9"/>
+      <text x="80" y="75" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">API Server</text>
+
+      <!-- etcd -->
+      <rect x="160" y="50" width="120" height="40" rx="4" fill="white" opacity="0.9"/>
+      <text x="220" y="75" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">etcd</text>
+
+      <!-- Scheduler -->
+      <rect x="20" y="105" width="120" height="40" rx="4" fill="white" opacity="0.9"/>
+      <text x="80" y="130" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">Scheduler</text>
+
+      <!-- Controller Manager -->
+      <rect x="160" y="105" width="120" height="40" rx="4" fill="white" opacity="0.9"/>
+      <text x="220" y="125" font-size="10" fill="#333" text-anchor="middle" font-weight="bold">Controller</text>
+      <text x="220" y="138" font-size="10" fill="#333" text-anchor="middle" font-weight="bold">Manager</text>
+
+      <text x="150" y="170" font-size="10" fill="white" text-anchor="middle" opacity="0.9">※本番は3台以上で冗長化</text>
+    </g>
+
+    <!-- 矢印 -->
+    <g transform="translate(340, 100)">
+      <line x1="0" y1="20" x2="50" y2="20" stroke="#333" stroke-width="3" marker-end="url(#arrowK8s)"/>
+      <text x="25" y="50" font-size="10" fill="#333" text-anchor="middle">指示</text>
+    </g>
+
+    <!-- Worker Node 1 -->
+    <g transform="translate(410, 20)">
+      <rect x="0" y="0" width="150" height="170" rx="8" fill="url(#nodeGrad)" stroke="#1e8449" stroke-width="2"/>
+      <text x="75" y="25" font-size="12" fill="white" text-anchor="middle" font-weight="bold">Worker Node 1</text>
+
+      <!-- kubelet -->
+      <rect x="15" y="40" width="55" height="30" rx="3" fill="white" opacity="0.9"/>
+      <text x="42" y="60" font-size="9" fill="#333" text-anchor="middle">kubelet</text>
+
+      <!-- kube-proxy -->
+      <rect x="80" y="40" width="55" height="30" rx="3" fill="white" opacity="0.9"/>
+      <text x="107" y="55" font-size="8" fill="#333" text-anchor="middle">kube-</text>
+      <text x="107" y="65" font-size="8" fill="#333" text-anchor="middle">proxy</text>
+
+      <!-- Pod -->
+      <rect x="15" y="80" width="120" height="75" rx="3" fill="white" opacity="0.3"/>
+      <text x="75" y="100" font-size="10" fill="white" text-anchor="middle">Pod</text>
+      <rect x="25" y="105" width="40" height="25" rx="2" fill="#3498db"/>
+      <text x="45" y="122" font-size="8" fill="white" text-anchor="middle">Container</text>
+      <rect x="70" y="105" width="40" height="25" rx="2" fill="#3498db"/>
+      <text x="90" y="122" font-size="8" fill="white" text-anchor="middle">Container</text>
+    </g>
+
+    <!-- Worker Node 2 -->
+    <g transform="translate(580, 20)">
+      <rect x="0" y="0" width="150" height="170" rx="8" fill="url(#nodeGrad)" stroke="#1e8449" stroke-width="2"/>
+      <text x="75" y="25" font-size="12" fill="white" text-anchor="middle" font-weight="bold">Worker Node 2</text>
+
+      <rect x="15" y="40" width="55" height="30" rx="3" fill="white" opacity="0.9"/>
+      <text x="42" y="60" font-size="9" fill="#333" text-anchor="middle">kubelet</text>
+
+      <rect x="80" y="40" width="55" height="30" rx="3" fill="white" opacity="0.9"/>
+      <text x="107" y="55" font-size="8" fill="#333" text-anchor="middle">kube-</text>
+      <text x="107" y="65" font-size="8" fill="#333" text-anchor="middle">proxy</text>
+
+      <rect x="15" y="80" width="120" height="75" rx="3" fill="white" opacity="0.3"/>
+      <text x="75" y="100" font-size="10" fill="white" text-anchor="middle">Pod</text>
+      <rect x="40" y="105" width="55" height="25" rx="2" fill="#3498db"/>
+      <text x="68" y="122" font-size="8" fill="white" text-anchor="middle">Container</text>
+    </g>
+
+    <!-- kubectl -->
+    <g transform="translate(50, 280)">
+      <rect x="0" y="0" width="100" height="40" rx="4" fill="#95a5a6"/>
+      <text x="50" y="25" font-size="12" fill="white" text-anchor="middle" font-weight="bold">kubectl</text>
+      <line x1="100" y1="20" x2="150" y2="20" stroke="#333" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="125" y="40" font-size="9" fill="#333" text-anchor="middle">CLI</text>
+    </g>
+
+    <!-- 説明テキスト -->
+    <g transform="translate(200, 270)">
+      <text x="0" y="0" font-size="11" fill="#333" font-weight="bold">Control Planeのコンポーネント:</text>
+      <text x="0" y="20" font-size="10" fill="#333">・API Server: 全ての窓口（REST API）</text>
+      <text x="0" y="35" font-size="10" fill="#333">・etcd: 状態を保存するDB</text>
+      <text x="0" y="50" font-size="10" fill="#333">・Scheduler: Podをどのノードに配置するか決定</text>
+      <text x="0" y="65" font-size="10" fill="#333">・Controller Manager: 状態を監視・維持</text>
+    </g>
+
+    <g transform="translate(480, 270)">
+      <text x="0" y="0" font-size="11" fill="#333" font-weight="bold">Worker Nodeのコンポーネント:</text>
+      <text x="0" y="20" font-size="10" fill="#333">・kubelet: Podを管理するエージェント</text>
+      <text x="0" y="35" font-size="10" fill="#333">・kube-proxy: ネットワーク通信を管理</text>
+      <text x="0" y="50" font-size="10" fill="#333">・Container Runtime: Docker等</text>
+    </g>
+
+    <defs>
+      <marker id="arrowK8s" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <h2>コンポーネント詳細</h2>
+
+  <h3>Control Plane（マスター）</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>コンポーネント</th>
+        <th>役割</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>API Server</strong></td>
+        <td>すべての操作の窓口。kubectlやkubeletはここと通信</td>
+      </tr>
+      <tr>
+        <td><strong>etcd</strong></td>
+        <td>クラスターの状態を保存する分散KVストア</td>
+      </tr>
+      <tr>
+        <td><strong>Scheduler</strong></td>
+        <td>新しいPodをどのNodeに配置するか決定</td>
+      </tr>
+      <tr>
+        <td><strong>Controller Manager</strong></td>
+        <td>「あるべき状態」と「現在の状態」を比較し調整</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Worker Node</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>コンポーネント</th>
+        <th>役割</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>kubelet</strong></td>
+        <td>各Nodeで動くエージェント。Podの起動・監視を担当</td>
+      </tr>
+      <tr>
+        <td><strong>kube-proxy</strong></td>
+        <td>ネットワークルールを管理。Service経由の通信を実現</td>
+      </tr>
+      <tr>
+        <td><strong>Container Runtime</strong></td>
+        <td>実際にコンテナを動かす（containerd、CRI-O等）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> 重要: etcdの役割</div>
+    <p>
+      <strong>etcd</strong>はクラスターの「真実の源（Source of Truth）」です。<br>
+      すべての設定、状態がここに保存されます。<br>
+      etcdが壊れるとクラスター全体が機能しなくなるため、
+      <strong>本番環境では必ずバックアップと冗長化</strong>が必要です。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-k8s2">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 新しいPodをどのNodeに配置するか決めるのは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s2" value="a">
+        <span>kubelet</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s2" value="b">
+        <span>etcd</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Schedulerは各Nodeのリソース状況を見て、新しいPodを配置する最適なNodeを決定します。kubeletはPodを実際に起動するエージェントです。">
+        <input type="radio" name="q-k8s2" value="c">
+        <span>Scheduler</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-k8s2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('k8s2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="k8s3">
+  <h1>3. Pod（ポッド）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>Podの概念とライフサイクルを理解する</p>
+  </div>
+
+  <h2>Podとは？</h2>
+  <p>
+    <strong>Pod</strong>は、Kubernetesの<strong>最小デプロイ単位</strong>です。<br>
+    1つ以上のコンテナをまとめたグループで、
+    同じネットワークとストレージを共有します。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> たとえ話</div>
+    <p>
+      Podは「一緒に暮らす家族」のようなものです。<br>
+      同じ家（Pod）に住み、同じ住所（IPアドレス）を持ち、<br>
+      同じ冷蔵庫（ストレージ）を共有します。<br>
+      引っ越す時は家族全員で一緒に移動します。
+    </p>
+  </div>
+
+  <!-- SVG図解: Pod -->
+  <svg viewBox="0 0 650 250" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- 単一コンテナPod -->
+    <g transform="translate(30, 30)">
+      <rect x="0" y="0" width="180" height="150" rx="10" fill="#3498db" opacity="0.2" stroke="#3498db" stroke-width="3"/>
+      <text x="90" y="25" font-size="14" fill="#2980b9" text-anchor="middle" font-weight="bold">Pod（一般的）</text>
+
+      <rect x="30" y="45" width="120" height="80" rx="6" fill="#3498db"/>
+      <text x="90" y="85" font-size="12" fill="white" text-anchor="middle" font-weight="bold">Container</text>
+      <text x="90" y="105" font-size="10" fill="white" text-anchor="middle">my-app</text>
+
+      <text x="90" y="145" font-size="10" fill="#333" text-anchor="middle">IP: 10.244.1.5</text>
+    </g>
+
+    <!-- マルチコンテナPod -->
+    <g transform="translate(250, 30)">
+      <rect x="0" y="0" width="280" height="200" rx="10" fill="#27ae60" opacity="0.2" stroke="#27ae60" stroke-width="3"/>
+      <text x="140" y="25" font-size="14" fill="#1e8449" text-anchor="middle" font-weight="bold">Pod（マルチコンテナ）</text>
+
+      <!-- メインコンテナ -->
+      <rect x="20" y="45" width="110" height="80" rx="6" fill="#27ae60"/>
+      <text x="75" y="80" font-size="11" fill="white" text-anchor="middle" font-weight="bold">Main</text>
+      <text x="75" y="95" font-size="11" fill="white" text-anchor="middle" font-weight="bold">Container</text>
+      <text x="75" y="115" font-size="9" fill="white" text-anchor="middle">app</text>
+
+      <!-- サイドカー -->
+      <rect x="150" y="45" width="110" height="80" rx="6" fill="#f39c12"/>
+      <text x="205" y="80" font-size="11" fill="white" text-anchor="middle" font-weight="bold">Sidecar</text>
+      <text x="205" y="95" font-size="11" fill="white" text-anchor="middle" font-weight="bold">Container</text>
+      <text x="205" y="115" font-size="9" fill="white" text-anchor="middle">log-shipper</text>
+
+      <!-- 共有リソース -->
+      <rect x="20" y="135" width="240" height="25" rx="3" fill="#95a5a6"/>
+      <text x="140" y="152" font-size="10" fill="white" text-anchor="middle">共有ボリューム（/var/log）</text>
+
+      <text x="140" y="180" font-size="10" fill="#333" text-anchor="middle">IP: 10.244.1.6</text>
+      <text x="140" y="195" font-size="9" fill="#666" text-anchor="middle">localhost で相互通信</text>
+    </g>
+
+    <!-- 説明 -->
+    <g transform="translate(560, 60)">
+      <text x="0" y="0" font-size="11" fill="#333" font-weight="bold">Podの特徴</text>
+      <text x="0" y="20" font-size="10" fill="#333">・1つのIPアドレス</text>
+      <text x="0" y="35" font-size="10" fill="#333">・ボリューム共有</text>
+      <text x="0" y="50" font-size="10" fill="#333">・一緒に作成/削除</text>
+      <text x="0" y="65" font-size="10" fill="#333">・同じNodeで実行</text>
+    </g>
+  </svg>
+
+  <h2>Podのライフサイクル</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>状態</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>Pending</code></td>
+        <td>スケジュール待ち、またはイメージダウンロード中</td>
+      </tr>
+      <tr>
+        <td><code>Running</code></td>
+        <td>少なくとも1つのコンテナが実行中</td>
+      </tr>
+      <tr>
+        <td><code>Succeeded</code></td>
+        <td>すべてのコンテナが正常終了</td>
+      </tr>
+      <tr>
+        <td><code>Failed</code></td>
+        <td>少なくとも1つのコンテナが異常終了</td>
+      </tr>
+      <tr>
+        <td><code>Unknown</code></td>
+        <td>Podの状態を取得できない</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>マルチコンテナパターン</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>パターン</th>
+        <th>用途</th>
+        <th>例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Sidecar</strong></td>
+        <td>メインコンテナを補助</td>
+        <td>ログ収集、プロキシ</td>
+      </tr>
+      <tr>
+        <td><strong>Ambassador</strong></td>
+        <td>外部通信をプロキシ</td>
+        <td>DB接続プール</td>
+      </tr>
+      <tr>
+        <td><strong>Adapter</strong></td>
+        <td>出力形式を変換</td>
+        <td>メトリクス変換</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Podのマニフェスト例</h2>
+
+  <pre><code># pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-app
+  labels:
+    app: my-app
+spec:
+  containers:
+  - name: app
+    image: my-app:1.0.0
+    ports:
+    - containerPort: 3000
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: 直接Podを作成していないか</div>
+    <p>
+      本番環境で<strong>直接Podを作成するのはアンチパターン</strong>です。<br>
+      Podが落ちても自動で再作成されません。<br>
+      必ず<strong>Deployment</strong>や<strong>StatefulSet</strong>経由で管理しましょう。
+    </p>
+  </div>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">直接Pod作成（非推奨）</div>
+      <pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: my-app
+spec:
+  containers:
+  - name: app
+    image: my-app:1.0.0</code></pre>
+      <p>Podが落ちたら手動で再作成が必要</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">Deployment経由（推奨）</div>
+      <pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 3
+  # ...</code></pre>
+      <p>Podが落ちても自動で再作成される</p>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-k8s3">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 同じPod内のコンテナ間で通信する方法は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s3" value="a">
+        <span>Service経由でアクセス</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="同じPod内のコンテナは同じネットワーク名前空間を共有するため、localhost:ポート番号で通信できます。">
+        <input type="radio" name="q-k8s3" value="b">
+        <span>localhost で通信</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s3" value="c">
+        <span>通信できない</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-k8s3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('k8s3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="k8s4">
+  <h1>4. Deployment</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>Deploymentによるレプリカ管理とローリングアップデートを理解する</p>
+  </div>
+
+  <h2>Deploymentとは？</h2>
+  <p>
+    <strong>Deployment</strong>は、Podの<strong>あるべき状態</strong>を宣言し、
+    その状態を維持するリソースです。<br>
+    「このPodを3つ動かしてほしい」と宣言すると、常に3つを維持します。
+  </p>
+
+  <!-- SVG図解: Deployment -->
+  <svg viewBox="0 0 700 280" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- Deployment -->
+    <g transform="translate(30, 20)">
+      <rect x="0" y="0" width="640" height="240" rx="12" fill="#9b59b6" opacity="0.15" stroke="#9b59b6" stroke-width="3"/>
+      <text x="320" y="30" font-size="16" fill="#8e44ad" text-anchor="middle" font-weight="bold">Deployment: my-app（replicas: 3）</text>
+
+      <!-- ReplicaSet -->
+      <g transform="translate(20, 50)">
+        <rect x="0" y="0" width="600" height="170" rx="8" fill="#3498db" opacity="0.2" stroke="#3498db" stroke-width="2"/>
+        <text x="300" y="25" font-size="13" fill="#2980b9" text-anchor="middle" font-weight="bold">ReplicaSet: my-app-5d8c6f</text>
+
+        <!-- Pod 1 -->
+        <g transform="translate(20, 40)">
+          <rect x="0" y="0" width="170" height="110" rx="6" fill="#27ae60" opacity="0.2" stroke="#27ae60" stroke-width="2"/>
+          <text x="85" y="25" font-size="11" fill="#1e8449" text-anchor="middle" font-weight="bold">Pod 1</text>
+          <rect x="20" y="40" width="130" height="50" rx="4" fill="#27ae60"/>
+          <text x="85" y="70" font-size="10" fill="white" text-anchor="middle">my-app:1.0.0</text>
+          <text x="85" y="100" font-size="9" fill="#333" text-anchor="middle">Running</text>
+        </g>
+
+        <!-- Pod 2 -->
+        <g transform="translate(210, 40)">
+          <rect x="0" y="0" width="170" height="110" rx="6" fill="#27ae60" opacity="0.2" stroke="#27ae60" stroke-width="2"/>
+          <text x="85" y="25" font-size="11" fill="#1e8449" text-anchor="middle" font-weight="bold">Pod 2</text>
+          <rect x="20" y="40" width="130" height="50" rx="4" fill="#27ae60"/>
+          <text x="85" y="70" font-size="10" fill="white" text-anchor="middle">my-app:1.0.0</text>
+          <text x="85" y="100" font-size="9" fill="#333" text-anchor="middle">Running</text>
+        </g>
+
+        <!-- Pod 3 -->
+        <g transform="translate(400, 40)">
+          <rect x="0" y="0" width="170" height="110" rx="6" fill="#27ae60" opacity="0.2" stroke="#27ae60" stroke-width="2"/>
+          <text x="85" y="25" font-size="11" fill="#1e8449" text-anchor="middle" font-weight="bold">Pod 3</text>
+          <rect x="20" y="40" width="130" height="50" rx="4" fill="#27ae60"/>
+          <text x="85" y="70" font-size="10" fill="white" text-anchor="middle">my-app:1.0.0</text>
+          <text x="85" y="100" font-size="9" fill="#333" text-anchor="middle">Running</text>
+        </g>
+      </g>
+    </g>
+  </svg>
+
+  <h2>Deploymentの階層構造</h2>
+  <pre><code>Deployment
+  └── ReplicaSet（バージョン管理）
+        └── Pod（実際のコンテナ）</code></pre>
+
+  <p>
+    <strong>ReplicaSet</strong>は裏で自動的に作成されます。<br>
+    直接ReplicaSetを操作する必要はありません。
+  </p>
+
+  <h2>基本的なDeploymentマニフェスト</h2>
+
+  <pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 3                    # Podを3つ維持
+  selector:
+    matchLabels:
+      app: my-app                # 管理対象のPodを選択
+  template:
+    metadata:
+      labels:
+        app: my-app              # Podにつけるラベル
+    spec:
+      containers:
+      - name: app
+        image: my-app:1.0.0      # 明示的なバージョン！
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"</code></pre>
+
+  <h2>ローリングアップデート</h2>
+  <p>
+    Deploymentは<strong>無停止でアプリを更新</strong>できます。<br>
+    古いPodを1つずつ新しいPodに置き換えていきます。
+  </p>
+
+  <pre><code># イメージを更新
+kubectl set image deployment/my-app app=my-app:2.0.0
+
+# または、マニフェストを編集して適用
+kubectl apply -f deployment.yaml
+
+# 更新状況を確認
+kubectl rollout status deployment/my-app
+
+# 問題があればロールバック
+kubectl rollout undo deployment/my-app</code></pre>
+
+  <h2>更新戦略の設定</h2>
+
+  <pre><code>spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1        # 一時的に増やせるPod数
+      maxUnavailable: 0  # 同時に停止できるPod数</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点</div>
+    <ul style="margin-bottom:0;">
+      <li><strong>replicas: 1</strong> は本番環境ではNG（冗長性なし）</li>
+      <li><strong>image: latest</strong> は追跡不可（明示的バージョンを使う）</li>
+      <li><strong>resourcesなし</strong> はノード枯渇リスク</li>
+    </ul>
+  </div>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">問題のあるDeployment</div>
+      <pre><code>spec:
+  replicas: 1          # 冗長性なし
+  template:
+    spec:
+      containers:
+      - image: my-app:latest  # 追跡不可
+        # resourcesなし</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">本番向けDeployment</div>
+      <pre><code>spec:
+  replicas: 3          # 冗長性あり
+  template:
+    spec:
+      containers:
+      - image: my-app:1.0.0   # 明示的バージョン
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-k8s4-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: Deploymentで管理しているPodが1つ落ちた場合、何が起きる？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s4-1" value="a">
+        <span>何も起きない（手動で再作成が必要）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Deploymentは「replicas: 3」という宣言に従い、常にPod数を維持しようとします。1つ落ちたら自動的に新しいPodを作成します。">
+        <input type="radio" name="q-k8s4-1" value="b">
+        <span>自動的に新しいPodが作成される</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s4-1" value="c">
+        <span>Deployment全体が停止する</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-k8s4-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-k8s4-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: 本番環境で <code>image: my-app:latest</code> が問題な理由は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s4-2" value="a">
+        <span>latestタグは使用禁止だから</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="latestタグは常に最新を指すため、どのバージョンが動いているか追跡できません。問題発生時のロールバックも困難になります。">
+        <input type="radio" name="q-k8s4-2" value="b">
+        <span>どのバージョンが動いているか追跡できないから</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s4-2" value="c">
+        <span>ダウンロードが遅くなるから</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-k8s4-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('k8s4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="k8s5">
+  <h1>5. Service</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>ServiceによるPodへのアクセス方法を理解する</p>
+  </div>
+
+  <h2>なぜServiceが必要？</h2>
+  <p>
+    Podは一時的な存在です。<br>
+    再起動するとIPアドレスが変わります。<br>
+    <strong>Service</strong>は、変わらないエンドポイントを提供します。
+  </p>
+
+  <!-- SVG図解: Service -->
+  <svg viewBox="0 0 700 320" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- クライアント -->
+    <g transform="translate(30, 130)">
+      <rect x="0" y="0" width="100" height="60" rx="6" fill="#95a5a6"/>
+      <text x="50" y="25" font-size="12" fill="white" text-anchor="middle" font-weight="bold">Client</text>
+      <text x="50" y="45" font-size="10" fill="white" text-anchor="middle">（他のPod）</text>
+    </g>
+
+    <!-- Service -->
+    <g transform="translate(180, 100)">
+      <rect x="0" y="0" width="150" height="120" rx="8" fill="#e74c3c" opacity="0.2" stroke="#e74c3c" stroke-width="3"/>
+      <text x="75" y="30" font-size="14" fill="#c0392b" text-anchor="middle" font-weight="bold">Service</text>
+      <text x="75" y="50" font-size="11" fill="#c0392b" text-anchor="middle">my-app-svc</text>
+      <text x="75" y="75" font-size="10" fill="#333" text-anchor="middle">ClusterIP:</text>
+      <text x="75" y="90" font-size="10" fill="#333" text-anchor="middle">10.96.0.100</text>
+      <text x="75" y="110" font-size="10" fill="#333" text-anchor="middle">DNS: my-app-svc</text>
+    </g>
+
+    <!-- 矢印 -->
+    <line x1="130" y1="160" x2="175" y2="160" stroke="#333" stroke-width="2" marker-end="url(#arrowSvc)"/>
+    <line x1="330" y1="130" x2="400" y2="80" stroke="#333" stroke-width="2" marker-end="url(#arrowSvc)"/>
+    <line x1="330" y1="160" x2="400" y2="160" stroke="#333" stroke-width="2" marker-end="url(#arrowSvc)"/>
+    <line x1="330" y1="190" x2="400" y2="240" stroke="#333" stroke-width="2" marker-end="url(#arrowSvc)"/>
+
+    <!-- Pod群 -->
+    <g transform="translate(410, 30)">
+      <rect x="0" y="0" width="120" height="80" rx="6" fill="#27ae60" opacity="0.8"/>
+      <text x="60" y="30" font-size="11" fill="white" text-anchor="middle" font-weight="bold">Pod 1</text>
+      <text x="60" y="50" font-size="9" fill="white" text-anchor="middle">10.244.1.5:3000</text>
+      <text x="60" y="70" font-size="9" fill="white" text-anchor="middle">app: my-app</text>
+    </g>
+
+    <g transform="translate(410, 120)">
+      <rect x="0" y="0" width="120" height="80" rx="6" fill="#27ae60" opacity="0.8"/>
+      <text x="60" y="30" font-size="11" fill="white" text-anchor="middle" font-weight="bold">Pod 2</text>
+      <text x="60" y="50" font-size="9" fill="white" text-anchor="middle">10.244.2.8:3000</text>
+      <text x="60" y="70" font-size="9" fill="white" text-anchor="middle">app: my-app</text>
+    </g>
+
+    <g transform="translate(410, 210)">
+      <rect x="0" y="0" width="120" height="80" rx="6" fill="#27ae60" opacity="0.8"/>
+      <text x="60" y="30" font-size="11" fill="white" text-anchor="middle" font-weight="bold">Pod 3</text>
+      <text x="60" y="50" font-size="9" fill="white" text-anchor="middle">10.244.1.12:3000</text>
+      <text x="60" y="70" font-size="9" fill="white" text-anchor="middle">app: my-app</text>
+    </g>
+
+    <!-- 説明 -->
+    <g transform="translate(560, 80)">
+      <text x="0" y="0" font-size="11" fill="#333" font-weight="bold">Serviceの役割</text>
+      <text x="0" y="20" font-size="10" fill="#333">1. 固定IPを提供</text>
+      <text x="0" y="35" font-size="10" fill="#333">2. DNS名で解決</text>
+      <text x="0" y="50" font-size="10" fill="#333">3. ロードバランス</text>
+      <text x="0" y="65" font-size="10" fill="#333">4. ラベルでPod選択</text>
+    </g>
+
+    <defs>
+      <marker id="arrowSvc" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <h2>Serviceの種類</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>種類</th>
+        <th>用途</th>
+        <th>アクセス範囲</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ClusterIP</strong></td>
+        <td>クラスター内部通信（デフォルト）</td>
+        <td>クラスター内のみ</td>
+      </tr>
+      <tr>
+        <td><strong>NodePort</strong></td>
+        <td>各Nodeのポートで公開</td>
+        <td>クラスター外から可</td>
+      </tr>
+      <tr>
+        <td><strong>LoadBalancer</strong></td>
+        <td>クラウドのLBを使用</td>
+        <td>インターネット公開</td>
+      </tr>
+      <tr>
+        <td><strong>ExternalName</strong></td>
+        <td>外部サービスへのエイリアス</td>
+        <td>DNS転送</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Serviceマニフェスト例</h2>
+
+  <pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: my-app-svc
+spec:
+  type: ClusterIP           # デフォルト
+  selector:
+    app: my-app             # このラベルのPodにルーティング
+  ports:
+  - port: 80                # Serviceのポート
+    targetPort: 3000        # Podのポート
+    protocol: TCP</code></pre>
+
+  <h2>サービスディスカバリ（DNS）</h2>
+  <p>
+    Kubernetesは<strong>CoreDNS</strong>を使って、
+    Service名をDNSで解決できます。
+  </p>
+
+  <pre><code># 同じNamespace内からアクセス
+curl http://my-app-svc
+
+# 別のNamespaceからアクセス
+curl http://my-app-svc.production.svc.cluster.local
+
+# FQDN形式: {service}.{namespace}.svc.cluster.local</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: Pod IPを直接参照していないか</div>
+    <p>
+      コード内でPodのIPアドレスを直接指定するのは<strong>アンチパターン</strong>です。<br>
+      PodのIPは再起動で変わります。<br>
+      必ず<strong>Service名</strong>を使いましょう。
+    </p>
+  </div>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">Pod IPを直接参照（NG）</div>
+      <pre><code>DATABASE_URL=postgres://10.244.1.5:5432/db
+# PodのIPは変わる！</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">Service名で参照（OK）</div>
+      <pre><code>DATABASE_URL=postgres://db-svc:5432/db
+# Service名は固定</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-k8s5">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: クラスター内の別のPodからアクセスしたい場合、どのServiceタイプが適切？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="ClusterIPはクラスター内部通信用のデフォルトタイプです。外部公開が不要な内部サービス間通信に最適です。">
+        <input type="radio" name="q-k8s5" value="a">
+        <span>ClusterIP</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s5" value="b">
+        <span>LoadBalancer</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s5" value="c">
+        <span>NodePort</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-k8s5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('k8s5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="k8s6">
+  <h1>6. Ingress</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>IngressによるHTTPルーティングとTLS終端を理解する</p>
+  </div>
+
+  <h2>Ingressとは？</h2>
+  <p>
+    <strong>Ingress</strong>は、HTTPレベルでトラフィックを振り分けるリソースです。<br>
+    1つのロードバランサーで、複数のServiceにルーティングできます。
+  </p>
+
+  <!-- SVG図解: Ingress -->
+  <svg viewBox="0 0 700 350" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- インターネット -->
+    <g transform="translate(50, 30)">
+      <ellipse cx="50" cy="30" rx="50" ry="30" fill="#3498db" opacity="0.3"/>
+      <text x="50" y="35" font-size="12" fill="#2980b9" text-anchor="middle" font-weight="bold">Internet</text>
+    </g>
+
+    <!-- 矢印 -->
+    <line x1="100" y1="70" x2="100" y2="110" stroke="#333" stroke-width="2" marker-end="url(#arrowIng)"/>
+
+    <!-- Ingress Controller -->
+    <g transform="translate(20, 120)">
+      <rect x="0" y="0" width="200" height="80" rx="8" fill="#9b59b6" opacity="0.9"/>
+      <text x="100" y="30" font-size="12" fill="white" text-anchor="middle" font-weight="bold">Ingress Controller</text>
+      <text x="100" y="50" font-size="10" fill="white" text-anchor="middle">(NGINX / Traefik)</text>
+      <text x="100" y="70" font-size="10" fill="white" text-anchor="middle">TLS終端 / ルーティング</text>
+    </g>
+
+    <!-- Ingress Rules -->
+    <g transform="translate(250, 110)">
+      <rect x="0" y="0" width="200" height="100" rx="6" fill="#f39c12" opacity="0.2" stroke="#f39c12" stroke-width="2"/>
+      <text x="100" y="25" font-size="12" fill="#e67e22" text-anchor="middle" font-weight="bold">Ingress Rules</text>
+      <text x="100" y="50" font-size="10" fill="#333" text-anchor="middle">/api/* → api-svc</text>
+      <text x="100" y="70" font-size="10" fill="#333" text-anchor="middle">/web/* → web-svc</text>
+      <text x="100" y="90" font-size="10" fill="#333" text-anchor="middle">example.com → web-svc</text>
+    </g>
+
+    <!-- 矢印（ルーティング） -->
+    <line x1="220" y1="180" x2="280" y2="250" stroke="#333" stroke-width="2" marker-end="url(#arrowIng)"/>
+    <line x1="220" y1="180" x2="420" y2="250" stroke="#333" stroke-width="2" marker-end="url(#arrowIng)"/>
+
+    <!-- Service: API -->
+    <g transform="translate(200, 260)">
+      <rect x="0" y="0" width="140" height="70" rx="6" fill="#e74c3c" opacity="0.8"/>
+      <text x="70" y="25" font-size="11" fill="white" text-anchor="middle" font-weight="bold">Service: api-svc</text>
+      <text x="70" y="45" font-size="10" fill="white" text-anchor="middle">→ API Pods</text>
+      <text x="70" y="60" font-size="9" fill="white" text-anchor="middle">/api/*</text>
+    </g>
+
+    <!-- Service: Web -->
+    <g transform="translate(360, 260)">
+      <rect x="0" y="0" width="140" height="70" rx="6" fill="#27ae60" opacity="0.8"/>
+      <text x="70" y="25" font-size="11" fill="white" text-anchor="middle" font-weight="bold">Service: web-svc</text>
+      <text x="70" y="45" font-size="10" fill="white" text-anchor="middle">→ Web Pods</text>
+      <text x="70" y="60" font-size="9" fill="white" text-anchor="middle">/web/*</text>
+    </g>
+
+    <!-- 説明 -->
+    <g transform="translate(500, 50)">
+      <text x="0" y="0" font-size="11" fill="#333" font-weight="bold">Ingressの特徴</text>
+      <text x="0" y="20" font-size="10" fill="#333">・HTTPパスベースルーティング</text>
+      <text x="0" y="35" font-size="10" fill="#333">・ホストベースルーティング</text>
+      <text x="0" y="50" font-size="10" fill="#333">・TLS終端（SSL証明書）</text>
+      <text x="0" y="65" font-size="10" fill="#333">・1つのLBで複数Service</text>
+    </g>
+
+    <defs>
+      <marker id="arrowIng" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <h2>Ingressマニフェスト例</h2>
+
+  <pre><code>apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - example.com
+    secretName: tls-secret      # TLS証明書
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: api-svc
+            port:
+              number: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web-svc
+            port:
+              number: 80</code></pre>
+
+  <h2>Ingress Controller</h2>
+  <p>
+    Ingressリソースだけでは動きません。<br>
+    <strong>Ingress Controller</strong>（NGINX、Traefik等）を事前にインストールする必要があります。
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Controller</th>
+        <th>特徴</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>NGINX Ingress</strong></td>
+        <td>最も普及、安定、高機能</td>
+      </tr>
+      <tr>
+        <td><strong>Traefik</strong></td>
+        <td>自動証明書、動的設定</td>
+      </tr>
+      <tr>
+        <td><strong>AWS ALB Controller</strong></td>
+        <td>AWS ALBとネイティブ統合</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: Serviceを直接公開していないか</div>
+    <p>
+      <strong>NodePort</strong>や<strong>LoadBalancer</strong>で
+      各Serviceを直接公開するのは非効率です。<br>
+      Ingressで1つのエントリーポイントにまとめましょう。
+    </p>
+  </div>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">Service直接公開（非効率）</div>
+      <pre><code># 各ServiceにLoadBalancer
+api-svc: LB1 ($0.025/hour)
+web-svc: LB2 ($0.025/hour)
+admin-svc: LB3 ($0.025/hour)
+# コスト: 3個分</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">Ingress経由（効率的）</div>
+      <pre><code># 1つのIngressでルーティング
+/api → api-svc
+/web → web-svc
+/admin → admin-svc
+# コスト: 1個分</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-k8s6">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: Ingressの主な役割は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s6" value="a">
+        <span>Pod間のTCP通信を管理</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="IngressはHTTPレベルでパスやホスト名に基づいてトラフィックを振り分けます。また、TLS証明書の管理も行います。">
+        <input type="radio" name="q-k8s6" value="b">
+        <span>HTTPルーティングとTLS終端</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s6" value="c">
+        <span>Podのスケーリング</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-k8s6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('k8s6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="k8s7">
+  <h1>7. ConfigMap と Secret</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>設定と機密情報の外部化方法を理解する</p>
+  </div>
+
+  <h2>なぜ設定を外部化？</h2>
+  <p>
+    設定をコンテナイメージに埋め込むと、<br>
+    環境ごと（dev/stg/prod）にイメージを作り直す必要があります。<br>
+    <strong>ConfigMap</strong>と<strong>Secret</strong>で設定を外部化しましょう。
+  </p>
+
+  <!-- SVG図解: ConfigMap/Secret -->
+  <svg viewBox="0 0 650 230" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- ConfigMap -->
+    <g transform="translate(30, 30)">
+      <rect x="0" y="0" width="180" height="120" rx="8" fill="#3498db" opacity="0.2" stroke="#3498db" stroke-width="2"/>
+      <text x="90" y="25" font-size="13" fill="#2980b9" text-anchor="middle" font-weight="bold">ConfigMap</text>
+      <text x="90" y="50" font-size="10" fill="#333" text-anchor="middle">LOG_LEVEL=info</text>
+      <text x="90" y="70" font-size="10" fill="#333" text-anchor="middle">API_ENDPOINT=...</text>
+      <text x="90" y="90" font-size="10" fill="#333" text-anchor="middle">nginx.conf</text>
+      <text x="90" y="110" font-size="9" fill="#666" text-anchor="middle">（平文、バージョン管理OK）</text>
+    </g>
+
+    <!-- Secret -->
+    <g transform="translate(230, 30)">
+      <rect x="0" y="0" width="180" height="120" rx="8" fill="#e74c3c" opacity="0.2" stroke="#e74c3c" stroke-width="2"/>
+      <text x="90" y="25" font-size="13" fill="#c0392b" text-anchor="middle" font-weight="bold">Secret</text>
+      <text x="90" y="50" font-size="10" fill="#333" text-anchor="middle">DB_PASSWORD=***</text>
+      <text x="90" y="70" font-size="10" fill="#333" text-anchor="middle">API_KEY=***</text>
+      <text x="90" y="90" font-size="10" fill="#333" text-anchor="middle">TLS証明書</text>
+      <text x="90" y="110" font-size="9" fill="#666" text-anchor="middle">（Base64、etcdで暗号化可）</text>
+    </g>
+
+    <!-- 矢印 -->
+    <line x1="120" y1="150" x2="500" y2="180" stroke="#333" stroke-width="2" marker-end="url(#arrowCfg)"/>
+    <line x1="320" y1="150" x2="500" y2="180" stroke="#333" stroke-width="2" marker-end="url(#arrowCfg)"/>
+
+    <!-- Pod -->
+    <g transform="translate(430, 150)">
+      <rect x="0" y="0" width="150" height="70" rx="6" fill="#27ae60" opacity="0.8"/>
+      <text x="75" y="25" font-size="12" fill="white" text-anchor="middle" font-weight="bold">Pod</text>
+      <text x="75" y="45" font-size="10" fill="white" text-anchor="middle">環境変数で注入</text>
+      <text x="75" y="60" font-size="10" fill="white" text-anchor="middle">or ファイルマウント</text>
+    </g>
+
+    <defs>
+      <marker id="arrowCfg" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <h2>ConfigMap vs Secret</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>項目</th>
+        <th>ConfigMap</th>
+        <th>Secret</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>用途</strong></td>
+        <td>一般的な設定</td>
+        <td>機密情報</td>
+      </tr>
+      <tr>
+        <td><strong>データ形式</strong></td>
+        <td>平文</td>
+        <td>Base64エンコード</td>
+      </tr>
+      <tr>
+        <td><strong>Git管理</strong></td>
+        <td>OK</td>
+        <td>NG（暗号化必須）</td>
+      </tr>
+      <tr>
+        <td><strong>サイズ制限</strong></td>
+        <td>1MB</td>
+        <td>1MB</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>ConfigMapの作成と使用</h2>
+
+  <pre><code># ConfigMapマニフェスト
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  LOG_LEVEL: "info"
+  API_ENDPOINT: "https://api.example.com"
+  # ファイルとして
+  nginx.conf: |
+    server {
+      listen 80;
+      ...
+    }
+
+---
+# Podで使用（環境変数）
+spec:
+  containers:
+  - name: app
+    envFrom:
+    - configMapRef:
+        name: app-config
+
+# または個別に
+    env:
+    - name: LOG_LEVEL
+      valueFrom:
+        configMapKeyRef:
+          name: app-config
+          key: LOG_LEVEL</code></pre>
+
+  <h2>Secretの作成と使用</h2>
+
+  <pre><code># Secretマニフェスト
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-secret
+type: Opaque
+data:
+  # Base64エンコードが必要
+  password: cGFzc3dvcmQxMjM=  # "password123"
+
+# stringDataを使うと自動でBase64化
+stringData:
+  password: password123
+
+---
+# Podで使用
+spec:
+  containers:
+  - name: app
+    env:
+    - name: DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: db-secret
+          key: password</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: 設定がハードコードされていないか</div>
+    <p>
+      環境変数や機密情報がDeploymentのマニフェストに<br>
+      直接書かれていないかチェック。<br>
+      <strong>ConfigMap/Secret</strong>で外部化しましょう。
+    </p>
+  </div>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">ハードコード（NG）</div>
+      <pre><code>spec:
+  containers:
+  - name: app
+    env:
+    - name: DATABASE_URL
+      value: "postgres://user:pass@db:5432"
+    - name: API_KEY
+      value: "sk-123456789"</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">Secret参照（OK）</div>
+      <pre><code>spec:
+  containers:
+  - name: app
+    env:
+    - name: DATABASE_URL
+      valueFrom:
+        secretKeyRef:
+          name: db-secret
+          key: url
+    - name: API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: api-secret
+          key: key</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-k8s7-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: データベースのパスワードを保存するべきリソースは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s7-1" value="a">
+        <span>ConfigMap</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="機密情報はSecretに保存します。SecretはBase64エンコードされ、etcdでの暗号化も設定可能です。ConfigMapは平文なので機密情報には不適切です。">
+        <input type="radio" name="q-k8s7-1" value="b">
+        <span>Secret</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s7-1" value="c">
+        <span>Deployment</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-k8s7-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-k8s7-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: SecretをGitリポジトリにコミットしてもよい？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s7-2" value="a">
+        <span>Base64エンコードされているので安全</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Base64は暗号化ではなくエンコードです。誰でもデコードできます。Secretは暗号化ツール（Sealed Secrets、SOPS等）を使うか、外部シークレット管理（Vault、AWS Secrets Manager）を使いましょう。">
+        <input type="radio" name="q-k8s7-2" value="b">
+        <span>NG - Base64は暗号化ではない、誰でも復号可能</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s7-2" value="c">
+        <span>プライベートリポジトリなら問題ない</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-k8s7-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('k8s7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="k8s8">
+  <h1>8. ストレージ（PV/PVC）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>PersistentVolumeとPersistentVolumeClaimの関係を理解する</p>
+  </div>
+
+  <h2>なぜ永続ストレージが必要？</h2>
+  <p>
+    Podは一時的な存在です。<br>
+    Pod内のデータは、Podが削除されると<strong>消えます</strong>。<br>
+    データベースなど永続化が必要なデータは、<strong>PersistentVolume</strong>を使います。
+  </p>
+
+  <!-- SVG図解: PV/PVC -->
+  <svg viewBox="0 0 700 280" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- Pod -->
+    <g transform="translate(30, 30)">
+      <rect x="0" y="0" width="150" height="100" rx="8" fill="#27ae60" opacity="0.8"/>
+      <text x="75" y="30" font-size="13" fill="white" text-anchor="middle" font-weight="bold">Pod</text>
+      <text x="75" y="55" font-size="10" fill="white" text-anchor="middle">PostgreSQL</text>
+      <text x="75" y="75" font-size="10" fill="white" text-anchor="middle">/var/lib/postgresql</text>
+    </g>
+
+    <!-- 矢印 -->
+    <line x1="180" y1="80" x2="230" y2="80" stroke="#333" stroke-width="2" marker-end="url(#arrowPV)"/>
+    <text x="205" y="100" font-size="9" fill="#333" text-anchor="middle">要求</text>
+
+    <!-- PVC -->
+    <g transform="translate(240, 30)">
+      <rect x="0" y="0" width="150" height="100" rx="8" fill="#3498db" opacity="0.2" stroke="#3498db" stroke-width="3"/>
+      <text x="75" y="25" font-size="12" fill="#2980b9" text-anchor="middle" font-weight="bold">PVC</text>
+      <text x="75" y="45" font-size="10" fill="#333" text-anchor="middle">(Claim)</text>
+      <text x="75" y="65" font-size="10" fill="#333" text-anchor="middle">10Gi要求</text>
+      <text x="75" y="85" font-size="10" fill="#333" text-anchor="middle">ReadWriteOnce</text>
+    </g>
+
+    <!-- 矢印 -->
+    <line x1="390" y1="80" x2="440" y2="80" stroke="#333" stroke-width="2" marker-end="url(#arrowPV)"/>
+    <text x="415" y="100" font-size="9" fill="#333" text-anchor="middle">バインド</text>
+
+    <!-- PV -->
+    <g transform="translate(450, 30)">
+      <rect x="0" y="0" width="150" height="100" rx="8" fill="#9b59b6" opacity="0.2" stroke="#9b59b6" stroke-width="3"/>
+      <text x="75" y="25" font-size="12" fill="#8e44ad" text-anchor="middle" font-weight="bold">PV</text>
+      <text x="75" y="45" font-size="10" fill="#333" text-anchor="middle">(Volume)</text>
+      <text x="75" y="65" font-size="10" fill="#333" text-anchor="middle">10Gi確保済み</text>
+      <text x="75" y="85" font-size="10" fill="#333" text-anchor="middle">EBS/NFS/etc</text>
+    </g>
+
+    <!-- 説明 -->
+    <g transform="translate(30, 160)">
+      <text x="0" y="0" font-size="11" fill="#333" font-weight="bold">リソースの役割</text>
+      <text x="0" y="25" font-size="10" fill="#333">PV (PersistentVolume): 実際のストレージ。管理者が用意。</text>
+      <text x="0" y="45" font-size="10" fill="#333">PVC (PersistentVolumeClaim): Podからの要求。開発者が作成。</text>
+      <text x="0" y="65" font-size="10" fill="#333">StorageClass: 動的プロビジョニングの設定。</text>
+    </g>
+
+    <!-- StorageClass -->
+    <g transform="translate(450, 160)">
+      <rect x="0" y="0" width="200" height="80" rx="6" fill="#f39c12" opacity="0.2" stroke="#f39c12" stroke-width="2"/>
+      <text x="100" y="25" font-size="11" fill="#e67e22" text-anchor="middle" font-weight="bold">StorageClass</text>
+      <text x="100" y="50" font-size="10" fill="#333" text-anchor="middle">動的にPVを作成</text>
+      <text x="100" y="70" font-size="10" fill="#333" text-anchor="middle">(AWS EBS, GCE PD)</text>
+    </g>
+
+    <defs>
+      <marker id="arrowPV" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <h2>アクセスモード</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>モード</th>
+        <th>説明</th>
+        <th>用途</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ReadWriteOnce (RWO)</strong></td>
+        <td>1つのNodeからのみR/W</td>
+        <td>一般的なDB</td>
+      </tr>
+      <tr>
+        <td><strong>ReadOnlyMany (ROX)</strong></td>
+        <td>複数Nodeから読み取り</td>
+        <td>静的コンテンツ</td>
+      </tr>
+      <tr>
+        <td><strong>ReadWriteMany (RWX)</strong></td>
+        <td>複数Nodeから読み書き</td>
+        <td>共有ストレージ（NFS）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>PVCマニフェスト例</h2>
+
+  <pre><code>apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard     # StorageClassを指定
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+# Podで使用
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  template:
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:16-alpine
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: postgres-pvc</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: emptyDirをデータベースに使っていないか</div>
+    <p>
+      <code>emptyDir</code>はPodと一緒に消える一時ストレージです。<br>
+      データベースに使うと、Podが再起動するたびに<strong>データが消失</strong>します。<br>
+      本番環境では必ず<strong>PersistentVolumeClaim</strong>を使いましょう。
+    </p>
+  </div>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">emptyDir（データ消失リスク）</div>
+      <pre><code>volumes:
+- name: data
+  emptyDir: {}  # Podと一緒に消える</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">PVC（永続化）</div>
+      <pre><code>volumes:
+- name: data
+  persistentVolumeClaim:
+    claimName: postgres-pvc  # Pod削除後も残る</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-k8s8">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: DBのデータを永続化するために使うべきリソースは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s8" value="a">
+        <span>emptyDir</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="PersistentVolumeClaimはPodのライフサイクルから独立したストレージを要求します。Podが削除されてもデータは保持されます。">
+        <input type="radio" name="q-k8s8" value="b">
+        <span>PersistentVolumeClaim</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s8" value="c">
+        <span>ConfigMap</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-k8s8')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('k8s8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="k8s9">
+  <h1>9. RBAC（権限管理）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>Role/RoleBindingによる最小権限の原則を理解する</p>
+  </div>
+
+  <h2>RBACとは？</h2>
+  <p>
+    <strong>RBAC</strong>（Role-Based Access Control）は、<br>
+    「誰が」「何に対して」「何ができるか」を制御する仕組みです。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> たとえ話</div>
+    <p>
+      会社のオフィスと同じです。<br>
+      「一般社員」は自分のデスク周辺にしかアクセスできない。<br>
+      「経理部長」は経理室の金庫にもアクセスできる。<br>
+      「社長」は全フロアにアクセスできる。<br>
+      これが「ロールベースのアクセス制御」です。
+    </p>
+  </div>
+
+  <!-- SVG図解: RBAC -->
+  <svg viewBox="0 0 700 280" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- User/ServiceAccount -->
+    <g transform="translate(30, 80)">
+      <rect x="0" y="0" width="120" height="70" rx="6" fill="#3498db" opacity="0.8"/>
+      <text x="60" y="25" font-size="11" fill="white" text-anchor="middle" font-weight="bold">User /</text>
+      <text x="60" y="45" font-size="11" fill="white" text-anchor="middle" font-weight="bold">ServiceAccount</text>
+      <text x="60" y="60" font-size="9" fill="white" text-anchor="middle">(誰が)</text>
+    </g>
+
+    <!-- 矢印 -->
+    <line x1="150" y1="115" x2="200" y2="115" stroke="#333" stroke-width="2" marker-end="url(#arrowRBAC)"/>
+
+    <!-- RoleBinding -->
+    <g transform="translate(210, 50)">
+      <rect x="0" y="0" width="160" height="130" rx="8" fill="#f39c12" opacity="0.2" stroke="#f39c12" stroke-width="2"/>
+      <text x="80" y="25" font-size="12" fill="#e67e22" text-anchor="middle" font-weight="bold">RoleBinding</text>
+      <text x="80" y="50" font-size="10" fill="#333" text-anchor="middle">(紐付け)</text>
+      <text x="80" y="80" font-size="10" fill="#333" text-anchor="middle">Subject: dev-user</text>
+      <text x="80" y="100" font-size="10" fill="#333" text-anchor="middle">→ Role: pod-reader</text>
+    </g>
+
+    <!-- 矢印 -->
+    <line x1="370" y1="115" x2="420" y2="115" stroke="#333" stroke-width="2" marker-end="url(#arrowRBAC)"/>
+
+    <!-- Role -->
+    <g transform="translate(430, 50)">
+      <rect x="0" y="0" width="160" height="130" rx="8" fill="#27ae60" opacity="0.2" stroke="#27ae60" stroke-width="2"/>
+      <text x="80" y="25" font-size="12" fill="#1e8449" text-anchor="middle" font-weight="bold">Role</text>
+      <text x="80" y="50" font-size="10" fill="#333" text-anchor="middle">(権限セット)</text>
+      <text x="80" y="80" font-size="10" fill="#333" text-anchor="middle">resources: pods</text>
+      <text x="80" y="100" font-size="10" fill="#333" text-anchor="middle">verbs: get, list</text>
+    </g>
+
+    <!-- 説明 -->
+    <g transform="translate(30, 200)">
+      <text x="0" y="0" font-size="11" fill="#333" font-weight="bold">RBACの構成要素</text>
+      <text x="0" y="25" font-size="10" fill="#333">Role / ClusterRole: 「何ができるか」を定義</text>
+      <text x="0" y="45" font-size="10" fill="#333">RoleBinding / ClusterRoleBinding: UserとRoleを紐付け</text>
+      <text x="0" y="65" font-size="10" fill="#333">※ ClusterRole/ClusterRoleBindingはNamespace横断</text>
+    </g>
+
+    <defs>
+      <marker id="arrowRBAC" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <h2>RBACリソースの種類</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>リソース</th>
+        <th>スコープ</th>
+        <th>用途</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Role</strong></td>
+        <td>Namespace内</td>
+        <td>特定Namespaceの権限</td>
+      </tr>
+      <tr>
+        <td><strong>ClusterRole</strong></td>
+        <td>クラスター全体</td>
+        <td>クラスター全体の権限</td>
+      </tr>
+      <tr>
+        <td><strong>RoleBinding</strong></td>
+        <td>Namespace内</td>
+        <td>RoleをUserに紐付け</td>
+      </tr>
+      <tr>
+        <td><strong>ClusterRoleBinding</strong></td>
+        <td>クラスター全体</td>
+        <td>ClusterRoleをUserに紐付け</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Roleの例</h2>
+
+  <pre><code># 特定NamespaceでPodの参照のみ許可
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-reader
+  namespace: development
+rules:
+- apiGroups: [""]           # コアAPI
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+
+---
+# RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-pods
+  namespace: development
+subjects:
+- kind: User
+  name: dev-user
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io</code></pre>
+
+  <h2>よく使うverbs</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Verb</th>
+        <th>説明</th>
+        <th>kubectl相当</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>get</code></td>
+        <td>単一リソースの取得</td>
+        <td><code>kubectl get pod my-pod</code></td>
+      </tr>
+      <tr>
+        <td><code>list</code></td>
+        <td>リソース一覧の取得</td>
+        <td><code>kubectl get pods</code></td>
+      </tr>
+      <tr>
+        <td><code>watch</code></td>
+        <td>リソースの変更監視</td>
+        <td><code>kubectl get pods -w</code></td>
+      </tr>
+      <tr>
+        <td><code>create</code></td>
+        <td>リソースの作成</td>
+        <td><code>kubectl create</code></td>
+      </tr>
+      <tr>
+        <td><code>delete</code></td>
+        <td>リソースの削除</td>
+        <td><code>kubectl delete</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: cluster-adminを多用していないか</div>
+    <p>
+      <code>cluster-admin</code>はすべての権限を持つ最強のClusterRoleです。<br>
+      本番環境で安易に付与するのは<strong>セキュリティリスク</strong>です。<br>
+      <strong>最小権限の原則</strong>に従い、必要な権限だけを付与しましょう。
+    </p>
+  </div>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">過剰な権限（NG）</div>
+      <pre><code>roleRef:
+  kind: ClusterRole
+  name: cluster-admin  # 全権限！危険</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">最小権限（OK）</div>
+      <pre><code>roleRef:
+  kind: Role
+  name: pod-reader  # 必要な権限のみ</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-k8s9">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 開発者に「Podの参照のみ」を許可したい場合、適切な設定は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s9" value="a">
+        <span>cluster-admin ClusterRoleをバインド</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="最小権限の原則に従い、get/list/watchのみを許可したRoleを作成し、バインドします。cluster-adminは不要な権限まで与えてしまいます。">
+        <input type="radio" name="q-k8s9" value="b">
+        <span>verbs: [get, list, watch]のRoleを作成してバインド</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s9" value="c">
+        <span>RBACは不要、誰でもアクセス可能にする</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-k8s9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('k8s9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="k8s10">
+  <h1>10. ヘルスチェック（Probe）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>liveness/readiness/startup Probeの違いと使い方を理解する</p>
+  </div>
+
+  <h2>なぜヘルスチェックが必要？</h2>
+  <p>
+    アプリケーションは、プロセスが起動していても<br>
+    <strong>正常に動作しているとは限りません</strong>。<br>
+    デッドロック、DB接続切れ、メモリ不足などで応答しなくなることがあります。
+  </p>
+
+  <p>
+    <strong>Probe</strong>を設定することで、Kubernetesが<br>
+    アプリケーションの健全性を監視し、問題があれば自動で対処します。
+  </p>
+
+  <h2>3種類のProbe</h2>
+
+  <!-- SVG図解: Probe種類 -->
+  <svg viewBox="0 0 700 250" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- Liveness Probe -->
+    <g transform="translate(30, 30)">
+      <rect x="0" y="0" width="200" height="120" rx="8" fill="#e74c3c" opacity="0.2" stroke="#e74c3c" stroke-width="2"/>
+      <text x="100" y="25" font-size="13" fill="#c0392b" text-anchor="middle" font-weight="bold">Liveness Probe</text>
+      <text x="100" y="50" font-size="10" fill="#333" text-anchor="middle">「生きてる？」</text>
+      <text x="100" y="75" font-size="10" fill="#333" text-anchor="middle">失敗 → コンテナ再起動</text>
+      <text x="100" y="100" font-size="9" fill="#666" text-anchor="middle">デッドロック検知</text>
+    </g>
+
+    <!-- Readiness Probe -->
+    <g transform="translate(250, 30)">
+      <rect x="0" y="0" width="200" height="120" rx="8" fill="#3498db" opacity="0.2" stroke="#3498db" stroke-width="2"/>
+      <text x="100" y="25" font-size="13" fill="#2980b9" text-anchor="middle" font-weight="bold">Readiness Probe</text>
+      <text x="100" y="50" font-size="10" fill="#333" text-anchor="middle">「リクエスト受けれる？」</text>
+      <text x="100" y="75" font-size="10" fill="#333" text-anchor="middle">失敗 → Serviceから除外</text>
+      <text x="100" y="100" font-size="9" fill="#666" text-anchor="middle">起動中/一時的な負荷</text>
+    </g>
+
+    <!-- Startup Probe -->
+    <g transform="translate(470, 30)">
+      <rect x="0" y="0" width="200" height="120" rx="8" fill="#27ae60" opacity="0.2" stroke="#27ae60" stroke-width="2"/>
+      <text x="100" y="25" font-size="13" fill="#1e8449" text-anchor="middle" font-weight="bold">Startup Probe</text>
+      <text x="100" y="50" font-size="10" fill="#333" text-anchor="middle">「起動完了した？」</text>
+      <text x="100" y="75" font-size="10" fill="#333" text-anchor="middle">成功まで他Probe無効</text>
+      <text x="100" y="100" font-size="9" fill="#666" text-anchor="middle">起動が遅いアプリ用</text>
+    </g>
+
+    <!-- 説明 -->
+    <g transform="translate(30, 170)">
+      <text x="0" y="0" font-size="11" fill="#333" font-weight="bold">Probeの実行順序:</text>
+      <text x="0" y="25" font-size="10" fill="#333">1. Startup Probe → 成功するまで待機</text>
+      <text x="0" y="45" font-size="10" fill="#333">2. Liveness Probe → 定期的にチェック、失敗で再起動</text>
+      <text x="0" y="65" font-size="10" fill="#333">3. Readiness Probe → 定期的にチェック、失敗でService除外</text>
+    </g>
+  </svg>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Probe</th>
+        <th>目的</th>
+        <th>失敗時の動作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Liveness</strong></td>
+        <td>コンテナが正常か</td>
+        <td>コンテナ再起動</td>
+      </tr>
+      <tr>
+        <td><strong>Readiness</strong></td>
+        <td>トラフィックを受けられるか</td>
+        <td>Serviceから除外</td>
+      </tr>
+      <tr>
+        <td><strong>Startup</strong></td>
+        <td>起動が完了したか</td>
+        <td>他のProbeを遅延</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Probeの設定方法</h2>
+
+  <pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  template:
+    spec:
+      containers:
+      - name: app
+        image: my-app:1.0.0
+        ports:
+        - containerPort: 3000
+
+        # 起動完了チェック
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          failureThreshold: 30   # 30回失敗まで待つ
+          periodSeconds: 10       # 10秒ごとにチェック
+
+        # 生存チェック
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 10 # 起動後10秒待ってから開始
+          periodSeconds: 10       # 10秒ごとにチェック
+          timeoutSeconds: 3       # 3秒でタイムアウト
+          failureThreshold: 3     # 3回失敗で再起動
+
+        # 受付可能チェック
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 3</code></pre>
+
+  <h2>Probeの種類（チェック方法）</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>方法</th>
+        <th>用途</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>httpGet</code></td>
+        <td>HTTP GETリクエスト（200-399で成功）</td>
+      </tr>
+      <tr>
+        <td><code>tcpSocket</code></td>
+        <td>TCPポート接続チェック</td>
+      </tr>
+      <tr>
+        <td><code>exec</code></td>
+        <td>コマンド実行（exit 0で成功）</td>
+      </tr>
+      <tr>
+        <td><code>grpc</code></td>
+        <td>gRPCヘルスチェック</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: Probeが設定されているか</div>
+    <p>
+      本番環境で<strong>Probeなし</strong>は危険です。<br>
+      アプリがハングしても検知・復旧できません。<br>
+      少なくとも<strong>liveness</strong>と<strong>readiness</strong>は設定しましょう。
+    </p>
+  </div>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">Probeなし（NG）</div>
+      <pre><code>spec:
+  containers:
+  - name: app
+    image: my-app:1.0.0
+    # Probeなし → ハング検知できない</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">Probe設定（OK）</div>
+      <pre><code>spec:
+  containers:
+  - name: app
+    image: my-app:1.0.0
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: 3000
+    readinessProbe:
+      httpGet:
+        path: /ready
+        port: 3000</code></pre>
+    </div>
+  </div>
+
+  <h2>ヘルスチェックエンドポイントの実装例</h2>
+
+  <pre><code>// Node.js Express
+app.get('/health', (req, res) => {
+  // 単純な生存確認
+  res.status(200).json({ status: 'ok' });
+});
+
+app.get('/ready', async (req, res) => {
+  try {
+    // DB接続チェック
+    await db.query('SELECT 1');
+    // 外部サービスチェック
+    await fetch('https://api.example.com/health');
+    res.status(200).json({ status: 'ready' });
+  } catch (error) {
+    res.status(503).json({ status: 'not ready', error: error.message });
+  }
+});</code></pre>
+
+  <div class="quiz" id="quiz-k8s10-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: アプリがデッドロックを起こした場合、どのProbeで検知する？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="Liveness Probeは「アプリが生きているか」をチェックします。デッドロックでリクエストに応答しなくなると、Liveness Probeが失敗し、コンテナが再起動されます。">
+        <input type="radio" name="q-k8s10-1" value="a">
+        <span>Liveness Probe</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s10-1" value="b">
+        <span>Readiness Probe</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s10-1" value="c">
+        <span>Startup Probe</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-k8s10-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-k8s10-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: 起動に2分かかるアプリで、すぐにLiveness Probeが失敗する問題の解決策は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s10-2" value="a">
+        <span>Liveness Probeを無効にする</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Startup Probeは起動完了を待つためのProbeです。Startup Probeが成功するまで、Liveness/Readiness Probeは実行されません。起動が遅いアプリに最適です。">
+        <input type="radio" name="q-k8s10-2" value="b">
+        <span>Startup Probeを設定する</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-k8s10-2" value="c">
+        <span>Readiness Probeだけ使う</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-k8s10-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <h2>Phase 2 まとめ: Kubernetesレビューチェックリスト</h2>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">✓</span> コードレビューで確認すべきポイント</div>
+    <ul style="margin-bottom:0;">
+      <li><strong>Deployment経由</strong>で管理しているか（直接Pod作成NG）</li>
+      <li><strong>replicas: 3以上</strong>で冗長性を確保しているか</li>
+      <li><strong>明示的バージョン</strong>を使っているか（latestタグNG）</li>
+      <li><strong>resources</strong>（requests/limits）が設定されているか</li>
+      <li><strong>liveness/readiness Probe</strong>が設定されているか</li>
+      <li><strong>ConfigMap/Secret</strong>で設定を外部化しているか</li>
+      <li><strong>PVC</strong>でデータを永続化しているか（emptyDirNG）</li>
+      <li><strong>最小権限</strong>のRBACを設定しているか（cluster-admin多用NG）</li>
+      <li><strong>Service名</strong>で通信しているか（Pod IP直接参照NG）</li>
+      <li><strong>Ingress</strong>でHTTPルーティングしているか（Service直接公開NG）</li>
+    </ul>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('k8s10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

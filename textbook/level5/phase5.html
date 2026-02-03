@@ -1,0 +1,1551 @@
+<!-- ============================================
+     Level 5 Phase 5: CI/CD GitHub Actions
+     ============================================ -->
+
+<section id="cicd1">
+  <h1>1. CI/CDとは</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>CI/CDの概念と、なぜ現代の開発に必須なのかを説明できる</p>
+  </div>
+
+  <h2>CI/CDを一言で</h2>
+  <p>
+    <strong>CI/CD</strong>は、コードの変更を<strong>自動で</strong>テスト・ビルド・デプロイする仕組みです。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> たとえ話</div>
+    <p>
+      CI/CDは<strong>「工場の製造ライン」</strong>のようなものです。<br>
+      原材料（コード）を入れると、検品（テスト）、組立（ビルド）、出荷（デプロイ）が自動で行われます。<br>
+      人が毎回手作業でやる必要がなくなります。
+    </p>
+  </div>
+
+  <h2>CI と CD の違い</h2>
+
+  <!-- SVG図解: CI/CDパイプライン -->
+  <svg viewBox="0 0 750 280" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <defs>
+      <linearGradient id="ciGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:#3498db;stop-opacity:0.9"/>
+        <stop offset="100%" style="stop-color:#2980b9;stop-opacity:1"/>
+      </linearGradient>
+      <linearGradient id="cdGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:#27ae60;stop-opacity:0.9"/>
+        <stop offset="100%" style="stop-color:#1e8449;stop-opacity:1"/>
+      </linearGradient>
+      <marker id="arrowCI" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+      </marker>
+    </defs>
+
+    <!-- タイトル -->
+    <text x="375" y="25" font-size="16" fill="#333" text-anchor="middle" font-weight="bold">CI/CD パイプライン</text>
+
+    <!-- CI部分 -->
+    <rect x="30" y="50" width="340" height="200" rx="8" fill="url(#ciGrad)" opacity="0.1" stroke="#3498db" stroke-width="2"/>
+    <text x="200" y="75" font-size="14" fill="#3498db" text-anchor="middle" font-weight="bold">CI（継続的インテグレーション）</text>
+
+    <!-- ステップ: コード -->
+    <g transform="translate(50, 100)">
+      <rect x="0" y="0" width="80" height="60" rx="6" fill="#9b59b6"/>
+      <text x="40" y="25" font-size="11" fill="white" text-anchor="middle" font-weight="bold">コード</text>
+      <text x="40" y="42" font-size="10" fill="white" text-anchor="middle">Push</text>
+    </g>
+
+    <!-- 矢印 -->
+    <path d="M135,130 L155,130" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowCI)"/>
+
+    <!-- ステップ: テスト -->
+    <g transform="translate(160, 100)">
+      <rect x="0" y="0" width="80" height="60" rx="6" fill="#3498db"/>
+      <text x="40" y="25" font-size="11" fill="white" text-anchor="middle" font-weight="bold">テスト</text>
+      <text x="40" y="42" font-size="10" fill="white" text-anchor="middle">Lint/Unit</text>
+    </g>
+
+    <!-- 矢印 -->
+    <path d="M245,130 L265,130" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowCI)"/>
+
+    <!-- ステップ: ビルド -->
+    <g transform="translate(270, 100)">
+      <rect x="0" y="0" width="80" height="60" rx="6" fill="#3498db"/>
+      <text x="40" y="25" font-size="11" fill="white" text-anchor="middle" font-weight="bold">ビルド</text>
+      <text x="40" y="42" font-size="10" fill="white" text-anchor="middle">成果物作成</text>
+    </g>
+
+    <!-- CI説明 -->
+    <text x="200" y="200" font-size="11" fill="#3498db" text-anchor="middle">開発者がpushするたびに自動実行</text>
+    <text x="200" y="220" font-size="11" fill="#3498db" text-anchor="middle">問題を早期発見</text>
+
+    <!-- CD部分 -->
+    <rect x="380" y="50" width="340" height="200" rx="8" fill="url(#cdGrad)" opacity="0.1" stroke="#27ae60" stroke-width="2"/>
+    <text x="550" y="75" font-size="14" fill="#27ae60" text-anchor="middle" font-weight="bold">CD（継続的デリバリー/デプロイ）</text>
+
+    <!-- 矢印: CI -> CD -->
+    <path d="M355,130 L400,130" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowCI)"/>
+
+    <!-- ステップ: ステージング -->
+    <g transform="translate(405, 100)">
+      <rect x="0" y="0" width="80" height="60" rx="6" fill="#27ae60"/>
+      <text x="40" y="25" font-size="11" fill="white" text-anchor="middle" font-weight="bold">Staging</text>
+      <text x="40" y="42" font-size="10" fill="white" text-anchor="middle">検証環境</text>
+    </g>
+
+    <!-- 矢印 -->
+    <path d="M490,130 L510,130" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowCI)"/>
+
+    <!-- ステップ: 承認 -->
+    <g transform="translate(515, 100)">
+      <rect x="0" y="0" width="80" height="60" rx="6" fill="#f39c12"/>
+      <text x="40" y="25" font-size="11" fill="white" text-anchor="middle" font-weight="bold">承認</text>
+      <text x="40" y="42" font-size="10" fill="white" text-anchor="middle">（任意）</text>
+    </g>
+
+    <!-- 矢印 -->
+    <path d="M600,130 L620,130" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowCI)"/>
+
+    <!-- ステップ: 本番 -->
+    <g transform="translate(625, 100)">
+      <rect x="0" y="0" width="80" height="60" rx="6" fill="#27ae60"/>
+      <text x="40" y="25" font-size="11" fill="white" text-anchor="middle" font-weight="bold">本番</text>
+      <text x="40" y="42" font-size="10" fill="white" text-anchor="middle">Production</text>
+    </g>
+
+    <!-- CD説明 -->
+    <text x="550" y="200" font-size="11" fill="#27ae60" text-anchor="middle">テスト通過後、自動または手動でデプロイ</text>
+    <text x="550" y="220" font-size="11" fill="#27ae60" text-anchor="middle">いつでもリリース可能な状態を維持</text>
+  </svg>
+
+  <table>
+    <thead>
+      <tr>
+        <th>用語</th>
+        <th>意味</th>
+        <th>目的</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>CI</strong><br>Continuous Integration</td>
+        <td>継続的インテグレーション</td>
+        <td>コード変更のたびにテスト・ビルドを自動実行し、問題を早期発見</td>
+      </tr>
+      <tr>
+        <td><strong>CD</strong><br>Continuous Delivery</td>
+        <td>継続的デリバリー</td>
+        <td>いつでもリリースできる状態を維持（最終デプロイは手動）</td>
+      </tr>
+      <tr>
+        <td><strong>CD</strong><br>Continuous Deployment</td>
+        <td>継続的デプロイメント</td>
+        <td>テスト通過で自動的に本番デプロイ（完全自動化）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>CI/CDがない世界の問題</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">CI/CDなし</div>
+      <ul>
+        <li>「自分のPCでは動くのに...」問題</li>
+        <li>マージ後にバグ発覚（手遅れ）</li>
+        <li>デプロイは金曜の夜に人力作業</li>
+        <li>本番障害のたびに徹夜対応</li>
+      </ul>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">CI/CDあり</div>
+      <ul>
+        <li>全員同じ環境でテスト</li>
+        <li>マージ前に問題を検知</li>
+        <li>ボタン一つで安全にデプロイ</li>
+        <li>ロールバックも自動</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-cicd1">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: CI（継続的インテグレーション）の主な目的は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd1" value="a">
+        <span>本番環境に自動デプロイすること</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="CIはコード変更のたびに自動でテスト・ビルドを実行し、問題を早期に発見することが目的です。デプロイはCD（Continuous Delivery/Deployment）の役割です。">
+        <input type="radio" name="q-cicd1" value="b">
+        <span>コード変更の問題を早期に発見すること</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd1" value="c">
+        <span>開発者のコーディング速度を上げること</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cicd1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cicd1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="cicd2">
+  <h1>2. GitHub Actions基礎</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>workflow、job、step、トリガーの関係を説明できる</p>
+  </div>
+
+  <h2>GitHub Actionsとは？</h2>
+  <p>
+    <strong>GitHub Actions</strong>は、GitHubが提供するCI/CDプラットフォームです。<br>
+    リポジトリにYAMLファイルを置くだけで、自動化ワークフローを構築できます。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> 2026年の状況</div>
+    <p>
+      GitHub Actionsは<strong>最も人気のあるCI/CDツール</strong>です。<br>
+      GitHubとの統合がシームレスで、オープンソースのActionが豊富に公開されています。
+    </p>
+  </div>
+
+  <h2>基本構造</h2>
+
+  <!-- SVG図解: GitHub Actions構造 -->
+  <svg viewBox="0 0 700 320" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <defs>
+      <linearGradient id="workflowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#6f42c1;stop-opacity:0.8"/>
+        <stop offset="100%" style="stop-color:#5a32a3;stop-opacity:0.9"/>
+      </linearGradient>
+      <linearGradient id="jobGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#0366d6;stop-opacity:0.8"/>
+        <stop offset="100%" style="stop-color:#0256b9;stop-opacity:0.9"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Workflow -->
+    <g transform="translate(20, 20)">
+      <rect x="0" y="0" width="660" height="280" rx="10" fill="url(#workflowGrad)" opacity="0.15" stroke="#6f42c1" stroke-width="3"/>
+      <text x="20" y="30" font-size="16" fill="#6f42c1" font-weight="bold">Workflow（ワークフロー）</text>
+      <text x="20" y="50" font-size="11" fill="#6f42c1">.github/workflows/*.yml</text>
+
+      <!-- Job 1 -->
+      <g transform="translate(20, 70)">
+        <rect x="0" y="0" width="300" height="180" rx="8" fill="url(#jobGrad)" opacity="0.2" stroke="#0366d6" stroke-width="2"/>
+        <text x="15" y="25" font-size="14" fill="#0366d6" font-weight="bold">Job: build</text>
+        <text x="15" y="42" font-size="10" fill="#0366d6">runs-on: ubuntu-latest</text>
+
+        <!-- Steps -->
+        <g transform="translate(15, 55)">
+          <rect x="0" y="0" width="270" height="35" rx="4" fill="#28a745"/>
+          <text x="10" y="22" font-size="11" fill="white">Step 1: actions/checkout@v4</text>
+        </g>
+        <g transform="translate(15, 95)">
+          <rect x="0" y="0" width="270" height="35" rx="4" fill="#28a745"/>
+          <text x="10" y="22" font-size="11" fill="white">Step 2: actions/setup-node@v4</text>
+        </g>
+        <g transform="translate(15, 135)">
+          <rect x="0" y="0" width="270" height="35" rx="4" fill="#28a745"/>
+          <text x="10" y="22" font-size="11" fill="white">Step 3: run: npm test</text>
+        </g>
+      </g>
+
+      <!-- 矢印 -->
+      <path d="M330,160 L360,160" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowCI)"/>
+
+      <!-- Job 2 -->
+      <g transform="translate(370, 70)">
+        <rect x="0" y="0" width="270" height="180" rx="8" fill="url(#jobGrad)" opacity="0.2" stroke="#0366d6" stroke-width="2"/>
+        <text x="15" y="25" font-size="14" fill="#0366d6" font-weight="bold">Job: deploy</text>
+        <text x="15" y="42" font-size="10" fill="#0366d6">needs: build</text>
+
+        <!-- Steps -->
+        <g transform="translate(15, 55)">
+          <rect x="0" y="0" width="240" height="35" rx="4" fill="#28a745"/>
+          <text x="10" y="22" font-size="11" fill="white">Step 1: Download artifact</text>
+        </g>
+        <g transform="translate(15, 95)">
+          <rect x="0" y="0" width="240" height="35" rx="4" fill="#28a745"/>
+          <text x="10" y="22" font-size="11" fill="white">Step 2: Deploy to AWS</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- 凡例 -->
+    <g transform="translate(520, 20)">
+      <rect x="0" y="0" width="15" height="15" rx="2" fill="#6f42c1" opacity="0.3"/>
+      <text x="20" y="12" font-size="10" fill="#333">Workflow</text>
+      <rect x="0" y="20" width="15" height="15" rx="2" fill="#0366d6" opacity="0.3"/>
+      <text x="20" y="32" font-size="10" fill="#333">Job</text>
+      <rect x="0" y="40" width="15" height="15" rx="2" fill="#28a745"/>
+      <text x="20" y="52" font-size="10" fill="#333">Step</text>
+    </g>
+  </svg>
+
+  <table>
+    <thead>
+      <tr>
+        <th>概念</th>
+        <th>説明</th>
+        <th>関係</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Workflow</strong></td>
+        <td>自動化プロセス全体（1つのYAMLファイル）</td>
+        <td>複数のJobを含む</td>
+      </tr>
+      <tr>
+        <td><strong>Job</strong></td>
+        <td>仮想マシン上で実行される一連のStep</td>
+        <td>並列または依存関係で実行</td>
+      </tr>
+      <tr>
+        <td><strong>Step</strong></td>
+        <td>個々のタスク（Actionまたはコマンド）</td>
+        <td>順番に実行される</td>
+      </tr>
+      <tr>
+        <td><strong>Action</strong></td>
+        <td>再利用可能なStep（公開/カスタム）</td>
+        <td>uses:で指定</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>最小限のワークフロー</h2>
+
+  <pre><code># .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: npm ci
+      - run: npm test</code></pre>
+
+  <h2>トリガー（on）</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>トリガー</th>
+        <th>説明</th>
+        <th>使用例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>push</code></td>
+        <td>ブランチへのpush時</td>
+        <td>CI実行</td>
+      </tr>
+      <tr>
+        <td><code>pull_request</code></td>
+        <td>PR作成/更新時</td>
+        <td>マージ前チェック</td>
+      </tr>
+      <tr>
+        <td><code>schedule</code></td>
+        <td>定期実行（cron形式）</td>
+        <td>夜間テスト</td>
+      </tr>
+      <tr>
+        <td><code>workflow_dispatch</code></td>
+        <td>手動実行</td>
+        <td>任意のタイミングでデプロイ</td>
+      </tr>
+      <tr>
+        <td><code>release</code></td>
+        <td>リリース作成時</td>
+        <td>本番デプロイ</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quiz" id="quiz-cicd2">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: GitHub Actionsで「Step」と「Job」の関係は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd2" value="a">
+        <span>Stepは複数のJobを含む</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Jobは複数のStepを含み、Stepは順番に実行されます。Jobは並列または依存関係で実行できます。">
+        <input type="radio" name="q-cicd2" value="b">
+        <span>Jobは複数のStepを含む</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd2" value="c">
+        <span>StepとJobは同じもの</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cicd2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cicd2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="cicd3">
+  <h1>3. ワークフロー構文</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>matrix、環境変数、シークレットの使い方を理解する</p>
+  </div>
+
+  <h2>Matrix戦略</h2>
+  <p>
+    <strong>Matrix</strong>を使うと、複数の環境で並列テストできます。<br>
+    Node.js 20/22、OS Linux/Windows などの組み合わせを一度に実行できます。
+  </p>
+
+  <pre><code>jobs:
+  test:
+    strategy:
+      matrix:
+        node-version: [20, 22]
+        os: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - run: npm ci
+      - run: npm test</code></pre>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> これで4並列実行</div>
+    <p>
+      上の例では、以下の4つのJobが<strong>並列で</strong>実行されます：
+    </p>
+    <ul style="margin-bottom:0;">
+      <li>Node 20 + Ubuntu</li>
+      <li>Node 20 + Windows</li>
+      <li>Node 22 + Ubuntu</li>
+      <li>Node 22 + Windows</li>
+    </ul>
+  </div>
+
+  <h2>環境変数</h2>
+
+  <pre><code># ワークフロー全体で使う環境変数
+env:
+  CI: true
+  NODE_ENV: test
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    # Job単位の環境変数
+    env:
+      DATABASE_URL: postgres://localhost:5432/test
+
+    steps:
+      - run: echo $CI              # ワークフロー変数
+      - run: echo $DATABASE_URL    # Job変数
+
+      # Step単位の環境変数
+      - name: Run with custom env
+        env:
+          API_KEY: my-key
+        run: echo $API_KEY</code></pre>
+
+  <h2>シークレット</h2>
+  <p>
+    パスワードやAPIキーなどの機密情報は、<strong>GitHub Secrets</strong>に保存します。<br>
+    コードに直接書いてはいけません。
+  </p>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">絶対にダメ</div>
+      <pre><code># ❌ シークレットをハードコード
+env:
+  AWS_ACCESS_KEY: AKIAIOSFODNN7EXAMPLE
+  AWS_SECRET_KEY: wJalrXUtnFEMI/K7MDENG</code></pre>
+      <p>リポジトリに残り続ける</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">正しい方法</div>
+      <pre><code># ⭕ GitHub Secretsから取得
+env:
+  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}</code></pre>
+      <p>ログにも表示されない</p>
+    </div>
+  </div>
+
+  <h2>条件分岐（if）</h2>
+
+  <pre><code>jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    # mainブランチへのpushのみ実行
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 前のStepが成功した場合のみ
+      - name: Deploy
+        if: success()
+        run: ./deploy.sh
+
+      # 失敗時の通知
+      - name: Notify on failure
+        if: failure()
+        run: ./notify-slack.sh "Deploy failed"</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点</div>
+    <ul style="margin-bottom:0;">
+      <li>シークレットがハードコードされていないか</li>
+      <li>環境変数のスコープが適切か（広すぎないか）</li>
+      <li>本番デプロイの条件分岐が正しいか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cicd3">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 以下のワークフローの問題点は？</strong></p>
+    <pre><code>env:
+  DATABASE_PASSWORD: mypassword123
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: ./deploy.sh</code></pre>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd3" value="a">
+        <span>envの位置が間違っている</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="パスワードなどの機密情報をワークフローファイルにハードコードすると、リポジトリに残り続けます。GitHub Secretsを使用し、${{ secrets.DATABASE_PASSWORD }}で参照すべきです。">
+        <input type="radio" name="q-cicd3" value="b">
+        <span>パスワードがハードコードされている</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd3" value="c">
+        <span>stepsが1つしかない</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cicd3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cicd3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="cicd4">
+  <h1>4. 再利用可能ワークフロー</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>Composite ActionとReusable Workflowで重複を排除できる</p>
+  </div>
+
+  <h2>なぜ再利用が重要？</h2>
+  <p>
+    複数のリポジトリやワークフローで同じ処理をコピペすると、<strong>DRY原則に違反</strong>します。<br>
+    変更時に全箇所を修正する必要があり、漏れやバグの原因になります。
+  </p>
+
+  <!-- SVG図解: 再利用パターン -->
+  <svg viewBox="0 0 700 220" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- コピペパターン -->
+    <g transform="translate(30, 30)">
+      <text x="100" y="0" font-size="14" fill="#e74c3c" text-anchor="middle" font-weight="bold">コピペパターン</text>
+
+      <rect x="0" y="15" width="70" height="50" rx="4" fill="#e74c3c" opacity="0.3"/>
+      <text x="35" y="45" font-size="10" fill="#333" text-anchor="middle">Repo A</text>
+
+      <rect x="80" y="15" width="70" height="50" rx="4" fill="#e74c3c" opacity="0.3"/>
+      <text x="115" y="45" font-size="10" fill="#333" text-anchor="middle">Repo B</text>
+
+      <rect x="160" y="15" width="70" height="50" rx="4" fill="#e74c3c" opacity="0.3"/>
+      <text x="195" y="45" font-size="10" fill="#333" text-anchor="middle">Repo C</text>
+
+      <text x="115" y="90" font-size="10" fill="#e74c3c" text-anchor="middle">同じコードが3箇所</text>
+      <text x="115" y="105" font-size="10" fill="#e74c3c" text-anchor="middle">修正時3回変更</text>
+    </g>
+
+    <!-- 矢印 -->
+    <path d="M280,80 L320,80" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowCI)"/>
+    <text x="300" y="100" font-size="10" fill="#666" text-anchor="middle">改善</text>
+
+    <!-- 再利用パターン -->
+    <g transform="translate(350, 30)">
+      <text x="150" y="0" font-size="14" fill="#27ae60" text-anchor="middle" font-weight="bold">再利用パターン</text>
+
+      <rect x="0" y="15" width="70" height="40" rx="4" fill="#3498db" opacity="0.3"/>
+      <text x="35" y="40" font-size="10" fill="#333" text-anchor="middle">Repo A</text>
+
+      <rect x="115" y="15" width="70" height="40" rx="4" fill="#3498db" opacity="0.3"/>
+      <text x="150" y="40" font-size="10" fill="#333" text-anchor="middle">Repo B</text>
+
+      <rect x="230" y="15" width="70" height="40" rx="4" fill="#3498db" opacity="0.3"/>
+      <text x="265" y="40" font-size="10" fill="#333" text-anchor="middle">Repo C</text>
+
+      <!-- 共通Action -->
+      <line x1="35" y1="55" x2="35" y2="85" stroke="#27ae60" stroke-width="2"/>
+      <line x1="150" y1="55" x2="150" y2="85" stroke="#27ae60" stroke-width="2"/>
+      <line x1="265" y1="55" x2="265" y2="85" stroke="#27ae60" stroke-width="2"/>
+      <line x1="35" y1="85" x2="265" y2="85" stroke="#27ae60" stroke-width="2"/>
+      <line x1="150" y1="85" x2="150" y2="100" stroke="#27ae60" stroke-width="2"/>
+
+      <rect x="75" y="100" width="150" height="40" rx="4" fill="#27ae60"/>
+      <text x="150" y="125" font-size="11" fill="white" text-anchor="middle" font-weight="bold">共通Action</text>
+
+      <text x="150" y="165" font-size="10" fill="#27ae60" text-anchor="middle">1箇所を修正すれば</text>
+      <text x="150" y="180" font-size="10" fill="#27ae60" text-anchor="middle">全リポに反映</text>
+    </g>
+  </svg>
+
+  <h2>2つの再利用方法</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>方法</th>
+        <th>用途</th>
+        <th>スコープ</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Composite Action</strong></td>
+        <td>複数のStepをまとめる</td>
+        <td>Step単位の再利用</td>
+      </tr>
+      <tr>
+        <td><strong>Reusable Workflow</strong></td>
+        <td>ワークフロー全体を呼び出す</td>
+        <td>Job/Workflow単位の再利用</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Composite Action</h2>
+
+  <pre><code># .github/actions/setup-node-pnpm/action.yml
+name: 'Setup Node and pnpm'
+description: 'Node.jsとpnpmをセットアップ'
+
+inputs:
+  node-version:
+    description: 'Node.jsバージョン'
+    required: false
+    default: '22'
+
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - uses: pnpm/action-setup@v4
+      with:
+        version: 9
+
+    - name: Get pnpm store directory
+      shell: bash
+      run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+    - uses: actions/cache@v4
+      with:
+        path: ${{ env.STORE_PATH }}
+        key: pnpm-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile</code></pre>
+
+  <p>使い方：</p>
+  <pre><code># 呼び出し側
+steps:
+  - uses: actions/checkout@v4
+
+  # ローカルのComposite Actionを使用
+  - uses: ./.github/actions/setup-node-pnpm
+    with:
+      node-version: '22'
+
+  - run: pnpm test</code></pre>
+
+  <h2>Reusable Workflow（workflow_call）</h2>
+
+  <pre><code># .github/workflows/reusable-deploy.yml
+name: Reusable Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+    secrets:
+      AWS_ROLE_ARN:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ap-northeast-1
+
+      - run: ./deploy.sh ${{ inputs.environment }}</code></pre>
+
+  <p>呼び出し側：</p>
+  <pre><code># .github/workflows/deploy-prod.yml
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      environment: production
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}</code></pre>
+
+  <div class="quiz" id="quiz-cicd4">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: Composite ActionとReusable Workflowの主な違いは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd4" value="a">
+        <span>どちらも同じで、名前が違うだけ</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Composite ActionはStep単位（複数Stepをまとめる）、Reusable WorkflowはJob/Workflow単位（ワークフロー全体を呼び出す）で再利用します。">
+        <input type="radio" name="q-cicd4" value="b">
+        <span>Composite ActionはStep単位、Reusable WorkflowはJob単位</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd4" value="c">
+        <span>Composite Actionは公開専用、Reusable Workflowはプライベート専用</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cicd4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cicd4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="cicd5">
+  <h1>5. アクションのセキュリティ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>アクションのバージョン固定と最小権限の重要性を理解する</p>
+  </div>
+
+  <h2>アクションはサードパーティコード</h2>
+  <p>
+    <code>uses: actions/checkout@v4</code>は、<strong>他人が書いたコード</strong>を実行することです。<br>
+    悪意のあるコードが混入すると、シークレットの窃取や不正な操作が可能になります。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> 実際にあった事例</div>
+    <p>
+      2024年、人気のCIアクション<code>tj-actions/verify-changed-files</code>がサプライチェーン攻撃を受け、
+      シークレットが漏洩する事態が発生しました。<br>
+      <strong>@mainを参照していたリポジトリ</strong>が被害を受けました。
+    </p>
+  </div>
+
+  <h2>バージョン固定</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">危険：mainブランチ参照</div>
+      <pre><code># ❌ mainは常に変わる
+- uses: actions/checkout@main
+
+# ❌ メジャーバージョンも危険
+- uses: some-action/risky@v1</code></pre>
+      <p>作者がコードを変更すると即座に影響</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">安全：コミットハッシュ固定</div>
+      <pre><code># ⭕ 具体的バージョン
+- uses: actions/checkout@v4.1.7
+
+# ⭕⭕ 最も安全：SHA固定
+- uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11</code></pre>
+      <p>意図的にアップデートするまで変わらない</p>
+    </div>
+  </div>
+
+  <h2>最小権限の原則（permissions）</h2>
+  <p>
+    GitHub Actionsはデフォルトで<strong>書き込み権限</strong>を持っています。<br>
+    必要最小限に制限することで、侵害時の被害を抑えられます。
+  </p>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">危険：全権限</div>
+      <pre><code># ❌ すべての権限を付与
+permissions: write-all
+
+# または permissions を書かない
+# （デフォルトで広い権限）</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">安全：最小権限</div>
+      <pre><code># ⭕ 必要な権限のみ明示
+permissions:
+  contents: read      # コードの読み取り
+  packages: write     # パッケージの公開
+
+# ⭕ Job単位で設定
+jobs:
+  build:
+    permissions:
+      contents: read
+  deploy:
+    permissions:
+      id-token: write  # OIDC用</code></pre>
+    </div>
+  </div>
+
+  <h2>主要なpermissions</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>権限</th>
+        <th>read</th>
+        <th>write</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>contents</code></td>
+        <td>コード読み取り</td>
+        <td>コードpush、リリース作成</td>
+      </tr>
+      <tr>
+        <td><code>pull-requests</code></td>
+        <td>PR読み取り</td>
+        <td>PRコメント、ラベル</td>
+      </tr>
+      <tr>
+        <td><code>packages</code></td>
+        <td>パッケージ読み取り</td>
+        <td>パッケージ公開</td>
+      </tr>
+      <tr>
+        <td><code>id-token</code></td>
+        <td>-</td>
+        <td>OIDC トークン取得</td>
+      </tr>
+      <tr>
+        <td><code>issues</code></td>
+        <td>Issue読み取り</td>
+        <td>Issue作成・編集</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点</div>
+    <ul style="margin-bottom:0;">
+      <li>アクションが<code>@main</code>や<code>@v1</code>で参照されていないか</li>
+      <li><code>permissions: write-all</code>が使われていないか</li>
+      <li>不要な権限が付与されていないか</li>
+      <li>信頼できないアクションを使っていないか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cicd5-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: アクション参照で最も安全なのは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd5-1" value="a">
+        <span><code>uses: actions/checkout@main</code></span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd5-1" value="b">
+        <span><code>uses: actions/checkout@v4</code></span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="コミットハッシュ（SHA）で固定すると、意図的にアップデートするまで絶対に変わりません。@mainや@v4は、作者がコードを変更すると即座に影響を受けます。">
+        <input type="radio" name="q-cicd5-1" value="c">
+        <span><code>uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11</code></span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cicd5-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-cicd5-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: 以下のワークフローのセキュリティ問題は？</strong></p>
+    <pre><code>permissions: write-all
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: untrusted-org/some-action@main</code></pre>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd5-2" value="a">
+        <span>runs-onがubuntu-latestなのが問題</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="write-all（全権限）+ @main参照（常に最新）+ 信頼性不明のアクションという3重の問題があります。悪意のあるコードが混入すると、リポジトリ全体を乗っ取られる可能性があります。">
+        <input type="radio" name="q-cicd5-2" value="b">
+        <span>過剰な権限 + 固定されていないアクションバージョン</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd5-2" value="c">
+        <span>stepsが1つしかない</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cicd5-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cicd5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="cicd6">
+  <h1>6. OIDC認証</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>OIDC認証でシークレットレスなAWS接続を実現する方法を理解する</p>
+  </div>
+
+  <h2>長期アクセスキーの問題</h2>
+  <p>
+    従来、GitHub ActionsからAWSに接続するには<strong>アクセスキー（長期キー）</strong>を使っていました。<br>
+    しかし、これには深刻な問題があります。
+  </p>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">長期アクセスキー</div>
+      <ul>
+        <li>漏洩すると<strong>無期限で悪用可能</strong></li>
+        <li>定期的なローテーションが必要</li>
+        <li>GitHub Secretsに保存（管理の手間）</li>
+        <li>誰がいつ使ったか追跡困難</li>
+      </ul>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">OIDC（推奨）</div>
+      <ul>
+        <li>一時的なトークン（<strong>数分で失効</strong>）</li>
+        <li>ローテーション不要</li>
+        <li>シークレット保存不要</li>
+        <li>CloudTrailで追跡可能</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>OIDCの仕組み</h2>
+
+  <!-- SVG図解: OIDC認証フロー -->
+  <svg viewBox="0 0 700 300" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <defs>
+      <marker id="arrowOIDC" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#27ae60"/>
+      </marker>
+    </defs>
+
+    <!-- GitHub Actions -->
+    <g transform="translate(30, 80)">
+      <rect x="0" y="0" width="150" height="100" rx="8" fill="#24292e" stroke="#333" stroke-width="2"/>
+      <text x="75" y="30" font-size="14" fill="white" text-anchor="middle" font-weight="bold">GitHub Actions</text>
+      <text x="75" y="55" font-size="11" fill="#aaa" text-anchor="middle">Workflow実行中</text>
+      <text x="75" y="80" font-size="10" fill="#6f42c1" text-anchor="middle">OIDCトークン発行</text>
+    </g>
+
+    <!-- 矢印1: GitHub -> AWS -->
+    <g transform="translate(200, 100)">
+      <path d="M0,30 L80,30" stroke="#27ae60" stroke-width="2" fill="none" marker-end="url(#arrowOIDC)"/>
+      <text x="40" y="15" font-size="10" fill="#27ae60" text-anchor="middle">1. OIDCトークン</text>
+      <text x="40" y="55" font-size="10" fill="#27ae60" text-anchor="middle">送信</text>
+    </g>
+
+    <!-- AWS STS -->
+    <g transform="translate(300, 80)">
+      <rect x="0" y="0" width="150" height="100" rx="8" fill="#ff9900" stroke="#cc7a00" stroke-width="2"/>
+      <text x="75" y="30" font-size="14" fill="white" text-anchor="middle" font-weight="bold">AWS STS</text>
+      <text x="75" y="55" font-size="11" fill="white" text-anchor="middle">トークン検証</text>
+      <text x="75" y="80" font-size="10" fill="white" text-anchor="middle">一時クレデンシャル発行</text>
+    </g>
+
+    <!-- 矢印2: AWS -> GitHub -->
+    <g transform="translate(200, 180)">
+      <path d="M80,0 L0,0" stroke="#27ae60" stroke-width="2" fill="none" marker-end="url(#arrowOIDC)"/>
+      <text x="40" y="-10" font-size="10" fill="#27ae60" text-anchor="middle">2. 一時認証情報</text>
+      <text x="40" y="20" font-size="10" fill="#666" text-anchor="middle">（数分で失効）</text>
+    </g>
+
+    <!-- 矢印3: GitHub -> AWS Services -->
+    <g transform="translate(100, 210)">
+      <path d="M0,0 L0,40 L450,40" stroke="#27ae60" stroke-width="2" fill="none" marker-end="url(#arrowOIDC)"/>
+      <text x="225" y="60" font-size="10" fill="#27ae60" text-anchor="middle">3. 一時認証でAWSリソースにアクセス</text>
+    </g>
+
+    <!-- AWS Services -->
+    <g transform="translate(530, 200)">
+      <rect x="0" y="0" width="130" height="70" rx="8" fill="#ff9900" opacity="0.2" stroke="#ff9900" stroke-width="2"/>
+      <text x="65" y="25" font-size="12" fill="#cc7a00" text-anchor="middle" font-weight="bold">AWSリソース</text>
+      <text x="65" y="45" font-size="10" fill="#666" text-anchor="middle">S3, ECR, ECS...</text>
+    </g>
+
+    <!-- 信頼関係 -->
+    <g transform="translate(300, 20)">
+      <rect x="0" y="0" width="150" height="40" rx="4" fill="#3498db" opacity="0.2" stroke="#3498db"/>
+      <text x="75" y="25" font-size="10" fill="#3498db" text-anchor="middle">事前に信頼関係を設定</text>
+    </g>
+    <path d="M375,60 L375,75" stroke="#3498db" stroke-width="1" stroke-dasharray="4"/>
+  </svg>
+
+  <h2>設定方法</h2>
+
+  <h3>Step 1: AWSでIDプロバイダを作成</h3>
+  <pre><code># Terraform例
+resource "aws_iam_openid_connect_provider" "github" {
+  url             = "https://token.actions.githubusercontent.com"
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = ["6938fd4d98bab03faadb97b34396831e3780aea1"]
+}</code></pre>
+
+  <h3>Step 2: IAMロールを作成</h3>
+  <pre><code>resource "aws_iam_role" "github_actions" {
+  name = "github-actions-deploy"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Federated = aws_iam_openid_connect_provider.github.arn
+      }
+      Action = "sts:AssumeRoleWithWebIdentity"
+      Condition = {
+        StringEquals = {
+          "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+        }
+        StringLike = {
+          # 特定リポジトリ・ブランチのみ許可
+          "token.actions.githubusercontent.com:sub" = "repo:myorg/myrepo:ref:refs/heads/main"
+        }
+      }
+    }]
+  })
+}</code></pre>
+
+  <h3>Step 3: ワークフローで使用</h3>
+  <pre><code>name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write   # OIDCに必須
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::123456789012:role/github-actions-deploy
+          aws-region: ap-northeast-1
+
+      # これ以降、AWS CLIやSDKが使える
+      - run: aws s3 ls</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点</div>
+    <ul style="margin-bottom:0;">
+      <li>長期アクセスキー（AWS_ACCESS_KEY_ID）を使っていないか</li>
+      <li>OIDC使用時に<code>id-token: write</code>が設定されているか</li>
+      <li>IAMロールの信頼ポリシーが適切に制限されているか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cicd6">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: OIDC認証が長期アクセスキーより安全な理由は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd6" value="a">
+        <span>設定が簡単だから</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="OIDCでは一時的なトークン（数分で失効）を使用するため、漏洩しても被害が限定的です。長期キーは漏洩すると無期限で悪用される可能性があります。">
+        <input type="radio" name="q-cicd6" value="b">
+        <span>一時的なトークンなので漏洩しても被害が限定的</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd6" value="c">
+        <span>GitHub Secretsに保存するから</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cicd6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cicd6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="cicd7">
+  <h1>7. キャッシュ戦略</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>キャッシュを活用してCI/CDの実行時間を短縮する方法を理解する</p>
+  </div>
+
+  <h2>なぜキャッシュが重要？</h2>
+  <p>
+    毎回<code>npm install</code>を実行すると、<strong>数分〜数十分</strong>かかることがあります。<br>
+    依存関係が変わっていなければ、キャッシュを使って<strong>数秒</strong>で済ませられます。
+  </p>
+
+  <!-- SVG図解: キャッシュ効果 -->
+  <svg viewBox="0 0 700 180" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- キャッシュなし -->
+    <g transform="translate(30, 30)">
+      <text x="120" y="0" font-size="14" fill="#e74c3c" text-anchor="middle" font-weight="bold">キャッシュなし</text>
+
+      <rect x="0" y="15" width="240" height="30" rx="4" fill="#e74c3c" opacity="0.5"/>
+      <text x="120" y="35" font-size="11" fill="white" text-anchor="middle">npm install: 3分</text>
+
+      <rect x="0" y="50" width="60" height="30" rx="4" fill="#3498db"/>
+      <text x="30" y="70" font-size="11" fill="white" text-anchor="middle">テスト: 1分</text>
+
+      <text x="0" y="110" font-size="12" fill="#e74c3c">合計: 4分</text>
+      <text x="0" y="130" font-size="10" fill="#666">毎回フルインストール</text>
+    </g>
+
+    <!-- 矢印 -->
+    <path d="M300,80 L340,80" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowCI)"/>
+
+    <!-- キャッシュあり -->
+    <g transform="translate(380, 30)">
+      <text x="120" y="0" font-size="14" fill="#27ae60" text-anchor="middle" font-weight="bold">キャッシュあり</text>
+
+      <rect x="0" y="15" width="30" height="30" rx="4" fill="#27ae60"/>
+      <text x="15" y="35" font-size="9" fill="white" text-anchor="middle">10秒</text>
+
+      <rect x="35" y="15" width="60" height="30" rx="4" fill="#3498db"/>
+      <text x="65" y="35" font-size="11" fill="white" text-anchor="middle">テスト: 1分</text>
+
+      <text x="0" y="80" font-size="12" fill="#27ae60">合計: 1分10秒</text>
+      <text x="0" y="100" font-size="10" fill="#27ae60" font-weight="bold">75%短縮!</text>
+      <text x="0" y="120" font-size="10" fill="#666">キャッシュからリストア</text>
+    </g>
+  </svg>
+
+  <h2>setup-node のビルトインキャッシュ</h2>
+  <p>
+    最も簡単な方法は、<code>actions/setup-node</code>のキャッシュ機能を使うことです。
+  </p>
+
+  <pre><code>- uses: actions/setup-node@v4
+  with:
+    node-version: '22'
+    cache: 'pnpm'  # npm, yarn, pnpm に対応
+
+- run: pnpm install --frozen-lockfile</code></pre>
+
+  <h2>actions/cache を直接使う</h2>
+  <p>より細かい制御が必要な場合は、<code>actions/cache</code>を直接使います。</p>
+
+  <pre><code>- name: Cache node_modules
+  uses: actions/cache@v4
+  with:
+    path: node_modules
+    key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+    restore-keys: |
+      node-modules-${{ runner.os }}-
+
+- name: Install dependencies
+  run: pnpm install --frozen-lockfile</code></pre>
+
+  <h2>キャッシュキーの設計</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>パターン</th>
+        <th>用途</th>
+        <th>例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>hashFiles()</code></td>
+        <td>ファイル内容が変わったら更新</td>
+        <td><code>${{ hashFiles('pnpm-lock.yaml') }}</code></td>
+      </tr>
+      <tr>
+        <td><code>runner.os</code></td>
+        <td>OS別にキャッシュ</td>
+        <td><code>${{ runner.os }}-cache</code></td>
+      </tr>
+      <tr>
+        <td><code>github.sha</code></td>
+        <td>コミットごとに別キャッシュ</td>
+        <td><code>build-${{ github.sha }}</code></td>
+      </tr>
+      <tr>
+        <td><code>restore-keys</code></td>
+        <td>前方一致で古いキャッシュも使う</td>
+        <td>完全一致がなくても使える</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>ビルドキャッシュ（Docker）</h2>
+
+  <pre><code>- name: Set up Docker Buildx
+  uses: docker/setup-buildx-action@v3
+
+- name: Build and push
+  uses: docker/build-push-action@v5
+  with:
+    context: .
+    push: true
+    tags: myapp:latest
+    cache-from: type=gha    # GitHub Actionsキャッシュを使用
+    cache-to: type=gha,mode=max</code></pre>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">非効率</div>
+      <pre><code># キャッシュなし
+- run: npm ci
+- run: npm run build</code></pre>
+      <p>毎回フルビルド</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">効率的</div>
+      <pre><code>- uses: actions/setup-node@v4
+  with:
+    node-version: '22'
+    cache: 'pnpm'
+
+- run: pnpm install --frozen-lockfile</code></pre>
+      <p>キャッシュヒット時は高速</p>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-cicd7">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: <code>hashFiles('pnpm-lock.yaml')</code>をキャッシュキーに使う理由は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd7" value="a">
+        <span>ファイル名を短くするため</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="pnpm-lock.yamlのハッシュをキーに使うと、依存関係が変更されたときだけ新しいキャッシュが作成されます。依存が変わっていなければ以前のキャッシュが再利用されます。">
+        <input type="radio" name="q-cicd7" value="b">
+        <span>依存関係が変わったときだけキャッシュを更新するため</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd7" value="c">
+        <span>セキュリティのためファイル内容を隠すため</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cicd7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cicd7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="cicd8">
+  <h1>8. 環境とデプロイ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>GitHub Environmentsと保護ルールで安全なデプロイを実現する</p>
+  </div>
+
+  <h2>環境（Environments）とは？</h2>
+  <p>
+    <strong>GitHub Environments</strong>は、デプロイ先（staging、productionなど）を管理する機能です。<br>
+    環境ごとにシークレットや保護ルールを設定できます。
+  </p>
+
+  <!-- SVG図解: 環境とデプロイフロー -->
+  <svg viewBox="0 0 700 280" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <defs>
+      <marker id="arrowEnv" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+      </marker>
+    </defs>
+
+    <!-- CI -->
+    <g transform="translate(30, 50)">
+      <rect x="0" y="0" width="120" height="70" rx="8" fill="#3498db"/>
+      <text x="60" y="30" font-size="14" fill="white" text-anchor="middle" font-weight="bold">CI</text>
+      <text x="60" y="50" font-size="10" fill="white" text-anchor="middle">テスト・ビルド</text>
+    </g>
+
+    <!-- 矢印 -->
+    <path d="M160,85 L200,85" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowEnv)"/>
+
+    <!-- Staging -->
+    <g transform="translate(210, 50)">
+      <rect x="0" y="0" width="150" height="70" rx="8" fill="#f39c12" opacity="0.2" stroke="#f39c12" stroke-width="2"/>
+      <text x="75" y="25" font-size="14" fill="#f39c12" text-anchor="middle" font-weight="bold">staging</text>
+      <text x="75" y="45" font-size="10" fill="#666" text-anchor="middle">自動デプロイ</text>
+      <text x="75" y="60" font-size="9" fill="#666" text-anchor="middle">承認不要</text>
+    </g>
+
+    <!-- 矢印 -->
+    <path d="M370,85 L410,85" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowEnv)"/>
+
+    <!-- 承認ゲート -->
+    <g transform="translate(420, 30)">
+      <rect x="0" y="0" width="80" height="110" rx="8" fill="#e74c3c" opacity="0.1" stroke="#e74c3c" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="40" y="30" font-size="12" fill="#e74c3c" text-anchor="middle" font-weight="bold">承認</text>
+      <text x="40" y="50" font-size="10" fill="#e74c3c" text-anchor="middle">必須</text>
+
+      <!-- 承認者アイコン -->
+      <circle cx="25" cy="75" r="12" fill="#e74c3c" opacity="0.3"/>
+      <text x="25" y="80" font-size="10" fill="#e74c3c" text-anchor="middle">1</text>
+      <circle cx="55" cy="75" r="12" fill="#e74c3c" opacity="0.3"/>
+      <text x="55" y="80" font-size="10" fill="#e74c3c" text-anchor="middle">2</text>
+
+      <text x="40" y="105" font-size="8" fill="#666" text-anchor="middle">2人の承認</text>
+    </g>
+
+    <!-- 矢印 -->
+    <path d="M510,85 L550,85" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowEnv)"/>
+
+    <!-- Production -->
+    <g transform="translate(560, 50)">
+      <rect x="0" y="0" width="120" height="70" rx="8" fill="#27ae60"/>
+      <text x="60" y="30" font-size="14" fill="white" text-anchor="middle" font-weight="bold">production</text>
+      <text x="60" y="50" font-size="10" fill="white" text-anchor="middle">本番環境</text>
+    </g>
+
+    <!-- 保護ルール説明 -->
+    <g transform="translate(30, 160)">
+      <rect x="0" y="0" width="650" height="100" rx="8" fill="#f8f9fa" stroke="#dee2e6"/>
+      <text x="20" y="25" font-size="12" fill="#333" font-weight="bold">Protection Rules（保護ルール）</text>
+
+      <text x="20" y="50" font-size="11" fill="#666">- Required reviewers: 承認者を指定（1人以上）</text>
+      <text x="20" y="70" font-size="11" fill="#666">- Wait timer: デプロイ前の待機時間（例: 30分）</text>
+      <text x="20" y="90" font-size="11" fill="#666">- Branch restrictions: 特定ブランチからのみデプロイ許可</text>
+
+      <text x="350" y="50" font-size="11" fill="#666">- Environment secrets: 環境固有のシークレット</text>
+      <text x="350" y="70" font-size="11" fill="#666">- Environment URL: デプロイ先URL</text>
+    </g>
+  </svg>
+
+  <h2>ワークフローでの使用</h2>
+
+  <pre><code>name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: dist/
+
+  deploy-staging:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://staging.example.com
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+
+      - name: Deploy to Staging
+        run: ./deploy.sh staging
+
+  deploy-production:
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://example.com
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+
+      - name: Deploy to Production
+        run: ./deploy.sh production</code></pre>
+
+  <h2>保護ルールの設定（GitHub UI）</h2>
+
+  <ol>
+    <li>リポジトリの<strong>Settings → Environments</strong></li>
+    <li><strong>New environment</strong>で環境作成（例: production）</li>
+    <li><strong>Required reviewers</strong>で承認者を追加</li>
+    <li><strong>Wait timer</strong>でデプロイ前の待機時間を設定</li>
+    <li><strong>Environment secrets</strong>で本番用シークレットを設定</li>
+  </ol>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">危険：保護なし</div>
+      <pre><code>jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: ./deploy-to-production.sh</code></pre>
+      <p>誰でも即座に本番デプロイ可能</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">安全：環境保護</div>
+      <pre><code>jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://example.com
+    steps:
+      - run: ./deploy-to-production.sh</code></pre>
+      <p>承認がないとデプロイできない</p>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点</div>
+    <ul style="margin-bottom:0;">
+      <li>本番デプロイに<code>environment</code>が設定されているか</li>
+      <li>本番環境に承認者（Required reviewers）が設定されているか</li>
+      <li>環境ごとにシークレットが分離されているか</li>
+      <li>デプロイ先URLが正しく設定されているか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cicd8-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: GitHub Environmentsの主な目的は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd8-1" value="a">
+        <span>ビルド時間を短縮すること</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="GitHub Environmentsを使うと、環境ごとに保護ルール（承認者、待機時間など）やシークレットを設定でき、安全なデプロイフローを実現できます。">
+        <input type="radio" name="q-cicd8-1" value="b">
+        <span>デプロイ先ごとに保護ルールとシークレットを管理すること</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd8-1" value="c">
+        <span>テストを並列実行すること</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cicd8-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-cicd8-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: 本番環境への誤デプロイを防ぐベストプラクティスは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd8-2" value="a">
+        <span>デプロイスクリプトにパスワードを設定する</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-cicd8-2" value="b">
+        <span>手動でサーバーにSSHしてデプロイする</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="GitHub Environmentsの保護ルールで、承認者を設定（Required reviewers）し、特定ブランチからのみデプロイを許可することで、誤デプロイや不正なデプロイを防げます。">
+        <input type="radio" name="q-cicd8-2" value="c">
+        <span>Environment保護ルールで承認者とブランチ制限を設定する</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cicd8-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cicd8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

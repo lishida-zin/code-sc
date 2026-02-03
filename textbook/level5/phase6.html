@@ -1,0 +1,1740 @@
+<!-- ============================================
+     Level 5 Phase 6: 可観測性 Observability
+     ============================================ -->
+
+<section id="obs1">
+  <h1>1. 可観測性とは？</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>ログ/メトリクス/トレースの違いと、監視との違いを説明できる</p>
+  </div>
+
+  <h2>可観測性（Observability）を一言で</h2>
+  <p>
+    <strong>可観測性</strong>とは、システムの<strong>「内部状態」を外部から理解できる能力</strong>です。<br>
+    何が起きているか、なぜ起きているかを把握できる状態を目指します。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> たとえ話</div>
+    <p>
+      可観測性は<strong>「車のダッシュボード」</strong>のようなものです。<br>
+      速度計、燃料計、警告灯があれば、エンジンを開けなくても車の状態がわかります。
+    </p>
+    <p>
+      同様に、システムにログ・メトリクス・トレースがあれば、<br>
+      コードを見なくても「何が起きているか」がわかります。
+    </p>
+  </div>
+
+  <h2>監視 vs 可観測性</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">監視（Monitoring）</div>
+      <p><strong>既知の問題</strong>を検出する</p>
+      <ul>
+        <li>「CPUが80%を超えたら通知」</li>
+        <li>「エラー率が1%を超えたら通知」</li>
+        <li>事前に何を見るか決めておく必要がある</li>
+      </ul>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">可観測性（Observability）</div>
+      <p><strong>未知の問題</strong>も調査できる</p>
+      <ul>
+        <li>「なぜこのリクエストだけ遅い？」</li>
+        <li>「どのサービスが原因？」</li>
+        <li>データから問いを探索できる</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>可観測性の3本柱</h2>
+
+  <!-- SVG図解: 可観測性の3本柱 -->
+  <svg viewBox="0 0 700 320" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <defs>
+      <linearGradient id="logsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#3498db;stop-opacity:0.9"/>
+        <stop offset="100%" style="stop-color:#2980b9;stop-opacity:1"/>
+      </linearGradient>
+      <linearGradient id="metricsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#27ae60;stop-opacity:0.9"/>
+        <stop offset="100%" style="stop-color:#1e8449;stop-opacity:1"/>
+      </linearGradient>
+      <linearGradient id="tracesGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#9b59b6;stop-opacity:0.9"/>
+        <stop offset="100%" style="stop-color:#8e44ad;stop-opacity:1"/>
+      </linearGradient>
+    </defs>
+
+    <!-- タイトル -->
+    <text x="350" y="30" font-size="18" font-weight="bold" fill="#333" text-anchor="middle">可観測性の3本柱</text>
+
+    <!-- ログ -->
+    <g transform="translate(50, 60)">
+      <rect x="0" y="0" width="180" height="200" rx="10" fill="url(#logsGrad)" stroke="#2980b9" stroke-width="2"/>
+      <text x="90" y="35" font-size="16" fill="white" text-anchor="middle" font-weight="bold">ログ (Logs)</text>
+      <text x="90" y="60" font-size="12" fill="white" text-anchor="middle" opacity="0.9">何が起きたか</text>
+
+      <!-- ログの例 -->
+      <rect x="15" y="80" width="150" height="25" rx="3" fill="white" opacity="0.9"/>
+      <text x="25" y="97" font-size="9" fill="#333" font-family="monospace">[INFO] User login</text>
+
+      <rect x="15" y="110" width="150" height="25" rx="3" fill="white" opacity="0.8"/>
+      <text x="25" y="127" font-size="9" fill="#333" font-family="monospace">[ERROR] DB timeout</text>
+
+      <rect x="15" y="140" width="150" height="25" rx="3" fill="white" opacity="0.7"/>
+      <text x="25" y="157" font-size="9" fill="#333" font-family="monospace">[WARN] High memory</text>
+
+      <text x="90" y="185" font-size="10" fill="white" text-anchor="middle">Loki, CloudWatch</text>
+    </g>
+
+    <!-- メトリクス -->
+    <g transform="translate(260, 60)">
+      <rect x="0" y="0" width="180" height="200" rx="10" fill="url(#metricsGrad)" stroke="#1e8449" stroke-width="2"/>
+      <text x="90" y="35" font-size="16" fill="white" text-anchor="middle" font-weight="bold">メトリクス</text>
+      <text x="90" y="60" font-size="12" fill="white" text-anchor="middle" opacity="0.9">どれくらいか</text>
+
+      <!-- グラフのような表現 -->
+      <rect x="15" y="80" width="150" height="80" rx="3" fill="white" opacity="0.2"/>
+      <polyline points="25,140 45,130 65,135 85,110 105,115 125,100 145,95 155,105"
+                stroke="white" stroke-width="2" fill="none"/>
+      <circle cx="145" cy="95" r="4" fill="white"/>
+
+      <text x="90" y="145" font-size="11" fill="white" text-anchor="middle">CPU: 45%</text>
+      <text x="90" y="160" font-size="11" fill="white" text-anchor="middle">QPS: 1,234</text>
+
+      <text x="90" y="185" font-size="10" fill="white" text-anchor="middle">Prometheus, Datadog</text>
+    </g>
+
+    <!-- トレース -->
+    <g transform="translate(470, 60)">
+      <rect x="0" y="0" width="180" height="200" rx="10" fill="url(#tracesGrad)" stroke="#8e44ad" stroke-width="2"/>
+      <text x="90" y="35" font-size="16" fill="white" text-anchor="middle" font-weight="bold">トレース</text>
+      <text x="90" y="60" font-size="12" fill="white" text-anchor="middle" opacity="0.9">どこで起きたか</text>
+
+      <!-- トレースの例 -->
+      <rect x="15" y="80" width="150" height="20" rx="3" fill="white" opacity="0.9"/>
+      <text x="25" y="94" font-size="9" fill="#333">API Gateway (5ms)</text>
+
+      <rect x="30" y="105" width="120" height="20" rx="3" fill="white" opacity="0.8"/>
+      <text x="40" y="119" font-size="9" fill="#333">Auth (10ms)</text>
+
+      <rect x="45" y="130" width="105" height="20" rx="3" fill="white" opacity="0.7"/>
+      <text x="55" y="144" font-size="9" fill="#e74c3c" font-weight="bold">DB (500ms)</text>
+
+      <text x="90" y="170" font-size="10" fill="white" text-anchor="middle" opacity="0.9">ボトルネック発見!</text>
+
+      <text x="90" y="185" font-size="10" fill="white" text-anchor="middle">Jaeger, X-Ray</text>
+    </g>
+
+    <!-- 下部の説明 -->
+    <text x="350" y="300" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">
+      3つを組み合わせることで、問題の「検出」→「特定」→「原因究明」が可能に
+    </text>
+  </svg>
+
+  <table>
+    <thead>
+      <tr>
+        <th>種類</th>
+        <th>答える問い</th>
+        <th>データ形式</th>
+        <th>例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ログ</strong></td>
+        <td>何が起きた？</td>
+        <td>テキスト/JSON（イベント）</td>
+        <td>「ユーザーAがログイン失敗」</td>
+      </tr>
+      <tr>
+        <td><strong>メトリクス</strong></td>
+        <td>どれくらい？</td>
+        <td>数値（時系列）</td>
+        <td>「リクエスト数: 1000/秒」</td>
+      </tr>
+      <tr>
+        <td><strong>トレース</strong></td>
+        <td>どこで？</td>
+        <td>スパン（因果関係）</td>
+        <td>「DBクエリで500ms遅延」</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quiz" id="quiz-obs1">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 「監視」と「可観測性」の最大の違いは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs1" value="a">
+        <span>監視は自動で、可観測性は手動</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="監視は『CPUが80%超えたら通知』のように既知の問題を検出します。可観測性は『なぜこのリクエストだけ遅い？』のような未知の問題も調査できる能力です。">
+        <input type="radio" name="q-obs1" value="b">
+        <span>監視は既知の問題を検出、可観測性は未知の問題も調査可能</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs1" value="c">
+        <span>監視は無料で、可観測性は有料</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="obs2">
+  <h1>2. 構造化ログ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>JSON形式の構造化ログと相関IDの重要性を理解する</p>
+  </div>
+
+  <h2>なぜ構造化ログ？</h2>
+  <p>
+    <strong>構造化ログ</strong>とは、JSON形式など機械が解析しやすい形式のログです。<br>
+    大量のログから問題を特定するには、検索・フィルタリングが必須です。
+  </p>
+
+  <h2>非構造化 vs 構造化</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">非構造化ログ（アンチパターン）</div>
+      <pre><code>// ❌ console.log で文字列連結
+console.log('User ' + userId + ' failed login at ' + new Date());
+
+// 出力: User 123 failed login at Mon Jan 15 2026 10:30:00
+
+// 問題点:
+// - パースが困難
+// - 検索しにくい（userId=123で検索できない）
+// - 形式がバラバラ</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">構造化ログ（ベストプラクティス）</div>
+      <pre><code>// ⭕ JSON形式で出力
+logger.warn({
+  event: 'login_failed',
+  userId: 123,
+  reason: 'invalid_password',
+  ip: '192.168.1.1',
+  timestamp: '2026-01-15T10:30:00Z'
+});
+
+// 出力: {"event":"login_failed","userId":123,...}
+
+// 利点:
+// - 機械で解析可能
+// - userId:123 で検索できる
+// - 一貫した形式</code></pre>
+    </div>
+  </div>
+
+  <h2>ログレベル</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>レベル</th>
+        <th>用途</th>
+        <th>例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ERROR</strong></td>
+        <td>処理が失敗、対応が必要</td>
+        <td>DB接続失敗、支払い処理エラー</td>
+      </tr>
+      <tr>
+        <td><strong>WARN</strong></td>
+        <td>問題の兆候、注意が必要</td>
+        <td>リトライ発生、メモリ高使用率</td>
+      </tr>
+      <tr>
+        <td><strong>INFO</strong></td>
+        <td>正常な処理の記録</td>
+        <td>ユーザーログイン、注文完了</td>
+      </tr>
+      <tr>
+        <td><strong>DEBUG</strong></td>
+        <td>詳細な情報（開発時）</td>
+        <td>変数の値、処理の流れ</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>相関ID（Correlation ID）</h2>
+  <p>
+    <strong>相関ID</strong>は、1つのリクエストに紐づくすべてのログを追跡するためのIDです。<br>
+    マイクロサービスでは、1リクエストが複数サービスを経由するため必須です。
+  </p>
+
+  <!-- SVG図解: 相関ID -->
+  <svg viewBox="0 0 700 220" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- クライアント -->
+    <g transform="translate(30, 50)">
+      <rect x="0" y="0" width="80" height="60" rx="6" fill="#95a5a6"/>
+      <text x="40" y="35" font-size="12" fill="white" text-anchor="middle">Client</text>
+    </g>
+
+    <!-- 矢印1 -->
+    <g transform="translate(120, 70)">
+      <path d="M0,10 L50,10" stroke="#3498db" stroke-width="2" marker-end="url(#arrow-blue)"/>
+      <text x="25" y="0" font-size="9" fill="#3498db" text-anchor="middle">traceId: abc123</text>
+    </g>
+
+    <!-- API Gateway -->
+    <g transform="translate(180, 50)">
+      <rect x="0" y="0" width="100" height="60" rx="6" fill="#3498db"/>
+      <text x="50" y="25" font-size="11" fill="white" text-anchor="middle">API Gateway</text>
+      <text x="50" y="45" font-size="9" fill="white" text-anchor="middle" opacity="0.8">traceId: abc123</text>
+    </g>
+
+    <!-- 矢印2 -->
+    <g transform="translate(290, 70)">
+      <path d="M0,10 L50,10" stroke="#27ae60" stroke-width="2" marker-end="url(#arrow-green2)"/>
+    </g>
+
+    <!-- Auth Service -->
+    <g transform="translate(350, 50)">
+      <rect x="0" y="0" width="100" height="60" rx="6" fill="#27ae60"/>
+      <text x="50" y="25" font-size="11" fill="white" text-anchor="middle">Auth Service</text>
+      <text x="50" y="45" font-size="9" fill="white" text-anchor="middle" opacity="0.8">traceId: abc123</text>
+    </g>
+
+    <!-- 矢印3 -->
+    <g transform="translate(460, 70)">
+      <path d="M0,10 L50,10" stroke="#9b59b6" stroke-width="2" marker-end="url(#arrow-purple)"/>
+    </g>
+
+    <!-- Order Service -->
+    <g transform="translate(520, 50)">
+      <rect x="0" y="0" width="100" height="60" rx="6" fill="#9b59b6"/>
+      <text x="50" y="25" font-size="11" fill="white" text-anchor="middle">Order Service</text>
+      <text x="50" y="45" font-size="9" fill="white" text-anchor="middle" opacity="0.8">traceId: abc123</text>
+    </g>
+
+    <!-- ログ出力の例 -->
+    <g transform="translate(50, 140)">
+      <text x="0" y="0" font-size="11" fill="#333" font-weight="bold">traceId: abc123 で検索すると、全サービスのログが追跡可能:</text>
+      <rect x="0" y="10" width="600" height="55" rx="4" fill="#f5f5f5" stroke="#ddd"/>
+      <text x="10" y="30" font-size="9" fill="#3498db" font-family="monospace">[API] {"traceId":"abc123","service":"gateway","msg":"Request received"}</text>
+      <text x="10" y="45" font-size="9" fill="#27ae60" font-family="monospace">[Auth] {"traceId":"abc123","service":"auth","msg":"Token validated"}</text>
+      <text x="10" y="60" font-size="9" fill="#9b59b6" font-family="monospace">[Order] {"traceId":"abc123","service":"order","msg":"Order created"}</text>
+    </g>
+
+    <defs>
+      <marker id="arrow-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#3498db"/>
+      </marker>
+      <marker id="arrow-green2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#27ae60"/>
+      </marker>
+      <marker id="arrow-purple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#9b59b6"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <h2>実装例: Pino（Node.js推奨ロガー）</h2>
+
+  <pre><code>import pino from 'pino';
+import crypto from 'crypto';
+import express from 'express';
+
+// ロガー初期化
+const logger = pino({
+  level: process.env.LOG_LEVEL || 'info',
+  formatters: {
+    level: (label) => ({ level: label })
+  }
+});
+
+const app = express();
+
+// 相関IDミドルウェア
+app.use((req, res, next) => {
+  // ヘッダーから取得、なければ生成
+  const traceId = req.headers['x-trace-id'] || crypto.randomUUID();
+  req.traceId = traceId;
+  res.setHeader('x-trace-id', traceId);
+
+  // リクエストログ
+  logger.info({
+    traceId,
+    method: req.method,
+    url: req.url,
+    userAgent: req.headers['user-agent']
+  }, 'Request received');
+
+  next();
+});
+
+// エラーハンドリング
+app.use((err, req, res, next) => {
+  logger.error({
+    traceId: req.traceId,
+    err: {
+      message: err.message,
+      stack: err.stack,
+      code: err.code
+    },
+    url: req.url
+  }, 'Request failed');
+
+  res.status(500).json({ error: 'Internal Server Error' });
+});</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: ログの問題</div>
+    <ul style="margin-bottom:0;">
+      <li><code>console.log</code> を本番コードで使用していないか</li>
+      <li>相関ID（traceId）がログに含まれているか</li>
+      <li>個人情報（パスワード、クレジットカード番号）をログに出力していないか</li>
+      <li>ログレベルが適切か（DEBUGを本番で有効にしていないか）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-obs2-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: 次のコードの問題点は？</strong></p>
+    <pre><code>console.log('User ' + user.email + ' logged in with password: ' + user.password);</code></pre>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs2-1" value="a">
+        <span>console.logの代わりにalertを使うべき</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="パスワードをログに出力するのは重大なセキュリティ違反です。また、console.logは構造化されておらず検索が困難、相関IDもありません。">
+        <input type="radio" name="q-obs2-1" value="b">
+        <span>パスワードをログ出力している（セキュリティ違反）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs2-1" value="c">
+        <span>文字列連結ではなくテンプレートリテラルを使うべき</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs2-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-obs2-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: 相関ID（traceId）が必要な理由は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs2-2" value="a">
+        <span>ログファイルのサイズを小さくするため</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs2-2" value="b">
+        <span>ログの出力速度を上げるため</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="マイクロサービスでは1リクエストが複数サービスを経由します。相関IDがあれば、すべてのサービスのログを1つのリクエストとして追跡できます。">
+        <input type="radio" name="q-obs2-2" value="c">
+        <span>複数サービスにまたがるリクエストを追跡するため</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs2-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="obs3">
+  <h1>3. メトリクス</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>カウンター/ゲージ/ヒストグラムの違いとPrometheusの基本を理解する</p>
+  </div>
+
+  <h2>メトリクスとは？</h2>
+  <p>
+    <strong>メトリクス</strong>は、システムの状態を<strong>数値</strong>で表したものです。<br>
+    時系列データとして保存され、傾向分析やアラートに使用されます。
+  </p>
+
+  <h2>メトリクスの3つのタイプ</h2>
+
+  <!-- SVG図解: メトリクスタイプ -->
+  <svg viewBox="0 0 700 280" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- カウンター -->
+    <g transform="translate(30, 30)">
+      <rect x="0" y="0" width="200" height="220" rx="8" fill="#3498db" opacity="0.1" stroke="#3498db" stroke-width="2"/>
+      <text x="100" y="30" font-size="14" fill="#3498db" text-anchor="middle" font-weight="bold">カウンター (Counter)</text>
+      <text x="100" y="50" font-size="11" fill="#666" text-anchor="middle">増加のみ（リセット不可）</text>
+
+      <!-- グラフ -->
+      <rect x="20" y="65" width="160" height="80" rx="3" fill="white" stroke="#ddd"/>
+      <polyline points="30,130 60,125 90,115 120,100 150,85 170,75"
+                stroke="#3498db" stroke-width="2" fill="none"/>
+      <text x="100" y="155" font-size="10" fill="#333" text-anchor="middle">常に増加</text>
+
+      <text x="100" y="180" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">用途:</text>
+      <text x="100" y="195" font-size="10" fill="#666" text-anchor="middle">リクエスト総数</text>
+      <text x="100" y="210" font-size="10" fill="#666" text-anchor="middle">エラー総数</text>
+    </g>
+
+    <!-- ゲージ -->
+    <g transform="translate(250, 30)">
+      <rect x="0" y="0" width="200" height="220" rx="8" fill="#27ae60" opacity="0.1" stroke="#27ae60" stroke-width="2"/>
+      <text x="100" y="30" font-size="14" fill="#27ae60" text-anchor="middle" font-weight="bold">ゲージ (Gauge)</text>
+      <text x="100" y="50" font-size="11" fill="#666" text-anchor="middle">増減する現在値</text>
+
+      <!-- グラフ -->
+      <rect x="20" y="65" width="160" height="80" rx="3" fill="white" stroke="#ddd"/>
+      <polyline points="30,100 50,85 70,110 90,90 110,105 130,80 150,95 170,100"
+                stroke="#27ae60" stroke-width="2" fill="none"/>
+      <text x="100" y="155" font-size="10" fill="#333" text-anchor="middle">上下に変動</text>
+
+      <text x="100" y="180" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">用途:</text>
+      <text x="100" y="195" font-size="10" fill="#666" text-anchor="middle">CPU使用率</text>
+      <text x="100" y="210" font-size="10" fill="#666" text-anchor="middle">接続数</text>
+    </g>
+
+    <!-- ヒストグラム -->
+    <g transform="translate(470, 30)">
+      <rect x="0" y="0" width="200" height="220" rx="8" fill="#9b59b6" opacity="0.1" stroke="#9b59b6" stroke-width="2"/>
+      <text x="100" y="30" font-size="14" fill="#9b59b6" text-anchor="middle" font-weight="bold">ヒストグラム</text>
+      <text x="100" y="50" font-size="11" fill="#666" text-anchor="middle">分布（バケット）</text>
+
+      <!-- バーチャート -->
+      <rect x="20" y="65" width="160" height="80" rx="3" fill="white" stroke="#ddd"/>
+      <rect x="35" y="120" width="20" height="20" fill="#9b59b6" opacity="0.3"/>
+      <rect x="60" y="100" width="20" height="40" fill="#9b59b6" opacity="0.5"/>
+      <rect x="85" y="80" width="20" height="60" fill="#9b59b6" opacity="0.8"/>
+      <rect x="110" y="95" width="20" height="45" fill="#9b59b6" opacity="0.6"/>
+      <rect x="135" y="115" width="20" height="25" fill="#9b59b6" opacity="0.4"/>
+      <text x="100" y="155" font-size="10" fill="#333" text-anchor="middle">レイテンシ分布</text>
+
+      <text x="100" y="180" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">用途:</text>
+      <text x="100" y="195" font-size="10" fill="#666" text-anchor="middle">レスポンス時間</text>
+      <text x="100" y="210" font-size="10" fill="#666" text-anchor="middle">P50/P95/P99</text>
+    </g>
+  </svg>
+
+  <table>
+    <thead>
+      <tr>
+        <th>タイプ</th>
+        <th>特徴</th>
+        <th>例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>カウンター</strong></td>
+        <td>常に増加（累積値）</td>
+        <td>http_requests_total, errors_total</td>
+      </tr>
+      <tr>
+        <td><strong>ゲージ</strong></td>
+        <td>増減する現在値</td>
+        <td>cpu_usage, memory_used, connections</td>
+      </tr>
+      <tr>
+        <td><strong>ヒストグラム</strong></td>
+        <td>値の分布を測定</td>
+        <td>request_duration_seconds</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Prometheusとは？</h2>
+  <p>
+    <strong>Prometheus</strong>は、メトリクス収集の<strong>デファクト標準</strong>です。<br>
+    アプリが<code>/metrics</code>エンドポイントを公開し、Prometheusがpull（取得）します。
+  </p>
+
+  <h2>Node.jsでのメトリクス実装</h2>
+
+  <pre><code>import express from 'express';
+import client from 'prom-client';
+
+// デフォルトメトリクス（CPU、メモリなど）を収集
+client.collectDefaultMetrics();
+
+// カスタムカウンター
+const httpRequestsTotal = new client.Counter({
+  name: 'http_requests_total',
+  help: 'Total number of HTTP requests',
+  labelNames: ['method', 'path', 'status']
+});
+
+// カスタムヒストグラム（レイテンシ）
+const httpRequestDuration = new client.Histogram({
+  name: 'http_request_duration_seconds',
+  help: 'HTTP request duration in seconds',
+  labelNames: ['method', 'path'],
+  buckets: [0.01, 0.05, 0.1, 0.5, 1, 2, 5]  // バケット定義
+});
+
+const app = express();
+
+// メトリクス計測ミドルウェア
+app.use((req, res, next) => {
+  const end = httpRequestDuration.startTimer({
+    method: req.method,
+    path: req.route?.path || req.path
+  });
+
+  res.on('finish', () => {
+    httpRequestsTotal.inc({
+      method: req.method,
+      path: req.route?.path || req.path,
+      status: res.statusCode
+    });
+    end();  // 時間計測終了
+  });
+
+  next();
+});
+
+// /metrics エンドポイント（Prometheusがスクレイプ）
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', client.register.contentType);
+  res.end(await client.register.metrics());
+});</code></pre>
+
+  <h2>メトリクスの命名規則</h2>
+
+  <pre><code># Prometheus命名規則
+namespace_subsystem_name_unit
+
+# 例:
+http_requests_total           # リクエスト総数（カウンター）
+http_request_duration_seconds # リクエスト時間（ヒストグラム）
+node_memory_usage_bytes       # メモリ使用量（ゲージ）</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: メトリクスの問題</div>
+    <ul style="margin-bottom:0;">
+      <li>カスタムメトリクスが定義されているか（デフォルトだけでは不十分）</li>
+      <li>高カーディナリティのラベルを使っていないか（userIdなど）</li>
+      <li>ヒストグラムのバケットが適切か（P99を計測できるか）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-obs3">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 「現在のDB接続数」を計測するのに適切なメトリクスタイプは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs3" value="a">
+        <span>カウンター（常に増加するため）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="接続数は増減する『現在値』なのでゲージが適切です。カウンターは累積値なので減少できません。">
+        <input type="radio" name="q-obs3" value="b">
+        <span>ゲージ（増減する現在値のため）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs3" value="c">
+        <span>ヒストグラム（分布を見るため）</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="obs4">
+  <h1>4. 分散トレーシング</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>スパン、トレースID、コンテキスト伝搬の概念を理解する</p>
+  </div>
+
+  <h2>なぜ分散トレーシング？</h2>
+  <p>
+    マイクロサービスでは、1つのリクエストが<strong>複数のサービスを経由</strong>します。<br>
+    「どのサービスで遅延が発生しているか」を特定するのが<strong>分散トレーシング</strong>です。
+  </p>
+
+  <h2>基本概念</h2>
+
+  <!-- SVG図解: スパンとトレース -->
+  <svg viewBox="0 0 700 300" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- タイトル -->
+    <text x="350" y="25" font-size="16" font-weight="bold" fill="#333" text-anchor="middle">
+      トレース（Trace）= 複数のスパン（Span）の集合
+    </text>
+
+    <!-- トレースID表示 -->
+    <rect x="50" y="40" width="600" height="30" rx="4" fill="#f0f0f0" stroke="#ddd"/>
+    <text x="350" y="60" font-size="12" fill="#666" text-anchor="middle">
+      TraceID: abc-123-def-456（1リクエスト全体を識別）
+    </text>
+
+    <!-- タイムライン -->
+    <line x1="80" y1="100" x2="650" y2="100" stroke="#ccc" stroke-width="1"/>
+    <text x="70" y="95" font-size="10" fill="#999">0ms</text>
+    <text x="650" y="95" font-size="10" fill="#999">500ms</text>
+
+    <!-- スパン1: API Gateway -->
+    <g transform="translate(80, 110)">
+      <rect x="0" y="0" width="550" height="35" rx="4" fill="#3498db" opacity="0.8"/>
+      <text x="10" y="22" font-size="11" fill="white" font-weight="bold">API Gateway</text>
+      <text x="500" y="22" font-size="10" fill="white">500ms</text>
+      <text x="280" y="22" font-size="9" fill="white" opacity="0.8">spanId: span-001</text>
+    </g>
+
+    <!-- スパン2: Auth Service -->
+    <g transform="translate(100, 155)">
+      <rect x="0" y="0" width="80" height="35" rx="4" fill="#27ae60" opacity="0.8"/>
+      <text x="10" y="22" font-size="10" fill="white" font-weight="bold">Auth</text>
+      <text x="55" y="22" font-size="9" fill="white">50ms</text>
+    </g>
+
+    <!-- スパン3: Order Service -->
+    <g transform="translate(190, 155)">
+      <rect x="0" y="0" width="420" height="35" rx="4" fill="#9b59b6" opacity="0.8"/>
+      <text x="10" y="22" font-size="11" fill="white" font-weight="bold">Order Service</text>
+      <text x="370" y="22" font-size="10" fill="white">400ms</text>
+    </g>
+
+    <!-- スパン4: Database (ボトルネック) -->
+    <g transform="translate(220, 200)">
+      <rect x="0" y="0" width="350" height="35" rx="4" fill="#e74c3c" opacity="0.9"/>
+      <text x="10" y="22" font-size="11" fill="white" font-weight="bold">Database Query</text>
+      <text x="280" y="22" font-size="10" fill="white">350ms ← ボトルネック!</text>
+    </g>
+
+    <!-- 説明 -->
+    <g transform="translate(80, 260)">
+      <text x="0" y="0" font-size="12" fill="#333" font-weight="bold">スパン（Span）の情報:</text>
+      <text x="0" y="20" font-size="11" fill="#666">・spanId: このスパンのID</text>
+      <text x="200" y="20" font-size="11" fill="#666">・parentSpanId: 親スパンのID</text>
+      <text x="430" y="20" font-size="11" fill="#666">・duration: 処理時間</text>
+    </g>
+  </svg>
+
+  <table>
+    <thead>
+      <tr>
+        <th>用語</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Trace（トレース）</strong></td>
+        <td>1リクエスト全体の旅路。複数のスパンで構成</td>
+      </tr>
+      <tr>
+        <td><strong>Span（スパン）</strong></td>
+        <td>1つの処理単位。開始時刻、終了時刻、メタデータを持つ</td>
+      </tr>
+      <tr>
+        <td><strong>TraceID</strong></td>
+        <td>トレース全体を識別するID。すべてのスパンで共通</td>
+      </tr>
+      <tr>
+        <td><strong>SpanID</strong></td>
+        <td>各スパンを識別するID</td>
+      </tr>
+      <tr>
+        <td><strong>ParentSpanID</strong></td>
+        <td>親スパンのID。因果関係を表す</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>コンテキスト伝搬（Context Propagation）</h2>
+  <p>
+    <strong>コンテキスト伝搬</strong>とは、TraceIDをサービス間で引き継ぐ仕組みです。<br>
+    HTTPヘッダーを使って伝搬します。
+  </p>
+
+  <pre><code>// サービスAがサービスBを呼び出す例
+const response = await fetch('http://service-b/api', {
+  headers: {
+    // W3C Trace Context 標準
+    'traceparent': `00-${traceId}-${spanId}-01`,
+    // または独自ヘッダー
+    'x-trace-id': traceId,
+    'x-span-id': spanId
+  }
+});
+
+// サービスBはヘッダーからトレース情報を取得
+app.use((req, res, next) => {
+  const traceparent = req.headers['traceparent'];
+  // traceparent をパースしてトレースを継続
+});</code></pre>
+
+  <h2>主要なトレーシングツール</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ツール</th>
+        <th>特徴</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Jaeger</strong></td>
+        <td>CNCF卒業プロジェクト。OSS。Kubernetes連携が強い</td>
+      </tr>
+      <tr>
+        <td><strong>Zipkin</strong></td>
+        <td>Twitter発。シンプルで軽量</td>
+      </tr>
+      <tr>
+        <td><strong>AWS X-Ray</strong></td>
+        <td>AWS統合。Lambda/ECSとの連携が容易</td>
+      </tr>
+      <tr>
+        <td><strong>Datadog APM</strong></td>
+        <td>商用SaaS。ログ・メトリクスとの統合が優秀</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: トレーシングの問題</div>
+    <ul style="margin-bottom:0;">
+      <li>トレーシングが導入されているか（マイクロサービスでは必須）</li>
+      <li>コンテキスト伝搬が正しく実装されているか</li>
+      <li>重要な処理にスパンが作成されているか（DBクエリ、外部API呼び出し）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-obs4">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: TraceIDとSpanIDの関係として正しいのは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs4" value="a">
+        <span>TraceIDとSpanIDは同じもの</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="TraceIDは1リクエスト全体で共通、SpanIDは各処理単位（スパン）ごとに異なります。これにより因果関係を追跡できます。">
+        <input type="radio" name="q-obs4" value="b">
+        <span>1つのTraceIDに対して、複数のSpanIDが存在する</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs4" value="c">
+        <span>SpanIDは省略可能で、TraceIDだけで追跡できる</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="obs5">
+  <h1>5. OpenTelemetry</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>OpenTelemetryの役割と基本的な計装方法を理解する</p>
+  </div>
+
+  <h2>OpenTelemetryとは？</h2>
+  <p>
+    <strong>OpenTelemetry（OTel）</strong>は、可観測性データ（ログ・メトリクス・トレース）を
+    収集するための<strong>標準仕様とSDK</strong>です。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> なぜOpenTelemetry？</div>
+    <p>
+      以前は、ログはFluentd、メトリクスはPrometheus、トレースはJaeger...と
+      バラバラのツールを使っていました。<br>
+      OpenTelemetryは<strong>すべてを統一</strong>し、<strong>ベンダーロックインを防ぐ</strong>標準です。
+    </p>
+    <p>
+      2026年現在、<strong>CNCFの卒業プロジェクト</strong>として、デファクト標準になっています。
+    </p>
+  </div>
+
+  <h2>OpenTelemetryのアーキテクチャ</h2>
+
+  <!-- SVG図解: OTelアーキテクチャ -->
+  <svg viewBox="0 0 700 320" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- アプリケーション層 -->
+    <g transform="translate(50, 30)">
+      <rect x="0" y="0" width="200" height="100" rx="8" fill="#3498db" opacity="0.1" stroke="#3498db" stroke-width="2"/>
+      <text x="100" y="25" font-size="12" fill="#3498db" text-anchor="middle" font-weight="bold">アプリケーション</text>
+
+      <rect x="15" y="40" width="170" height="50" rx="4" fill="#3498db" opacity="0.3"/>
+      <text x="100" y="60" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">OTel SDK</text>
+      <text x="100" y="78" font-size="9" fill="#666" text-anchor="middle">自動計装 / 手動計装</text>
+    </g>
+
+    <!-- 矢印1 -->
+    <g transform="translate(260, 70)">
+      <path d="M0,10 L60,10" stroke="#333" stroke-width="2" marker-end="url(#arrow-otel)"/>
+      <text x="30" y="0" font-size="9" fill="#666" text-anchor="middle">OTLP</text>
+    </g>
+
+    <!-- Collector -->
+    <g transform="translate(330, 20)">
+      <rect x="0" y="0" width="180" height="120" rx="8" fill="#27ae60" opacity="0.1" stroke="#27ae60" stroke-width="2"/>
+      <text x="90" y="25" font-size="12" fill="#27ae60" text-anchor="middle" font-weight="bold">OTel Collector</text>
+
+      <rect x="15" y="40" width="150" height="25" rx="3" fill="#27ae60" opacity="0.3"/>
+      <text x="90" y="57" font-size="10" fill="#333" text-anchor="middle">Receivers（受信）</text>
+
+      <rect x="15" y="70" width="150" height="25" rx="3" fill="#27ae60" opacity="0.3"/>
+      <text x="90" y="87" font-size="10" fill="#333" text-anchor="middle">Processors（加工）</text>
+
+      <rect x="15" y="100" width="150" height="25" rx="3" fill="#27ae60" opacity="0.3"/>
+      <text x="90" y="117" font-size="10" fill="#333" text-anchor="middle">Exporters（送信）</text>
+    </g>
+
+    <!-- 矢印2: バックエンドへ -->
+    <g transform="translate(520, 50)">
+      <path d="M0,10 L40,10" stroke="#333" stroke-width="2" marker-end="url(#arrow-otel)"/>
+    </g>
+    <g transform="translate(520, 80)">
+      <path d="M0,10 L40,10" stroke="#333" stroke-width="2" marker-end="url(#arrow-otel)"/>
+    </g>
+    <g transform="translate(520, 110)">
+      <path d="M0,10 L40,10" stroke="#333" stroke-width="2" marker-end="url(#arrow-otel)"/>
+    </g>
+
+    <!-- バックエンド -->
+    <g transform="translate(570, 30)">
+      <rect x="0" y="0" width="110" height="35" rx="4" fill="#3498db"/>
+      <text x="55" y="22" font-size="11" fill="white" text-anchor="middle">Jaeger</text>
+    </g>
+    <g transform="translate(570, 70)">
+      <rect x="0" y="0" width="110" height="35" rx="4" fill="#27ae60"/>
+      <text x="55" y="22" font-size="11" fill="white" text-anchor="middle">Prometheus</text>
+    </g>
+    <g transform="translate(570, 110)">
+      <rect x="0" y="0" width="110" height="35" rx="4" fill="#9b59b6"/>
+      <text x="55" y="22" font-size="11" fill="white" text-anchor="middle">Loki</text>
+    </g>
+
+    <!-- 説明テキスト -->
+    <g transform="translate(50, 170)">
+      <rect x="0" y="0" width="630" height="130" rx="6" fill="#f9f9f9" stroke="#ddd"/>
+      <text x="20" y="25" font-size="12" fill="#333" font-weight="bold">OpenTelemetryの利点:</text>
+      <text x="20" y="50" font-size="11" fill="#666">1. ベンダーロックインなし: バックエンドを自由に切り替え可能</text>
+      <text x="20" y="70" font-size="11" fill="#666">2. 統一されたAPI: ログ・メトリクス・トレースを同じ方法で計装</text>
+      <text x="20" y="90" font-size="11" fill="#666">3. 自動計装: 多くのフレームワーク・ライブラリを自動でインストルメント</text>
+      <text x="20" y="110" font-size="11" fill="#666">4. Collectorで加工: サンプリング、フィルタリング、変換が可能</text>
+    </g>
+
+    <defs>
+      <marker id="arrow-otel" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <h2>Node.jsでの自動計装</h2>
+
+  <pre><code>// tracing.ts（アプリ起動前に読み込む）
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
+import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
+
+const sdk = new NodeSDK({
+  // サービス名
+  serviceName: 'my-api-service',
+
+  // トレースエクスポーター
+  traceExporter: new OTLPTraceExporter({
+    url: 'http://otel-collector:4318/v1/traces'
+  }),
+
+  // メトリクスエクスポーター
+  metricReader: new PeriodicExportingMetricReader({
+    exporter: new OTLPMetricExporter({
+      url: 'http://otel-collector:4318/v1/metrics'
+    }),
+    exportIntervalMillis: 30000  // 30秒ごとにエクスポート
+  }),
+
+  // 自動計装（Express、HTTP、pg、redis など）
+  instrumentations: [
+    getNodeAutoInstrumentations({
+      '@opentelemetry/instrumentation-fs': { enabled: false }  // ファイル操作は除外
+    })
+  ]
+});
+
+// SDKを起動
+sdk.start();
+
+// シャットダウン時のクリーンアップ
+process.on('SIGTERM', () => {
+  sdk.shutdown().then(() => process.exit(0));
+});</code></pre>
+
+  <pre><code>// index.ts
+// 必ずアプリより先にトレーシングを読み込む
+import './tracing';
+import express from 'express';
+
+const app = express();
+// 以降のExpress処理は自動でトレースされる</code></pre>
+
+  <h2>手動計装（カスタムスパン）</h2>
+
+  <pre><code>import { trace } from '@opentelemetry/api';
+
+const tracer = trace.getTracer('my-service');
+
+async function processOrder(orderId: string) {
+  // カスタムスパンを作成
+  return tracer.startActiveSpan('processOrder', async (span) => {
+    try {
+      span.setAttribute('order.id', orderId);
+
+      // 処理...
+      const result = await doSomething();
+
+      span.setAttribute('order.status', 'completed');
+      return result;
+    } catch (error) {
+      span.recordException(error);
+      span.setStatus({ code: SpanStatusCode.ERROR });
+      throw error;
+    } finally {
+      span.end();
+    }
+  });
+}</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: ベンダーロックイン</div>
+    <p>
+      特定ベンダーのSDK（Datadog SDK、New Relic SDK）を直接使っていると、
+      バックエンドの切り替えが困難になります。<br>
+      <strong>OpenTelemetryを使うことで、バックエンドを自由に選択・変更できます。</strong>
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-obs5">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: OpenTelemetry Collectorの役割は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs5" value="a">
+        <span>アプリケーションのコードを自動生成する</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Collectorはアプリからテレメトリデータを受信し、フィルタリング・サンプリングなどの加工を行い、様々なバックエンド（Jaeger、Prometheus等）に転送します。">
+        <input type="radio" name="q-obs5" value="b">
+        <span>テレメトリデータを受信・加工し、バックエンドに転送する</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs5" value="c">
+        <span>アラートを送信する</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="obs6">
+  <h1>6. Grafana / Prometheus</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>Prometheusでのメトリクス収集とGrafanaでの可視化を理解する</p>
+  </div>
+
+  <h2>Prometheus + Grafana スタック</h2>
+  <p>
+    <strong>Prometheus</strong>: メトリクス収集・保存・クエリ<br>
+    <strong>Grafana</strong>: データ可視化（ダッシュボード）<br>
+    この組み合わせは、可観測性の<strong>デファクト標準</strong>です。
+  </p>
+
+  <!-- SVG図解: Prometheus + Grafana -->
+  <svg viewBox="0 0 700 250" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- アプリケーション群 -->
+    <g transform="translate(30, 40)">
+      <rect x="0" y="0" width="140" height="160" rx="6" fill="#f0f0f0" stroke="#ddd"/>
+      <text x="70" y="25" font-size="12" fill="#333" text-anchor="middle" font-weight="bold">アプリケーション</text>
+
+      <rect x="20" y="40" width="100" height="30" rx="4" fill="#3498db"/>
+      <text x="70" y="60" font-size="10" fill="white" text-anchor="middle">API Server</text>
+      <text x="70" y="80" font-size="8" fill="#666" text-anchor="middle">/metrics</text>
+
+      <rect x="20" y="95" width="100" height="30" rx="4" fill="#27ae60"/>
+      <text x="70" y="115" font-size="10" fill="white" text-anchor="middle">Worker</text>
+      <text x="70" y="135" font-size="8" fill="#666" text-anchor="middle">/metrics</text>
+    </g>
+
+    <!-- 矢印: Pull -->
+    <g transform="translate(180, 90)">
+      <path d="M60,20 L0,20" stroke="#e67e22" stroke-width="2" marker-end="url(#arrow-pull)"/>
+      <text x="30" y="10" font-size="9" fill="#e67e22" text-anchor="middle">Pull</text>
+      <text x="30" y="45" font-size="8" fill="#666" text-anchor="middle">定期的にスクレイプ</text>
+    </g>
+
+    <!-- Prometheus -->
+    <g transform="translate(250, 40)">
+      <rect x="0" y="0" width="150" height="160" rx="6" fill="#e67e22" opacity="0.1" stroke="#e67e22" stroke-width="2"/>
+      <text x="75" y="25" font-size="12" fill="#e67e22" text-anchor="middle" font-weight="bold">Prometheus</text>
+
+      <rect x="15" y="40" width="120" height="25" rx="3" fill="#e67e22" opacity="0.3"/>
+      <text x="75" y="57" font-size="9" fill="#333" text-anchor="middle">時系列DB</text>
+
+      <rect x="15" y="70" width="120" height="25" rx="3" fill="#e67e22" opacity="0.3"/>
+      <text x="75" y="87" font-size="9" fill="#333" text-anchor="middle">PromQL クエリ</text>
+
+      <rect x="15" y="100" width="120" height="25" rx="3" fill="#e67e22" opacity="0.3"/>
+      <text x="75" y="117" font-size="9" fill="#333" text-anchor="middle">Alertmanager連携</text>
+
+      <text x="75" y="145" font-size="9" fill="#666" text-anchor="middle">ポート: 9090</text>
+    </g>
+
+    <!-- 矢印: Query -->
+    <g transform="translate(410, 90)">
+      <path d="M0,20 L60,20" stroke="#f39c12" stroke-width="2" marker-end="url(#arrow-query)"/>
+      <text x="30" y="10" font-size="9" fill="#f39c12" text-anchor="middle">Query</text>
+    </g>
+
+    <!-- Grafana -->
+    <g transform="translate(480, 40)">
+      <rect x="0" y="0" width="150" height="160" rx="6" fill="#f39c12" opacity="0.1" stroke="#f39c12" stroke-width="2"/>
+      <text x="75" y="25" font-size="12" fill="#f39c12" text-anchor="middle" font-weight="bold">Grafana</text>
+
+      <!-- ダッシュボードイメージ -->
+      <rect x="15" y="40" width="120" height="80" rx="3" fill="white" stroke="#ddd"/>
+      <rect x="20" y="50" width="50" height="25" rx="2" fill="#3498db" opacity="0.5"/>
+      <rect x="75" y="50" width="55" height="25" rx="2" fill="#27ae60" opacity="0.5"/>
+      <rect x="20" y="80" width="110" height="30" rx="2" fill="#9b59b6" opacity="0.5"/>
+
+      <text x="75" y="135" font-size="9" fill="#666" text-anchor="middle">ダッシュボード</text>
+      <text x="75" y="150" font-size="9" fill="#666" text-anchor="middle">ポート: 3000</text>
+    </g>
+
+    <defs>
+      <marker id="arrow-pull" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+        <polygon points="10 0, 0 3.5, 10 7" fill="#e67e22"/>
+      </marker>
+      <marker id="arrow-query" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#f39c12"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <h2>PromQL（Prometheus Query Language）</h2>
+  <p>
+    <strong>PromQL</strong>は、Prometheusでメトリクスを検索・集計するためのクエリ言語です。
+  </p>
+
+  <pre><code># 基本クエリ: メトリクス名
+http_requests_total
+
+# ラベルでフィルタリング
+http_requests_total{method="POST", status="200"}
+
+# レートの計算（5分間の1秒あたりのリクエスト数）
+rate(http_requests_total[5m])
+
+# P95レイテンシ（ヒストグラムから算出）
+histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
+
+# エラー率（直近5分）
+sum(rate(http_requests_total{status=~"5.."}[5m]))
+  /
+sum(rate(http_requests_total[5m])) * 100
+
+# サービス別のメモリ使用量
+sum by (service) (container_memory_usage_bytes)</code></pre>
+
+  <h2>Grafanaダッシュボードの設計</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">悪いダッシュボード</div>
+      <ul>
+        <li>すべてのメトリクスを1画面に詰め込み</li>
+        <li>グラフが多すぎて何を見ればいいかわからない</li>
+        <li>閾値（しきい値）が設定されていない</li>
+        <li>単位が表示されていない</li>
+      </ul>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">良いダッシュボード</div>
+      <ul>
+        <li><strong>USEメソッド</strong>: Utilization, Saturation, Errors</li>
+        <li><strong>REDメソッド</strong>: Rate, Errors, Duration</li>
+        <li>閾値を色分けで表示（緑/黄/赤）</li>
+        <li>単位を明示（ms, %, bytes）</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>REDメソッド（サービス監視の基本）</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>指標</th>
+        <th>説明</th>
+        <th>PromQL例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Rate</strong></td>
+        <td>リクエスト数/秒</td>
+        <td><code>rate(http_requests_total[5m])</code></td>
+      </tr>
+      <tr>
+        <td><strong>Errors</strong></td>
+        <td>エラー率</td>
+        <td><code>rate(http_requests_total{status=~"5.."}[5m])</code></td>
+      </tr>
+      <tr>
+        <td><strong>Duration</strong></td>
+        <td>レイテンシ（P50/P95/P99）</td>
+        <td><code>histogram_quantile(0.95, ...)</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: 可視化の問題</div>
+    <ul style="margin-bottom:0;">
+      <li>Grafanaダッシュボードが存在するか</li>
+      <li>REDメソッドの基本指標が含まれているか</li>
+      <li>閾値が設定され、異常が一目でわかるか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-obs6">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: REDメソッドの「D」は何を表す？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs6" value="a">
+        <span>Data（データ量）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs6" value="b">
+        <span>Disk（ディスク使用量）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="REDメソッドは Rate（リクエスト率）、Errors（エラー率）、Duration（レイテンシ）の3つでサービスの健全性を監視する手法です。">
+        <input type="radio" name="q-obs6" value="c">
+        <span>Duration（レイテンシ/応答時間）</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="obs7">
+  <h1>7. アラート設計</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>SLI/SLO/SLAの概念と、アラート疲れを防ぐ設計を理解する</p>
+  </div>
+
+  <h2>SLI / SLO / SLA</h2>
+
+  <!-- SVG図解: SLI/SLO/SLA -->
+  <svg viewBox="0 0 700 200" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- SLI -->
+    <g transform="translate(50, 30)">
+      <rect x="0" y="0" width="180" height="140" rx="8" fill="#3498db" opacity="0.1" stroke="#3498db" stroke-width="2"/>
+      <text x="90" y="30" font-size="14" fill="#3498db" text-anchor="middle" font-weight="bold">SLI</text>
+      <text x="90" y="50" font-size="10" fill="#666" text-anchor="middle">Service Level Indicator</text>
+      <text x="90" y="70" font-size="10" fill="#666" text-anchor="middle">（サービスレベル指標）</text>
+
+      <text x="90" y="95" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">何を測るか</text>
+      <text x="90" y="115" font-size="10" fill="#666" text-anchor="middle">例: 可用性 99.2%</text>
+      <text x="90" y="130" font-size="10" fill="#666" text-anchor="middle">例: P99レイテンシ 200ms</text>
+    </g>
+
+    <!-- 矢印 -->
+    <g transform="translate(240, 90)">
+      <path d="M0,10 L30,10" stroke="#333" stroke-width="2" marker-end="url(#arrow-slo)"/>
+    </g>
+
+    <!-- SLO -->
+    <g transform="translate(280, 30)">
+      <rect x="0" y="0" width="180" height="140" rx="8" fill="#27ae60" opacity="0.1" stroke="#27ae60" stroke-width="2"/>
+      <text x="90" y="30" font-size="14" fill="#27ae60" text-anchor="middle" font-weight="bold">SLO</text>
+      <text x="90" y="50" font-size="10" fill="#666" text-anchor="middle">Service Level Objective</text>
+      <text x="90" y="70" font-size="10" fill="#666" text-anchor="middle">（サービスレベル目標）</text>
+
+      <text x="90" y="95" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">どこまで目指すか</text>
+      <text x="90" y="115" font-size="10" fill="#666" text-anchor="middle">例: 可用性 99.9% 目標</text>
+      <text x="90" y="130" font-size="10" fill="#666" text-anchor="middle">例: P99 ≤ 100ms 目標</text>
+    </g>
+
+    <!-- 矢印 -->
+    <g transform="translate(470, 90)">
+      <path d="M0,10 L30,10" stroke="#333" stroke-width="2" marker-end="url(#arrow-slo)"/>
+    </g>
+
+    <!-- SLA -->
+    <g transform="translate(510, 30)">
+      <rect x="0" y="0" width="180" height="140" rx="8" fill="#e74c3c" opacity="0.1" stroke="#e74c3c" stroke-width="2"/>
+      <text x="90" y="30" font-size="14" fill="#e74c3c" text-anchor="middle" font-weight="bold">SLA</text>
+      <text x="90" y="50" font-size="10" fill="#666" text-anchor="middle">Service Level Agreement</text>
+      <text x="90" y="70" font-size="10" fill="#666" text-anchor="middle">（サービスレベル契約）</text>
+
+      <text x="90" y="95" font-size="11" fill="#333" text-anchor="middle" font-weight="bold">何を約束するか</text>
+      <text x="90" y="115" font-size="10" fill="#666" text-anchor="middle">例: 可用性 99.5% 保証</text>
+      <text x="90" y="130" font-size="10" fill="#e74c3c" text-anchor="middle">違反時は返金など</text>
+    </g>
+
+    <defs>
+      <marker id="arrow-slo" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <table>
+    <thead>
+      <tr>
+        <th>用語</th>
+        <th>説明</th>
+        <th>決める人</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>SLI</strong></td>
+        <td>実際の測定値（可用性、レイテンシ等）</td>
+        <td>エンジニア</td>
+      </tr>
+      <tr>
+        <td><strong>SLO</strong></td>
+        <td>社内の目標値（SLAより厳しく設定）</td>
+        <td>エンジニア + PM</td>
+      </tr>
+      <tr>
+        <td><strong>SLA</strong></td>
+        <td>顧客との契約（違反時はペナルティ）</td>
+        <td>ビジネス + 法務</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>エラーバジェット</h2>
+  <p>
+    <strong>エラーバジェット</strong>は、「許容される障害の量」です。<br>
+    SLO 99.9%の場合、月間 0.1%（約43分）の障害が許容されます。
+  </p>
+
+  <pre><code># エラーバジェットの計算例
+SLO: 99.9%
+許容ダウンタイム/月: 30日 × 24時間 × 60分 × 0.1% = 約43分
+
+# 今月の使用状況
+障害発生: 計20分
+残りバジェット: 43分 - 20分 = 23分
+
+# バジェットが尽きたら？
+→ 新機能リリースを停止し、信頼性改善に集中</code></pre>
+
+  <h2>アラート疲れ（Alert Fatigue）</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">アラート疲れを起こす設計</div>
+      <ul>
+        <li>すべてのエラーでアラート発報</li>
+        <li>閾値が低すぎる（CPU 50%で警告）</li>
+        <li>同じ問題で何度も発報</li>
+        <li>対応方法が不明確</li>
+      </ul>
+      <p><strong>結果</strong>: アラートを無視するようになる</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">効果的なアラート設計</div>
+      <ul>
+        <li><strong>症状ベース</strong>で発報（原因ではなく）</li>
+        <li>SLOに基づいた閾値設定</li>
+        <li>集約・重複排除（同一原因は1通知）</li>
+        <li>ランブック（対応手順書）をリンク</li>
+      </ul>
+      <p><strong>結果</strong>: 本当に対応が必要な時だけ通知</p>
+    </div>
+  </div>
+
+  <h2>症状ベース vs 原因ベース</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">原因ベース（非推奨）</div>
+      <pre><code># CPU使用率でアラート
+alert: HighCPU
+expr: cpu_usage > 80
+# 問題: CPUが高くてもサービスは正常かも</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">症状ベース（推奨）</div>
+      <pre><code># エラー率でアラート
+alert: HighErrorRate
+expr: |
+  sum(rate(http_requests_total{status=~"5.."}[5m]))
+  / sum(rate(http_requests_total[5m])) > 0.01
+# ユーザーに影響が出ている時だけ発報</code></pre>
+    </div>
+  </div>
+
+  <h2>Alertmanagerの設定例</h2>
+
+  <pre><code># alertmanager.yml
+route:
+  receiver: 'slack-notifications'
+  group_by: ['alertname', 'service']  # 同じアラートを集約
+  group_wait: 30s       # 最初の通知を待つ時間
+  group_interval: 5m    # 同じグループの再通知間隔
+  repeat_interval: 4h   # 同じアラートの繰り返し間隔
+
+receivers:
+  - name: 'slack-notifications'
+    slack_configs:
+      - channel: '#alerts'
+        title: '{{ .GroupLabels.alertname }}'
+        text: |
+          *サービス*: {{ .GroupLabels.service }}
+          *対応手順*: {{ .CommonAnnotations.runbook_url }}
+          *詳細*: {{ .CommonAnnotations.description }}</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: アラートの問題</div>
+    <ul style="margin-bottom:0;">
+      <li>アラートが多すぎないか（月100件以上は要見直し）</li>
+      <li>症状ベースになっているか（CPU/メモリだけでアラートしていないか）</li>
+      <li>ランブック（対応手順）がリンクされているか</li>
+      <li>SLOに基づいた閾値になっているか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-obs7-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: SLOが99.9%の場合、月間の許容ダウンタイムは約何分？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs7-1" value="a">
+        <span>約4分</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="30日 × 24時間 × 60分 = 43,200分。その0.1%は約43分です。これが1ヶ月のエラーバジェットになります。">
+        <input type="radio" name="q-obs7-1" value="b">
+        <span>約43分</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs7-1" value="c">
+        <span>約430分</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs7-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-obs7-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: 「CPU使用率が80%を超えたらアラート」の問題点は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs7-2" value="a">
+        <span>80%は閾値として低すぎる</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="CPU使用率は『原因』であり、『症状』ではありません。CPUが高くてもサービスが正常なら対応不要です。エラー率やレイテンシなど、ユーザー影響を示す『症状』でアラートすべきです。">
+        <input type="radio" name="q-obs7-2" value="b">
+        <span>原因ベースであり、サービスへの影響が不明</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs7-2" value="c">
+        <span>CPU使用率はメトリクスとして不正確</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs7-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="obs8">
+  <h1>8. インシデント対応</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🎯</span> このページのゴール</div>
+    <p>ランブックとポストモーテムの重要性を理解する</p>
+  </div>
+
+  <h2>インシデント対応の流れ</h2>
+
+  <!-- SVG図解: インシデント対応フロー -->
+  <svg viewBox="0 0 700 180" style="max-width:100%;margin:1.5rem 0;display:block;">
+    <!-- 検知 -->
+    <g transform="translate(30, 50)">
+      <rect x="0" y="0" width="100" height="80" rx="6" fill="#e74c3c" opacity="0.8"/>
+      <text x="50" y="30" font-size="12" fill="white" text-anchor="middle" font-weight="bold">検知</text>
+      <text x="50" y="50" font-size="9" fill="white" text-anchor="middle">アラート発報</text>
+      <text x="50" y="65" font-size="9" fill="white" text-anchor="middle">ユーザー報告</text>
+    </g>
+
+    <path d="M140,90 L160,90" stroke="#333" stroke-width="2" marker-end="url(#arrow-inc)"/>
+
+    <!-- トリアージ -->
+    <g transform="translate(170, 50)">
+      <rect x="0" y="0" width="100" height="80" rx="6" fill="#e67e22" opacity="0.8"/>
+      <text x="50" y="30" font-size="12" fill="white" text-anchor="middle" font-weight="bold">トリアージ</text>
+      <text x="50" y="50" font-size="9" fill="white" text-anchor="middle">重大度判定</text>
+      <text x="50" y="65" font-size="9" fill="white" text-anchor="middle">担当者アサイン</text>
+    </g>
+
+    <path d="M280,90 L300,90" stroke="#333" stroke-width="2" marker-end="url(#arrow-inc)"/>
+
+    <!-- 対応 -->
+    <g transform="translate(310, 50)">
+      <rect x="0" y="0" width="100" height="80" rx="6" fill="#f39c12" opacity="0.8"/>
+      <text x="50" y="30" font-size="12" fill="white" text-anchor="middle" font-weight="bold">対応</text>
+      <text x="50" y="50" font-size="9" fill="white" text-anchor="middle">ランブック実行</text>
+      <text x="50" y="65" font-size="9" fill="white" text-anchor="middle">緩和策適用</text>
+    </g>
+
+    <path d="M420,90 L440,90" stroke="#333" stroke-width="2" marker-end="url(#arrow-inc)"/>
+
+    <!-- 解決 -->
+    <g transform="translate(450, 50)">
+      <rect x="0" y="0" width="100" height="80" rx="6" fill="#27ae60" opacity="0.8"/>
+      <text x="50" y="30" font-size="12" fill="white" text-anchor="middle" font-weight="bold">解決</text>
+      <text x="50" y="50" font-size="9" fill="white" text-anchor="middle">根本原因修正</text>
+      <text x="50" y="65" font-size="9" fill="white" text-anchor="middle">正常確認</text>
+    </g>
+
+    <path d="M560,90 L580,90" stroke="#333" stroke-width="2" marker-end="url(#arrow-inc)"/>
+
+    <!-- 振り返り -->
+    <g transform="translate(590, 50)">
+      <rect x="0" y="0" width="100" height="80" rx="6" fill="#3498db" opacity="0.8"/>
+      <text x="50" y="30" font-size="12" fill="white" text-anchor="middle" font-weight="bold">振り返り</text>
+      <text x="50" y="50" font-size="9" fill="white" text-anchor="middle">ポストモーテム</text>
+      <text x="50" y="65" font-size="9" fill="white" text-anchor="middle">再発防止策</text>
+    </g>
+
+    <defs>
+      <marker id="arrow-inc" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <h2>ランブック（Runbook）</h2>
+  <p>
+    <strong>ランブック</strong>は、インシデント対応の<strong>手順書</strong>です。<br>
+    深夜3時に起こされても、手順通りに対応できることを目指します。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> ランブックのテンプレート</div>
+    <pre style="background:#f9f9f9;padding:1rem;border-radius:4px;"><code># アラート名: High Error Rate
+
+## 概要
+エラー率が1%を超えている状態
+
+## 影響
+ユーザーの約1%がエラーを経験
+
+## 確認手順
+1. Grafanaダッシュボードでエラー率を確認
+   - URL: https://grafana.example.com/d/xyz
+2. エラーログを確認
+   - `kubectl logs -l app=api --since=10m | grep ERROR`
+3. 直近のデプロイを確認
+   - `kubectl rollout history deployment/api`
+
+## 対応手順
+1. 直近のデプロイが原因の場合:
+   - `kubectl rollout undo deployment/api`
+2. DB負荷が原因の場合:
+   - 読み取りをリードレプリカに切り替え
+3. 外部APIが原因の場合:
+   - サーキットブレーカーを有効化
+
+## エスカレーション
+- 30分で解決しない場合: on-call エンジニア
+- 1時間で解決しない場合: テックリード</code></pre>
+  </div>
+
+  <h2>ポストモーテム（Postmortem）</h2>
+  <p>
+    <strong>ポストモーテム</strong>は、インシデント後の<strong>振り返り文書</strong>です。<br>
+    <strong>非難なし（Blameless）</strong>の文化で、システム改善に焦点を当てます。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> 重要: 非難なしの文化</div>
+    <p>
+      「誰が悪いか」ではなく「<strong>なぜシステムがそれを許したか</strong>」に焦点を当てます。<br>
+      人はミスをします。ミスを防ぐのはシステムの責任です。
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📝</span> ポストモーテムのテンプレート</div>
+    <pre style="background:#f9f9f9;padding:1rem;border-radius:4px;"><code># インシデントレポート: 2026-01-15 APIダウン
+
+## 概要
+- 発生日時: 2026-01-15 14:30 - 15:15 (45分間)
+- 影響: ユーザーの100%がAPIにアクセス不可
+- 重大度: Sev1（Critical）
+
+## タイムライン
+- 14:30 - デプロイ完了
+- 14:32 - アラート発報「High Error Rate」
+- 14:35 - オンコール担当が確認開始
+- 14:45 - 原因特定（DB接続数上限）
+- 15:00 - 接続数上限を引き上げ
+- 15:15 - エラー率が正常に復帰
+
+## 根本原因
+新機能のDB接続プール設定ミス。
+接続がリークし、上限に達した。
+
+## 影響範囲
+- 影響ユーザー: 約10,000人
+- 推定損失: 約50万円
+
+## 再発防止策
+| アクション | 担当者 | 期限 |
+|-----------|--------|------|
+| 接続プールのリーク検知アラート追加 | 田中 | 1/20 |
+| デプロイ前のDB接続テスト追加 | 鈴木 | 1/25 |
+| 接続数メトリクスをダッシュボードに追加 | 佐藤 | 1/22 |
+
+## 教訓
+- デプロイ直後のカナリアリリース時間を延長すべき
+- DB接続数のデフォルト閾値が低すぎた</code></pre>
+  </div>
+
+  <h2>重大度レベル（Severity）</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>レベル</th>
+        <th>説明</th>
+        <th>対応目標</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Sev1 / P1</strong></td>
+        <td>サービス全停止、重大なデータ損失</td>
+        <td>即時対応、15分以内に開始</td>
+      </tr>
+      <tr>
+        <td><strong>Sev2 / P2</strong></td>
+        <td>主要機能に影響、回避策なし</td>
+        <td>1時間以内に対応開始</td>
+      </tr>
+      <tr>
+        <td><strong>Sev3 / P3</strong></td>
+        <td>一部機能に影響、回避策あり</td>
+        <td>24時間以内に対応</td>
+      </tr>
+      <tr>
+        <td><strong>Sev4 / P4</strong></td>
+        <td>軽微な問題、ユーザー影響小</td>
+        <td>次スプリントで対応</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> レビュー観点: インシデント対応の問題</div>
+    <ul style="margin-bottom:0;">
+      <li>ランブックが存在するか</li>
+      <li>アラートにランブックのリンクが含まれているか</li>
+      <li>重大インシデント後にポストモーテムを実施しているか</li>
+      <li>再発防止策がトラッキングされているか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-obs8-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: ポストモーテムで最も重要な姿勢は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs8-1" value="a">
+        <span>責任者を特定して厳しく指導する</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ポストモーテムは『非難なし（Blameless）』が原則です。人を責めるのではなく、『なぜシステムがそれを許したか』に焦点を当て、再発防止策を考えます。">
+        <input type="radio" name="q-obs8-1" value="b">
+        <span>非難なし（Blameless）で、システム改善に焦点を当てる</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs8-1" value="c">
+        <span>できるだけ詳細を省いて早く終わらせる</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs8-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-obs8-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: ランブックに含めるべき内容として不適切なものは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs8-2" value="a">
+        <span>確認手順と対応手順</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs8-2" value="b">
+        <span>エスカレーション先</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ランブックは『手順書』であり、過去のインシデント履歴はポストモーテムに記録します。ランブックには、確認手順、対応手順、エスカレーション先を含めます。">
+        <input type="radio" name="q-obs8-2" value="c">
+        <span>過去のインシデントの詳細履歴</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs8-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
