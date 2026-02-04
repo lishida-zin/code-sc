@@ -1,0 +1,2385 @@
+<!-- ============================================
+     Level 8 Phase 3: 結合テスト・APIテスト
+     ============================================ -->
+
+<section id="int1">
+  <h1>結合テストの目的</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>結合テストとは何か、単体テストとの違い</li>
+      <li>コンポーネント連携の検証方法</li>
+      <li>境界（バウンダリ）の確認ポイント</li>
+    </ul>
+  </div>
+
+  <h2>結合テストとは</h2>
+
+  <p>
+    <strong>結合テスト（Integration Test）</strong>とは、複数のコンポーネントを組み合わせて正しく連携するかを検証するテストです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：オーケストラのリハーサル
+    </div>
+    <p>
+      各楽器奏者が個別に練習する = <strong>単体テスト</strong><br>
+      全員で合わせて演奏する = <strong>結合テスト</strong>
+    </p>
+    <p style="margin:0;">
+      個人が完璧でも、タイミングが合わなければ音楽にならない。<br>
+      結合テストは「ちゃんと合奏できるか」を確認します。
+    </p>
+  </div>
+
+  <h2>単体テストとの違い</h2>
+
+  <svg viewBox="0 0 600 280" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="単体テストと結合テストの違い">
+    <title>単体テストと結合テストの比較</title>
+
+    <defs>
+      <marker id="arrow-int" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+        <path d="M0,0 L10,5 L0,10 z" fill="#6366f1"/>
+      </marker>
+    </defs>
+
+    <!-- 単体テスト側 -->
+    <text x="150" y="25" text-anchor="middle" fill="currentColor" font-size="14" font-weight="bold">単体テスト</text>
+    <rect x="50" y="40" width="80" height="50" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+    <text x="90" y="70" text-anchor="middle" fill="white" font-size="12">Module A</text>
+    <rect x="170" y="40" width="80" height="50" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+    <text x="210" y="70" text-anchor="middle" fill="white" font-size="12">Module B</text>
+    <text x="90" y="115" text-anchor="middle" fill="#22c55e" font-size="11">個別にテスト</text>
+    <text x="210" y="115" text-anchor="middle" fill="#22c55e" font-size="11">個別にテスト</text>
+
+    <!-- 結合テスト側 -->
+    <text x="450" y="25" text-anchor="middle" fill="currentColor" font-size="14" font-weight="bold">結合テスト</text>
+    <rect x="340" y="40" width="80" height="50" rx="8" fill="#10b981" stroke="#047857" stroke-width="2"/>
+    <text x="380" y="70" text-anchor="middle" fill="white" font-size="12">Module A</text>
+    <line x1="420" y1="65" x2="470" y2="65" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-int)"/>
+    <rect x="480" y="40" width="80" height="50" rx="8" fill="#10b981" stroke="#047857" stroke-width="2"/>
+    <text x="520" y="70" text-anchor="middle" fill="white" font-size="12">Module B</text>
+    <text x="450" y="115" text-anchor="middle" fill="#f59e0b" font-size="11">連携をテスト</text>
+
+    <!-- 比較表 -->
+    <rect x="50" y="140" width="500" height="130" rx="8" fill="none" stroke="#ddd" stroke-width="1"/>
+    <line x1="50" y1="170" x2="550" y2="170" stroke="#ddd" stroke-width="1"/>
+    <line x1="200" y1="140" x2="200" y2="270" stroke="#ddd" stroke-width="1"/>
+    <line x1="375" y1="140" x2="375" y2="270" stroke="#ddd" stroke-width="1"/>
+
+    <text x="125" y="160" text-anchor="middle" fill="currentColor" font-size="12" font-weight="bold">観点</text>
+    <text x="287" y="160" text-anchor="middle" fill="#3b82f6" font-size="12" font-weight="bold">単体テスト</text>
+    <text x="462" y="160" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">結合テスト</text>
+
+    <text x="125" y="195" text-anchor="middle" fill="currentColor" font-size="11">対象範囲</text>
+    <text x="287" y="195" text-anchor="middle" fill="currentColor" font-size="11">1つの関数/クラス</text>
+    <text x="462" y="195" text-anchor="middle" fill="currentColor" font-size="11">複数コンポーネント</text>
+
+    <text x="125" y="220" text-anchor="middle" fill="currentColor" font-size="11">依存関係</text>
+    <text x="287" y="220" text-anchor="middle" fill="currentColor" font-size="11">モック化</text>
+    <text x="462" y="220" text-anchor="middle" fill="currentColor" font-size="11">実際に接続</text>
+
+    <text x="125" y="245" text-anchor="middle" fill="currentColor" font-size="11">実行速度</text>
+    <text x="287" y="245" text-anchor="middle" fill="currentColor" font-size="11">高速</text>
+    <text x="462" y="245" text-anchor="middle" fill="currentColor" font-size="11">やや遅い</text>
+
+    <text x="125" y="265" text-anchor="middle" fill="currentColor" font-size="11">検出できるバグ</text>
+    <text x="287" y="265" text-anchor="middle" fill="currentColor" font-size="11">ロジックエラー</text>
+    <text x="462" y="265" text-anchor="middle" fill="currentColor" font-size="11">連携エラー</text>
+  </svg>
+
+  <h2>コンポーネント連携の検証</h2>
+
+  <p>
+    結合テストで検証すべき<strong>連携ポイント</strong>は以下です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔗</span>
+      検証すべき連携
+    </div>
+    <ul>
+      <li><strong>API呼び出し</strong>：Controller → Service → Repository</li>
+      <li><strong>データベース連携</strong>：アプリ → DB への読み書き</li>
+      <li><strong>外部サービス連携</strong>：自システム → 外部API</li>
+      <li><strong>メッセージング</strong>：Producer → Queue → Consumer</li>
+    </ul>
+  </div>
+
+  <h2>境界（バウンダリ）の確認</h2>
+
+  <p>
+    <strong>境界</strong>とは、異なるコンポーネント間の接点です。<br>
+    ここが結合テストの<strong>最重要ポイント</strong>です。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      境界で起きやすい問題
+    </div>
+    <ul>
+      <li><strong>データ形式の不一致</strong>：Date型 vs 文字列、タイムゾーン</li>
+      <li><strong>null/undefinedの扱い</strong>：送信側と受信側で認識が違う</li>
+      <li><strong>エラーハンドリング</strong>：例外が正しく伝播しない</li>
+      <li><strong>トランザクション境界</strong>：ロールバックが効かない</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💻</span>
+      結合テストの例（Node.js）
+    </div>
+<pre><code>// 結合テスト：Controller + Service + Repository
+describe('UserController Integration', () => {
+  let app: Express;
+  let db: Database;
+
+  beforeAll(async () => {
+    // 実際のDBに接続（テスト用）
+    db = await Database.connect(TEST_DB_URL);
+    app = createApp(db);
+  });
+
+  afterAll(async () => {
+    await db.close();
+  });
+
+  it('ユーザー作成からDB保存まで連携する', async () => {
+    const response = await request(app)
+      .post('/users')
+      .send({ name: '田中', email: 'tanaka@example.com' });
+
+    expect(response.status).toBe(201);
+
+    // DBに実際に保存されたか確認
+    const user = await db.query(
+      'SELECT * FROM users WHERE email = $1',
+      ['tanaka@example.com']
+    );
+    expect(user.rows[0].name).toBe('田中');
+  });
+});</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>モックばかりの結合テスト</strong>：全部モックなら単体テストと変わらない</li>
+      <li><strong>テスト後のクリーンアップ漏れ</strong>：テストデータが残る</li>
+      <li><strong>境界条件のテスト不足</strong>：正常系だけでは不十分</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-int1-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>結合テストの主な目的は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int1-1" style="display:none;">
+      A. 個々の関数のロジックを検証する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-int1-1" style="display:none;">
+      B. 複数コンポーネントの連携を検証する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int1-1" style="display:none;">
+      C. UIの見た目を検証する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-int1-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-int1-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>結合テストで検証すべき「境界」で起きやすい問題は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int1-2" style="display:none;">
+      A. 変数名のタイポ
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-int1-2" style="display:none;">
+      B. データ形式の不一致（Date型 vs 文字列など）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int1-2" style="display:none;">
+      C. CSSのスタイル崩れ
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-int1-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('int1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="int2">
+  <h1>結合テスト戦略</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>トップダウンアプローチ</li>
+      <li>ボトムアップアプローチ</li>
+      <li>サンドイッチ（ハイブリッド）アプローチ</li>
+    </ul>
+  </div>
+
+  <h2>3つの結合テスト戦略</h2>
+
+  <p>
+    結合テストを行う順番には<strong>3つの戦略</strong>があります。
+  </p>
+
+  <svg viewBox="0 0 700 350" style="width:100%;max-width:700px;display:block;margin:1rem auto;" role="img" aria-label="結合テスト戦略の比較">
+    <title>トップダウン・ボトムアップ・サンドイッチの比較</title>
+
+    <!-- トップダウン -->
+    <text x="120" y="25" text-anchor="middle" fill="#3b82f6" font-size="14" font-weight="bold">トップダウン</text>
+    <rect x="70" y="40" width="100" height="35" rx="5" fill="#3b82f6"/>
+    <text x="120" y="62" text-anchor="middle" fill="white" font-size="11">UI/Controller</text>
+    <path d="M120,75 L120,95" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-int)"/>
+    <rect x="70" y="100" width="100" height="35" rx="5" fill="#93c5fd"/>
+    <text x="120" y="122" text-anchor="middle" fill="#1e3a8a" font-size="11">Service</text>
+    <path d="M120,135 L120,155" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-int)"/>
+    <rect x="70" y="160" width="100" height="35" rx="5" fill="#dbeafe" stroke="#3b82f6" stroke-dasharray="4"/>
+    <text x="120" y="182" text-anchor="middle" fill="#3b82f6" font-size="11">Stub (DB)</text>
+    <text x="120" y="220" text-anchor="middle" fill="currentColor" font-size="10">上から順にテスト</text>
+    <text x="120" y="235" text-anchor="middle" fill="currentColor" font-size="10">下位はスタブで代用</text>
+
+    <!-- ボトムアップ -->
+    <text x="350" y="25" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">ボトムアップ</text>
+    <rect x="300" y="40" width="100" height="35" rx="5" fill="#d1fae5" stroke="#10b981" stroke-dasharray="4"/>
+    <text x="350" y="62" text-anchor="middle" fill="#10b981" font-size="11">Driver</text>
+    <path d="M350,75 L350,95" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-int)"/>
+    <rect x="300" y="100" width="100" height="35" rx="5" fill="#6ee7b7"/>
+    <text x="350" y="122" text-anchor="middle" fill="#064e3b" font-size="11">Service</text>
+    <path d="M350,135 L350,155" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-int)"/>
+    <rect x="300" y="160" width="100" height="35" rx="5" fill="#10b981"/>
+    <text x="350" y="182" text-anchor="middle" fill="white" font-size="11">Repository/DB</text>
+    <text x="350" y="220" text-anchor="middle" fill="currentColor" font-size="10">下から順にテスト</text>
+    <text x="350" y="235" text-anchor="middle" fill="currentColor" font-size="10">上位はドライバで代用</text>
+
+    <!-- サンドイッチ -->
+    <text x="580" y="25" text-anchor="middle" fill="#f59e0b" font-size="14" font-weight="bold">サンドイッチ</text>
+    <rect x="530" y="40" width="100" height="35" rx="5" fill="#f59e0b"/>
+    <text x="580" y="62" text-anchor="middle" fill="white" font-size="11">UI/Controller</text>
+    <path d="M580,75 L580,95" stroke="#f59e0b" stroke-width="2"/>
+    <rect x="530" y="100" width="100" height="35" rx="5" fill="#fef3c7" stroke="#f59e0b"/>
+    <text x="580" y="122" text-anchor="middle" fill="#92400e" font-size="11">Service</text>
+    <path d="M580,135 L580,155" stroke="#f59e0b" stroke-width="2"/>
+    <rect x="530" y="160" width="100" height="35" rx="5" fill="#f59e0b"/>
+    <text x="580" y="182" text-anchor="middle" fill="white" font-size="11">Repository/DB</text>
+    <text x="580" y="220" text-anchor="middle" fill="currentColor" font-size="10">上下から同時にテスト</text>
+    <text x="580" y="235" text-anchor="middle" fill="currentColor" font-size="10">中間層で合流</text>
+
+    <!-- 比較表 -->
+    <rect x="50" y="260" width="600" height="80" rx="8" fill="none" stroke="#ddd" stroke-width="1"/>
+    <line x1="50" y1="285" x2="650" y2="285" stroke="#ddd"/>
+    <line x1="200" y1="260" x2="200" y2="340" stroke="#ddd"/>
+    <line x1="350" y1="260" x2="350" y2="340" stroke="#ddd"/>
+    <line x1="500" y1="260" x2="500" y2="340" stroke="#ddd"/>
+
+    <text x="125" y="277" text-anchor="middle" fill="currentColor" font-size="11" font-weight="bold">特徴</text>
+    <text x="275" y="277" text-anchor="middle" fill="#3b82f6" font-size="11" font-weight="bold">トップダウン</text>
+    <text x="425" y="277" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">ボトムアップ</text>
+    <text x="575" y="277" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">サンドイッチ</text>
+
+    <text x="125" y="310" text-anchor="middle" fill="currentColor" font-size="10">メリット</text>
+    <text x="275" y="310" text-anchor="middle" fill="currentColor" font-size="10">UI早期確認</text>
+    <text x="425" y="310" text-anchor="middle" fill="currentColor" font-size="10">基盤が安定</text>
+    <text x="575" y="310" text-anchor="middle" fill="currentColor" font-size="10">並列開発可</text>
+
+    <text x="125" y="330" text-anchor="middle" fill="currentColor" font-size="10">デメリット</text>
+    <text x="275" y="330" text-anchor="middle" fill="currentColor" font-size="10">スタブ多い</text>
+    <text x="425" y="330" text-anchor="middle" fill="currentColor" font-size="10">UI後回し</text>
+    <text x="575" y="330" text-anchor="middle" fill="currentColor" font-size="10">複雑</text>
+  </svg>
+
+  <h2>トップダウンアプローチ</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⬇️</span>
+      トップダウン
+    </div>
+    <p>
+      <strong>上位モジュール</strong>（UI、Controller）から先にテストし、<br>
+      下位モジュールは<strong>スタブ（Stub）</strong>で代用します。
+    </p>
+<pre><code>// トップダウン：Controllerを先にテスト、Serviceはスタブ
+describe('UserController', () => {
+  it('ユーザー一覧を取得', async () => {
+    // Serviceをスタブ化
+    const mockService = {
+      findAll: jest.fn().mockResolvedValue([
+        { id: 1, name: 'テストユーザー' }
+      ])
+    };
+
+    const controller = new UserController(mockService);
+    const result = await controller.list();
+
+    expect(result).toHaveLength(1);
+  });
+});</code></pre>
+    <p><strong>スタブ</strong>：呼び出されたら固定値を返すダミー実装</p>
+  </div>
+
+  <h2>ボトムアップアプローチ</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⬆️</span>
+      ボトムアップ
+    </div>
+    <p>
+      <strong>下位モジュール</strong>（Repository、DB層）から先にテストし、<br>
+      上位モジュールは<strong>ドライバ（Driver）</strong>で呼び出します。
+    </p>
+<pre><code>// ボトムアップ：Repositoryを先にテスト
+describe('UserRepository', () => {
+  let repository: UserRepository;
+  let db: TestDatabase;
+
+  beforeAll(async () => {
+    db = await TestDatabase.create();
+    repository = new UserRepository(db);
+  });
+
+  it('ユーザーを保存できる', async () => {
+    // テストドライバとして直接Repositoryを呼び出す
+    const user = await repository.save({
+      name: '田中',
+      email: 'tanaka@example.com'
+    });
+
+    expect(user.id).toBeDefined();
+    expect(user.name).toBe('田中');
+  });
+});</code></pre>
+    <p><strong>ドライバ</strong>：テスト対象を呼び出すためのテストコード</p>
+  </div>
+
+  <h2>サンドイッチアプローチ</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🥪</span>
+      サンドイッチ（ハイブリッド）
+    </div>
+    <p>
+      上位と下位を<strong>同時並行</strong>でテストし、<br>
+      中間層で<strong>合流</strong>させます。
+    </p>
+    <ul>
+      <li>チームを分けて並列開発する大規模プロジェクト向け</li>
+      <li>UIチーム：トップダウンでController層まで</li>
+      <li>バックエンドチーム：ボトムアップでService層まで</li>
+      <li>最後にService層で結合</li>
+    </ul>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      実務での選択基準
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th>状況</th>
+        <th>推奨アプローチ</th>
+      </tr>
+      <tr>
+        <td>UIを早く見せたい</td>
+        <td>トップダウン</td>
+      </tr>
+      <tr>
+        <td>DB設計が固まっている</td>
+        <td>ボトムアップ</td>
+      </tr>
+      <tr>
+        <td>大規模・並列開発</td>
+        <td>サンドイッチ</td>
+      </tr>
+      <tr>
+        <td>小規模・アジャイル</td>
+        <td>柔軟に組み合わせ</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>戦略なき結合テスト</strong>：場当たり的で網羅性がない</li>
+      <li><strong>スタブの過剰使用</strong>：実際の連携をテストしていない</li>
+      <li><strong>ドライバの使い回し</strong>：本番コードに混入していないか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-int2-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>下位モジュール（DB層）から先にテストするアプローチは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int2-1" style="display:none;">
+      A. トップダウン
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-int2-1" style="display:none;">
+      B. ボトムアップ
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int2-1" style="display:none;">
+      C. サンドイッチ
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-int2-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('int2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="int3">
+  <h1>APIテスト基礎</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>HTTPメソッドとその使い分け</li>
+      <li>ステータスコードの意味</li>
+      <li>リクエスト/レスポンスのペイロード</li>
+    </ul>
+  </div>
+
+  <h2>APIテストとは</h2>
+
+  <p>
+    <strong>APIテスト</strong>とは、HTTP APIの動作を検証するテストです。<br>
+    フロントエンドとバックエンドの<strong>契約</strong>が守られているかを確認します。
+  </p>
+
+  <h2>HTTPメソッド</h2>
+
+  <svg viewBox="0 0 600 200" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="HTTPメソッドの使い分け">
+    <title>CRUD操作とHTTPメソッドの対応</title>
+
+    <!-- Create -->
+    <rect x="20" y="30" width="120" height="70" rx="10" fill="#22c55e"/>
+    <text x="80" y="55" text-anchor="middle" fill="white" font-size="14" font-weight="bold">POST</text>
+    <text x="80" y="75" text-anchor="middle" fill="#dcfce7" font-size="11">Create（作成）</text>
+    <text x="80" y="120" text-anchor="middle" fill="currentColor" font-size="10">/users</text>
+    <text x="80" y="135" text-anchor="middle" fill="#6b7280" font-size="9">新規ユーザー作成</text>
+
+    <!-- Read -->
+    <rect x="160" y="30" width="120" height="70" rx="10" fill="#3b82f6"/>
+    <text x="220" y="55" text-anchor="middle" fill="white" font-size="14" font-weight="bold">GET</text>
+    <text x="220" y="75" text-anchor="middle" fill="#dbeafe" font-size="11">Read（取得）</text>
+    <text x="220" y="120" text-anchor="middle" fill="currentColor" font-size="10">/users/123</text>
+    <text x="220" y="135" text-anchor="middle" fill="#6b7280" font-size="9">ユーザー情報取得</text>
+
+    <!-- Update -->
+    <rect x="300" y="30" width="120" height="70" rx="10" fill="#f59e0b"/>
+    <text x="360" y="55" text-anchor="middle" fill="white" font-size="14" font-weight="bold">PUT/PATCH</text>
+    <text x="360" y="75" text-anchor="middle" fill="#fef3c7" font-size="11">Update（更新）</text>
+    <text x="360" y="120" text-anchor="middle" fill="currentColor" font-size="10">/users/123</text>
+    <text x="360" y="135" text-anchor="middle" fill="#6b7280" font-size="9">ユーザー情報更新</text>
+
+    <!-- Delete -->
+    <rect x="440" y="30" width="120" height="70" rx="10" fill="#ef4444"/>
+    <text x="500" y="55" text-anchor="middle" fill="white" font-size="14" font-weight="bold">DELETE</text>
+    <text x="500" y="75" text-anchor="middle" fill="#fee2e2" font-size="11">Delete（削除）</text>
+    <text x="500" y="120" text-anchor="middle" fill="currentColor" font-size="10">/users/123</text>
+    <text x="500" y="135" text-anchor="middle" fill="#6b7280" font-size="9">ユーザー削除</text>
+
+    <!-- CRUD label -->
+    <text x="300" y="170" text-anchor="middle" fill="currentColor" font-size="12" font-weight="bold">CRUD操作 = HTTPメソッド</text>
+  </svg>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📝</span>
+      PUT vs PATCH
+    </div>
+    <ul>
+      <li><strong>PUT</strong>：リソース全体を置き換える（全フィールド必須）</li>
+      <li><strong>PATCH</strong>：リソースの一部を更新（変更フィールドのみ）</li>
+    </ul>
+<pre><code>// PUT: 全フィールドを送信
+PUT /users/123
+{ "name": "田中", "email": "tanaka@example.com", "age": 30 }
+
+// PATCH: 変更部分のみ送信
+PATCH /users/123
+{ "age": 31 }</code></pre>
+  </div>
+
+  <h2>ステータスコード</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔢</span>
+      主要なステータスコード
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th style="width:15%;">コード</th>
+        <th style="width:25%;">意味</th>
+        <th>使用場面</th>
+      </tr>
+      <tr>
+        <td><strong>200</strong></td>
+        <td>OK</td>
+        <td>GET成功、PUT/PATCH成功</td>
+      </tr>
+      <tr>
+        <td><strong>201</strong></td>
+        <td>Created</td>
+        <td>POST成功（リソース作成）</td>
+      </tr>
+      <tr>
+        <td><strong>204</strong></td>
+        <td>No Content</td>
+        <td>DELETE成功（レスポンスボディなし）</td>
+      </tr>
+      <tr>
+        <td><strong>400</strong></td>
+        <td>Bad Request</td>
+        <td>リクエスト形式エラー</td>
+      </tr>
+      <tr>
+        <td><strong>401</strong></td>
+        <td>Unauthorized</td>
+        <td>認証が必要</td>
+      </tr>
+      <tr>
+        <td><strong>403</strong></td>
+        <td>Forbidden</td>
+        <td>認可エラー（権限なし）</td>
+      </tr>
+      <tr>
+        <td><strong>404</strong></td>
+        <td>Not Found</td>
+        <td>リソースが存在しない</td>
+      </tr>
+      <tr>
+        <td><strong>500</strong></td>
+        <td>Internal Server Error</td>
+        <td>サーバー内部エラー</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>リクエスト/レスポンスのペイロード</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📦</span>
+      JSONペイロードの例
+    </div>
+<pre><code>// リクエスト
+POST /api/users HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "田中太郎",
+  "email": "tanaka@example.com",
+  "role": "user"
+}
+
+// レスポンス
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+  "id": 123,
+  "name": "田中太郎",
+  "email": "tanaka@example.com",
+  "role": "user",
+  "createdAt": "2026-02-04T10:30:00Z"
+}</code></pre>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      AIがやりがちな間違い
+    </div>
+<pre><code>// ❌ POSTで200を返す
+POST /users
+→ 200 OK  // 201 Createdが正しい
+
+// ❌ DELETEでボディを返す
+DELETE /users/123
+→ 200 OK { "message": "deleted" }
+// 204 No Content（ボディなし）が一般的
+
+// ❌ 認証エラーで403を返す
+→ 403 Forbidden  // 認証切れは401、認可エラーは403</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>不適切なステータスコード</strong>：全部200で返していないか</li>
+      <li><strong>HTTPメソッドの誤用</strong>：GETで更新、POSTで取得</li>
+      <li><strong>レスポンス形式の不統一</strong>：エラー時とスキーマが違う</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-int3-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>新規リソース作成成功時に返すべきステータスコードは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int3-1" style="display:none;">
+      A. 200 OK
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-int3-1" style="display:none;">
+      B. 201 Created
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int3-1" style="display:none;">
+      C. 204 No Content
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-int3-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-int3-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>「認証されていない（ログインしていない）」場合のステータスコードは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-int3-2" style="display:none;">
+      A. 401 Unauthorized
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int3-2" style="display:none;">
+      B. 403 Forbidden
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int3-2" style="display:none;">
+      C. 400 Bad Request
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-int3-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('int3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="int4">
+  <h1>Supertest / REST Assured</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Supertest（Node.js向けAPIテストツール）</li>
+      <li>REST Assured（Java向けAPIテストツール）</li>
+      <li>実践的なテストコードの書き方</li>
+    </ul>
+  </div>
+
+  <h2>Supertestとは</h2>
+
+  <p>
+    <strong>Supertest</strong>は、Node.js/ExpressアプリケーションのHTTPテストライブラリです。<br>
+    サーバーを起動せずにAPIをテストできます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💻</span>
+      Supertestの基本
+    </div>
+<pre><code>import request from 'supertest';
+import app from '../src/app';
+
+describe('User API', () => {
+  describe('GET /users', () => {
+    it('ユーザー一覧を取得できる', async () => {
+      const response = await request(app)
+        .get('/users')
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(response.body).toBeInstanceOf(Array);
+    });
+  });
+
+  describe('POST /users', () => {
+    it('新規ユーザーを作成できる', async () => {
+      const newUser = {
+        name: '田中太郎',
+        email: 'tanaka@example.com'
+      };
+
+      const response = await request(app)
+        .post('/users')
+        .send(newUser)
+        .expect('Content-Type', /json/)
+        .expect(201);
+
+      expect(response.body.id).toBeDefined();
+      expect(response.body.name).toBe(newUser.name);
+    });
+
+    it('必須フィールドがない場合は400を返す', async () => {
+      await request(app)
+        .post('/users')
+        .send({ name: '田中' }) // emailがない
+        .expect(400);
+    });
+  });
+});</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔧</span>
+      認証付きリクエストのテスト
+    </div>
+<pre><code>describe('認証が必要なAPI', () => {
+  let authToken: string;
+
+  beforeAll(async () => {
+    // ログインしてトークンを取得
+    const loginResponse = await request(app)
+      .post('/auth/login')
+      .send({ email: 'admin@example.com', password: 'password' });
+
+    authToken = loginResponse.body.token;
+  });
+
+  it('認証済みでプロフィールを取得できる', async () => {
+    await request(app)
+      .get('/profile')
+      .set('Authorization', `Bearer ${authToken}`)
+      .expect(200);
+  });
+
+  it('認証なしは401を返す', async () => {
+    await request(app)
+      .get('/profile')
+      .expect(401);
+  });
+});</code></pre>
+  </div>
+
+  <h2>REST Assured（Java）</h2>
+
+  <p>
+    <strong>REST Assured</strong>は、Java向けのAPIテストライブラリです。<br>
+    流暢なAPIで読みやすいテストが書けます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">☕</span>
+      REST Assuredの基本（Java）
+    </div>
+<pre><code>import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
+
+public class UserApiTest {
+
+    @BeforeAll
+    static void setup() {
+        RestAssured.baseURI = "http://localhost:8080";
+    }
+
+    @Test
+    void ユーザー一覧を取得できる() {
+        given()
+            .contentType(ContentType.JSON)
+        .when()
+            .get("/users")
+        .then()
+            .statusCode(200)
+            .body("$", hasSize(greaterThan(0)))
+            .body("[0].name", notNullValue());
+    }
+
+    @Test
+    void 新規ユーザーを作成できる() {
+        String requestBody = """
+            {
+                "name": "田中太郎",
+                "email": "tanaka@example.com"
+            }
+            """;
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(requestBody)
+        .when()
+            .post("/users")
+        .then()
+            .statusCode(201)
+            .body("id", notNullValue())
+            .body("name", equalTo("田中太郎"));
+    }
+}</code></pre>
+  </div>
+
+  <h2>比較：Supertest vs REST Assured</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>観点</th>
+        <th>Supertest (Node.js)</th>
+        <th>REST Assured (Java)</th>
+      </tr>
+      <tr>
+        <td>言語</td>
+        <td>JavaScript/TypeScript</td>
+        <td>Java/Kotlin</td>
+      </tr>
+      <tr>
+        <td>スタイル</td>
+        <td>async/await + チェーン</td>
+        <td>given/when/then (BDD)</td>
+      </tr>
+      <tr>
+        <td>サーバー起動</td>
+        <td>不要（インメモリ）</td>
+        <td>必要（実サーバー）</td>
+      </tr>
+      <tr>
+        <td>適用範囲</td>
+        <td>Express/Fastify等</td>
+        <td>任意のREST API</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>ステータスコードのみの検証</strong>：ボディの内容も確認すべき</li>
+      <li><strong>ハードコードされたURL</strong>：環境変数やbaseURIを使う</li>
+      <li><strong>テスト間の依存</strong>：順番に依存しないよう独立させる</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-int4-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Supertestでリクエストヘッダーを設定するメソッドは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int4-1" style="display:none;">
+      A. .header()
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-int4-1" style="display:none;">
+      B. .set()
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int4-1" style="display:none;">
+      C. .add()
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-int4-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('int4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="int5">
+  <h1>契約テスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>契約テスト（Contract Testing）とは</li>
+      <li>Pactによるコンシューマ駆動契約</li>
+      <li>プロバイダ/コンシューマの役割</li>
+    </ul>
+  </div>
+
+  <h2>契約テストとは</h2>
+
+  <p>
+    <strong>契約テスト</strong>とは、サービス間の「約束事」が守られているかを検証するテストです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：賃貸契約
+    </div>
+    <p>
+      大家さん（プロバイダ）と借主（コンシューマ）は<strong>契約書</strong>で約束を交わします。
+    </p>
+    <ul style="margin:0;">
+      <li>大家：「毎月1日に家賃を受け取る」</li>
+      <li>借主：「毎月1日に家賃を払う」</li>
+    </ul>
+    <p style="margin:0;">
+      この「契約」が守られているかを自動でチェックするのが契約テストです。
+    </p>
+  </div>
+
+  <svg viewBox="0 0 600 250" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="契約テストの仕組み">
+    <title>プロバイダとコンシューマの契約</title>
+
+    <!-- Consumer -->
+    <rect x="50" y="50" width="150" height="80" rx="10" fill="#3b82f6"/>
+    <text x="125" y="85" text-anchor="middle" fill="white" font-size="14" font-weight="bold">Consumer</text>
+    <text x="125" y="105" text-anchor="middle" fill="#dbeafe" font-size="11">（フロントエンド等）</text>
+
+    <!-- Contract -->
+    <rect x="230" y="60" width="140" height="60" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+    <text x="300" y="85" text-anchor="middle" fill="#92400e" font-size="12" font-weight="bold">契約（Contract）</text>
+    <text x="300" y="102" text-anchor="middle" fill="#92400e" font-size="10">期待するリクエスト/レスポンス</text>
+
+    <!-- Provider -->
+    <rect x="400" y="50" width="150" height="80" rx="10" fill="#10b981"/>
+    <text x="475" y="85" text-anchor="middle" fill="white" font-size="14" font-weight="bold">Provider</text>
+    <text x="475" y="105" text-anchor="middle" fill="#d1fae5" font-size="11">（バックエンドAPI）</text>
+
+    <!-- Arrows -->
+    <path d="M200,90 L230,90" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-int)"/>
+    <path d="M370,90 L400,90" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-int)"/>
+
+    <!-- Labels -->
+    <text x="215" y="75" text-anchor="middle" fill="currentColor" font-size="9">契約を</text>
+    <text x="215" y="85" text-anchor="middle" fill="currentColor" font-size="9">定義</text>
+    <text x="385" y="75" text-anchor="middle" fill="currentColor" font-size="9">契約を</text>
+    <text x="385" y="85" text-anchor="middle" fill="currentColor" font-size="9">検証</text>
+
+    <!-- Workflow -->
+    <rect x="50" y="160" width="500" height="70" rx="8" fill="none" stroke="#ddd" stroke-width="1"/>
+    <text x="300" y="180" text-anchor="middle" fill="currentColor" font-size="11" font-weight="bold">コンシューマ駆動契約（CDC）のフロー</text>
+    <text x="120" y="205" text-anchor="middle" fill="#3b82f6" font-size="10">1. Consumerが</text>
+    <text x="120" y="218" text-anchor="middle" fill="#3b82f6" font-size="10">契約を作成</text>
+    <text x="300" y="205" text-anchor="middle" fill="#f59e0b" font-size="10">2. 契約を</text>
+    <text x="300" y="218" text-anchor="middle" fill="#f59e0b" font-size="10">Pact Brokerに共有</text>
+    <text x="480" y="205" text-anchor="middle" fill="#10b981" font-size="10">3. Providerが</text>
+    <text x="480" y="218" text-anchor="middle" fill="#10b981" font-size="10">契約を検証</text>
+  </svg>
+
+  <h2>Pactによる契約テスト</h2>
+
+  <p>
+    <strong>Pact</strong>は、最も広く使われている契約テストツールです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📝</span>
+      Consumer側のテスト（契約を定義）
+    </div>
+<pre><code>// consumer.spec.ts（フロントエンド側）
+import { PactV3, MatchersV3 } from '@pact-foundation/pact';
+
+const provider = new PactV3({
+  consumer: 'Frontend',
+  provider: 'UserAPI'
+});
+
+describe('User API Contract', () => {
+  it('ユーザー取得の契約', async () => {
+    // 期待するリクエスト/レスポンスを定義
+    await provider
+      .given('ユーザーID=123が存在する')
+      .uponReceiving('GET /users/123')
+      .withRequest({
+        method: 'GET',
+        path: '/users/123'
+      })
+      .willRespondWith({
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: MatchersV3.like({
+          id: 123,
+          name: MatchersV3.string('田中太郎'),
+          email: MatchersV3.email()
+        })
+      });
+
+    await provider.executeTest(async (mockServer) => {
+      // mockServerに対してリクエストを実行
+      const response = await fetch(`${mockServer.url}/users/123`);
+      const user = await response.json();
+
+      expect(user.id).toBe(123);
+    });
+  });
+});</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔧</span>
+      Provider側のテスト（契約を検証）
+    </div>
+<pre><code>// provider.spec.ts（バックエンド側）
+import { Verifier } from '@pact-foundation/pact';
+
+describe('Provider Verification', () => {
+  it('すべての契約を満たす', async () => {
+    const verifier = new Verifier({
+      providerBaseUrl: 'http://localhost:3000',
+      pactBrokerUrl: 'https://your-broker.pact.io',
+      provider: 'UserAPI',
+      providerVersion: process.env.GIT_COMMIT,
+
+      // 状態のセットアップ
+      stateHandlers: {
+        'ユーザーID=123が存在する': async () => {
+          // テストデータをDBに投入
+          await db.users.create({ id: 123, name: '田中太郎' });
+        }
+      }
+    });
+
+    await verifier.verifyProvider();
+  });
+});</code></pre>
+  </div>
+
+  <h2>契約テストのメリット</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      なぜ契約テストが必要か
+    </div>
+    <ul>
+      <li><strong>独立したデプロイ</strong>：全サービスを同時にテストしなくていい</li>
+      <li><strong>早期発見</strong>：本番前にAPI仕様の不整合を検出</li>
+      <li><strong>ドキュメント</strong>：契約がそのまま仕様書になる</li>
+      <li><strong>安心感</strong>：プロバイダの変更がコンシューマを壊さない</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>マッチャーの誤用</strong>：exact matchよりlike/regexを使うべき場面</li>
+      <li><strong>状態のセットアップ漏れ</strong>：given()に対応するstateHandlersがない</li>
+      <li><strong>契約の肥大化</strong>：1契約に多すぎるシナリオ</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-int5-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>コンシューマ駆動契約（CDC）で、契約を最初に定義するのは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-int5-1" style="display:none;">
+      A. Consumer（利用側）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int5-1" style="display:none;">
+      B. Provider（提供側）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int5-1" style="display:none;">
+      C. Pact Broker
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-int5-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-int5-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>契約テストの最大のメリットは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int5-2" style="display:none;">
+      A. テスト実行速度が速い
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-int5-2" style="display:none;">
+      B. サービス間のAPI仕様の不整合を早期発見できる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int5-2" style="display:none;">
+      C. UIのデザインをテストできる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-int5-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('int5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="int6">
+  <h1>DBテスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>テスト用データベースの構築</li>
+      <li>トランザクションとロールバック戦略</li>
+      <li>テストデータの分離</li>
+    </ul>
+  </div>
+
+  <h2>なぜDBテストが重要か</h2>
+
+  <p>
+    実際のDBを使ったテストは、モックでは検出できない問題を発見します。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      モックでは検出できない問題
+    </div>
+    <ul>
+      <li><strong>SQL構文エラー</strong>：実行して初めてわかる</li>
+      <li><strong>制約違反</strong>：UNIQUE、NOT NULL、外部キー</li>
+      <li><strong>N+1問題</strong>：クエリ数が爆発する</li>
+      <li><strong>トランザクション境界</strong>：ロールバックの挙動</li>
+    </ul>
+  </div>
+
+  <h2>テスト用データベースの構築</h2>
+
+  <svg viewBox="0 0 600 200" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="テストDB戦略">
+    <title>テストデータベースの3つの戦略</title>
+
+    <!-- In-Memory -->
+    <rect x="30" y="30" width="160" height="100" rx="10" fill="#3b82f6"/>
+    <text x="110" y="55" text-anchor="middle" fill="white" font-size="12" font-weight="bold">In-Memory DB</text>
+    <text x="110" y="75" text-anchor="middle" fill="#dbeafe" font-size="10">SQLite / H2</text>
+    <text x="110" y="100" text-anchor="middle" fill="#dbeafe" font-size="9">速度: 最速</text>
+    <text x="110" y="115" text-anchor="middle" fill="#dbeafe" font-size="9">本番再現: 低</text>
+
+    <!-- Docker -->
+    <rect x="220" y="30" width="160" height="100" rx="10" fill="#10b981"/>
+    <text x="300" y="55" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Docker Container</text>
+    <text x="300" y="75" text-anchor="middle" fill="#d1fae5" font-size="10">PostgreSQL / MySQL</text>
+    <text x="300" y="100" text-anchor="middle" fill="#d1fae5" font-size="9">速度: 中</text>
+    <text x="300" y="115" text-anchor="middle" fill="#d1fae5" font-size="9">本番再現: 高</text>
+
+    <!-- Shared Test DB -->
+    <rect x="410" y="30" width="160" height="100" rx="10" fill="#f59e0b"/>
+    <text x="490" y="55" text-anchor="middle" fill="white" font-size="12" font-weight="bold">共有テストDB</text>
+    <text x="490" y="75" text-anchor="middle" fill="#fef3c7" font-size="10">専用サーバー</text>
+    <text x="490" y="100" text-anchor="middle" fill="#fef3c7" font-size="9">速度: 遅</text>
+    <text x="490" y="115" text-anchor="middle" fill="#fef3c7" font-size="9">本番再現: 最高</text>
+
+    <!-- Recommendation -->
+    <rect x="220" y="150" width="160" height="35" rx="5" fill="#dcfce7" stroke="#10b981" stroke-width="2"/>
+    <text x="300" y="172" text-anchor="middle" fill="#065f46" font-size="11" font-weight="bold">推奨: Testcontainers</text>
+  </svg>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🐳</span>
+      Testcontainersの使用例
+    </div>
+<pre><code>// Node.js + Testcontainers
+import { PostgreSqlContainer } from '@testcontainers/postgresql';
+
+describe('UserRepository', () => {
+  let container: StartedPostgreSqlContainer;
+  let db: Database;
+
+  beforeAll(async () => {
+    // Dockerコンテナを起動
+    container = await new PostgreSqlContainer()
+      .withDatabase('testdb')
+      .start();
+
+    // 接続
+    db = await Database.connect(container.getConnectionUri());
+
+    // マイグレーション実行
+    await db.migrate();
+  }, 60000); // タイムアウトを長めに
+
+  afterAll(async () => {
+    await db.close();
+    await container.stop();
+  });
+
+  it('ユーザーを保存して取得できる', async () => {
+    const repo = new UserRepository(db);
+
+    const created = await repo.create({
+      name: '田中',
+      email: 'tanaka@example.com'
+    });
+
+    const found = await repo.findById(created.id);
+    expect(found.name).toBe('田中');
+  });
+});</code></pre>
+  </div>
+
+  <h2>トランザクションロールバック戦略</h2>
+
+  <p>
+    テスト後のデータクリーンアップには<strong>2つの戦略</strong>があります。
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">トランザクションロールバック</div>
+<pre><code>beforeEach(async () => {
+  await db.query('BEGIN');
+});
+
+afterEach(async () => {
+  await db.query('ROLLBACK');
+});
+
+it('テスト', async () => {
+  // INSERT/UPDATE/DELETE
+  // → ROLLBACKで元に戻る
+});</code></pre>
+      <p>利点: 高速、確実</p>
+      <p>欠点: トランザクション境界のテストが難しい</p>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">テーブルトランケート</div>
+<pre><code>afterEach(async () => {
+  await db.query('TRUNCATE users CASCADE');
+});
+
+it('テスト', async () => {
+  // INSERT/UPDATE/DELETE
+  // → TRUNCATEで全削除
+});</code></pre>
+      <p>利点: 実際のコミットをテスト可能</p>
+      <p>欠点: やや遅い</p>
+    </div>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>本番DBに接続</strong>：テスト用DB URLが環境変数で分離されているか</li>
+      <li><strong>クリーンアップ漏れ</strong>：テストデータが残っていないか</li>
+      <li><strong>テスト間の依存</strong>：順番に依存していないか</li>
+      <li><strong>接続リーク</strong>：afterAllでconnection.close()しているか</li>
+    </ul>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      AIがやりがちな間違い
+    </div>
+<pre><code>// ❌ 本番DBのURLをハードコード
+const db = new Database('postgresql://prod-server/maindb');
+
+// ❌ クリーンアップなし
+it('ユーザー作成', async () => {
+  await repo.create({ name: 'テスト' });
+  // afterEachでのクリーンアップがない
+});
+
+// ❌ 接続を閉じない
+afterAll(() => {
+  // db.close() を忘れている
+});</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-int6-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>テストデータのクリーンアップで最も高速な方法は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-int6-1" style="display:none;">
+      A. トランザクションロールバック
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int6-1" style="display:none;">
+      B. TRUNCATE TABLE
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int6-1" style="display:none;">
+      C. DELETE FROM
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-int6-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('int6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="int7">
+  <h1>外部サービスのテスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>WireMockによるモックサーバー</li>
+      <li>レコード＆リプレイパターン</li>
+      <li>外部API依存のテスト戦略</li>
+    </ul>
+  </div>
+
+  <h2>外部サービステストの課題</h2>
+
+  <p>
+    外部APIに依存するコードのテストには<strong>課題</strong>があります。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      外部APIをそのままテストする問題
+    </div>
+    <ul>
+      <li><strong>不安定</strong>：外部サービスの障害でテストが失敗</li>
+      <li><strong>遅い</strong>：ネットワーク遅延</li>
+      <li><strong>コスト</strong>：API呼び出し課金</li>
+      <li><strong>制御不能</strong>：エラーケースを再現できない</li>
+    </ul>
+  </div>
+
+  <svg viewBox="0 0 600 180" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="モックサーバーの仕組み">
+    <title>WireMockによる外部APIのモック</title>
+
+    <!-- Your App -->
+    <rect x="50" y="60" width="120" height="60" rx="10" fill="#3b82f6"/>
+    <text x="110" y="95" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Your App</text>
+
+    <!-- Arrow to Mock -->
+    <path d="M170,90 L250,90" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-int)"/>
+    <text x="210" y="80" text-anchor="middle" fill="currentColor" font-size="10">テスト時</text>
+
+    <!-- WireMock -->
+    <rect x="260" y="60" width="120" height="60" rx="10" fill="#10b981"/>
+    <text x="320" y="85" text-anchor="middle" fill="white" font-size="12" font-weight="bold">WireMock</text>
+    <text x="320" y="102" text-anchor="middle" fill="#d1fae5" font-size="10">モックサーバー</text>
+
+    <!-- Arrow to Real (dashed) -->
+    <path d="M380,90 L460,90" stroke="#9ca3af" stroke-width="2" stroke-dasharray="5,5"/>
+    <text x="420" y="80" text-anchor="middle" fill="#9ca3af" font-size="10">本番時</text>
+
+    <!-- Real API -->
+    <rect x="470" y="60" width="120" height="60" rx="10" fill="#f59e0b"/>
+    <text x="530" y="85" text-anchor="middle" fill="white" font-size="12" font-weight="bold">外部API</text>
+    <text x="530" y="102" text-anchor="middle" fill="#fef3c7" font-size="10">Stripe, Slack等</text>
+
+    <!-- Legend -->
+    <text x="300" y="160" text-anchor="middle" fill="currentColor" font-size="11">テスト時は WireMock が外部APIをシミュレート</text>
+  </svg>
+
+  <h2>WireMockの使用</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔧</span>
+      WireMock（Node.js版）の例
+    </div>
+<pre><code>import { WireMock } from 'wiremock-captain';
+
+describe('PaymentService', () => {
+  let wireMock: WireMock;
+
+  beforeAll(async () => {
+    wireMock = new WireMock('http://localhost:8080');
+  });
+
+  beforeEach(async () => {
+    await wireMock.clearAll();
+  });
+
+  it('決済APIを呼び出せる', async () => {
+    // モックの設定
+    await wireMock.register({
+      request: {
+        method: 'POST',
+        url: '/v1/payments'
+      },
+      response: {
+        status: 200,
+        body: JSON.stringify({
+          id: 'pay_123',
+          status: 'succeeded'
+        }),
+        headers: { 'Content-Type': 'application/json' }
+      }
+    });
+
+    // テスト実行
+    const service = new PaymentService('http://localhost:8080');
+    const result = await service.charge({ amount: 1000 });
+
+    expect(result.status).toBe('succeeded');
+  });
+
+  it('決済APIがエラーを返す場合', async () => {
+    // エラーケースのモック
+    await wireMock.register({
+      request: {
+        method: 'POST',
+        url: '/v1/payments'
+      },
+      response: {
+        status: 402,
+        body: JSON.stringify({
+          error: { message: 'Card declined' }
+        })
+      }
+    });
+
+    const service = new PaymentService('http://localhost:8080');
+
+    await expect(service.charge({ amount: 1000 }))
+      .rejects.toThrow('Card declined');
+  });
+});</code></pre>
+  </div>
+
+  <h2>レコード＆リプレイ</h2>
+
+  <p>
+    <strong>レコード＆リプレイ</strong>は、実際のAPIレスポンスを記録して再利用するパターンです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📼</span>
+      Nockによるレコード＆リプレイ（Node.js）
+    </div>
+<pre><code>import nock from 'nock';
+
+// レコードモード（初回実行時）
+nock.recorder.rec({
+  output_objects: true,
+  dont_print: true
+});
+
+// API呼び出し
+await callExternalAPI();
+
+// 記録を保存
+const recordings = nock.recorder.play();
+fs.writeFileSync('fixtures/api-recordings.json', JSON.stringify(recordings));
+
+// リプレイモード（2回目以降）
+const fixtures = JSON.parse(fs.readFileSync('fixtures/api-recordings.json'));
+nock.define(fixtures);
+
+// テスト実行（記録されたレスポンスが返る）
+const result = await callExternalAPI();</code></pre>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      レコード＆リプレイのメリット
+    </div>
+    <ul>
+      <li><strong>リアルなデータ</strong>：実際のAPIレスポンスを使用</li>
+      <li><strong>手動設定不要</strong>：モック定義を自動生成</li>
+      <li><strong>更新が簡単</strong>：再レコードするだけ</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>機密情報の記録</strong>：APIキー、トークンがフィクスチャに含まれていないか</li>
+      <li><strong>古いフィクスチャ</strong>：APIが変更されて互換性がなくなっていないか</li>
+      <li><strong>モック漏れ</strong>：一部のリクエストが実際のAPIに飛んでいないか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-int7-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>外部APIのモックを使うメリットとして最も重要なのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int7-1" style="display:none;">
+      A. テストコードが短くなる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-int7-1" style="display:none;">
+      B. テストの安定性と再現性が向上する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int7-1" style="display:none;">
+      C. 本番環境のバグが見つかる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-int7-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('int7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="int8">
+  <h1>認証・認可テスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>JWTトークンのテスト</li>
+      <li>ロールベースアクセス制御のテスト</li>
+      <li>セキュリティテストの観点</li>
+    </ul>
+  </div>
+
+  <h2>認証と認可の違い</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">認証（Authentication）</div>
+      <p>「あなたは誰？」を確認</p>
+      <ul>
+        <li>ログイン/ログアウト</li>
+        <li>JWTトークン検証</li>
+        <li>セッション管理</li>
+      </ul>
+      <p>失敗時: <strong>401 Unauthorized</strong></p>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">認可（Authorization）</div>
+      <p>「その操作は許可されている？」を確認</p>
+      <ul>
+        <li>ロールベース制御（RBAC）</li>
+        <li>リソース所有権確認</li>
+        <li>権限チェック</li>
+      </ul>
+      <p>失敗時: <strong>403 Forbidden</strong></p>
+    </div>
+  </div>
+
+  <h2>JWTテスト</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔐</span>
+      JWTトークンのテスト例
+    </div>
+<pre><code>import jwt from 'jsonwebtoken';
+import request from 'supertest';
+
+describe('JWT認証テスト', () => {
+  const SECRET = 'test-secret';
+
+  // テスト用トークン生成ヘルパー
+  const createToken = (payload: object, options = {}) => {
+    return jwt.sign(payload, SECRET, { expiresIn: '1h', ...options });
+  };
+
+  it('有効なトークンでアクセスできる', async () => {
+    const token = createToken({ userId: 123, role: 'user' });
+
+    await request(app)
+      .get('/api/profile')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+  });
+
+  it('トークンなしは401を返す', async () => {
+    await request(app)
+      .get('/api/profile')
+      .expect(401);
+  });
+
+  it('期限切れトークンは401を返す', async () => {
+    const expiredToken = createToken(
+      { userId: 123 },
+      { expiresIn: '-1h' } // 1時間前に期限切れ
+    );
+
+    await request(app)
+      .get('/api/profile')
+      .set('Authorization', `Bearer ${expiredToken}`)
+      .expect(401);
+  });
+
+  it('改ざんされたトークンは401を返す', async () => {
+    const validToken = createToken({ userId: 123 });
+    // ペイロードを改ざん
+    const tamperedToken = validToken.slice(0, -5) + 'XXXXX';
+
+    await request(app)
+      .get('/api/profile')
+      .set('Authorization', `Bearer ${tamperedToken}`)
+      .expect(401);
+  });
+});</code></pre>
+  </div>
+
+  <h2>ロールベースアクセス制御（RBAC）テスト</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">👥</span>
+      RBACテストの例
+    </div>
+<pre><code>describe('ロールベースアクセス制御', () => {
+  const createUserToken = (role: string) => {
+    return jwt.sign({ userId: 1, role }, SECRET);
+  };
+
+  describe('管理者専用エンドポイント', () => {
+    it('adminロールはアクセス可能', async () => {
+      const adminToken = createUserToken('admin');
+
+      await request(app)
+        .get('/api/admin/users')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200);
+    });
+
+    it('userロールは403を返す', async () => {
+      const userToken = createUserToken('user');
+
+      await request(app)
+        .get('/api/admin/users')
+        .set('Authorization', `Bearer ${userToken}`)
+        .expect(403);
+    });
+
+    it('guestロールは403を返す', async () => {
+      const guestToken = createUserToken('guest');
+
+      await request(app)
+        .get('/api/admin/users')
+        .set('Authorization', `Bearer ${guestToken}`)
+        .expect(403);
+    });
+  });
+
+  describe('リソース所有権', () => {
+    it('自分のデータは取得できる', async () => {
+      const token = createUserToken('user');
+
+      await request(app)
+        .get('/api/users/1/profile') // 自分のID
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+    });
+
+    it('他人のデータは403を返す', async () => {
+      const token = createUserToken('user');
+
+      await request(app)
+        .get('/api/users/999/profile') // 他人のID
+        .set('Authorization', `Bearer ${token}`)
+        .expect(403);
+    });
+  });
+});</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点（セキュリティ重要）
+    </div>
+    <ul>
+      <li><strong>認証バイパス</strong>：トークンなしでアクセスできるパスがないか</li>
+      <li><strong>権限昇格</strong>：userがadmin操作できないか</li>
+      <li><strong>IDOR</strong>：他人のリソースにアクセスできないか</li>
+      <li><strong>トークン検証の甘さ</strong>：署名検証、期限チェックが適切か</li>
+    </ul>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      AIがやりがちな間違い
+    </div>
+<pre><code>// ❌ 認証と認可を混同
+if (!token) {
+  return res.status(403).json({ error: 'Forbidden' });
+  // 正しくは 401 Unauthorized
+}
+
+// ❌ 権限チェック漏れ
+app.delete('/api/users/:id', authenticate, async (req, res) => {
+  await userService.delete(req.params.id);
+  // 誰でも他人を削除できてしまう！
+});
+
+// ❌ JWTの期限チェック漏れ
+const decoded = jwt.decode(token); // verify()を使うべき！
+// decode()は署名を検証しない</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-int8-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>「ログインしているが、その操作の権限がない」場合のステータスコードは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int8-1" style="display:none;">
+      A. 401 Unauthorized
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-int8-1" style="display:none;">
+      B. 403 Forbidden
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int8-1" style="display:none;">
+      C. 400 Bad Request
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-int8-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-int8-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>JWTの署名を検証するために使うべきメソッドは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int8-2" style="display:none;">
+      A. jwt.decode()
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-int8-2" style="display:none;">
+      B. jwt.verify()
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int8-2" style="display:none;">
+      C. jwt.parse()
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-int8-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('int8')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="int9">
+  <h1>エラーハンドリングテスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>異常系テストの重要性</li>
+      <li>タイムアウトのテスト</li>
+      <li>リトライロジックのテスト</li>
+    </ul>
+  </div>
+
+  <h2>なぜ異常系テストが重要か</h2>
+
+  <p>
+    本番環境では、<strong>正常系より異常系の方が多く発生</strong>します。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      本番で起きる異常
+    </div>
+    <ul>
+      <li><strong>ネットワーク障害</strong>：タイムアウト、接続切断</li>
+      <li><strong>外部サービス障害</strong>：5xx エラー、レート制限</li>
+      <li><strong>データ不整合</strong>：想定外の null、不正なフォーマット</li>
+      <li><strong>リソース枯渇</strong>：メモリ不足、ディスク容量</li>
+    </ul>
+  </div>
+
+  <svg viewBox="0 0 500 150" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="テストカバレッジ">
+    <title>正常系と異常系のテストカバレッジ</title>
+
+    <!-- 正常系 -->
+    <rect x="50" y="40" width="100" height="80" rx="8" fill="#22c55e"/>
+    <text x="100" y="75" text-anchor="middle" fill="white" font-size="12" font-weight="bold">正常系</text>
+    <text x="100" y="95" text-anchor="middle" fill="#dcfce7" font-size="10">Happy Path</text>
+    <text x="100" y="135" text-anchor="middle" fill="currentColor" font-size="10">20%の時間</text>
+
+    <!-- 異常系 -->
+    <rect x="200" y="20" width="250" height="100" rx="8" fill="#ef4444"/>
+    <text x="325" y="55" text-anchor="middle" fill="white" font-size="12" font-weight="bold">異常系（エッジケース）</text>
+    <text x="325" y="80" text-anchor="middle" fill="#fee2e2" font-size="10">エラー、タイムアウト、境界値...</text>
+    <text x="325" y="135" text-anchor="middle" fill="currentColor" font-size="10">80%の時間をかけるべき</text>
+  </svg>
+
+  <h2>タイムアウトのテスト</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⏱️</span>
+      タイムアウトテストの例
+    </div>
+<pre><code>describe('タイムアウト処理', () => {
+  it('API呼び出しが5秒でタイムアウトする', async () => {
+    // WireMockで遅延をシミュレート
+    await wireMock.register({
+      request: { method: 'GET', url: '/slow-api' },
+      response: {
+        status: 200,
+        fixedDelayMilliseconds: 10000 // 10秒遅延
+      }
+    });
+
+    const service = new ExternalApiService({
+      timeout: 5000 // 5秒タイムアウト
+    });
+
+    await expect(service.fetch('/slow-api'))
+      .rejects.toThrow('Request timeout');
+  });
+
+  it('タイムアウト後に適切にクリーンアップする', async () => {
+    const service = new ExternalApiService({ timeout: 100 });
+
+    try {
+      await service.fetch('/slow-api');
+    } catch (e) {
+      // タイムアウト後
+    }
+
+    // コネクションがリークしていないか確認
+    expect(service.getActiveConnections()).toBe(0);
+  });
+});</code></pre>
+  </div>
+
+  <h2>リトライロジックのテスト</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔄</span>
+      リトライテストの例
+    </div>
+<pre><code>describe('リトライロジック', () => {
+  it('一時的エラーは3回までリトライする', async () => {
+    let callCount = 0;
+
+    // 最初の2回は失敗、3回目で成功
+    jest.spyOn(httpClient, 'get').mockImplementation(() => {
+      callCount++;
+      if (callCount < 3) {
+        return Promise.reject(new Error('503 Service Unavailable'));
+      }
+      return Promise.resolve({ data: 'success' });
+    });
+
+    const service = new ResilientService({ maxRetries: 3 });
+    const result = await service.fetch('/api/data');
+
+    expect(result.data).toBe('success');
+    expect(callCount).toBe(3);
+  });
+
+  it('永続的エラーはリトライしない', async () => {
+    let callCount = 0;
+
+    jest.spyOn(httpClient, 'get').mockImplementation(() => {
+      callCount++;
+      return Promise.reject(new Error('404 Not Found'));
+    });
+
+    const service = new ResilientService({ maxRetries: 3 });
+
+    await expect(service.fetch('/api/data'))
+      .rejects.toThrow('404 Not Found');
+
+    // 404はリトライしない（1回のみ）
+    expect(callCount).toBe(1);
+  });
+
+  it('指数バックオフで待機時間が増える', async () => {
+    const delays: number[] = [];
+    jest.spyOn(global, 'setTimeout').mockImplementation((fn, delay) => {
+      delays.push(delay as number);
+      (fn as Function)();
+      return 0 as any;
+    });
+
+    // 3回失敗するモック
+    jest.spyOn(httpClient, 'get').mockRejectedValue(new Error('503'));
+
+    const service = new ResilientService({
+      maxRetries: 3,
+      backoff: 'exponential',
+      initialDelay: 100
+    });
+
+    try {
+      await service.fetch('/api/data');
+    } catch (e) {}
+
+    // 100ms → 200ms → 400ms（指数的に増加）
+    expect(delays).toEqual([100, 200, 400]);
+  });
+});</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>リトライ対象の判断</strong>：4xx は即失敗、5xx はリトライが基本</li>
+      <li><strong>無限リトライ</strong>：必ず上限を設ける</li>
+      <li><strong>バックオフなし</strong>：障害時にサーバーを殴り続けてしまう</li>
+      <li><strong>タイムアウト設定なし</strong>：永遠に待ち続ける可能性</li>
+    </ul>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      AIがやりがちな間違い
+    </div>
+<pre><code>// ❌ すべてのエラーでリトライ
+try {
+  await fetch(url);
+} catch (e) {
+  return retry(url); // 404でもリトライしてしまう
+}
+
+// ❌ バックオフなしのリトライ
+for (let i = 0; i < 3; i++) {
+  try {
+    return await fetch(url);
+  } catch (e) {
+    // 即座にリトライ（サーバーに負荷をかける）
+  }
+}
+
+// ❌ タイムアウト設定なし
+const response = await fetch(url); // 永遠に待つ可能性</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-int9-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>リトライすべきHTTPステータスコードは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int9-1" style="display:none;">
+      A. 400 Bad Request
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int9-1" style="display:none;">
+      B. 404 Not Found
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-int9-1" style="display:none;">
+      C. 503 Service Unavailable
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-int9-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-int9-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>指数バックオフの目的は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int9-2" style="display:none;">
+      A. テストを高速化する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-int9-2" style="display:none;">
+      B. 障害中のサーバーへの負荷を軽減する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int9-2" style="display:none;">
+      C. メモリ使用量を削減する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-int9-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('int9')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="int10">
+  <h1>テストデータ管理</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ファクトリパターンによるテストデータ生成</li>
+      <li>シードデータの管理</li>
+      <li>テスト後のクリーンアップ戦略</li>
+    </ul>
+  </div>
+
+  <h2>テストデータ管理の課題</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      よくある問題
+    </div>
+    <ul>
+      <li><strong>ハードコード地獄</strong>：全テストに同じデータがベタ書き</li>
+      <li><strong>データの依存関係</strong>：テストAのデータがテストBに影響</li>
+      <li><strong>メンテナンス困難</strong>：スキーマ変更時に大量修正</li>
+      <li><strong>現実離れしたデータ</strong>：「test@test.com」では本番のバグを見逃す</li>
+    </ul>
+  </div>
+
+  <h2>ファクトリパターン</h2>
+
+  <p>
+    <strong>ファクトリ</strong>は、テストデータを生成する専用の関数/クラスです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏭</span>
+      ファクトリの実装例
+    </div>
+<pre><code>// factories/user.factory.ts
+import { faker } from '@faker-js/faker/locale/ja';
+
+interface UserData {
+  name?: string;
+  email?: string;
+  age?: number;
+  role?: 'admin' | 'user' | 'guest';
+}
+
+export const createUser = (overrides: UserData = {}): UserData => ({
+  name: faker.person.fullName(),
+  email: faker.internet.email(),
+  age: faker.number.int({ min: 18, max: 80 }),
+  role: 'user',
+  ...overrides // 上書き可能
+});
+
+// 使用例
+describe('UserService', () => {
+  it('ユーザーを作成できる', async () => {
+    // デフォルト値でリアルなデータ
+    const userData = createUser();
+    const user = await userService.create(userData);
+
+    expect(user.id).toBeDefined();
+  });
+
+  it('管理者を作成できる', async () => {
+    // roleだけ上書き
+    const adminData = createUser({ role: 'admin' });
+    const admin = await userService.create(adminData);
+
+    expect(admin.role).toBe('admin');
+  });
+
+  it('特定のメールでテスト', async () => {
+    // 必要なフィールドだけ指定
+    const userData = createUser({ email: 'specific@example.com' });
+    // ...
+  });
+});</code></pre>
+  </div>
+
+  <h2>シードデータ</h2>
+
+  <p>
+    <strong>シード</strong>は、テスト実行前にDBに投入する初期データです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🌱</span>
+      シードファイルの例
+    </div>
+<pre><code>// seeds/test-seed.ts
+import { createUser } from '../factories/user.factory';
+
+export const seedTestData = async (db: Database) => {
+  // 管理者（固定ID）
+  await db.users.create({
+    id: 1,
+    ...createUser({ role: 'admin', email: 'admin@test.com' })
+  });
+
+  // 一般ユーザー10人
+  const users = Array.from({ length: 10 }, (_, i) => ({
+    id: i + 2,
+    ...createUser()
+  }));
+  await db.users.createMany(users);
+
+  // 注文データ
+  const orders = users.slice(0, 5).map(user => ({
+    userId: user.id,
+    amount: faker.number.int({ min: 100, max: 10000 }),
+    status: 'completed'
+  }));
+  await db.orders.createMany(orders);
+};
+
+// テストで使用
+beforeAll(async () => {
+  await db.truncateAll();
+  await seedTestData(db);
+});</code></pre>
+  </div>
+
+  <h2>クリーンアップ戦略</h2>
+
+  <svg viewBox="0 0 600 200" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="クリーンアップ戦略">
+    <title>テストデータのクリーンアップ戦略比較</title>
+
+    <!-- 戦略1 -->
+    <rect x="30" y="30" width="160" height="80" rx="8" fill="#3b82f6"/>
+    <text x="110" y="55" text-anchor="middle" fill="white" font-size="11" font-weight="bold">beforeEach で</text>
+    <text x="110" y="72" text-anchor="middle" fill="white" font-size="11" font-weight="bold">クリーン</text>
+    <text x="110" y="95" text-anchor="middle" fill="#dbeafe" font-size="9">各テスト前にリセット</text>
+
+    <!-- 戦略2 -->
+    <rect x="220" y="30" width="160" height="80" rx="8" fill="#10b981"/>
+    <text x="300" y="55" text-anchor="middle" fill="white" font-size="11" font-weight="bold">afterEach で</text>
+    <text x="300" y="72" text-anchor="middle" fill="white" font-size="11" font-weight="bold">クリーン</text>
+    <text x="300" y="95" text-anchor="middle" fill="#d1fae5" font-size="9">各テスト後に削除</text>
+
+    <!-- 戦略3 -->
+    <rect x="410" y="30" width="160" height="80" rx="8" fill="#f59e0b"/>
+    <text x="490" y="55" text-anchor="middle" fill="white" font-size="11" font-weight="bold">トランザクション</text>
+    <text x="490" y="72" text-anchor="middle" fill="white" font-size="11" font-weight="bold">ロールバック</text>
+    <text x="490" y="95" text-anchor="middle" fill="#fef3c7" font-size="9">コミットせず巻き戻し</text>
+
+    <!-- 推奨 -->
+    <rect x="30" y="130" width="540" height="50" rx="8" fill="#dcfce7" stroke="#10b981"/>
+    <text x="300" y="160" text-anchor="middle" fill="#065f46" font-size="11" font-weight="bold">推奨: beforeEach + トランザクションロールバック の組み合わせ</text>
+  </svg>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🧹</span>
+      クリーンアップの実装例
+    </div>
+<pre><code>// test-utils.ts
+export const setupTestDatabase = () => {
+  let transaction: Transaction;
+
+  beforeEach(async () => {
+    // トランザクション開始
+    transaction = await db.beginTransaction();
+
+    // シードデータ投入
+    await seedTestData(db);
+  });
+
+  afterEach(async () => {
+    // ロールバック（データを元に戻す）
+    await transaction.rollback();
+  });
+
+  return { db, transaction };
+};
+
+// テストファイルで使用
+describe('OrderService', () => {
+  const { db } = setupTestDatabase();
+
+  it('注文を作成できる', async () => {
+    const order = await orderService.create({
+      userId: 1,
+      amount: 1000
+    });
+
+    expect(order.id).toBeDefined();
+    // afterEachでロールバックされる
+  });
+});</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>ハードコードされたテストデータ</strong>：ファクトリを使うべき</li>
+      <li><strong>固定ID依存</strong>：id=1 に依存するテストは脆い</li>
+      <li><strong>クリーンアップ漏れ</strong>：テスト後にデータが残る</li>
+      <li><strong>テスト間の依存</strong>：順番に依存していないか</li>
+    </ul>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      AIがやりがちな間違い
+    </div>
+<pre><code>// ❌ ハードコードされたテストデータ
+const user = {
+  name: 'Test User',
+  email: 'test@test.com',  // 現実的でない
+  age: 20
+};
+
+// ❌ 固定ID依存
+it('ユーザー1の注文を取得', async () => {
+  const orders = await orderService.findByUserId(1);
+  // ユーザー1が存在する前提
+});
+
+// ❌ クリーンアップなし
+it('ユーザーを作成', async () => {
+  await userService.create({ email: 'new@test.com' });
+  // 次のテストでユニーク制約違反！
+});</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-int10-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>テストデータをファクトリパターンで生成するメリットは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int10-1" style="display:none;">
+      A. テスト実行速度が速くなる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-int10-1" style="display:none;">
+      B. スキーマ変更時の修正が1箇所で済む
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int10-1" style="display:none;">
+      C. データベースが不要になる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-int10-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-int10-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>テストデータのクリーンアップで最も確実な方法は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int10-2" style="display:none;">
+      A. テスト後に手動でDELETE
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-int10-2" style="display:none;">
+      B. トランザクションロールバック
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-int10-2" style="display:none;">
+      C. DBサーバーを再起動
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-int10-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('int10')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
