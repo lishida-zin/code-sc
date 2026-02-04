@@ -1,0 +1,929 @@
+<!-- ============================================
+     Level 8 Phase 8: 品質保証・品質管理
+     ============================================ -->
+
+<section id="qa1">
+  <h1>QA vs QC</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>QA（品質保証）とQC（品質管理）の違い</li>
+      <li>プロセス vs 検査</li>
+      <li>予防 vs 検出</li>
+    </ul>
+  </div>
+
+  <h2>QAとQCの違い</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      QA vs QC
+    </div>
+    <svg viewBox="0 0 500 200" style="width:100%;max-width:500px;display:block;margin:1rem auto;">
+      <!-- QA -->
+      <rect x="30" y="30" width="200" height="140" rx="10" fill="#3b82f6"/>
+      <text x="130" y="60" text-anchor="middle" fill="white" font-size="16" font-weight="bold">QA</text>
+      <text x="130" y="85" text-anchor="middle" fill="#e0e7ff" font-size="12">Quality Assurance</text>
+      <text x="130" y="110" text-anchor="middle" fill="white" font-size="11">品質保証</text>
+      <text x="130" y="135" text-anchor="middle" fill="#e0e7ff" font-size="10">プロセス改善</text>
+      <text x="130" y="155" text-anchor="middle" fill="#e0e7ff" font-size="10">予防的</text>
+
+      <!-- QC -->
+      <rect x="270" y="30" width="200" height="140" rx="10" fill="#10b981"/>
+      <text x="370" y="60" text-anchor="middle" fill="white" font-size="16" font-weight="bold">QC</text>
+      <text x="370" y="85" text-anchor="middle" fill="#d1fae5" font-size="12">Quality Control</text>
+      <text x="370" y="110" text-anchor="middle" fill="white" font-size="11">品質管理</text>
+      <text x="370" y="135" text-anchor="middle" fill="#d1fae5" font-size="10">製品検査</text>
+      <text x="370" y="155" text-anchor="middle" fill="#d1fae5" font-size="10">検出的</text>
+    </svg>
+  </div>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th></th>
+        <th>QA（品質保証）</th>
+        <th>QC（品質管理）</th>
+      </tr>
+      <tr>
+        <td><strong>焦点</strong></td>
+        <td>プロセス</td>
+        <td>プロダクト</td>
+      </tr>
+      <tr>
+        <td><strong>目的</strong></td>
+        <td>欠陥を予防する</td>
+        <td>欠陥を検出する</td>
+      </tr>
+      <tr>
+        <td><strong>タイミング</strong></td>
+        <td>開発プロセス全体</td>
+        <td>テストフェーズ</td>
+      </tr>
+      <tr>
+        <td><strong>活動例</strong></td>
+        <td>コードレビュー、CI/CD</td>
+        <td>テスト実行、バグ報告</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="quiz" id="quiz-qa1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>「欠陥を予防する」ことに焦点を当てるのは？</p>
+    <label class="quiz-option" data-correct="true" data-explanation="QA（品質保証）はプロセス改善によって欠陥を予防することに焦点を当てます。">
+      <input type="radio" name="q-qa1" style="display:none;">
+      <span>QA（品質保証）</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa1" style="display:none;">
+      <span>QC（品質管理）</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('qa1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="qa2">
+  <h1>パフォーマンステスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>パフォーマンステストの種類</li>
+      <li>負荷/ストレス/スパイクテスト</li>
+      <li>k6, JMeterの使い方</li>
+    </ul>
+  </div>
+
+  <h2>パフォーマンステストの種類</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>種類</th>
+        <th>目的</th>
+        <th>シナリオ</th>
+      </tr>
+      <tr>
+        <td><strong>負荷テスト</strong></td>
+        <td>通常負荷での性能</td>
+        <td>想定ユーザー数で動作確認</td>
+      </tr>
+      <tr>
+        <td><strong>ストレステスト</strong></td>
+        <td>限界性能の確認</td>
+        <td>限界まで負荷をかける</td>
+      </tr>
+      <tr>
+        <td><strong>スパイクテスト</strong></td>
+        <td>急激な負荷への対応</td>
+        <td>突然のアクセス増加</td>
+      </tr>
+      <tr>
+        <td><strong>耐久テスト</strong></td>
+        <td>長時間稼働の安定性</td>
+        <td>24時間以上の連続稼働</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>k6の例</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔧</span>
+      k6スクリプト
+    </div>
+<pre><code>import http from 'k6/http';
+import { check, sleep } from 'k6';
+
+export const options = {
+  vus: 100,  // 仮想ユーザー数
+  duration: '30s',  // テスト時間
+};
+
+export default function() {
+  const res = http.get('https://api.example.com/users');
+
+  check(res, {
+    'status is 200': (r) => r.status === 200,
+    'response time < 200ms': (r) => r.timings.duration < 200,
+  });
+
+  sleep(1);
+}</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-qa2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>急激なアクセス増加への対応をテストするのは？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa2" style="display:none;">
+      <span>負荷テスト</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa2" style="display:none;">
+      <span>ストレステスト</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="スパイクテストは突然のアクセス増加（スパイク）にシステムが耐えられるかをテストします。">
+      <input type="radio" name="q-qa2" style="display:none;">
+      <span>スパイクテスト</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('qa2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="qa3">
+  <h1>セキュリティテスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>セキュリティテストの種類</li>
+      <li>OWASP ZAPの使い方</li>
+      <li>脆弱性スキャン</li>
+    </ul>
+  </div>
+
+  <h2>セキュリティテストの種類</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>種類</th>
+        <th>内容</th>
+      </tr>
+      <tr>
+        <td><strong>SAST</strong></td>
+        <td>静的解析（コードスキャン）</td>
+      </tr>
+      <tr>
+        <td><strong>DAST</strong></td>
+        <td>動的解析（実行中スキャン）</td>
+      </tr>
+      <tr>
+        <td><strong>ペネトレーションテスト</strong></td>
+        <td>擬似攻撃による脆弱性発見</td>
+      </tr>
+      <tr>
+        <td><strong>依存関係スキャン</strong></td>
+        <td>ライブラリの脆弱性チェック</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>OWASP ZAP</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔧</span>
+      ZAPでできること
+    </div>
+    <ul>
+      <li>自動スキャン：よくある脆弱性を自動検出</li>
+      <li>手動テスト：プロキシとして動作し、リクエストを改変</li>
+      <li>CI/CD統合：パイプラインでセキュリティテスト</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      よく見つかる脆弱性
+    </div>
+    <ul>
+      <li><strong>XSS</strong>：クロスサイトスクリプティング</li>
+      <li><strong>SQLインジェクション</strong>：SQLの不正実行</li>
+      <li><strong>CSRF</strong>：クロスサイトリクエストフォージェリ</li>
+      <li><strong>認証の欠陥</strong>：セッション管理の不備</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-qa3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>コードを実行せずに解析するセキュリティテストは？</p>
+    <label class="quiz-option" data-correct="true" data-explanation="SAST（Static Application Security Testing）はコードを実行せずに静的に解析します。">
+      <input type="radio" name="q-qa3" style="display:none;">
+      <span>SAST</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa3" style="display:none;">
+      <span>DAST</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa3" style="display:none;">
+      <span>ペネトレーションテスト</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('qa3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="qa4">
+  <h1>アクセシビリティテスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>アクセシビリティテストの重要性</li>
+      <li>WCAG準拠</li>
+      <li>axeによる自動テスト</li>
+    </ul>
+  </div>
+
+  <h2>なぜアクセシビリティテストが必要か</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">👥</span>
+      対象ユーザー
+    </div>
+    <ul>
+      <li>視覚障害者（スクリーンリーダー使用）</li>
+      <li>色覚異常者</li>
+      <li>運動機能障害者（キーボードのみ操作）</li>
+      <li>高齢者</li>
+    </ul>
+  </div>
+
+  <h2>axeによる自動テスト</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔧</span>
+      axe-core + Playwright
+    </div>
+<pre><code>import { test, expect } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+
+test('ホームページのa11yチェック', async ({ page }) => {
+  await page.goto('/');
+
+  const results = await new AxeBuilder({ page }).analyze();
+
+  expect(results.violations).toEqual([]);
+});</code></pre>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      自動テストの限界
+    </div>
+    <p>
+      自動テストで検出できるのは約30%の問題のみ。<br>
+      手動テスト（スクリーンリーダー使用など）も必要。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-qa4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>アクセシビリティの自動テストで検出できる問題は全体の約何%？</p>
+    <label class="quiz-option" data-correct="true" data-explanation="自動テストで検出できるのは約30%。残りは手動テストやユーザビリティテストが必要です。">
+      <input type="radio" name="q-qa4" style="display:none;">
+      <span>30%</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa4" style="display:none;">
+      <span>70%</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa4" style="display:none;">
+      <span>100%</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('qa4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="qa5">
+  <h1>テストメトリクス</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>重要なテストメトリクス</li>
+      <li>欠陥密度、MTTR</li>
+      <li>メトリクスの正しい使い方</li>
+    </ul>
+  </div>
+
+  <h2>重要なメトリクス</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>メトリクス</th>
+        <th>計算方法</th>
+        <th>意味</th>
+      </tr>
+      <tr>
+        <td><strong>欠陥密度</strong></td>
+        <td>バグ数 / KLOC</td>
+        <td>コード品質の指標</td>
+      </tr>
+      <tr>
+        <td><strong>MTTR</strong></td>
+        <td>修復にかかる平均時間</td>
+        <td>障害復旧能力</td>
+      </tr>
+      <tr>
+        <td><strong>逃げ率</strong></td>
+        <td>本番バグ / 全バグ</td>
+        <td>テストの有効性</td>
+      </tr>
+      <tr>
+        <td><strong>テスト実行率</strong></td>
+        <td>実行テスト / 計画テスト</td>
+        <td>テスト進捗</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>メトリクスの罠</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      グッドハートの法則
+    </div>
+    <p>
+      「指標が目標になると、良い指標でなくなる」
+    </p>
+    <ul>
+      <li>バグ数を目標にすると → 報告されなくなる</li>
+      <li>カバレッジを目標にすると → 無意味なテストが増える</li>
+      <li>テスト数を目標にすると → 質が下がる</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-qa5">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>障害からの復旧にかかる平均時間を表すメトリクスは？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa5" style="display:none;">
+      <span>MTTF</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="MTTR（Mean Time To Repair）は障害発生から復旧までの平均時間です。">
+      <input type="radio" name="q-qa5" style="display:none;">
+      <span>MTTR</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa5" style="display:none;">
+      <span>MTBF</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('qa5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="qa6">
+  <h1>品質ダッシュボード</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>品質ダッシュボードの目的</li>
+      <li>可視化すべき情報</li>
+      <li>トレンド分析</li>
+    </ul>
+  </div>
+
+  <h2>ダッシュボードに含めるもの</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      品質ダッシュボードの要素
+    </div>
+    <ul>
+      <li><strong>テスト実行状況</strong>：成功/失敗/スキップ</li>
+      <li><strong>カバレッジ</strong>：行/分岐カバレッジの推移</li>
+      <li><strong>バグ状況</strong>：新規/解決/残存</li>
+      <li><strong>パフォーマンス</strong>：レスポンスタイム推移</li>
+      <li><strong>Flakyテスト</strong>：不安定なテストのリスト</li>
+    </ul>
+  </div>
+
+  <h2>トレンド分析</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">📈</span>
+      注目すべきトレンド
+    </div>
+    <ul>
+      <li>カバレッジが下がっている → テストが追いついていない</li>
+      <li>テスト時間が増えている → パフォーマンス問題</li>
+      <li>Flakyテストが増えている → テスト環境の問題</li>
+      <li>バグ逃げ率が上がっている → テスト戦略の見直し</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-qa6">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>品質ダッシュボードで「カバレッジが下がっている」トレンドが見られたら？</p>
+    <label class="quiz-option" data-correct="true" data-explanation="カバレッジの低下は、新しいコードにテストが追いついていないことを示します。">
+      <input type="radio" name="q-qa6" style="display:none;">
+      <span>新しいコードにテストが追いついていない</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa6" style="display:none;">
+      <span>テストが速くなっている</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa6" style="display:none;">
+      <span>バグが減っている</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('qa6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="qa7">
+  <h1>AIを活用したテスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>AIテストツールの種類</li>
+      <li>自己修復テスト</li>
+      <li>テスト自動生成</li>
+    </ul>
+  </div>
+
+  <h2>AIテストの活用領域</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>領域</th>
+        <th>AIの活用</th>
+        <th>ツール例</th>
+      </tr>
+      <tr>
+        <td><strong>自己修復テスト</strong></td>
+        <td>セレクタ変更を自動検出・修正</td>
+        <td>Testim, mabl</td>
+      </tr>
+      <tr>
+        <td><strong>テスト生成</strong></td>
+        <td>コードからテストを自動生成</td>
+        <td>Copilot, Codium</td>
+      </tr>
+      <tr>
+        <td><strong>視覚テスト</strong></td>
+        <td>AIによる画面差分検出</td>
+        <td>Applitools</td>
+      </tr>
+      <tr>
+        <td><strong>バグ予測</strong></td>
+        <td>リスクの高いコードを予測</td>
+        <td>CodeClimate</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>AIテストの注意点</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      AIテストの限界
+    </div>
+    <ul>
+      <li><strong>過信は禁物</strong>：AIが生成したテストも検証が必要</li>
+      <li><strong>ビジネスロジック</strong>：AIは要件を完全に理解しない</li>
+      <li><strong>エッジケース</strong>：AIが見落とす可能性</li>
+      <li><strong>コスト</strong>：AIツールは高価なものが多い</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-qa7">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>UI変更でセレクタが変わったとき、自動で修正するAI機能は？</p>
+    <label class="quiz-option" data-correct="true" data-explanation="自己修復テストは、UIの変更を検出してセレクタを自動的に更新します。">
+      <input type="radio" name="q-qa7" style="display:none;">
+      <span>自己修復テスト</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa7" style="display:none;">
+      <span>テスト自動生成</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa7" style="display:none;">
+      <span>バグ予測</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('qa7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="qa8">
+  <h1>AIコードのテスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>AI生成コードの特有のリスク</li>
+      <li>ハルシネーション対策</li>
+      <li>AIコードのレビュー観点</li>
+    </ul>
+  </div>
+
+  <h2>AI生成コードのリスク</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      AIコードの問題点
+    </div>
+    <ul>
+      <li><strong>ハルシネーション</strong>：存在しないAPIを使用</li>
+      <li><strong>古い情報</strong>：非推奨のコードパターン</li>
+      <li><strong>セキュリティ</strong>：脆弱なコードの生成</li>
+      <li><strong>エッジケース漏れ</strong>：異常系の考慮不足</li>
+      <li><strong>テスト不足</strong>：ハッピーパスのみのテスト</li>
+    </ul>
+  </div>
+
+  <h2>AIコードのレビュー観点</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      チェックリスト
+    </div>
+    <ul>
+      <li>使用しているAPIは存在するか？</li>
+      <li>依存ライブラリのバージョンは正しいか？</li>
+      <li>セキュリティ的に問題ないか？</li>
+      <li>エッジケースは考慮されているか？</li>
+      <li>テストは異常系も含んでいるか？</li>
+      <li>パフォーマンスに問題はないか？</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      AIがやりがちな間違い
+    </div>
+<pre><code>// ❌ AIが生成したテスト（問題あり）
+test('データを取得できる', async () => {
+  const data = await fetchData();
+  expect(data).toBeTruthy();  // アサーションが甘い
+  // 異常系のテストがない
+  // エッジケースがない
+});
+
+// ⭕ 人間がレビューして改善
+describe('データ取得', () => {
+  test('正常系: データを取得できる', async () => {
+    const data = await fetchData();
+    expect(data.items).toHaveLength(10);
+    expect(data.items[0]).toHaveProperty('id');
+  });
+
+  test('異常系: APIエラーで例外を投げる', async () => {
+    mockApi.mockRejectedValue(new Error('Server Error'));
+    await expect(fetchData()).rejects.toThrow('Server Error');
+  });
+
+  test('エッジ: 空データの場合', async () => {
+    mockApi.mockResolvedValue({ items: [] });
+    const data = await fetchData();
+    expect(data.items).toHaveLength(0);
+  });
+});</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-qa8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>AIが存在しないAPIを使ったコードを生成する現象を何という？</p>
+    <label class="quiz-option" data-correct="true" data-explanation="ハルシネーション（幻覚）とは、AIが存在しない情報をあたかも事実かのように生成する現象です。">
+      <input type="radio" name="q-qa8" style="display:none;">
+      <span>ハルシネーション</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa8" style="display:none;">
+      <span>オーバーフィッティング</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa8" style="display:none;">
+      <span>バイアス</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa8')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('qa8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="qa9">
+  <h1>Shift-Left / Shift-Right</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Shift-Leftテスト</li>
+      <li>Shift-Rightテスト</li>
+      <li>両方のバランス</li>
+    </ul>
+  </div>
+
+  <h2>Shift-Left / Shift-Right</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      テストの位置
+    </div>
+    <svg viewBox="0 0 500 200" style="width:100%;max-width:500px;display:block;margin:1rem auto;">
+      <!-- タイムライン -->
+      <line x1="50" y1="100" x2="450" y2="100" stroke="#ddd" stroke-width="2"/>
+
+      <!-- Shift-Left -->
+      <rect x="60" y="50" width="150" height="40" rx="8" fill="#3b82f6"/>
+      <text x="135" y="75" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Shift-Left</text>
+
+      <!-- 開発 -->
+      <rect x="175" y="120" width="150" height="40" rx="8" fill="#10b981"/>
+      <text x="250" y="145" text-anchor="middle" fill="white" font-size="12">開発・テスト</text>
+
+      <!-- Shift-Right -->
+      <rect x="290" y="50" width="150" height="40" rx="8" fill="#f59e0b"/>
+      <text x="365" y="75" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Shift-Right</text>
+
+      <!-- ラベル -->
+      <text x="50" y="180" fill="#666" font-size="10">企画・設計</text>
+      <text x="400" y="180" fill="#666" font-size="10">本番運用</text>
+    </svg>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">Shift-Left</div>
+      <p>テストを早期に実施</p>
+      <ul>
+        <li>要件レビュー</li>
+        <li>設計レビュー</li>
+        <li>単体テスト</li>
+        <li>静的解析</li>
+      </ul>
+      <p><strong>メリット</strong>：早期発見で修正コスト削減</p>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">Shift-Right</div>
+      <p>本番環境でのテスト</p>
+      <ul>
+        <li>カナリアリリース</li>
+        <li>A/Bテスト</li>
+        <li>本番監視</li>
+        <li>カオスエンジニアリング</li>
+      </ul>
+      <p><strong>メリット</strong>：実環境での問題発見</p>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-qa9">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>本番環境で一部ユーザーに新機能を試す手法は？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa9" style="display:none;">
+      <span>Shift-Left</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="Shift-Rightの一環として、カナリアリリースやA/Bテストで本番環境での検証を行います。">
+      <input type="radio" name="q-qa9" style="display:none;">
+      <span>Shift-Right（カナリアリリース）</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa9" style="display:none;">
+      <span>回帰テスト</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('qa9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="qa10">
+  <h1>品質文化</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>品質はチーム全体の責任</li>
+      <li>DevQAOps</li>
+      <li>品質文化の構築</li>
+    </ul>
+  </div>
+
+  <h2>品質はQAチームだけの責任ではない</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      アンチパターン
+    </div>
+    <ul>
+      <li>「QAがテストするから大丈夫」</li>
+      <li>「バグを見つけるのはQAの仕事」</li>
+      <li>「開発者はコードを書くだけ」</li>
+    </ul>
+    <p style="margin-top:1rem;">
+      → <strong>品質はチーム全体の責任</strong>
+    </p>
+  </div>
+
+  <h2>DevQAOps</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔄</span>
+      DevQAOpsの原則
+    </div>
+    <ul>
+      <li><strong>開発者がテストを書く</strong>：単体テストは開発者の責務</li>
+      <li><strong>QAが戦略を立てる</strong>：テスト全体の設計</li>
+      <li><strong>Opsが監視する</strong>：本番環境での品質監視</li>
+      <li><strong>全員が品質に責任を持つ</strong></li>
+    </ul>
+  </div>
+
+  <h2>品質文化の構築</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏗️</span>
+      品質文化を作るには
+    </div>
+    <ol>
+      <li><strong>経営層のコミットメント</strong>：品質への投資を認める</li>
+      <li><strong>自動化への投資</strong>：CI/CD、自動テスト</li>
+      <li><strong>学習の機会</strong>：テスト技術の教育</li>
+      <li><strong>失敗から学ぶ</strong>：ポストモーテムの実施</li>
+      <li><strong>品質の可視化</strong>：ダッシュボードで共有</li>
+    </ol>
+  </div>
+
+  <div class="quiz" id="quiz-qa10">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>品質文化において正しいのは？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa10" style="display:none;">
+      <span>品質はQAチームの責任</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="品質はチーム全体（開発者、QA、運用）の責任であり、全員が品質に貢献します。">
+      <input type="radio" name="q-qa10" style="display:none;">
+      <span>品質はチーム全体の責任</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa10" style="display:none;">
+      <span>テストは開発後にまとめて行う</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa10')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('qa10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

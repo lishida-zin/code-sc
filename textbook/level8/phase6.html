@@ -1,0 +1,2311 @@
+<!-- ============================================
+     Level 8 Phase 6: TDD/BDD
+     ============================================ -->
+
+<section id="tdd1">
+  <h1>TDDとは</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>TDD（テスト駆動開発）の基本概念</li>
+      <li>Red-Green-Refactorサイクル</li>
+      <li>TDDの利点と適用場面</li>
+    </ul>
+  </div>
+
+  <h2>TDD（テスト駆動開発）とは何か</h2>
+
+  <p>
+    <strong>TDD（Test-Driven Development）</strong>とは、<br>
+    <strong>テストを先に書いてから実装する</strong>開発手法です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：試験問題と解答
+    </div>
+    <p>
+      普通は「解答を作ってから採点」しますが、<br>
+      TDDは「採点基準（テスト）を先に作ってから解答（実装）を作る」ようなものです。
+    </p>
+    <p style="margin:0;">
+      採点基準が明確だから、「何を作るべきか」がブレません。
+    </p>
+  </div>
+
+  <h2>Red-Green-Refactorサイクル</h2>
+
+  <p>
+    TDDは<strong>3つのステップ</strong>を繰り返します。
+  </p>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      TDDサイクル
+    </div>
+    <svg viewBox="0 0 500 320" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="TDDのRed-Green-Refactorサイクルを示す図">
+      <title>Red-Green-Refactorサイクル</title>
+
+      <defs>
+        <marker id="arrow-cycle" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#6366f1"/>
+        </marker>
+      </defs>
+
+      <!-- Red（上） -->
+      <circle cx="250" cy="60" r="50" fill="#ef4444" stroke="#dc2626" stroke-width="3"/>
+      <text x="250" y="55" text-anchor="middle" fill="white" font-size="14" font-weight="bold">1. Red</text>
+      <text x="250" y="75" text-anchor="middle" fill="#fecaca" font-size="11">テストを書く</text>
+
+      <!-- Green（右下） -->
+      <circle cx="370" cy="220" r="50" fill="#22c55e" stroke="#16a34a" stroke-width="3"/>
+      <text x="370" y="215" text-anchor="middle" fill="white" font-size="14" font-weight="bold">2. Green</text>
+      <text x="370" y="235" text-anchor="middle" fill="#dcfce7" font-size="11">最小実装</text>
+
+      <!-- Refactor（左下） -->
+      <circle cx="130" cy="220" r="50" fill="#3b82f6" stroke="#2563eb" stroke-width="3"/>
+      <text x="130" y="215" text-anchor="middle" fill="white" font-size="14" font-weight="bold">3. Refactor</text>
+      <text x="130" y="235" text-anchor="middle" fill="#dbeafe" font-size="11">リファクタ</text>
+
+      <!-- 矢印: Red → Green -->
+      <path d="M290,90 Q350,120 360,170" stroke="#6366f1" stroke-width="2" fill="none" marker-end="url(#arrow-cycle)"/>
+      <text x="340" y="120" fill="currentColor" font-size="10">失敗確認</text>
+
+      <!-- 矢印: Green → Refactor -->
+      <path d="M320,230 Q250,270 180,230" stroke="#6366f1" stroke-width="2" fill="none" marker-end="url(#arrow-cycle)"/>
+      <text x="250" y="270" fill="currentColor" font-size="10">成功確認</text>
+
+      <!-- 矢印: Refactor → Red -->
+      <path d="M140,170 Q150,120 210,80" stroke="#6366f1" stroke-width="2" fill="none" marker-end="url(#arrow-cycle)"/>
+      <text x="140" y="120" fill="currentColor" font-size="10">次のテスト</text>
+
+      <!-- 中央のテキスト -->
+      <text x="250" y="180" text-anchor="middle" fill="currentColor" font-size="12" font-weight="bold">TDDサイクル</text>
+    </svg>
+  </div>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">ステップ</th>
+        <th style="width:35%;">やること</th>
+        <th>ポイント</th>
+      </tr>
+      <tr>
+        <td><strong style="color:#ef4444;">1. Red</strong></td>
+        <td>失敗するテストを書く</td>
+        <td>まだ実装がないので必ず失敗する</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#22c55e;">2. Green</strong></td>
+        <td>テストを通す最小限のコードを書く</td>
+        <td>綺麗さは気にしない。動けばOK</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#3b82f6;">3. Refactor</strong></td>
+        <td>コードを綺麗にする</td>
+        <td>テストが通る状態を維持しながら改善</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>TDDの具体例</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💻</span>
+      例：足し算関数をTDDで作る
+    </div>
+<pre><code>// === Step 1: Red（テストを書く）===
+test('add(1, 2)は3を返す', () => {
+  expect(add(1, 2)).toBe(3);
+});
+// → テスト失敗（add関数がない）
+
+// === Step 2: Green（最小実装）===
+function add(a, b) {
+  return 3; // ハードコード！でもテストは通る
+}
+// → テスト成功
+
+// === Step 3: 次のテストを追加（Red）===
+test('add(2, 3)は5を返す', () => {
+  expect(add(2, 3)).toBe(5);
+});
+// → テスト失敗（3を返すから）
+
+// === Step 4: Green（一般化）===
+function add(a, b) {
+  return a + b; // 正しい実装
+}
+// → 両方のテスト成功
+
+// === Step 5: Refactor ===
+// この場合、リファクタ不要（既にシンプル）</code></pre>
+  </div>
+
+  <h2>TDDの利点</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      TDDのメリット
+    </div>
+    <ul>
+      <li><strong>設計の改善</strong>：テストしやすい設計 = 良い設計になる</li>
+      <li><strong>仕様の明確化</strong>：テストが仕様書になる</li>
+      <li><strong>リグレッション防止</strong>：変更時に壊れたらすぐ分かる</li>
+      <li><strong>自信を持ってリファクタ</strong>：テストが守ってくれる</li>
+      <li><strong>過剰実装の防止</strong>：必要なものだけ作る（YAGNI）</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>テストなしの実装PR</strong>：TDDでなくても、テストは必須</li>
+      <li><strong>テストが後付け感</strong>：実装に引きずられたテスト</li>
+      <li><strong>Refactorステップの省略</strong>：動くだけで満足していないか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-tdd1-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>TDDのRed-Green-Refactorサイクルで、最初に行うのは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd1-1" style="display:none;">
+      A. 失敗するテストを書く
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd1-1" style="display:none;">
+      B. 最小限の実装を書く
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd1-1" style="display:none;">
+      C. コードをリファクタリングする
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd1-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-tdd1-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>TDDの「Green」ステップで重要なのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd1-2" style="display:none;">
+      A. 完璧で美しいコードを書く
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd1-2" style="display:none;">
+      B. テストを通す最小限のコードを書く
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd1-2" style="display:none;">
+      C. 全ての機能を一度に実装する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd1-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('tdd1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="tdd2">
+  <h1>TDDの実践</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>小さなステップで進める重要性</li>
+      <li>最小実装（Fake it / Obvious）の考え方</li>
+      <li>リファクタリングの進め方</li>
+    </ul>
+  </div>
+
+  <h2>小さなステップの重要性</h2>
+
+  <p>
+    TDDの核心は<strong>「小さなステップで進む」</strong>ことです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：階段を上る
+    </div>
+    <p>
+      3階に行きたい時、一気にジャンプしようとせず、<br>
+      <strong>一段ずつ階段を上る</strong>方が確実です。
+    </p>
+    <p style="margin:0;">
+      TDDも同じ。大きな機能を一気に作らず、<strong>小さなテストを一つずつ通していく</strong>。
+    </p>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">大きすぎるステップ</div>
+<pre><code>// ❌ いきなり全機能をテスト
+test('ユーザー登録が完全に動作する', () => {
+  const result = registerUser({
+    email: 'test@example.com',
+    password: 'Pass123!',
+    name: '田中太郎',
+    age: 25,
+    address: '東京都...'
+  });
+  expect(result.success).toBe(true);
+  expect(result.user.id).toBeDefined();
+  expect(result.emailSent).toBe(true);
+  expect(result.dbRecord).toBeDefined();
+});
+// → 失敗しても原因特定が困難</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">小さなステップ</div>
+<pre><code>// ⭕ 一つずつテスト
+test('メール形式を検証できる', () => {
+  expect(isValidEmail('test@example.com')).toBe(true);
+  expect(isValidEmail('invalid')).toBe(false);
+});
+
+test('パスワード強度を検証できる', () => {
+  expect(isStrongPassword('Pass123!')).toBe(true);
+  expect(isStrongPassword('weak')).toBe(false);
+});
+
+test('ユーザーオブジェクトを作成できる', () => {
+  const user = createUser({ email: 'test@example.com' });
+  expect(user.email).toBe('test@example.com');
+});
+// → 一つずつ確実に進む</code></pre>
+    </div>
+  </div>
+
+  <h2>最小実装のテクニック</h2>
+
+  <p>
+    Green（テストを通す）段階では、<strong>最小限の実装</strong>でOKです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      3つの実装アプローチ
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">手法</th>
+        <th style="width:35%;">説明</th>
+        <th>使いどころ</th>
+      </tr>
+      <tr>
+        <td><strong>Fake it</strong></td>
+        <td>ハードコードで通す</td>
+        <td>最初の一歩、様子見</td>
+      </tr>
+      <tr>
+        <td><strong>Obvious</strong></td>
+        <td>明らかな実装をそのまま書く</td>
+        <td>簡単で自信がある時</td>
+      </tr>
+      <tr>
+        <td><strong>Triangulation</strong></td>
+        <td>複数テストで一般化を強制</td>
+        <td>正しい抽象化が分からない時</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💻</span>
+      Triangulationの例
+    </div>
+<pre><code>// テスト1
+test('1の階乗は1', () => {
+  expect(factorial(1)).toBe(1);
+});
+
+// Fake it: ハードコード
+function factorial(n) {
+  return 1;
+}
+
+// テスト2を追加（Triangulation）
+test('3の階乗は6', () => {
+  expect(factorial(3)).toBe(6);
+});
+
+// → ハードコードでは通らない。一般化が必要
+function factorial(n) {
+  if (n <= 1) return 1;
+  return n * factorial(n - 1);
+}</code></pre>
+  </div>
+
+  <h2>リファクタリングのタイミング</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      Refactorステップのルール
+    </div>
+    <ul>
+      <li><strong>テストが緑の時だけ</strong>リファクタする</li>
+      <li><strong>テストを変えずに</strong>実装だけ変える</li>
+      <li><strong>小さな変更を繰り返す</strong>（大きな変更は危険）</li>
+      <li>リファクタ後も<strong>テストが通ることを確認</strong></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💻</span>
+      リファクタリングの例
+    </div>
+<pre><code>// Before: 動くけど汚い
+function calculatePrice(items) {
+  let total = 0;
+  for (let i = 0; i < items.length; i++) {
+    total = total + items[i].price * items[i].quantity;
+    if (items[i].discount) {
+      total = total - items[i].discount;
+    }
+  }
+  return total;
+}
+
+// After: リファクタ後
+function calculatePrice(items) {
+  return items.reduce((total, item) => {
+    const itemTotal = item.price * item.quantity;
+    const discount = item.discount || 0;
+    return total + itemTotal - discount;
+  }, 0);
+}
+// テストは変更なし → 同じ結果が保証される</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🤖</span>
+      AIがやりがちな間違い
+    </div>
+<pre><code>// ❌ AIは一気に「完璧な」コードを書きがち
+function registerUser(data) {
+  // いきなり完全実装
+  validateEmail(data.email);
+  validatePassword(data.password);
+  const hashedPassword = await bcrypt.hash(data.password, 10);
+  const user = await db.users.create({...});
+  await sendWelcomeEmail(user.email);
+  await logActivity('user_registered', user.id);
+  return { success: true, user };
+}
+
+// ⭕ TDD的アプローチ
+// 1. まずバリデーションだけテスト＆実装
+// 2. 次にユーザー作成だけテスト＆実装
+// 3. 次にメール送信だけテスト＆実装
+// → 各ステップで確実にテストが通る</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-tdd2-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>TDDで「Fake it」とは何をすること？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd2-1" style="display:none;">
+      A. テストを偽装する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd2-1" style="display:none;">
+      B. ハードコードでテストを通す
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd2-1" style="display:none;">
+      C. モックを使う
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd2-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('tdd2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="tdd3">
+  <h1>TDDのデメリット</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>TDDの学習コストと習熟の壁</li>
+      <li>TDDが適さない場面</li>
+      <li>過度なTDD信仰の危険性</li>
+    </ul>
+  </div>
+
+  <h2>TDDは万能ではない</h2>
+
+  <p>
+    TDDは強力な手法ですが、<strong>全ての場面に適しているわけではありません</strong>。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      TDDの主なデメリット
+    </div>
+    <ul>
+      <li><strong>学習コストが高い</strong>：慣れるまで時間がかかる</li>
+      <li><strong>初期の開発速度低下</strong>：最初はテストなしより遅い</li>
+      <li><strong>設計変更時のテスト書き直し</strong>：大きな方針変更に弱い</li>
+      <li><strong>過剰なテストのリスク</strong>：テスト自体が負債になることも</li>
+    </ul>
+  </div>
+
+  <h2>TDDが適さない場面</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      TDDの適用判断
+    </div>
+    <svg viewBox="0 0 500 250" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="TDDが適する場面と適さない場面">
+      <title>TDD適用判断チャート</title>
+
+      <!-- 左側: 適する -->
+      <rect x="20" y="30" width="200" height="200" rx="10" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+      <text x="120" y="55" text-anchor="middle" fill="#166534" font-size="14" font-weight="bold">TDDが適する場面</text>
+      <text x="35" y="85" fill="#166534" font-size="11">・仕様が明確</text>
+      <text x="35" y="105" fill="#166534" font-size="11">・ビジネスロジック</text>
+      <text x="35" y="125" fill="#166534" font-size="11">・長期保守が必要</text>
+      <text x="35" y="145" fill="#166534" font-size="11">・チーム開発</text>
+      <text x="35" y="165" fill="#166534" font-size="11">・バグが許されない</text>
+      <text x="35" y="185" fill="#166534" font-size="11">・APIの設計</text>
+      <text x="35" y="205" fill="#166534" font-size="11">・計算ロジック</text>
+
+      <!-- 右側: 適さない -->
+      <rect x="280" y="30" width="200" height="200" rx="10" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+      <text x="380" y="55" text-anchor="middle" fill="#991b1b" font-size="14" font-weight="bold">TDDが適さない場面</text>
+      <text x="295" y="85" fill="#991b1b" font-size="11">・プロトタイプ/実験</text>
+      <text x="295" y="105" fill="#991b1b" font-size="11">・UIの試行錯誤</text>
+      <text x="295" y="125" fill="#991b1b" font-size="11">・仕様が未確定</text>
+      <text x="295" y="145" fill="#991b1b" font-size="11">・スパイク（調査）</text>
+      <text x="295" y="165" fill="#991b1b" font-size="11">・使い捨てスクリプト</text>
+      <text x="295" y="185" fill="#991b1b" font-size="11">・外部API連携の調査</text>
+      <text x="295" y="205" fill="#991b1b" font-size="11">・緊急のバグ修正</text>
+    </svg>
+  </div>
+
+  <h2>過度なTDD信仰の危険性</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      TDD原理主義の問題
+    </div>
+    <ul>
+      <li><strong>「TDDでなければダメ」という思考停止</strong></li>
+      <li><strong>テストカバレッジ100%への執着</strong>（価値のないテストが増える）</li>
+      <li><strong>探索的な開発の阻害</strong>（試行錯誤がしにくい）</li>
+      <li><strong>テストのためのテスト</strong>（本末転倒）</li>
+    </ul>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">TDD原理主義</div>
+<pre><code>// ❌ 無理にTDDで書いた結果
+// getterにまでテストを書く...
+
+test('getNameはnameを返す', () => {
+  const user = new User('田中');
+  expect(user.getName()).toBe('田中');
+});
+
+test('setNameはnameを設定する', () => {
+  const user = new User('田中');
+  user.setName('鈴木');
+  expect(user.getName()).toBe('鈴木');
+});
+// → 価値が低いテスト</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">現実的なアプローチ</div>
+<pre><code>// ⭕ 価値のあるテストに集中
+
+test('ユーザー名は空にできない', () => {
+  const user = new User('田中');
+  expect(() => user.setName('')).toThrow();
+});
+
+test('ユーザー名は50文字以内', () => {
+  const user = new User('田中');
+  const longName = 'a'.repeat(51);
+  expect(() => user.setName(longName)).toThrow();
+});
+// → ビジネスルールをテスト</code></pre>
+    </div>
+  </div>
+
+  <h2>バランスの取れたアプローチ</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      シニアエンジニアの判断基準
+    </div>
+    <ul>
+      <li><strong>コアロジックにはTDD</strong>：お金、認証、計算など</li>
+      <li><strong>UIは後からテスト</strong>：見た目は試行錯誤が必要</li>
+      <li><strong>プロトタイプはテストなし</strong>：検証後に書く</li>
+      <li><strong>チームの習熟度を考慮</strong>：無理強いしない</li>
+      <li><strong>ROIを意識</strong>：テストのコストと価値を比較</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら議論しましょう：</p>
+    <ul>
+      <li><strong>価値の低いテストの量産</strong>：getter/setterのテストなど</li>
+      <li><strong>実装の詳細をテスト</strong>：privateメソッドのテスト</li>
+      <li><strong>テストのためだけのコード変更</strong>：本末転倒</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-tdd3-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>TDDが最も適している場面は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd3-1" style="display:none;">
+      A. 仕様が決まっていないプロトタイプ開発
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd3-1" style="display:none;">
+      B. 明確な仕様があるビジネスロジックの実装
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd3-1" style="display:none;">
+      C. UIデザインの試行錯誤
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd3-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-tdd3-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>「TDD原理主義」の問題点として正しいものは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd3-2" style="display:none;">
+      A. テストを書きすぎて品質が上がりすぎる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd3-2" style="display:none;">
+      B. 価値の低いテストが増えてメンテナンスコストが上がる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd3-2" style="display:none;">
+      C. 開発速度が上がりすぎてバグが増える
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd3-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('tdd3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="tdd4">
+  <h1>BDDとは</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>BDD（振る舞い駆動開発）の基本概念</li>
+      <li>TDDとBDDの違い</li>
+      <li>ステークホルダーとの協働</li>
+    </ul>
+  </div>
+
+  <h2>BDD（振る舞い駆動開発）とは何か</h2>
+
+  <p>
+    <strong>BDD（Behavior-Driven Development）</strong>とは、<br>
+    <strong>「振る舞い」を自然言語で記述し、それをテストにする</strong>開発手法です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：説明書を先に書く
+    </div>
+    <p>
+      製品を作る前に、<strong>「ユーザーへの説明書」を先に書く</strong>イメージです。
+    </p>
+    <p style="margin:0;">
+      「このボタンを押すと、こうなります」という<strong>振る舞いの説明</strong>が、<br>
+      そのまま<strong>テスト</strong>になります。
+    </p>
+  </div>
+
+  <h2>TDDとBDDの違い</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      TDD vs BDD
+    </div>
+    <svg viewBox="0 0 500 200" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="TDDとBDDの比較">
+      <title>TDDとBDDの違い</title>
+
+      <!-- TDD側 -->
+      <rect x="20" y="30" width="200" height="150" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+      <text x="120" y="55" text-anchor="middle" fill="#1e40af" font-size="14" font-weight="bold">TDD</text>
+      <text x="35" y="80" fill="#1e40af" font-size="11">視点: 開発者</text>
+      <text x="35" y="100" fill="#1e40af" font-size="11">言語: プログラミング言語</text>
+      <text x="35" y="120" fill="#1e40af" font-size="11">単位: 関数・メソッド</text>
+      <text x="35" y="140" fill="#1e40af" font-size="11">目的: 設計の改善</text>
+      <text x="35" y="160" fill="#1e40af" font-size="11">参加者: 開発者のみ</text>
+
+      <!-- 矢印 -->
+      <text x="250" y="110" text-anchor="middle" fill="currentColor" font-size="24">→</text>
+
+      <!-- BDD側 -->
+      <rect x="280" y="30" width="200" height="150" rx="10" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+      <text x="380" y="55" text-anchor="middle" fill="#6b21a8" font-size="14" font-weight="bold">BDD</text>
+      <text x="295" y="80" fill="#6b21a8" font-size="11">視点: ユーザー・ビジネス</text>
+      <text x="295" y="100" fill="#6b21a8" font-size="11">言語: 自然言語（日本語等）</text>
+      <text x="295" y="120" fill="#6b21a8" font-size="11">単位: ユーザーストーリー</text>
+      <text x="295" y="140" fill="#6b21a8" font-size="11">目的: 仕様の共有</text>
+      <text x="295" y="160" fill="#6b21a8" font-size="11">参加者: 全ステークホルダー</text>
+    </svg>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">TDDのテスト</div>
+<pre><code>// 開発者向けの技術的なテスト
+test('calculateTax returns 10% of price', () => {
+  expect(calculateTax(1000)).toBe(100);
+});
+
+test('throws error for negative price', () => {
+  expect(() => calculateTax(-1)).toThrow();
+});</code></pre>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">BDDのテスト</div>
+<pre><code>// 誰でも読める自然言語
+Feature: 消費税計算
+
+  Scenario: 商品に消費税を加算する
+    Given 商品価格が1000円のとき
+    When 消費税を計算すると
+    Then 消費税は100円になる
+
+  Scenario: 不正な価格はエラーになる
+    Given 商品価格がマイナスのとき
+    When 消費税を計算すると
+    Then エラーが発生する</code></pre>
+    </div>
+  </div>
+
+  <h2>BDDの三者協働</h2>
+
+  <p>
+    BDDでは<strong>「3つの役割」</strong>が協力してシナリオを作ります。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">👥</span>
+      Three Amigos（三銃士）
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">役割</th>
+        <th style="width:35%;">貢献</th>
+        <th>質問例</th>
+      </tr>
+      <tr>
+        <td><strong>ビジネス</strong><br>（PO/BA）</td>
+        <td>「何を」達成したいか</td>
+        <td>「この機能の価値は？」</td>
+      </tr>
+      <tr>
+        <td><strong>開発</strong><br>（Developer）</td>
+        <td>「どう」実現するか</td>
+        <td>「技術的に可能？」</td>
+      </tr>
+      <tr>
+        <td><strong>テスト</strong><br>（QA）</td>
+        <td>「何が」壊れうるか</td>
+        <td>「エッジケースは？」</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      BDDのメリット
+    </div>
+    <ul>
+      <li><strong>共通言語</strong>：技術者と非技術者が同じ言葉で話せる</li>
+      <li><strong>生きたドキュメント</strong>：テストが仕様書になる</li>
+      <li><strong>認識のズレ防止</strong>：早い段階で誤解を発見</li>
+      <li><strong>受け入れ基準の明確化</strong>：完了条件が明確</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点：BDDの形骸化
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>開発者だけでシナリオを書いている</strong>：三者協働になっていない</li>
+      <li><strong>技術用語だらけのシナリオ</strong>：非技術者が読めない</li>
+      <li><strong>シナリオと実装の乖離</strong>：シナリオが更新されていない</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-tdd4-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>BDDの主な目的は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd4-1" style="display:none;">
+      A. コードのカバレッジを100%にする
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd4-1" style="display:none;">
+      B. ステークホルダー間で仕様を共有する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd4-1" style="display:none;">
+      C. テスト実行速度を上げる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd4-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-tdd4-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>BDDの「Three Amigos」に含まれないのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd4-2" style="display:none;">
+      A. ビジネス担当者
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd4-2" style="display:none;">
+      B. 開発者
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd4-2" style="display:none;">
+      C. インフラエンジニア
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd4-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('tdd4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="tdd5">
+  <h1>Gherkin記法</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Gherkin記法の基本構文</li>
+      <li>Given-When-Thenパターン</li>
+      <li>Feature/Scenarioの書き方</li>
+    </ul>
+  </div>
+
+  <h2>Gherkin記法とは</h2>
+
+  <p>
+    <strong>Gherkin</strong>とは、BDDでシナリオを書くための<strong>構造化された自然言語</strong>です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：レシピの書き方
+    </div>
+    <p>
+      料理のレシピには決まった形式があります。<br>
+      「材料」「手順」「完成図」のように、<strong>誰が見ても分かる形式</strong>です。
+    </p>
+    <p style="margin:0;">
+      Gherkinも同じ。<strong>Given（前提）、When（操作）、Then（結果）</strong>という<br>
+      決まった形式でシナリオを書きます。
+    </p>
+  </div>
+
+  <h2>Gherkinの基本構造</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      Gherkinの階層構造
+    </div>
+    <svg viewBox="0 0 500 280" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="Gherkinの階層構造">
+      <title>Feature > Scenario > Given/When/Then</title>
+
+      <!-- Feature -->
+      <rect x="50" y="20" width="400" height="240" rx="10" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+      <text x="70" y="45" fill="#6b21a8" font-size="14" font-weight="bold">Feature: ログイン機能</text>
+
+      <!-- Scenario 1 -->
+      <rect x="70" y="60" width="360" height="90" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+      <text x="90" y="85" fill="#1e40af" font-size="12" font-weight="bold">Scenario: 正常なログイン</text>
+      <text x="100" y="105" fill="#3b82f6" font-size="11">Given: ユーザーがログインページにいる</text>
+      <text x="100" y="120" fill="#3b82f6" font-size="11">When: 正しいID/PWを入力してログインボタンを押す</text>
+      <text x="100" y="135" fill="#3b82f6" font-size="11">Then: ダッシュボードが表示される</text>
+
+      <!-- Scenario 2 -->
+      <rect x="70" y="160" width="360" height="90" rx="8" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+      <text x="90" y="185" fill="#166534" font-size="12" font-weight="bold">Scenario: パスワード間違い</text>
+      <text x="100" y="205" fill="#22c55e" font-size="11">Given: ユーザーがログインページにいる</text>
+      <text x="100" y="220" fill="#22c55e" font-size="11">When: 間違ったパスワードでログインする</text>
+      <text x="100" y="235" fill="#22c55e" font-size="11">Then: エラーメッセージが表示される</text>
+    </svg>
+  </div>
+
+  <h2>Given-When-Thenパターン</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">キーワード</th>
+        <th style="width:30%;">意味</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong style="color:#3b82f6;">Given</strong></td>
+        <td>前提条件・初期状態</td>
+        <td>ユーザーがログイン済みのとき</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#f59e0b;">When</strong></td>
+        <td>アクション・操作</td>
+        <td>商品をカートに追加すると</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#22c55e;">Then</strong></td>
+        <td>期待される結果</td>
+        <td>カートに商品が表示される</td>
+      </tr>
+      <tr>
+        <td><strong>And / But</strong></td>
+        <td>追加条件・結果</td>
+        <td>And 合計金額が更新される</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💻</span>
+      Gherkinの実例
+    </div>
+<pre><code># language: ja
+
+Feature: ショッピングカート
+  オンラインショップの顧客として
+  商品をカートに追加したい
+  購入前に商品を確認するために
+
+  Background:
+    Given ユーザーがログインしている
+    And カートが空の状態
+
+  Scenario: 商品をカートに追加する
+    Given 商品「TypeScript入門」が在庫にある
+    When 「カートに追加」ボタンをクリックする
+    Then カートに「TypeScript入門」が表示される
+    And カート内の商品数が「1」になる
+
+  Scenario: 在庫切れ商品は追加できない
+    Given 商品「限定版」が在庫切れ
+    When 「カートに追加」ボタンをクリックする
+    Then 「在庫切れです」メッセージが表示される
+    And カートは空のまま
+
+  Scenario Outline: 複数個追加
+    Given 商品「ノート」が在庫にある
+    When &lt;数量&gt;個をカートに追加する
+    Then カートの合計金額は&lt;合計&gt;円になる
+
+    Examples:
+      | 数量 | 合計  |
+      | 1    | 100   |
+      | 3    | 300   |
+      | 10   | 1000  |</code></pre>
+  </div>
+
+  <h2>Gherkinのキーワード一覧</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">キーワード</th>
+        <th style="width:35%;">用途</th>
+        <th>日本語</th>
+      </tr>
+      <tr>
+        <td><strong>Feature</strong></td>
+        <td>機能の説明</td>
+        <td>機能</td>
+      </tr>
+      <tr>
+        <td><strong>Scenario</strong></td>
+        <td>具体的なシナリオ</td>
+        <td>シナリオ</td>
+      </tr>
+      <tr>
+        <td><strong>Scenario Outline</strong></td>
+        <td>パラメータ化シナリオ</td>
+        <td>シナリオアウトライン</td>
+      </tr>
+      <tr>
+        <td><strong>Examples</strong></td>
+        <td>データテーブル</td>
+        <td>例</td>
+      </tr>
+      <tr>
+        <td><strong>Background</strong></td>
+        <td>共通の前提条件</td>
+        <td>背景</td>
+      </tr>
+      <tr>
+        <td><strong>@tag</strong></td>
+        <td>分類・フィルタリング</td>
+        <td>-</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🤖</span>
+      AIがやりがちな間違い：曖昧なシナリオ
+    </div>
+<pre><code># ❌ 曖昧で検証できないシナリオ
+Scenario: ユーザー体験が良い
+  Given ユーザーがサイトにアクセス
+  When ページを閲覧する
+  Then 快適に使える  # 何をもって「快適」？
+
+# ⭕ 具体的で検証可能なシナリオ
+Scenario: ページ読み込みが3秒以内
+  Given ユーザーがトップページにアクセス
+  When ページが完全に読み込まれる
+  Then 読み込み時間は3秒以内である
+  And 主要コンテンツが表示されている</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-tdd5-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>Gherkinの「Given」が表すものは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd5-1" style="display:none;">
+      A. 前提条件・初期状態
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd5-1" style="display:none;">
+      B. ユーザーのアクション
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd5-1" style="display:none;">
+      C. 期待される結果
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd5-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-tdd5-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>「Scenario Outline」と「Examples」の組み合わせは何のため？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd5-2" style="display:none;">
+      A. シナリオを日本語で書くため
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd5-2" style="display:none;">
+      B. 同じシナリオを異なるデータで繰り返すため
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd5-2" style="display:none;">
+      C. テストの実行順序を指定するため
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd5-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('tdd5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="tdd6">
+  <h1>Cucumber/Jest-Cucumber</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>BDDツールの概要</li>
+      <li>ステップ定義の書き方</li>
+      <li>Jest-Cucumberの実践例</li>
+    </ul>
+  </div>
+
+  <h2>BDDツールとは</h2>
+
+  <p>
+    Gherkinで書いたシナリオを<strong>実際のテストコードに変換する</strong>ツールです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：翻訳者
+    </div>
+    <p>
+      Gherkinは「日本語のシナリオ」、テストコードは「プログラムの言葉」。<br>
+      CucumberやJest-Cucumberは、この2つを<strong>つなぐ翻訳者</strong>です。
+    </p>
+  </div>
+
+  <h2>主要なBDDツール</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">ツール</th>
+        <th style="width:35%;">言語/環境</th>
+        <th>特徴</th>
+      </tr>
+      <tr>
+        <td><strong>Cucumber</strong></td>
+        <td>Ruby, Java, JS</td>
+        <td>BDDの元祖、最も普及</td>
+      </tr>
+      <tr>
+        <td><strong>Jest-Cucumber</strong></td>
+        <td>JavaScript/TypeScript</td>
+        <td>Jest統合、導入が簡単</td>
+      </tr>
+      <tr>
+        <td><strong>SpecFlow</strong></td>
+        <td>.NET</td>
+        <td>C#向け、VS統合</td>
+      </tr>
+      <tr>
+        <td><strong>Behave</strong></td>
+        <td>Python</td>
+        <td>Python向けBDD</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>ステップ定義とは</h2>
+
+  <p>
+    Gherkinの各行を<strong>実際のコードに紐づける</strong>のがステップ定義です。
+  </p>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      ステップ定義の流れ
+    </div>
+    <svg viewBox="0 0 500 150" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="Gherkinからテストコードへの変換">
+      <title>ステップ定義の仕組み</title>
+
+      <defs>
+        <marker id="arrow-step" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#6366f1"/>
+        </marker>
+      </defs>
+
+      <!-- Gherkin -->
+      <rect x="20" y="30" width="140" height="90" rx="8" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+      <text x="90" y="55" text-anchor="middle" fill="#6b21a8" font-size="12" font-weight="bold">Gherkin</text>
+      <text x="90" y="75" text-anchor="middle" fill="#6b21a8" font-size="10">Given ユーザーが</text>
+      <text x="90" y="90" text-anchor="middle" fill="#6b21a8" font-size="10">ログインしている</text>
+
+      <!-- 矢印 -->
+      <line x1="170" y1="75" x2="210" y2="75" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-step)"/>
+
+      <!-- ステップ定義 -->
+      <rect x="220" y="30" width="140" height="90" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+      <text x="290" y="55" text-anchor="middle" fill="#1e40af" font-size="12" font-weight="bold">ステップ定義</text>
+      <text x="290" y="75" text-anchor="middle" fill="#1e40af" font-size="10">パターンマッチ</text>
+      <text x="290" y="90" text-anchor="middle" fill="#1e40af" font-size="10">+ 実装コード</text>
+
+      <!-- 矢印 -->
+      <line x1="370" y1="75" x2="410" y2="75" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-step)"/>
+
+      <!-- テスト実行 -->
+      <rect x="420" y="30" width="70" height="90" rx="8" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+      <text x="455" y="70" text-anchor="middle" fill="#166534" font-size="12" font-weight="bold">テスト</text>
+      <text x="455" y="90" text-anchor="middle" fill="#166534" font-size="10">実行</text>
+    </svg>
+  </div>
+
+  <h2>Jest-Cucumberの実例</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💻</span>
+      1. Featureファイル（login.feature）
+    </div>
+<pre><code># features/login.feature
+Feature: ログイン機能
+
+  Scenario: 正しい認証情報でログインできる
+    Given ユーザー "tanaka@example.com" が登録されている
+    When パスワード "Password123" でログインする
+    Then ログイン成功のメッセージが表示される
+
+  Scenario: 間違ったパスワードではログインできない
+    Given ユーザー "tanaka@example.com" が登録されている
+    When パスワード "WrongPassword" でログインする
+    Then "パスワードが間違っています" エラーが表示される</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💻</span>
+      2. ステップ定義（login.steps.ts）
+    </div>
+<pre><code>// steps/login.steps.ts
+import { defineFeature, loadFeature } from 'jest-cucumber';
+import { login, createUser } from '../src/auth';
+
+const feature = loadFeature('features/login.feature');
+
+defineFeature(feature, (test) => {
+  let result: { success: boolean; message: string };
+  let userEmail: string;
+
+  // Given のステップ定義
+  const givenUserExists = (given) => {
+    given(/^ユーザー "(.+)" が登録されている$/, (email: string) => {
+      userEmail = email;
+      createUser({ email, password: 'Password123' });
+    });
+  };
+
+  // When のステップ定義
+  const whenLogin = (when) => {
+    when(/^パスワード "(.+)" でログインする$/, (password: string) => {
+      result = login(userEmail, password);
+    });
+  };
+
+  test('正しい認証情報でログインできる', ({ given, when, then }) => {
+    givenUserExists(given);
+    whenLogin(when);
+
+    then('ログイン成功のメッセージが表示される', () => {
+      expect(result.success).toBe(true);
+      expect(result.message).toBe('ログイン成功');
+    });
+  });
+
+  test('間違ったパスワードではログインできない', ({ given, when, then }) => {
+    givenUserExists(given);
+    whenLogin(when);
+
+    then(/^"(.+)" エラーが表示される$/, (errorMessage: string) => {
+      expect(result.success).toBe(false);
+      expect(result.message).toBe(errorMessage);
+    });
+  });
+});</code></pre>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      ステップ定義の注意点
+    </div>
+    <ul>
+      <li><strong>正規表現のパターン</strong>：引数は正規表現で抽出</li>
+      <li><strong>ステップの再利用</strong>：同じステップは共通化する</li>
+      <li><strong>状態の管理</strong>：ステップ間でデータを共有する方法を決める</li>
+      <li><strong>非同期処理</strong>：async/awaitを適切に使う</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>ステップ定義の重複</strong>：同じ処理を複数箇所に書いている</li>
+      <li><strong>巨大なステップ定義</strong>：1つのステップに処理を詰め込みすぎ</li>
+      <li><strong>Gherkinとステップの乖離</strong>：更新されていない</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-tdd6-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ステップ定義の役割は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd6-1" style="display:none;">
+      A. Gherkinの文法をチェックする
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd6-1" style="display:none;">
+      B. Gherkinの各行を実際のテストコードに紐づける
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd6-1" style="display:none;">
+      C. テストレポートを生成する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd6-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('tdd6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="tdd7">
+  <h1>ATDDとは</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ATDD（受入テスト駆動開発）の概念</li>
+      <li>TDD/BDDとの違い</li>
+      <li>要件の明確化プロセス</li>
+    </ul>
+  </div>
+
+  <h2>ATDD（受入テスト駆動開発）とは何か</h2>
+
+  <p>
+    <strong>ATDD（Acceptance Test-Driven Development）</strong>とは、<br>
+    <strong>受入テストを先に定義してから開発する</strong>手法です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：合格基準を先に決める
+    </div>
+    <p>
+      試験を作る時、「何ができたら合格か」を<strong>先に決める</strong>のと同じです。
+    </p>
+    <p style="margin:0;">
+      「この機能が完了した」と言える<strong>基準（受入条件）</strong>を、<br>
+      開発前にステークホルダー全員で合意します。
+    </p>
+  </div>
+
+  <h2>TDD/BDD/ATDDの関係</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      3つの手法の位置づけ
+    </div>
+    <svg viewBox="0 0 500 250" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="TDD, BDD, ATDDの関係">
+      <title>開発プロセスにおける各手法の位置</title>
+
+      <!-- 背景の矢印 -->
+      <defs>
+        <marker id="arrow-atdd" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#6366f1"/>
+        </marker>
+      </defs>
+
+      <!-- ATDD（最上位） -->
+      <rect x="50" y="20" width="400" height="60" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+      <text x="250" y="45" text-anchor="middle" fill="#92400e" font-size="14" font-weight="bold">ATDD（受入テスト駆動）</text>
+      <text x="250" y="65" text-anchor="middle" fill="#92400e" font-size="11">ビジネス視点：何を作るべきか</text>
+
+      <!-- 矢印 -->
+      <line x1="250" y1="80" x2="250" y2="100" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-atdd)"/>
+
+      <!-- BDD（中間） -->
+      <rect x="100" y="110" width="300" height="60" rx="10" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+      <text x="250" y="135" text-anchor="middle" fill="#6b21a8" font-size="14" font-weight="bold">BDD（振る舞い駆動）</text>
+      <text x="250" y="155" text-anchor="middle" fill="#6b21a8" font-size="11">ユーザー視点：どう振る舞うべきか</text>
+
+      <!-- 矢印 -->
+      <line x1="250" y1="170" x2="250" y2="190" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-atdd)"/>
+
+      <!-- TDD（下） -->
+      <rect x="150" y="200" width="200" height="45" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+      <text x="250" y="220" text-anchor="middle" fill="#1e40af" font-size="14" font-weight="bold">TDD（テスト駆動）</text>
+      <text x="250" y="238" text-anchor="middle" fill="#1e40af" font-size="11">開発者視点：どう実装するか</text>
+    </svg>
+  </div>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:15%;">手法</th>
+        <th style="width:25%;">スコープ</th>
+        <th style="width:30%;">主な参加者</th>
+        <th>成果物</th>
+      </tr>
+      <tr>
+        <td><strong>ATDD</strong></td>
+        <td>ユーザーストーリー全体</td>
+        <td>PO、開発、QA、顧客</td>
+        <td>受入テスト</td>
+      </tr>
+      <tr>
+        <td><strong>BDD</strong></td>
+        <td>機能の振る舞い</td>
+        <td>PO、開発、QA</td>
+        <td>シナリオテスト</td>
+      </tr>
+      <tr>
+        <td><strong>TDD</strong></td>
+        <td>関数・メソッド</td>
+        <td>開発者</td>
+        <td>単体テスト</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>ATDDのプロセス</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      ATDDの4ステップ
+    </div>
+    <ol>
+      <li><strong>議論（Discuss）</strong>：ストーリーの意図と受入条件を話し合う</li>
+      <li><strong>蒸留（Distill）</strong>：受入テストを具体的に書き出す</li>
+      <li><strong>開発（Develop）</strong>：テストを通すように実装</li>
+      <li><strong>デモ（Demo）</strong>：ステークホルダーに動作を見せる</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💻</span>
+      受入条件の例
+    </div>
+<pre><code>ユーザーストーリー:
+「顧客として、過去の注文履歴を見たい。再注文しやすくするために。」
+
+受入条件（Acceptance Criteria）:
+1. ログイン済みユーザーは注文履歴ページにアクセスできる
+2. 未ログインユーザーはログインページにリダイレクトされる
+3. 注文履歴は新しい順に表示される
+4. 各注文には日付、商品名、金額、ステータスが表示される
+5. 注文がない場合は「注文履歴がありません」と表示される
+6. 「再注文」ボタンで同じ商品をカートに追加できる
+
+// これが全て通ったら「完了」</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点：要件との乖離
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>受入条件がない</strong>：何をもって完了か不明</li>
+      <li><strong>曖昧な受入条件</strong>：「使いやすい」など検証不能</li>
+      <li><strong>実装と受入条件の乖離</strong>：条件を満たしていない</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-tdd7-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ATDDで最初に行うことは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd7-1" style="display:none;">
+      A. コードを書く
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd7-1" style="display:none;">
+      B. 単体テストを書く
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd7-1" style="display:none;">
+      C. 受入条件をステークホルダーと合意する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd7-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('tdd7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="tdd8">
+  <h1>テストファースト vs テストラスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>テストファーストとテストラストの違い</li>
+      <li>それぞれのメリット・デメリット</li>
+      <li>適用場面の判断基準</li>
+    </ul>
+  </div>
+
+  <h2>2つのアプローチ</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">テストファースト</div>
+      <p><strong>テストを先に書いてから実装</strong></p>
+      <ul>
+        <li>TDD/BDD/ATDDのアプローチ</li>
+        <li>Red → Green → Refactor</li>
+        <li>仕様を先に確定させる</li>
+      </ul>
+<pre><code>// 1. テストを書く
+test('add(1,2) = 3', () => {
+  expect(add(1,2)).toBe(3);
+});
+
+// 2. 実装する
+function add(a, b) {
+  return a + b;
+}</code></pre>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">テストラスト</div>
+      <p><strong>実装してからテストを書く</strong></p>
+      <ul>
+        <li>従来型のアプローチ</li>
+        <li>実装 → テスト追加</li>
+        <li>動作確認としてのテスト</li>
+      </ul>
+<pre><code>// 1. 実装する
+function add(a, b) {
+  return a + b;
+}
+
+// 2. テストを書く
+test('add(1,2) = 3', () => {
+  expect(add(1,2)).toBe(3);
+});</code></pre>
+    </div>
+  </div>
+
+  <h2>メリット・デメリット比較</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">観点</th>
+        <th style="width:40%;">テストファースト</th>
+        <th>テストラスト</th>
+      </tr>
+      <tr>
+        <td><strong>設計品質</strong></td>
+        <td>高い（テスタブルな設計が自然にできる）</td>
+        <td>低くなりがち（テスト困難な設計になることも）</td>
+      </tr>
+      <tr>
+        <td><strong>初期速度</strong></td>
+        <td>遅い（テスト作成のオーバーヘッド）</td>
+        <td>速い（すぐ実装に入れる）</td>
+      </tr>
+      <tr>
+        <td><strong>仕様の明確さ</strong></td>
+        <td>高い（テストが仕様になる）</td>
+        <td>曖昧になりがち</td>
+      </tr>
+      <tr>
+        <td><strong>テスト漏れ</strong></td>
+        <td>少ない（テスト必須）</td>
+        <td>起きやすい（後回しにされる）</td>
+      </tr>
+      <tr>
+        <td><strong>探索的開発</strong></td>
+        <td>難しい（仕様確定が必要）</td>
+        <td>やりやすい（試行錯誤しやすい）</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>適用場面の判断基準</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      判断フローチャート
+    </div>
+    <svg viewBox="0 0 500 280" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="テストファースト/ラストの判断フロー">
+      <title>どちらを選ぶべきかの判断基準</title>
+
+      <!-- 開始 -->
+      <rect x="180" y="10" width="140" height="40" rx="20" fill="#6366f1" stroke="#4f46e5" stroke-width="2"/>
+      <text x="250" y="35" text-anchor="middle" fill="white" font-size="12">仕様は明確？</text>
+
+      <!-- 分岐矢印 -->
+      <line x1="200" y1="50" x2="120" y2="90" stroke="#6366f1" stroke-width="2"/>
+      <text x="140" y="70" fill="currentColor" font-size="10">Yes</text>
+      <line x1="300" y1="50" x2="380" y2="90" stroke="#6366f1" stroke-width="2"/>
+      <text x="350" y="70" fill="currentColor" font-size="10">No</text>
+
+      <!-- 左分岐：ビジネスクリティカル？ -->
+      <rect x="40" y="90" width="160" height="40" rx="20" fill="#3b82f6" stroke="#2563eb" stroke-width="2"/>
+      <text x="120" y="115" text-anchor="middle" fill="white" font-size="11">ビジネスクリティカル？</text>
+
+      <!-- 右分岐：プロトタイプ？ -->
+      <rect x="300" y="90" width="160" height="40" rx="20" fill="#3b82f6" stroke="#2563eb" stroke-width="2"/>
+      <text x="380" y="115" text-anchor="middle" fill="white" font-size="11">プロトタイプ？</text>
+
+      <!-- 左下分岐 -->
+      <line x1="80" y1="130" x2="60" y2="170" stroke="#6366f1" stroke-width="2"/>
+      <text x="50" y="150" fill="currentColor" font-size="10">Yes</text>
+      <line x1="160" y1="130" x2="180" y2="170" stroke="#6366f1" stroke-width="2"/>
+      <text x="180" y="150" fill="currentColor" font-size="10">No</text>
+
+      <!-- 右下分岐 -->
+      <line x1="340" y1="130" x2="320" y2="170" stroke="#6366f1" stroke-width="2"/>
+      <text x="310" y="150" fill="currentColor" font-size="10">Yes</text>
+      <line x1="420" y1="130" x2="440" y2="170" stroke="#6366f1" stroke-width="2"/>
+      <text x="440" y="150" fill="currentColor" font-size="10">No</text>
+
+      <!-- 結果ボックス -->
+      <rect x="10" y="180" width="100" height="50" rx="8" fill="#22c55e" stroke="#16a34a" stroke-width="2"/>
+      <text x="60" y="200" text-anchor="middle" fill="white" font-size="10" font-weight="bold">テスト</text>
+      <text x="60" y="215" text-anchor="middle" fill="white" font-size="10" font-weight="bold">ファースト</text>
+
+      <rect x="130" y="180" width="100" height="50" rx="8" fill="#eab308" stroke="#ca8a04" stroke-width="2"/>
+      <text x="180" y="200" text-anchor="middle" fill="white" font-size="10" font-weight="bold">状況次第</text>
+      <text x="180" y="215" text-anchor="middle" fill="white" font-size="10">（チーム判断）</text>
+
+      <rect x="270" y="180" width="100" height="50" rx="8" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
+      <text x="320" y="200" text-anchor="middle" fill="white" font-size="10" font-weight="bold">テスト</text>
+      <text x="320" y="215" text-anchor="middle" fill="white" font-size="10" font-weight="bold">ラスト</text>
+
+      <rect x="390" y="180" width="100" height="50" rx="8" fill="#eab308" stroke="#ca8a04" stroke-width="2"/>
+      <text x="440" y="200" text-anchor="middle" fill="white" font-size="10" font-weight="bold">後から</text>
+      <text x="440" y="215" text-anchor="middle" fill="white" font-size="10">テスト追加</text>
+
+      <!-- 注釈 -->
+      <text x="250" y="260" text-anchor="middle" fill="currentColor" font-size="10">※ 最終的にはテストが必要。違いは「いつ書くか」</text>
+    </svg>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      シニアエンジニアの判断
+    </div>
+    <p><strong>テストファーストを選ぶ場面：</strong></p>
+    <ul>
+      <li>金融・医療など<strong>バグが許されない</strong>領域</li>
+      <li>仕様が<strong>明確に定義されている</strong>場合</li>
+      <li><strong>長期保守</strong>が必要なシステム</li>
+      <li>チームに<strong>TDDの経験者</strong>がいる場合</li>
+    </ul>
+    <p><strong>テストラストでもOKな場面：</strong></p>
+    <ul>
+      <li><strong>プロトタイプ</strong>や<strong>スパイク</strong>（調査目的）</li>
+      <li>仕様が<strong>頻繁に変わる</strong>初期フェーズ</li>
+      <li><strong>スクリプト</strong>や<strong>使い捨てツール</strong></li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🤖</span>
+      AIがやりがちな間違い
+    </div>
+<pre><code>// ❌ AIは実装を先に出力し、テストを後回しにしがち
+// さらに、テストが実装に引きずられる
+
+// AIの出力例（テストラスト）
+function calculateDiscount(price, discountRate) {
+  return price * (1 - discountRate);  // 実装
+}
+
+// 後から書いたテスト（実装をなぞっただけ）
+test('discount works', () => {
+  expect(calculateDiscount(100, 0.1)).toBe(90);
+});
+// → エッジケース（負の値、100%超え）がテストされない
+
+// ⭕ テストファーストなら
+test('割引率0%なら価格そのまま', () => {...});
+test('割引率100%なら0円', () => {...});
+test('割引率が負の値ならエラー', () => {...});
+test('割引率が100%超えならエラー', () => {...});
+// → 先にエッジケースを考える</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-tdd8-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>テストファーストの最大のメリットは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd8-1" style="display:none;">
+      A. 開発速度が上がる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd8-1" style="display:none;">
+      B. テスタブルな設計になり、仕様が明確になる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd8-1" style="display:none;">
+      C. コード量が減る
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd8-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-tdd8-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>テストラストでもOKな場面は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd8-2" style="display:none;">
+      A. 金融システムの決済処理
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd8-2" style="display:none;">
+      B. 技術調査のためのスパイク
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd8-2" style="display:none;">
+      C. 長期運用されるAPIサーバー
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd8-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('tdd8')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="tdd9">
+  <h1>レガシーコードのテスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>レガシーコードとは何か</li>
+      <li>特性テスト（Characterization Test）</li>
+      <li>スプラウト/ラップ手法</li>
+    </ul>
+  </div>
+
+  <h2>レガシーコードとは</h2>
+
+  <p>
+    Michael Feathersの定義：<br>
+    <strong>「テストのないコードはレガシーコード」</strong>
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：古い家のリフォーム
+    </div>
+    <p>
+      古い家をリフォームする時、<strong>構造を理解せずに壁を壊すと大変なことに</strong>。
+    </p>
+    <p style="margin:0;">
+      レガシーコードも同じ。<strong>テストという安全網なしに変更すると、<br>
+      思わぬところが壊れます</strong>。
+    </p>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      レガシーコードの特徴
+    </div>
+    <ul>
+      <li><strong>テストがない</strong>または不十分</li>
+      <li><strong>依存関係が複雑</strong>（グローバル変数、密結合）</li>
+      <li><strong>ドキュメントがない</strong>または古い</li>
+      <li><strong>動作が仕様</strong>（誰も正しい動作を知らない）</li>
+      <li><strong>変更が怖い</strong>（壊れるかもしれない）</li>
+    </ul>
+  </div>
+
+  <h2>特性テスト（Characterization Test）</h2>
+
+  <p>
+    <strong>特性テスト</strong>とは、<strong>現在の動作をそのまま記録する</strong>テストです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      特性テストの目的
+    </div>
+    <p>
+      「正しい動作」ではなく、<strong>「今の動作」</strong>をテストで固定します。
+    </p>
+    <ul>
+      <li>リファクタリング時に<strong>動作が変わったことを検知</strong></li>
+      <li>コードを読まなくても<strong>動作を理解</strong>できる</li>
+      <li>変更の<strong>安全網</strong>になる</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💻</span>
+      特性テストの書き方
+    </div>
+<pre><code>// レガシーコード（何をしているか不明）
+function mysteryFunction(input) {
+  // 複雑な処理...
+  return result;
+}
+
+// 特性テスト：現在の動作を記録
+describe('mysteryFunction の特性テスト', () => {
+  test('入力が空配列のとき', () => {
+    // 1. 実際に動かして結果を見る
+    const result = mysteryFunction([]);
+    // 2. その結果をそのままテストにする
+    expect(result).toBe(null); // 実際の出力
+  });
+
+  test('入力が[1,2,3]のとき', () => {
+    const result = mysteryFunction([1, 2, 3]);
+    expect(result).toBe(6); // 実際の出力
+  });
+
+  test('入力にnullが含まれるとき', () => {
+    const result = mysteryFunction([1, null, 3]);
+    expect(result).toBe(4); // nullはスキップされる？
+  });
+});
+// これでリファクタリングの準備完了</code></pre>
+  </div>
+
+  <h2>スプラウト/ラップ手法</h2>
+
+  <p>
+    レガシーコードに<strong>安全に新機能を追加する</strong>テクニックです。
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">スプラウト（Sprout）</div>
+      <p><strong>新しい機能を別のメソッドとして「芽生えさせる」</strong></p>
+<pre><code>// Before: レガシーコード
+function processOrder(order) {
+  // 複雑な処理...
+  // ここに割引計算を追加したい
+}
+
+// After: スプラウト
+function processOrder(order) {
+  // 複雑な処理...
+  const discount = calculateDiscount(order);
+  // ↑ 新機能は別メソッドに（テスト可能）
+}
+
+// 新しいメソッド（テスト付き）
+function calculateDiscount(order) {
+  // テスト駆動で開発できる
+}</code></pre>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">ラップ（Wrap）</div>
+      <p><strong>既存コードを新しいメソッドで「包む」</strong></p>
+<pre><code>// Before: レガシーコード
+function sendEmail(to, subject, body) {
+  // メール送信ロジック
+}
+
+// After: ラップ
+function sendEmailWithLogging(to, subject, body) {
+  logEmailAttempt(to, subject);  // 新機能
+  sendEmail(to, subject, body);  // 既存コードを呼ぶ
+  logEmailSuccess(to);           // 新機能
+}
+
+// 既存コードは変更なし
+// 新機能部分だけテスト可能</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      スプラウト vs ラップ
+    </div>
+    <svg viewBox="0 0 500 200" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="スプラウトとラップの違い">
+      <title>2つの手法の比較</title>
+
+      <!-- スプラウト -->
+      <rect x="30" y="40" width="180" height="120" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+      <text x="120" y="65" text-anchor="middle" fill="#1e40af" font-size="12" font-weight="bold">Sprout（スプラウト）</text>
+      <rect x="50" y="80" width="60" height="30" rx="5" fill="#93c5fd"/>
+      <text x="80" y="100" text-anchor="middle" fill="#1e40af" font-size="10">既存</text>
+      <rect x="130" y="80" width="60" height="30" rx="5" fill="#22c55e"/>
+      <text x="160" y="100" text-anchor="middle" fill="white" font-size="10">新規</text>
+      <text x="120" y="145" text-anchor="middle" fill="#1e40af" font-size="10">内部に新メソッド追加</text>
+
+      <!-- ラップ -->
+      <rect x="290" y="40" width="180" height="120" rx="10" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+      <text x="380" y="65" text-anchor="middle" fill="#166534" font-size="12" font-weight="bold">Wrap（ラップ）</text>
+      <rect x="320" y="85" width="120" height="50" rx="5" fill="#bbf7d0"/>
+      <rect x="340" y="95" width="80" height="30" rx="5" fill="#93c5fd"/>
+      <text x="380" y="115" text-anchor="middle" fill="#1e40af" font-size="10">既存</text>
+      <text x="380" y="145" text-anchor="middle" fill="#166534" font-size="10">外側から既存を包む</text>
+    </svg>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>テストなしでレガシーコードを変更</strong>：まず特性テストを書くべき</li>
+      <li><strong>「動いているから触らない」</strong>：技術的負債の放置</li>
+      <li><strong>大規模リファクタリングの一発勝負</strong>：小さなステップで進めるべき</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-tdd9-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>特性テストの目的は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd9-1" style="display:none;">
+      A. コードが正しいことを証明する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd9-1" style="display:none;">
+      B. 現在の動作を記録し、変更時に壊れたことを検知する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd9-1" style="display:none;">
+      C. コードカバレッジを100%にする
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd9-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-tdd9-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>「スプラウト」手法の特徴は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd9-2" style="display:none;">
+      A. 新機能を別のメソッドとして追加する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd9-2" style="display:none;">
+      B. 既存コードを新しいメソッドで包む
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd9-2" style="display:none;">
+      C. 既存コードを全て書き直す
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd9-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('tdd9')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="tdd10">
+  <h1>リファクタリングとテスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>リファクタリングの定義と重要性</li>
+      <li>テストが守る安全なリファクタリング</li>
+      <li>リファクタリング中のテスト維持</li>
+    </ul>
+  </div>
+
+  <h2>リファクタリングとは</h2>
+
+  <p>
+    <strong>リファクタリング</strong>とは、<br>
+    <strong>外部から見た振る舞いを変えずに、内部構造を改善する</strong>ことです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：部屋の模様替え
+    </div>
+    <p>
+      部屋を模様替えしても、<strong>「寝室」という機能は変わらない</strong>。<br>
+      でも、使いやすく、整理整頓された状態になる。
+    </p>
+    <p style="margin:0;">
+      リファクタリングも同じ。<strong>外から見た動きは同じ</strong>だけど、<br>
+      中は読みやすく、変更しやすくなる。
+    </p>
+  </div>
+
+  <h2>テストがリファクタリングを守る</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      安全なリファクタリングの流れ
+    </div>
+    <svg viewBox="0 0 500 200" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="テストによる安全なリファクタリング">
+      <title>リファクタリングとテストの関係</title>
+
+      <defs>
+        <marker id="arrow-refactor" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#6366f1"/>
+        </marker>
+      </defs>
+
+      <!-- Step 1 -->
+      <rect x="20" y="60" width="100" height="80" rx="10" fill="#22c55e" stroke="#16a34a" stroke-width="2"/>
+      <text x="70" y="90" text-anchor="middle" fill="white" font-size="11" font-weight="bold">1. テスト</text>
+      <text x="70" y="110" text-anchor="middle" fill="white" font-size="10">全て通る</text>
+      <text x="70" y="125" text-anchor="middle" fill="#dcfce7" font-size="10">(Green)</text>
+
+      <!-- 矢印1 -->
+      <line x1="130" y1="100" x2="160" y2="100" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-refactor)"/>
+
+      <!-- Step 2 -->
+      <rect x="170" y="60" width="100" height="80" rx="10" fill="#3b82f6" stroke="#2563eb" stroke-width="2"/>
+      <text x="220" y="85" text-anchor="middle" fill="white" font-size="11" font-weight="bold">2. 小さく</text>
+      <text x="220" y="105" text-anchor="middle" fill="white" font-size="10">リファクタ</text>
+      <text x="220" y="125" text-anchor="middle" fill="#dbeafe" font-size="10">（1つの変更）</text>
+
+      <!-- 矢印2 -->
+      <line x1="280" y1="100" x2="310" y2="100" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-refactor)"/>
+
+      <!-- Step 3 -->
+      <rect x="320" y="60" width="100" height="80" rx="10" fill="#22c55e" stroke="#16a34a" stroke-width="2"/>
+      <text x="370" y="90" text-anchor="middle" fill="white" font-size="11" font-weight="bold">3. テスト</text>
+      <text x="370" y="110" text-anchor="middle" fill="white" font-size="10">再実行</text>
+      <text x="370" y="125" text-anchor="middle" fill="#dcfce7" font-size="10">(Green維持)</text>
+
+      <!-- 繰り返し矢印 -->
+      <path d="M420,100 Q450,100 450,50 Q450,20 220,20 Q120,20 120,60" stroke="#6366f1" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
+      <text x="285" y="15" text-anchor="middle" fill="#6366f1" font-size="10">繰り返し</text>
+
+      <!-- 下の注釈 -->
+      <text x="250" y="175" text-anchor="middle" fill="currentColor" font-size="11" font-weight="bold">テストが通り続ける = 振る舞いが変わっていない</text>
+    </svg>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      テストなしリファクタリングの危険
+    </div>
+<pre><code>// テストなしでリファクタリング → 知らぬ間にバグ混入
+
+// Before
+function getFullName(user) {
+  return user.firstName + ' ' + user.lastName;
+}
+
+// After（リファクタリングのつもりが...）
+function getFullName(user) {
+  return `${user.firstName}${user.lastName}`;  // スペースが消えた！
+}
+
+// テストがあれば即座に検知
+test('フルネームにスペースが入る', () => {
+  const user = { firstName: '田中', lastName: '太郎' };
+  expect(getFullName(user)).toBe('田中 太郎');
+  // → テスト失敗！バグ発見
+});</code></pre>
+  </div>
+
+  <h2>リファクタリング中のテスト維持</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      安全なリファクタリングのルール
+    </div>
+    <ol>
+      <li><strong>テストが全て通っている状態から始める</strong></li>
+      <li><strong>小さな変更を1つずつ</strong>（大きな変更は分割）</li>
+      <li><strong>変更のたびにテスト実行</strong>（IDEの自動実行が便利）</li>
+      <li><strong>テストが落ちたらすぐ戻す</strong>（git checkoutなど）</li>
+      <li><strong>振る舞いを変えるならテストも変える</strong>（別のコミット）</li>
+    </ol>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">危険なリファクタリング</div>
+<pre><code>// ❌ 一度に大きく変更
+git commit -m "大規模リファクタリング"
+// 変更ファイル: 50個
+// テスト: 10個失敗
+// → 原因特定が困難</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">安全なリファクタリング</div>
+<pre><code>// ⭕ 小さく刻んで変更
+git commit -m "変数名をuserIdに統一"
+// テスト: 全パス
+
+git commit -m "calculateTotal関数を抽出"
+// テスト: 全パス
+
+git commit -m "マジックナンバーを定数化"
+// テスト: 全パス</code></pre>
+    </div>
+  </div>
+
+  <h2>テスト自体のリファクタリング</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      テストコードも保守対象
+    </div>
+    <p>
+      テストコードも<strong>リファクタリングが必要</strong>です。<br>
+      ただし、<strong>プロダクションコードと同時には変更しない</strong>。
+    </p>
+<pre><code>// ❌ 同時に変更（危険）
+git commit -m "計算ロジックとテストを両方リファクタ"
+// → どちらに問題があるか分からない
+
+// ⭕ 別々に変更（安全）
+git commit -m "テストのヘルパー関数を追加"
+// テスト: 全パス（テストの動作は同じ）
+
+git commit -m "計算ロジックをリファクタ"
+// テスト: 全パス（テストが保護）</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🤖</span>
+      AIがやりがちな間違い
+    </div>
+<pre><code>// ❌ AIにリファクタリングを頼むと一気に変更しがち
+
+// Before（AI入力）
+function processData(data) {
+  // 100行の複雑なコード
+}
+
+// AIの出力（一気に変更）
+function processData(data) {
+  // 完全に書き換えられた50行
+}
+// → 振る舞いが変わっていないか不明
+// → テストなしでは検証不能
+
+// ⭕ AIへの正しい依頼
+「この関数から calculateSum を抽出してください。
+ 他の部分は変更しないでください。」
+// → 小さなステップで依頼</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>テストなしの大規模リファクタリング</strong>：まずテストを書く</li>
+      <li><strong>リファクタリングと機能追加が混在</strong>：コミットを分ける</li>
+      <li><strong>テストとプロダクションコードの同時変更</strong>：別コミットに</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-tdd10-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>リファクタリングの定義として正しいものは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd10-1" style="display:none;">
+      A. 機能を追加しながらコードを整理する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd10-1" style="display:none;">
+      B. 外部から見た振る舞いを変えずに内部構造を改善する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd10-1" style="display:none;">
+      C. バグを修正しながらコードを書き換える
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd10-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-tdd10-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>安全なリファクタリングのルールとして誤っているものは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd10-2" style="display:none;">
+      A. 小さな変更を1つずつ行う
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd10-2" style="display:none;">
+      B. 変更のたびにテストを実行する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd10-2" style="display:none;">
+      C. 効率化のためテストとプロダクションコードを同時に変更する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd10-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-tdd10-3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 3（総まとめ）
+    </div>
+    <p>TDD/BDD/ATDDに共通する最も重要な考え方は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd10-3" style="display:none;">
+      A. テストカバレッジを100%にする
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-tdd10-3" style="display:none;">
+      B. 開発速度を最大化する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-tdd10-3" style="display:none;">
+      C. テストを通じて仕様を明確にし、変更に強いコードを作る
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-tdd10-3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('tdd10')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>

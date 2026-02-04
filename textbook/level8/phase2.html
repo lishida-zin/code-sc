@@ -1,0 +1,1022 @@
+<!-- ============================================
+     Level 8 Phase 2: 単体テスト
+     ============================================ -->
+
+<section id="unit1">
+  <h1>FIRST原則</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>単体テストのFIRST原則</li>
+      <li>各原則の意味と重要性</li>
+    </ul>
+  </div>
+
+  <h2>FIRST原則とは</h2>
+
+  <p>
+    <strong>FIRST原則</strong>は、良い単体テストの5つの特性です。
+  </p>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      FIRST原則
+    </div>
+    <svg viewBox="0 0 500 300" style="width:100%;max-width:500px;display:block;margin:1rem auto;">
+      <!-- F -->
+      <rect x="20" y="50" width="80" height="200" rx="8" fill="#3b82f6"/>
+      <text x="60" y="90" text-anchor="middle" fill="white" font-size="24" font-weight="bold">F</text>
+      <text x="60" y="130" text-anchor="middle" fill="white" font-size="11">Fast</text>
+      <text x="60" y="150" text-anchor="middle" fill="#e0e7ff" font-size="9">高速</text>
+
+      <!-- I -->
+      <rect x="115" y="50" width="80" height="200" rx="8" fill="#10b981"/>
+      <text x="155" y="90" text-anchor="middle" fill="white" font-size="24" font-weight="bold">I</text>
+      <text x="155" y="130" text-anchor="middle" fill="white" font-size="11">Isolated</text>
+      <text x="155" y="150" text-anchor="middle" fill="#d1fae5" font-size="9">独立</text>
+
+      <!-- R -->
+      <rect x="210" y="50" width="80" height="200" rx="8" fill="#f59e0b"/>
+      <text x="250" y="90" text-anchor="middle" fill="white" font-size="24" font-weight="bold">R</text>
+      <text x="250" y="130" text-anchor="middle" fill="white" font-size="11">Repeatable</text>
+      <text x="250" y="150" text-anchor="middle" fill="#fef3c7" font-size="9">再現性</text>
+
+      <!-- S -->
+      <rect x="305" y="50" width="80" height="200" rx="8" fill="#8b5cf6"/>
+      <text x="345" y="90" text-anchor="middle" fill="white" font-size="24" font-weight="bold">S</text>
+      <text x="345" y="130" text-anchor="middle" fill="white" font-size="10">Self-validating</text>
+      <text x="345" y="150" text-anchor="middle" fill="#ede9fe" font-size="9">自己検証</text>
+
+      <!-- T -->
+      <rect x="400" y="50" width="80" height="200" rx="8" fill="#ef4444"/>
+      <text x="440" y="90" text-anchor="middle" fill="white" font-size="24" font-weight="bold">T</text>
+      <text x="440" y="130" text-anchor="middle" fill="white" font-size="11">Timely</text>
+      <text x="440" y="150" text-anchor="middle" fill="#fee2e2" font-size="9">適時</text>
+    </svg>
+  </div>
+
+  <h2>各原則の詳細</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>原則</th>
+        <th>意味</th>
+        <th>違反例</th>
+      </tr>
+      <tr>
+        <td><strong>Fast</strong></td>
+        <td>高速に実行できる</td>
+        <td>DBアクセスで遅い</td>
+      </tr>
+      <tr>
+        <td><strong>Isolated</strong></td>
+        <td>他のテストに依存しない</td>
+        <td>テスト順序に依存</td>
+      </tr>
+      <tr>
+        <td><strong>Repeatable</strong></td>
+        <td>何度実行しても同じ結果</td>
+        <td>乱数や日時に依存</td>
+      </tr>
+      <tr>
+        <td><strong>Self-validating</strong></td>
+        <td>自動で成功/失敗を判定</td>
+        <td>目視確認が必要</td>
+      </tr>
+      <tr>
+        <td><strong>Timely</strong></td>
+        <td>適切なタイミングで書く</td>
+        <td>リリース後にテスト</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="quiz" id="quiz-unit1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>FIRST原則の「I」は何を意味する？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit1" style="display:none;">
+      <span>Important（重要）</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="Isolated（独立）：テストは他のテストに依存せず、単独で実行できる必要があります。">
+      <input type="radio" name="q-unit1" style="display:none;">
+      <span>Isolated（独立）</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit1" style="display:none;">
+      <span>Instant（即時）</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-unit1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('unit1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="unit2">
+  <h1>AAA / Given-When-Then</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>テストの構造化パターン</li>
+      <li>AAAパターンとGiven-When-Then</li>
+      <li>可読性の高いテストの書き方</li>
+    </ul>
+  </div>
+
+  <h2>AAAパターン</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      Arrange - Act - Assert
+    </div>
+<pre><code>test('ユーザーを作成できる', () => {
+  // Arrange（準備）
+  const userData = { name: '太郎', email: 'taro@example.com' };
+
+  // Act（実行）
+  const user = createUser(userData);
+
+  // Assert（検証）
+  expect(user.id).toBeDefined();
+  expect(user.name).toBe('太郎');
+});</code></pre>
+  </div>
+
+  <h2>Given-When-Then</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      BDDスタイル
+    </div>
+<pre><code>describe('ユーザー作成', () => {
+  test('有効なデータが与えられたとき、ユーザーが作成される', () => {
+    // Given（前提条件）
+    const userData = { name: '太郎', email: 'taro@example.com' };
+
+    // When（操作）
+    const user = createUser(userData);
+
+    // Then（期待結果）
+    expect(user.id).toBeDefined();
+    expect(user.name).toBe('太郎');
+  });
+});</code></pre>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">構造化されていない</div>
+<pre><code>test('test', () => {
+  const x = func(1);
+  expect(x).toBe(2);
+  const y = func(x);
+  expect(y).toBe(4);
+  // 何がArrange? Act? Assert?
+});</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">構造化されている</div>
+<pre><code>test('2倍にする', () => {
+  // Arrange
+  const input = 1;
+  // Act
+  const result = double(input);
+  // Assert
+  expect(result).toBe(2);
+});</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-unit2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>AAAパターンで「実際に関数を呼び出す」フェーズは？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit2" style="display:none;">
+      <span>Arrange</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="Act（実行）フェーズで、テスト対象の関数やメソッドを実際に呼び出します。">
+      <input type="radio" name="q-unit2" style="display:none;">
+      <span>Act</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit2" style="display:none;">
+      <span>Assert</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-unit2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('unit2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="unit3">
+  <h1>アサーション</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>アサーションとは何か</li>
+      <li>適切なアサーションの書き方</li>
+      <li>アサーション漏れの危険性</li>
+    </ul>
+  </div>
+
+  <h2>アサーションとは</h2>
+
+  <p>
+    <strong>アサーション</strong>とは、テストの期待値を検証する文です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔧</span>
+      Jestのアサーション例
+    </div>
+<pre><code>// 等価
+expect(value).toBe(1);           // 厳密等価（===）
+expect(value).toEqual({a: 1});   // 深い等価
+
+// 真偽値
+expect(value).toBeTruthy();      // 真っぽい値
+expect(value).toBeFalsy();       // 偽っぽい値
+expect(value).toBeNull();        // null
+
+// 数値
+expect(value).toBeGreaterThan(3);
+expect(value).toBeLessThanOrEqual(5);
+
+// 配列・文字列
+expect(array).toContain('item');
+expect(string).toMatch(/pattern/);
+
+// エラー
+expect(() => func()).toThrow();
+expect(() => func()).toThrow('message');</code></pre>
+  </div>
+
+  <h2>アサーションの注意点</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      AIがやりがちな間違い
+    </div>
+<pre><code>// ❌ 甘いアサーション
+test('ユーザーを取得', async () => {
+  const user = await getUser(1);
+  expect(user).toBeTruthy(); // 存在だけ確認
+});
+
+// ⭕ 適切なアサーション
+test('ユーザーを取得', async () => {
+  const user = await getUser(1);
+  expect(user.id).toBe(1);
+  expect(user.name).toBe('太郎');
+  expect(user.email).toMatch(/@/);
+});</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-unit3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>オブジェクトの深い比較に使うアサーションは？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit3" style="display:none;">
+      <span>toBe()</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="toEqual()はオブジェクトや配列の深い比較を行います。toBe()は参照の比較です。">
+      <input type="radio" name="q-unit3" style="display:none;">
+      <span>toEqual()</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit3" style="display:none;">
+      <span>toBeTruthy()</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-unit3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('unit3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="unit4">
+  <h1>テストダブル概要</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>テストダブルとは</li>
+      <li>5種類のテストダブル</li>
+      <li>それぞれの使い分け</li>
+    </ul>
+  </div>
+
+  <h2>テストダブルとは</h2>
+
+  <p>
+    <strong>テストダブル</strong>とは、テストで本物の依存オブジェクトの代わりに使う偽物です。<br>
+    映画のスタントダブル（代役）が語源。
+  </p>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      5種類のテストダブル
+    </div>
+    <svg viewBox="0 0 500 250" style="width:100%;max-width:500px;display:block;margin:1rem auto;">
+      <rect x="20" y="30" width="90" height="60" rx="8" fill="#3b82f6"/>
+      <text x="65" y="55" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Dummy</text>
+      <text x="65" y="75" text-anchor="middle" fill="#e0e7ff" font-size="9">引数埋め</text>
+
+      <rect x="120" y="30" width="90" height="60" rx="8" fill="#10b981"/>
+      <text x="165" y="55" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Stub</text>
+      <text x="165" y="75" text-anchor="middle" fill="#d1fae5" font-size="9">固定値返却</text>
+
+      <rect x="220" y="30" width="90" height="60" rx="8" fill="#f59e0b"/>
+      <text x="265" y="55" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Spy</text>
+      <text x="265" y="75" text-anchor="middle" fill="#fef3c7" font-size="9">呼出記録</text>
+
+      <rect x="320" y="30" width="90" height="60" rx="8" fill="#8b5cf6"/>
+      <text x="365" y="55" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Mock</text>
+      <text x="365" y="75" text-anchor="middle" fill="#ede9fe" font-size="9">期待値検証</text>
+
+      <rect x="420" y="30" width="60" height="60" rx="8" fill="#ef4444"/>
+      <text x="450" y="55" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Fake</text>
+      <text x="450" y="75" text-anchor="middle" fill="#fee2e2" font-size="9">簡易実装</text>
+    </svg>
+  </div>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>種類</th>
+        <th>目的</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>Dummy</strong></td>
+        <td>引数を埋めるだけ</td>
+        <td>使わない引数にnull</td>
+      </tr>
+      <tr>
+        <td><strong>Stub</strong></td>
+        <td>固定値を返す</td>
+        <td>APIが常に成功を返す</td>
+      </tr>
+      <tr>
+        <td><strong>Spy</strong></td>
+        <td>呼び出しを記録</td>
+        <td>何回呼ばれたか確認</td>
+      </tr>
+      <tr>
+        <td><strong>Mock</strong></td>
+        <td>期待値を事前に設定</td>
+        <td>特定の引数で呼ばれることを検証</td>
+      </tr>
+      <tr>
+        <td><strong>Fake</strong></td>
+        <td>簡易的な実装</td>
+        <td>インメモリDB</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="quiz" id="quiz-unit4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>APIが常に「成功」を返すように設定するのは何？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit4" style="display:none;">
+      <span>Dummy</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="Stubは固定値を返すテストダブルです。外部依存を排除して安定したテストを書けます。">
+      <input type="radio" name="q-unit4" style="display:none;">
+      <span>Stub</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit4" style="display:none;">
+      <span>Spy</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-unit4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('unit4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="unit5">
+  <h1>Mock</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Mockの使い方</li>
+      <li>振る舞いの検証</li>
+      <li>過剰なモックの問題</li>
+    </ul>
+  </div>
+
+  <h2>Mockとは</h2>
+
+  <p>
+    <strong>Mock</strong>は、期待する呼び出しを事前に設定し、検証するテストダブルです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔧</span>
+      Jestでのモック
+    </div>
+<pre><code>// モジュール全体をモック
+jest.mock('./api');
+
+// 関数をモック
+const mockFn = jest.fn();
+mockFn.mockReturnValue('hello');
+
+// 呼び出しを検証
+expect(mockFn).toHaveBeenCalled();
+expect(mockFn).toHaveBeenCalledWith('arg');
+expect(mockFn).toHaveBeenCalledTimes(2);</code></pre>
+  </div>
+
+  <h2>過剰なモックの問題</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      モックの罠
+    </div>
+    <ul>
+      <li><strong>実装詳細への依存</strong>：内部実装が変わるとテストが壊れる</li>
+      <li><strong>本番との乖離</strong>：モックと本物の動作が違う可能性</li>
+      <li><strong>過信</strong>：モックは成功するが本番で失敗</li>
+    </ul>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">過剰なモック</div>
+<pre><code>// ❌ 内部実装をモック
+test('process', () => {
+  const spy = jest.spyOn(
+    service, '_internalHelper'
+  );
+  service.process();
+  expect(spy).toHaveBeenCalled();
+});</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">振る舞いをテスト</div>
+<pre><code>// ⭕ 外部から見た振る舞い
+test('process', () => {
+  const result = service.process();
+  expect(result.status).toBe('ok');
+});</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-unit5">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>過剰なモックの問題として正しいものは？</p>
+    <label class="quiz-option" data-correct="true" data-explanation="モックは実装詳細に依存しがちで、リファクタリングでテストが壊れやすくなります。">
+      <input type="radio" name="q-unit5" style="display:none;">
+      <span>実装詳細への依存が生まれる</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit5" style="display:none;">
+      <span>テストが速くなりすぎる</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit5" style="display:none;">
+      <span>コードカバレッジが下がる</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-unit5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('unit5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="unit6">
+  <h1>Stub</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Stubの使い方</li>
+      <li>外部依存の置き換え</li>
+      <li>Stubと本番の乖離</li>
+    </ul>
+  </div>
+
+  <h2>Stubとは</h2>
+
+  <p>
+    <strong>Stub</strong>は、固定の戻り値を返すテストダブルです。外部依存を排除できます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔧</span>
+      Stubの例
+    </div>
+<pre><code>// API呼び出しをスタブ
+jest.spyOn(api, 'fetchUser').mockResolvedValue({
+  id: 1,
+  name: '太郎'
+});
+
+// テスト
+test('ユーザー情報を表示', async () => {
+  const result = await displayUser(1);
+  expect(result).toContain('太郎');
+});</code></pre>
+  </div>
+
+  <h2>Stubの注意点</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      本番との乖離
+    </div>
+    <p>
+      Stubは常に期待通りの値を返しますが、本番のAPIは：
+    </p>
+    <ul>
+      <li>エラーを返すかもしれない</li>
+      <li>タイムアウトするかもしれない</li>
+      <li>予期しないデータ形式かもしれない</li>
+    </ul>
+    <p style="margin:0;">
+      → 異常系のStubも用意する
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-unit6">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Stubを使う主な目的は？</p>
+    <label class="quiz-option" data-correct="true" data-explanation="Stubは外部依存（API、DB等）を固定値に置き換え、テストを安定させます。">
+      <input type="radio" name="q-unit6" style="display:none;">
+      <span>外部依存を排除してテストを安定させる</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit6" style="display:none;">
+      <span>テストの実行速度を上げる</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit6" style="display:none;">
+      <span>コードカバレッジを上げる</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-unit6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('unit6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="unit7">
+  <h1>Jest/Vitest基礎</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Jest/Vitestの基本的な使い方</li>
+      <li>テストの構造化</li>
+      <li>セットアップとティアダウン</li>
+    </ul>
+  </div>
+
+  <h2>基本的なテスト構造</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔧</span>
+      Jestの基本
+    </div>
+<pre><code>// describe: テストをグループ化
+describe('Calculator', () => {
+  // テストケース
+  test('足し算ができる', () => {
+    expect(add(1, 2)).toBe(3);
+  });
+
+  test('引き算ができる', () => {
+    expect(subtract(5, 3)).toBe(2);
+  });
+});
+
+// ネストも可能
+describe('Calculator', () => {
+  describe('add', () => {
+    test('正の数', () => { ... });
+    test('負の数', () => { ... });
+  });
+});</code></pre>
+  </div>
+
+  <h2>セットアップとティアダウン</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔧</span>
+      ライフサイクル
+    </div>
+<pre><code>describe('Database', () => {
+  // 全テスト前に1回
+  beforeAll(async () => {
+    await db.connect();
+  });
+
+  // 各テスト前
+  beforeEach(() => {
+    db.clear();
+  });
+
+  // 各テスト後
+  afterEach(() => {
+    db.rollback();
+  });
+
+  // 全テスト後に1回
+  afterAll(async () => {
+    await db.disconnect();
+  });
+});</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-unit7">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>各テストの前に実行されるフックは？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit7" style="display:none;">
+      <span>beforeAll</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="beforeEachは各テストケースの前に毎回実行されます。beforeAllは全テストの前に1回だけです。">
+      <input type="radio" name="q-unit7" style="display:none;">
+      <span>beforeEach</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit7" style="display:none;">
+      <span>afterEach</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-unit7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('unit7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="unit8">
+  <h1>非同期テスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>非同期コードのテスト方法</li>
+      <li>async/awaitの使い方</li>
+      <li>タイマーのテスト</li>
+    </ul>
+  </div>
+
+  <h2>async/awaitでテスト</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔧</span>
+      非同期テストの書き方
+    </div>
+<pre><code>// async/await
+test('ユーザーを取得できる', async () => {
+  const user = await fetchUser(1);
+  expect(user.name).toBe('太郎');
+});
+
+// Promiseを返す
+test('ユーザーを取得できる', () => {
+  return fetchUser(1).then(user => {
+    expect(user.name).toBe('太郎');
+  });
+});
+
+// resolves/rejects マッチャー
+test('成功を返す', async () => {
+  await expect(fetchUser(1)).resolves.toHaveProperty('name');
+});
+
+test('エラーを返す', async () => {
+  await expect(fetchUser(-1)).rejects.toThrow('Invalid ID');
+});</code></pre>
+  </div>
+
+  <h2>タイマーのテスト</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⏱️</span>
+      Fake Timers
+    </div>
+<pre><code>// タイマーをモック
+jest.useFakeTimers();
+
+test('1秒後にコールバックが呼ばれる', () => {
+  const callback = jest.fn();
+  setTimeout(callback, 1000);
+
+  // 1秒進める
+  jest.advanceTimersByTime(1000);
+
+  expect(callback).toHaveBeenCalled();
+});
+
+// 元に戻す
+afterEach(() => {
+  jest.useRealTimers();
+});</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-unit8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>非同期テストで正しい書き方は？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit8" style="display:none;">
+      <span>test('...', () => { await fetch(); })</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="async/awaitを使う場合、テスト関数自体をasyncにする必要があります。">
+      <input type="radio" name="q-unit8" style="display:none;">
+      <span>test('...', async () => { await fetch(); })</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit8" style="display:none;">
+      <span>test('...', () => { fetch().then(); })</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-unit8')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('unit8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="unit9">
+  <h1>カバレッジ</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>コードカバレッジとは</li>
+      <li>カバレッジの種類</li>
+      <li>カバレッジの罠</li>
+    </ul>
+  </div>
+
+  <h2>カバレッジとは</h2>
+
+  <p>
+    <strong>コードカバレッジ</strong>は、テストがコードのどれだけを実行したかを示す指標です。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>種類</th>
+        <th>意味</th>
+      </tr>
+      <tr>
+        <td><strong>行カバレッジ</strong></td>
+        <td>実行された行の割合</td>
+      </tr>
+      <tr>
+        <td><strong>分岐カバレッジ</strong></td>
+        <td>if/elseの全分岐を通過した割合</td>
+      </tr>
+      <tr>
+        <td><strong>関数カバレッジ</strong></td>
+        <td>呼び出された関数の割合</td>
+      </tr>
+      <tr>
+        <td><strong>文カバレッジ</strong></td>
+        <td>実行された文の割合</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>カバレッジの罠</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      カバレッジ100%の落とし穴
+    </div>
+<pre><code>// カバレッジ100%でもバグがある例
+function divide(a, b) {
+  return a / b;  // b=0 でInfinityになる
+}
+
+test('割り算', () => {
+  expect(divide(10, 2)).toBe(5);
+  // カバレッジ100%だが、b=0のテストがない
+});</code></pre>
+    <p style="margin-top:1rem;">
+      <strong>カバレッジは「テストされていない箇所」を見つけるツール</strong>であり、<br>
+      「テストの品質」を保証するものではない。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-unit9">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>カバレッジ100%について正しいのは？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit9" style="display:none;">
+      <span>バグがないことを保証する</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit9" style="display:none;">
+      <span>必ず達成すべき目標</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="カバレッジ100%でもバグは残る可能性があります。テストの品質（アサーションの適切さ）が重要です。">
+      <input type="radio" name="q-unit9" style="display:none;">
+      <span>バグがないことは保証しない</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-unit9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('unit9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="unit10">
+  <h1>テスタブルな設計</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>テストしやすいコードの特徴</li>
+      <li>依存性注入（DI）</li>
+      <li>純粋関数と副作用</li>
+    </ul>
+  </div>
+
+  <h2>テストしにくいコード</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      テスト困難な例
+    </div>
+<pre><code>// ❌ 直接依存
+function getUser(id) {
+  const db = new Database();  // 直接生成
+  return db.query(`SELECT * FROM users WHERE id = ${id}`);
+}
+
+// テストでDBを差し替えられない</code></pre>
+  </div>
+
+  <h2>依存性注入（DI）</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">✅</span>
+      テスト可能な設計
+    </div>
+<pre><code>// ⭕ 依存性注入
+function getUser(id, db) {
+  return db.query(`SELECT * FROM users WHERE id = ${id}`);
+}
+
+// テストでモックを注入できる
+test('ユーザーを取得', () => {
+  const mockDb = {
+    query: jest.fn().mockReturnValue({ id: 1, name: '太郎' })
+  };
+  const user = getUser(1, mockDb);
+  expect(user.name).toBe('太郎');
+});</code></pre>
+  </div>
+
+  <h2>純粋関数</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">副作用あり</div>
+<pre><code>let total = 0;
+function addToTotal(n) {
+  total += n;  // 外部状態を変更
+  return total;
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">純粋関数</div>
+<pre><code>function add(a, b) {
+  return a + b;  // 入力のみで出力が決まる
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-unit10">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>テストしやすいコードの特徴は？</p>
+    <label class="quiz-option" data-correct="true" data-explanation="依存性を外部から注入することで、テスト時にモックを使えるようになります。">
+      <input type="radio" name="q-unit10" style="display:none;">
+      <span>依存性を外部から注入できる</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit10" style="display:none;">
+      <span>グローバル変数を使っている</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-unit10" style="display:none;">
+      <span>直接DBに接続している</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-unit10')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('unit10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

@@ -1,0 +1,2336 @@
+<!-- ============================================
+     Level 8 Phase 7: CI/CDとテスト自動化
+     ============================================ -->
+
+<section id="ci1">
+  <h1>CI/CDでのテスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>CI/CDパイプラインへのテスト統合</li>
+      <li>品質ゲートの設定方法</li>
+      <li>テスト失敗時のパイプライン制御</li>
+    </ul>
+  </div>
+
+  <h2>CI/CDパイプラインとテスト</h2>
+
+  <p>
+    <strong>CI/CD</strong>（継続的インテグレーション/継続的デリバリー）では、
+    コード変更のたびに<strong>自動テスト</strong>を実行し、品質を担保します。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：工場の品質検査
+    </div>
+    <p>
+      工場で製品がベルトコンベアを流れる途中で<strong>品質検査</strong>を行うように、<br>
+      CI/CDではコードが本番に届く前に<strong>テストという検査</strong>を通過させます。
+    </p>
+    <p style="margin:0;">
+      検査に不合格なら、製品（コード）は出荷（デプロイ）されません。
+    </p>
+  </div>
+
+  <h2>パイプラインの基本構造</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      CI/CDパイプラインのテストフロー
+    </div>
+    <svg viewBox="0 0 600 200" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="CI/CDパイプラインのテストフロー図">
+      <title>CI/CDパイプラインにおけるテストの位置</title>
+
+      <defs>
+        <marker id="arrow-right-ci1" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#6366f1"/>
+        </marker>
+      </defs>
+
+      <!-- ステージ1: コードプッシュ -->
+      <rect x="10" y="60" width="90" height="60" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+      <text x="55" y="85" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Push</text>
+      <text x="55" y="102" text-anchor="middle" fill="#e0e7ff" font-size="9">コード変更</text>
+
+      <!-- 矢印1 -->
+      <line x1="100" y1="90" x2="125" y2="90" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-right-ci1)"/>
+
+      <!-- ステージ2: ビルド -->
+      <rect x="130" y="60" width="90" height="60" rx="8" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="175" y="85" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Build</text>
+      <text x="175" y="102" text-anchor="middle" fill="#d1fae5" font-size="9">コンパイル</text>
+
+      <!-- 矢印2 -->
+      <line x1="220" y1="90" x2="245" y2="90" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-right-ci1)"/>
+
+      <!-- ステージ3: テスト（強調） -->
+      <rect x="250" y="50" width="100" height="80" rx="8" fill="#f59e0b" stroke="#d97706" stroke-width="3"/>
+      <text x="300" y="80" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Test</text>
+      <text x="300" y="98" text-anchor="middle" fill="#fef3c7" font-size="9">Unit/Integration</text>
+      <text x="300" y="115" text-anchor="middle" fill="#fef3c7" font-size="9">E2E Tests</text>
+
+      <!-- 矢印3 -->
+      <line x1="350" y1="90" x2="375" y2="90" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-right-ci1)"/>
+
+      <!-- ステージ4: デプロイ -->
+      <rect x="380" y="60" width="90" height="60" rx="8" fill="#8b5cf6" stroke="#7c3aed" stroke-width="2"/>
+      <text x="425" y="85" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Deploy</text>
+      <text x="425" y="102" text-anchor="middle" fill="#e0e7ff" font-size="9">ステージング</text>
+
+      <!-- 矢印4 -->
+      <line x1="470" y1="90" x2="495" y2="90" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-right-ci1)"/>
+
+      <!-- ステージ5: 本番 -->
+      <rect x="500" y="60" width="90" height="60" rx="8" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
+      <text x="545" y="85" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Production</text>
+      <text x="545" y="102" text-anchor="middle" fill="#fee2e2" font-size="9">本番環境</text>
+
+      <!-- 品質ゲートの説明 -->
+      <rect x="250" y="145" width="100" height="30" rx="5" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+      <text x="300" y="165" text-anchor="middle" fill="#92400e" font-size="10" font-weight="bold">品質ゲート</text>
+      <line x1="300" y1="130" x2="300" y2="145" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4,2"/>
+    </svg>
+  </div>
+
+  <h2>GitHub Actionsでのテスト設定</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      基本的なテストワークフロー
+    </div>
+<pre><code># .github/workflows/test.yml
+name: Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Run unit tests
+        run: npm test -- --coverage
+
+      - name: Run integration tests
+        run: npm run test:integration
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}</code></pre>
+  </div>
+
+  <h2>品質ゲートの設定</h2>
+
+  <p>
+    <strong>品質ゲート</strong>とは、テストやカバレッジが基準を満たさないと
+    次のステージに進めない仕組みです。
+  </p>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      品質ゲートの例
+    </div>
+    <ul>
+      <li><strong>テスト成功率</strong>：100%（全テスト合格必須）</li>
+      <li><strong>カバレッジ</strong>：80%以上</li>
+      <li><strong>静的解析</strong>：エラー0件</li>
+      <li><strong>セキュリティスキャン</strong>：Critical脆弱性0件</li>
+    </ul>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">AIがやりがちな間違い</div>
+<pre><code># ❌ テスト失敗を無視する設定
+- name: Run tests
+  run: npm test
+  continue-on-error: true  # 失敗しても続行
+
+# ❌ 失敗時にexit 0で握りつぶす
+- name: Run tests
+  run: npm test || exit 0</code></pre>
+      <p style="margin:0;">テスト失敗を無視するとバグが本番に流出</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">正しい設定</div>
+<pre><code># ⭕ テスト失敗で即座に停止
+- name: Run tests
+  run: npm test
+
+# ⭕ 明示的に失敗を検知
+- name: Run tests
+  run: |
+    npm test
+    if [ $? -ne 0 ]; then
+      echo "Tests failed!"
+      exit 1
+    fi</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>continue-on-error: true</strong>がテストステップに設定されている</li>
+      <li><strong>テストなしでデプロイ</strong>できるワークフロー</li>
+      <li><strong>品質ゲートがない</strong>パイプライン</li>
+      <li><strong>main直接プッシュ</strong>が許可されている</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-ci1-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>CI/CDパイプラインで「品質ゲート」の目的は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci1-1" style="display:none;">
+      A. ビルド時間を短縮する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ci1-1" style="display:none;">
+      B. 基準を満たさないコードのデプロイを防ぐ
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci1-1" style="display:none;">
+      C. 開発者の作業を監視する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci1-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-ci1-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>次のワークフロー設定の問題点は？</p>
+<pre><code>- name: Run tests
+  run: npm test
+  continue-on-error: true</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ci1-2" style="display:none;">
+      A. テスト失敗してもパイプラインが成功になる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci1-2" style="display:none;">
+      B. テストが並列実行されない
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci1-2" style="display:none;">
+      C. 特に問題はない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci1-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ci1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ci2">
+  <h1>テストの並列化</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>テスト並列実行の仕組み</li>
+      <li>シャーディング（分割実行）の手法</li>
+      <li>並列化による高速化の実践</li>
+    </ul>
+  </div>
+
+  <h2>なぜ並列化が必要か</h2>
+
+  <p>
+    テストスイートが大きくなると、実行時間が<strong>数十分〜数時間</strong>になることも。
+    並列化で<strong>劇的に短縮</strong>できます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：レジの行列
+    </div>
+    <p>
+      スーパーで1つのレジに100人並んでいると時間がかかります。<br>
+      レジを<strong>5台</strong>に増やせば、待ち時間は<strong>1/5</strong>に。
+    </p>
+    <p style="margin:0;">
+      テストも同じ。複数のマシンで分担すれば速くなります。
+    </p>
+  </div>
+
+  <h2>並列化の基本戦略</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      並列実行のイメージ
+    </div>
+    <svg viewBox="0 0 500 250" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="テスト並列実行のイメージ">
+      <title>テスト並列実行の比較</title>
+
+      <!-- 直列実行（上） -->
+      <text x="10" y="30" fill="currentColor" font-size="12" font-weight="bold">直列実行（1ランナー）</text>
+      <rect x="10" y="40" width="480" height="30" rx="5" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
+      <text x="250" y="60" text-anchor="middle" fill="white" font-size="11">テスト1〜100（30分）</text>
+
+      <!-- 並列実行（下） -->
+      <text x="10" y="110" fill="currentColor" font-size="12" font-weight="bold">並列実行（5ランナー）</text>
+
+      <rect x="10" y="120" width="96" height="25" rx="5" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="58" y="137" text-anchor="middle" fill="white" font-size="9">1〜20</text>
+
+      <rect x="10" y="150" width="96" height="25" rx="5" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="58" y="167" text-anchor="middle" fill="white" font-size="9">21〜40</text>
+
+      <rect x="10" y="180" width="96" height="25" rx="5" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="58" y="197" text-anchor="middle" fill="white" font-size="9">41〜60</text>
+
+      <rect x="10" y="210" width="96" height="25" rx="5" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="58" y="227" text-anchor="middle" fill="white" font-size="9">61〜80</text>
+
+      <rect x="110" y="120" width="96" height="25" rx="5" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="158" y="137" text-anchor="middle" fill="white" font-size="9">81〜100</text>
+
+      <!-- 時間表示 -->
+      <line x1="106" y1="115" x2="106" y2="240" stroke="#333" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="110" y="245" fill="currentColor" font-size="10">6分</text>
+
+      <!-- 効果 -->
+      <rect x="300" y="150" width="180" height="60" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+      <text x="390" y="175" text-anchor="middle" fill="#92400e" font-size="12" font-weight="bold">30分 → 6分</text>
+      <text x="390" y="195" text-anchor="middle" fill="#92400e" font-size="11">5倍高速化！</text>
+    </svg>
+  </div>
+
+  <h2>GitHub Actionsでの並列化</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      マトリックス戦略による並列化
+    </div>
+<pre><code># .github/workflows/test-parallel.yml
+name: Parallel Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        shard: [1, 2, 3, 4, 5]  # 5分割
+      fail-fast: false  # 1つ失敗しても他を継続
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests (shard ${{ matrix.shard }}/5)
+        run: |
+          npx jest --shard=${{ matrix.shard }}/5</code></pre>
+  </div>
+
+  <h2>シャーディングの仕組み</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      Jestのシャーディング
+    </div>
+<pre><code># 5分割の2番目のシャードを実行
+npx jest --shard=2/5
+
+# テストファイルがこう分配される：
+# Shard 1/5: test1.js, test6.js, test11.js...
+# Shard 2/5: test2.js, test7.js, test12.js...
+# Shard 3/5: test3.js, test8.js, test13.js...
+# ...</code></pre>
+    <p style="margin:0;">
+      <strong>ポイント</strong>：テストファイル単位で分割され、各シャードが独立して実行されます。
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      Playwright（E2Eテスト）の並列化
+    </div>
+<pre><code># playwright.config.ts
+export default defineConfig({
+  // 並列ワーカー数
+  workers: process.env.CI ? 4 : undefined,
+
+  // シャーディング設定（CI用）
+  shard: process.env.SHARD
+    ? { current: parseInt(process.env.SHARD), total: 5 }
+    : undefined,
+});
+
+# GitHub Actionsで実行
+- name: Run E2E tests
+  run: npx playwright test
+  env:
+    SHARD: ${{ matrix.shard }}</code></pre>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      並列化の注意点
+    </div>
+    <ul>
+      <li><strong>テストの独立性</strong>：テスト間で状態を共有しないこと</li>
+      <li><strong>データベース</strong>：各シャードで独立したDBが必要</li>
+      <li><strong>ポート競合</strong>：同じポートを使うテストは失敗する</li>
+      <li><strong>コスト</strong>：ランナー数が増えると課金も増える</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>fail-fast: true</strong>のまま（1つ失敗で全停止）</li>
+      <li><strong>テスト間でグローバル状態を共有</strong>している</li>
+      <li><strong>ハードコードされたポート番号</strong></li>
+      <li><strong>シャード数が多すぎる</strong>（オーバーヘッドで逆効果）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-ci2-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>テスト並列化の前提条件として最も重要なのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci2-1" style="display:none;">
+      A. 高速なネットワーク接続
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ci2-1" style="display:none;">
+      B. テストが互いに独立していること
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci2-1" style="display:none;">
+      C. 同じOSバージョンを使うこと
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci2-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ci2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ci3">
+  <h1>テストの順序と依存</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>テストの独立性の重要さ</li>
+      <li>順序依存の検出と排除</li>
+      <li>テスト間の状態汚染の防止</li>
+    </ul>
+  </div>
+
+  <h2>テストの独立性とは</h2>
+
+  <p>
+    <strong>独立したテスト</strong>とは、他のテストの実行結果に影響されず、
+    <strong>単独でも、どの順序でも</strong>同じ結果になるテストです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：試験問題
+    </div>
+    <p>
+      良い試験は、問1の答えがわからなくても問2は解けます。<br>
+      「問1の答えを使って問2を解く」設計は<strong>悪い設計</strong>。
+    </p>
+    <p style="margin:0;">
+      テストも同じ。テストAの結果がテストBに影響するのは危険です。
+    </p>
+  </div>
+
+  <h2>順序依存の問題</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">順序依存のあるテスト</div>
+<pre><code>// ❌ グローバル状態に依存
+let userId;
+
+test('ユーザー作成', async () => {
+  const user = await createUser('test@example.com');
+  userId = user.id;  // グローバルに保存
+  expect(user).toBeDefined();
+});
+
+test('ユーザー取得', async () => {
+  // 上のテストで設定されたuserIdに依存
+  const user = await getUser(userId);
+  expect(user.email).toBe('test@example.com');
+});
+
+// テスト順序が変わると失敗！</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">独立したテスト</div>
+<pre><code>// ⭕ 各テストが独立
+test('ユーザー作成', async () => {
+  const user = await createUser('test1@example.com');
+  expect(user).toBeDefined();
+});
+
+test('ユーザー取得', async () => {
+  // このテスト用に新たにユーザー作成
+  const user = await createUser('test2@example.com');
+  const fetched = await getUser(user.id);
+  expect(fetched.email).toBe('test2@example.com');
+});
+
+// どの順序でも成功！</code></pre>
+    </div>
+  </div>
+
+  <h2>順序依存の検出方法</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      ランダム実行で検出
+    </div>
+<pre><code># Jest: ランダム順序で実行
+npx jest --randomize
+
+# Vitest: シャッフルモード
+npx vitest --sequence.shuffle
+
+# RSpec (Ruby): ランダムシード指定
+rspec --order random
+
+# pytest (Python): pytest-random-order
+pip install pytest-random-order
+pytest --random-order</code></pre>
+    <p style="margin:0;">
+      ランダム実行で失敗が発生したら、<strong>順序依存がある</strong>証拠です。
+    </p>
+  </div>
+
+  <h2>状態汚染の防止</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      各テストでクリーンな状態を作る
+    </div>
+<pre><code>describe('User API', () => {
+  // 各テスト前にDBをリセット
+  beforeEach(async () => {
+    await db.query('TRUNCATE users CASCADE');
+  });
+
+  // 各テスト後にクリーンアップ
+  afterEach(async () => {
+    await cleanup();
+  });
+
+  test('ユーザー作成', async () => {
+    // クリーンな状態から開始
+    const user = await createUser('test@example.com');
+    expect(user).toBeDefined();
+  });
+
+  test('ユーザー一覧', async () => {
+    // このテストもクリーンな状態から開始
+    await createUser('user1@example.com');
+    await createUser('user2@example.com');
+    const users = await listUsers();
+    expect(users).toHaveLength(2);
+  });
+});</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>テストファイル外のlet/var変数</strong>を複数テストで使用</li>
+      <li><strong>beforeAllで作成したデータ</strong>を複数テストで参照</li>
+      <li><strong>afterEachがない</strong>のにDBや外部リソースを使用</li>
+      <li><strong>テスト名に「その後」「続いて」</strong>などの表現</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-ci3-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>テストの順序依存を検出する最も効果的な方法は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci3-1" style="display:none;">
+      A. コードを目視で確認する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ci3-1" style="display:none;">
+      B. テストをランダム順序で実行する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci3-1" style="display:none;">
+      C. テストカバレッジを確認する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci3-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-ci3-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>このテストコードの問題点は？</p>
+<pre><code>let createdUser;
+test('create user', () => { createdUser = createUser(); });
+test('get user', () => { getUser(createdUser.id); });</code></pre>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci3-2" style="display:none;">
+      A. 非同期処理が正しくない
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ci3-2" style="display:none;">
+      B. 順序依存があり、ランダム実行で失敗する可能性
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci3-2" style="display:none;">
+      C. 特に問題はない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci3-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ci3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ci4">
+  <h1>Flakyテスト管理</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Flakyテストとは何か</li>
+      <li>Flakyテストの検出と隔離</li>
+      <li>根本原因の特定と修正方法</li>
+    </ul>
+  </div>
+
+  <h2>Flakyテストとは</h2>
+
+  <p>
+    <strong>Flaky（フレーキー）テスト</strong>とは、コード変更なしに
+    <strong>成功したり失敗したり</strong>する不安定なテストです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：壊れかけの信号機
+    </div>
+    <p>
+      時々赤になったり青になったりする信号機は信用できません。<br>
+      ドライバーは「本当に青か？」と疑い、交通が混乱します。
+    </p>
+    <p style="margin:0;">
+      Flakyテストも同じ。開発者は「本当に失敗？」と疑い、
+      <strong>テスト結果を無視する</strong>悪習慣が生まれます。
+    </p>
+  </div>
+
+  <h2>Flakyテストの主な原因</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      Flakyテストの原因分類
+    </div>
+    <svg viewBox="0 0 500 300" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="Flakyテストの原因分類">
+      <title>Flakyテストの主な原因</title>
+
+      <!-- 中心 -->
+      <circle cx="250" cy="150" r="50" fill="#ef4444" stroke="#dc2626" stroke-width="3"/>
+      <text x="250" y="145" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Flaky</text>
+      <text x="250" y="162" text-anchor="middle" fill="white" font-size="11">テスト</text>
+
+      <!-- 原因1: タイミング -->
+      <rect x="30" y="30" width="120" height="50" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+      <text x="90" y="52" text-anchor="middle" fill="white" font-size="11" font-weight="bold">タイミング</text>
+      <text x="90" y="68" text-anchor="middle" fill="#e0e7ff" font-size="9">非同期処理待ち不足</text>
+      <line x1="150" y1="55" x2="200" y2="120" stroke="#3b82f6" stroke-width="2"/>
+
+      <!-- 原因2: 外部依存 -->
+      <rect x="350" y="30" width="120" height="50" rx="8" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="410" y="52" text-anchor="middle" fill="white" font-size="11" font-weight="bold">外部依存</text>
+      <text x="410" y="68" text-anchor="middle" fill="#d1fae5" font-size="9">API/ネットワーク</text>
+      <line x1="350" y1="55" x2="300" y2="120" stroke="#10b981" stroke-width="2"/>
+
+      <!-- 原因3: 順序依存 -->
+      <rect x="30" y="220" width="120" height="50" rx="8" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="90" y="242" text-anchor="middle" fill="white" font-size="11" font-weight="bold">順序依存</text>
+      <text x="90" y="258" text-anchor="middle" fill="#fef3c7" font-size="9">テスト間の状態共有</text>
+      <line x1="150" y1="245" x2="200" y2="180" stroke="#f59e0b" stroke-width="2"/>
+
+      <!-- 原因4: リソース競合 -->
+      <rect x="350" y="220" width="120" height="50" rx="8" fill="#8b5cf6" stroke="#7c3aed" stroke-width="2"/>
+      <text x="410" y="242" text-anchor="middle" fill="white" font-size="11" font-weight="bold">リソース競合</text>
+      <text x="410" y="258" text-anchor="middle" fill="#e0e7ff" font-size="9">ポート/ファイル/DB</text>
+      <line x1="350" y1="245" x2="300" y2="180" stroke="#8b5cf6" stroke-width="2"/>
+    </svg>
+  </div>
+
+  <h2>Flakyテストの検出</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      複数回実行で検出
+    </div>
+<pre><code># Jest: 同じテストを複数回実行
+npx jest --repeat=5
+
+# Vitest: 繰り返し実行
+npx vitest --retry=3
+
+# Playwright: 繰り返し実行
+npx playwright test --repeat-each=5
+
+# GitHub Actionsで定期検出
+name: Flaky Test Detection
+on:
+  schedule:
+    - cron: '0 3 * * *'  # 毎日3時
+
+jobs:
+  detect-flaky:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - name: Run tests multiple times
+        run: |
+          for i in {1..10}; do
+            npm test 2>&1 | tee -a results.txt
+          done
+      - name: Check for flaky tests
+        run: |
+          if grep -q "FAIL" results.txt && grep -q "PASS" results.txt; then
+            echo "Flaky tests detected!"
+            exit 1
+          fi</code></pre>
+  </div>
+
+  <h2>Flakyテストの対処法</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      原因別の修正方法
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">原因</th>
+        <th>修正方法</th>
+      </tr>
+      <tr>
+        <td><strong>タイミング</strong></td>
+        <td>明示的なwaitFor、ポーリング、適切なawait</td>
+      </tr>
+      <tr>
+        <td><strong>外部依存</strong></td>
+        <td>モック化、スタブ化、フェイク実装</td>
+      </tr>
+      <tr>
+        <td><strong>順序依存</strong></td>
+        <td>beforeEach/afterEachで状態リセット</td>
+      </tr>
+      <tr>
+        <td><strong>リソース競合</strong></td>
+        <td>動的ポート割当、一意なファイル名</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">Flakyになりやすいコード</div>
+<pre><code>// ❌ 固定の待機時間
+test('データ読み込み', async () => {
+  render(&lt;DataList /&gt;);
+  await sleep(1000);  // 環境により不足する
+  expect(screen.getByText('Item 1')).toBeVisible();
+});
+
+// ❌ リトライで誤魔化す
+test('不安定なテスト', async () => {
+  for (let i = 0; i < 3; i++) {
+    try {
+      await unstableOperation();
+      break;
+    } catch (e) {
+      if (i === 2) throw e;
+    }
+  }
+});</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">安定したコード</div>
+<pre><code>// ⭕ 条件を待つ
+test('データ読み込み', async () => {
+  render(&lt;DataList /&gt;);
+  await waitFor(() => {
+    expect(screen.getByText('Item 1')).toBeVisible();
+  });
+});
+
+// ⭕ 根本原因を修正
+test('安定したテスト', async () => {
+  // 外部依存をモック化
+  mockApi.get.mockResolvedValue({ data: 'test' });
+  const result = await stableOperation();
+  expect(result).toBe('test');
+});</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>sleep/waitを固定時間</strong>で使用</li>
+      <li><strong>Date.now()</strong>や<strong>Math.random()</strong>を直接使用</li>
+      <li><strong>リトライでテストを通す</strong>アプローチ</li>
+      <li><strong>.skip()されたまま</strong>放置されたテスト</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-ci4-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>Flakyテストの最大の問題は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci4-1" style="display:none;">
+      A. テスト実行時間が長くなる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ci4-1" style="display:none;">
+      B. テスト結果への信頼が失われる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci4-1" style="display:none;">
+      C. カバレッジが下がる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci4-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-ci4-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>タイミング起因のFlakyテストの正しい対処法は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci4-2" style="display:none;">
+      A. sleep時間を長くする
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci4-2" style="display:none;">
+      B. テストをスキップする
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ci4-2" style="display:none;">
+      C. waitForで条件が満たされるまで待つ
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci4-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ci4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ci5">
+  <h1>テストレポート</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>JUnit XMLフォーマット</li>
+      <li>Allureレポートの活用</li>
+      <li>テスト結果の可視化</li>
+    </ul>
+  </div>
+
+  <h2>なぜテストレポートが重要か</h2>
+
+  <p>
+    テスト結果を<strong>見やすく可視化</strong>することで、
+    問題の発見と分析が格段に速くなります。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：健康診断結果
+    </div>
+    <p>
+      健康診断で数値だけ渡されても何が問題かわかりません。<br>
+      グラフや正常範囲との比較があると<strong>一目で異常がわかる</strong>。
+    </p>
+    <p style="margin:0;">
+      テストレポートも同じ。どこで何が失敗したか視覚的にわかることが大切です。
+    </p>
+  </div>
+
+  <h2>JUnit XMLフォーマット</h2>
+
+  <p>
+    <strong>JUnit XML</strong>は、CI/CDツール共通のテスト結果フォーマットです。
+    ほぼすべてのCIサービスがサポートしています。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      各フレームワークでの出力設定
+    </div>
+<pre><code># Jest
+npx jest --reporters=default --reporters=jest-junit
+# jest.config.js で設定も可能
+
+# Vitest
+npx vitest --reporter=junit --outputFile=test-results.xml
+
+# Playwright
+npx playwright test --reporter=junit
+
+# pytest (Python)
+pytest --junitxml=test-results.xml
+
+# Go
+go test -v ./... 2>&1 | go-junit-report > test-results.xml</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📄</span>
+      JUnit XMLの構造
+    </div>
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;testsuites name="jest tests" tests="10" failures="1" time="5.234"&gt;
+  &lt;testsuite name="UserService" tests="5" failures="1" time="2.1"&gt;
+    &lt;testcase classname="UserService" name="creates user" time="0.5"/&gt;
+    &lt;testcase classname="UserService" name="validates email" time="0.3"&gt;
+      &lt;failure message="Expected true, got false"&gt;
+        AssertionError: expected true to equal false
+        at Object.&lt;anonymous&gt; (user.test.js:15:10)
+      &lt;/failure&gt;
+    &lt;/testcase&gt;
+  &lt;/testsuite&gt;
+&lt;/testsuites&gt;</code></pre>
+  </div>
+
+  <h2>GitHub Actionsでのレポート表示</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      テスト結果のアップロード
+    </div>
+<pre><code># .github/workflows/test.yml
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run tests
+        run: npm test -- --ci --reporters=jest-junit
+        env:
+          JEST_JUNIT_OUTPUT_DIR: ./reports
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()  # 失敗時もアップロード
+        with:
+          name: test-results
+          path: ./reports/*.xml
+
+      - name: Publish Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Jest Tests
+          path: './reports/*.xml'
+          reporter: jest-junit</code></pre>
+  </div>
+
+  <h2>Allureレポート</h2>
+
+  <p>
+    <strong>Allure</strong>は、リッチなテストレポートを生成するフレームワークです。
+    スクリーンショット、ステップ、履歴などを含む詳細なレポートが作成できます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      Allureの設定例（Playwright）
+    </div>
+<pre><code>// playwright.config.ts
+export default defineConfig({
+  reporter: [
+    ['list'],
+    ['allure-playwright', {
+      detail: true,
+      outputFolder: 'allure-results',
+      suiteTitle: false,
+    }],
+  ],
+});
+
+# レポート生成
+npx allure generate allure-results --clean
+npx allure open</code></pre>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      Allureレポートの特徴
+    </div>
+    <ul>
+      <li><strong>ダッシュボード</strong>：成功/失敗の概要を一目で把握</li>
+      <li><strong>履歴</strong>：過去の実行結果との比較</li>
+      <li><strong>カテゴリ</strong>：失敗原因の分類</li>
+      <li><strong>添付ファイル</strong>：スクリーンショット、動画、ログ</li>
+      <li><strong>ステップ</strong>：テスト内の各ステップを可視化</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>テスト結果の保存がない</strong>ワークフロー</li>
+      <li><strong>if: always()</strong>がなく失敗時にレポートが消える</li>
+      <li><strong>アーティファクトの保持期間</strong>が短すぎる</li>
+      <li><strong>E2Eテストでスクリーンショット</strong>が保存されていない</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-ci5-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>テスト結果のアーティファクトをアップロードする際に「if: always()」を指定する理由は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci5-1" style="display:none;">
+      A. アップロード速度を上げるため
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ci5-1" style="display:none;">
+      B. テスト失敗時もレポートを保存するため
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci5-1" style="display:none;">
+      C. 並列実行を可能にするため
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci5-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ci5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ci6">
+  <h1>カバレッジレポート</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>コードカバレッジの種類</li>
+      <li>Codecovなどのサービス連携</li>
+      <li>カバレッジゲートの設定</li>
+    </ul>
+  </div>
+
+  <h2>コードカバレッジとは</h2>
+
+  <p>
+    <strong>コードカバレッジ</strong>とは、テストがコードのどの程度を
+    実行したかを示す指標です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：家の点検
+    </div>
+    <p>
+      家の点検で「全体の80%を確認しました」と言われたら、<br>
+      「残り20%は大丈夫？」と心配になります。
+    </p>
+    <p style="margin:0;">
+      カバレッジ80%は「20%は未テスト」という意味。<br>
+      <strong>高ければ良いわけではない</strong>が、低すぎると不安。
+    </p>
+  </div>
+
+  <h2>カバレッジの種類</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">種類</th>
+        <th style="width:35%;">説明</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>行カバレッジ</strong></td>
+        <td>実行された行の割合</td>
+        <td>100行中80行実行 = 80%</td>
+      </tr>
+      <tr>
+        <td><strong>分岐カバレッジ</strong></td>
+        <td>if/elseの全分岐を通過</td>
+        <td>if文のtrue/false両方テスト</td>
+      </tr>
+      <tr>
+        <td><strong>関数カバレッジ</strong></td>
+        <td>呼び出された関数の割合</td>
+        <td>10関数中8関数呼び出し = 80%</td>
+      </tr>
+      <tr>
+        <td><strong>ステートメント</strong></td>
+        <td>実行された文の割合</td>
+        <td>行カバレッジに近い</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>カバレッジの計測と出力</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      各フレームワークでのカバレッジ設定
+    </div>
+<pre><code># Jest
+npx jest --coverage
+
+# jest.config.js
+module.exports = {
+  collectCoverage: true,
+  coverageReporters: ['text', 'lcov', 'html'],
+  coverageThreshold: {
+    global: {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80,
+    },
+  },
+};
+
+# Vitest
+npx vitest --coverage
+
+# Go
+go test -coverprofile=coverage.out ./...
+go tool cover -html=coverage.out</code></pre>
+  </div>
+
+  <h2>Codecovとの連携</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      GitHub ActionsでCodecovにアップロード
+    </div>
+<pre><code># .github/workflows/test.yml
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run tests with coverage
+        run: npm test -- --coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          fail_ci_if_error: true  # アップロード失敗で停止</code></pre>
+  </div>
+
+  <h2>カバレッジゲート</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      codecov.ymlでの設定
+    </div>
+<pre><code># codecov.yml
+coverage:
+  status:
+    project:
+      default:
+        target: 80%          # 全体で80%以上
+        threshold: 2%        # 2%までの低下は許容
+    patch:
+      default:
+        target: 90%          # 新規コードは90%以上
+
+comment:
+  layout: "reach,diff,flags,files"
+  behavior: default
+  require_changes: true</code></pre>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      カバレッジの罠
+    </div>
+    <ul>
+      <li><strong>100%を目指さない</strong>：現実的には80-90%で十分</li>
+      <li><strong>カバレッジ≠品質</strong>：通っただけでは正しさは保証されない</li>
+      <li><strong>重要な箇所を重点的に</strong>：ビジネスロジックを優先</li>
+      <li><strong>生成コードは除外</strong>：自動生成ファイルは計測対象外に</li>
+    </ul>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">カバレッジだけ上げる悪例</div>
+<pre><code>// ❌ 意味のないテスト
+test('covers the function', () => {
+  calculate(1, 2);  // 結果を検証しない！
+});
+
+// これでもカバレッジは上がるが
+// バグは検出できない</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">意味のあるテスト</div>
+<pre><code>// ⭕ 結果を検証する
+test('calculates correctly', () => {
+  expect(calculate(1, 2)).toBe(3);
+  expect(calculate(-1, 1)).toBe(0);
+  expect(calculate(0, 0)).toBe(0);
+});
+
+// カバレッジも上がり、バグも検出できる</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>expect/assertがない</strong>テスト（カバレッジ稼ぎ）</li>
+      <li><strong>カバレッジ除外（istanbul ignore）</strong>の乱用</li>
+      <li><strong>テストなしで追加された</strong>新規コード</li>
+      <li><strong>閾値が低すぎる</strong>カバレッジ設定</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-ci6-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>カバレッジ100%のコードは品質が保証される？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci6-1" style="display:none;">
+      A. はい、完全に保証される
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ci6-1" style="display:none;">
+      B. いいえ、通っただけでは正しさは保証されない
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci6-1" style="display:none;">
+      C. 80%以上なら保証される
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci6-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-ci6-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>次のテストの問題点は？</p>
+<pre><code>test('process data', () => {
+  processData([1, 2, 3]);  // 結果確認なし
+});</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ci6-2" style="display:none;">
+      A. expectがなく、正しさを検証していない
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci6-2" style="display:none;">
+      B. テストデータが少ない
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci6-2" style="display:none;">
+      C. 特に問題はない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci6-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ci6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ci7">
+  <h1>テスト高速化</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>キャッシュによる高速化</li>
+      <li>差分テスト（affected tests）</li>
+      <li>効果的な並列化戦略</li>
+    </ul>
+  </div>
+
+  <h2>なぜテスト高速化が重要か</h2>
+
+  <p>
+    テストが遅いと<strong>開発サイクルが長くなり</strong>、
+    フィードバックが遅れ、生産性が低下します。
+  </p>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      高速化の効果
+    </div>
+    <svg viewBox="0 0 500 200" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="テスト高速化の効果">
+      <title>テスト時間とフィードバックループ</title>
+
+      <!-- Before -->
+      <text x="50" y="30" fill="currentColor" font-size="12" font-weight="bold">Before</text>
+      <rect x="50" y="40" width="200" height="30" rx="5" fill="#ef4444"/>
+      <text x="150" y="60" text-anchor="middle" fill="white" font-size="11">30分</text>
+
+      <text x="280" y="60" fill="currentColor" font-size="10">→ 1日5回しかPush確認できない</text>
+
+      <!-- After -->
+      <text x="50" y="110" fill="currentColor" font-size="12" font-weight="bold">After</text>
+      <rect x="50" y="120" width="40" height="30" rx="5" fill="#10b981"/>
+      <text x="70" y="140" text-anchor="middle" fill="white" font-size="11">5分</text>
+
+      <text x="120" y="140" fill="currentColor" font-size="10">→ 1日30回以上Push確認可能</text>
+
+      <!-- 効果 -->
+      <rect x="300" y="150" width="180" height="40" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+      <text x="390" y="175" text-anchor="middle" fill="#92400e" font-size="11" font-weight="bold">開発速度6倍！</text>
+    </svg>
+  </div>
+
+  <h2>キャッシュによる高速化</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      依存関係のキャッシュ
+    </div>
+<pre><code># GitHub Actionsでのキャッシュ設定
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js with cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'  # npm ciの結果をキャッシュ
+
+      # または明示的にキャッシュ
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: npm ci
+      - run: npm test</code></pre>
+  </div>
+
+  <h2>差分テスト（Affected Tests）</h2>
+
+  <p>
+    <strong>差分テスト</strong>とは、変更されたコードに関連するテストだけを実行する手法です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      Jestの差分テスト
+    </div>
+<pre><code># 前回コミットからの変更に関連するテストのみ実行
+npx jest --onlyChanged
+
+# 特定のコミット以降の変更に関連
+npx jest --changedSince=main
+
+# GitHub Actionsでの設定
+- name: Run affected tests
+  run: |
+    if [ "${{ github.event_name }}" == "pull_request" ]; then
+      npx jest --changedSince=origin/${{ github.base_ref }}
+    else
+      npx jest
+    fi</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      Nxを使った差分テスト（モノレポ）
+    </div>
+<pre><code># 影響を受けるプロジェクトのみテスト
+npx nx affected:test --base=main
+
+# GitHub Actions
+- name: Run affected tests
+  run: npx nx affected:test --base=${{ github.event.pull_request.base.sha }}</code></pre>
+  </div>
+
+  <h2>その他の高速化テクニック</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      高速化のベストプラクティス
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th style="width:30%;">テクニック</th>
+        <th>効果</th>
+      </tr>
+      <tr>
+        <td><strong>並列実行</strong></td>
+        <td>ランナー数に応じて線形に高速化</td>
+      </tr>
+      <tr>
+        <td><strong>依存キャッシュ</strong></td>
+        <td>npm ci時間を大幅短縮（数分→数秒）</td>
+      </tr>
+      <tr>
+        <td><strong>差分テスト</strong></td>
+        <td>PRでは関連テストのみ実行</td>
+      </tr>
+      <tr>
+        <td><strong>テスト分割</strong></td>
+        <td>重いテストを別ジョブに分離</td>
+      </tr>
+      <tr>
+        <td><strong>モック活用</strong></td>
+        <td>外部API呼び出しを省略</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">AIがやりがちな間違い</div>
+<pre><code># ❌ キャッシュキーが固定
+- uses: actions/cache@v4
+  with:
+    path: node_modules
+    key: node-cache  # 常に同じキー
+
+# ❌ 毎回フルインストール
+- run: rm -rf node_modules && npm install</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">正しい設定</div>
+<pre><code># ⭕ lock fileのハッシュをキーに
+- uses: actions/cache@v4
+  with:
+    path: node_modules
+    key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
+# ⭕ npm ciでクリーンインストール
+- run: npm ci  # キャッシュがあれば高速</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>キャッシュ未設定</strong>のワークフロー</li>
+      <li><strong>npm install</strong>（npm ciを使うべき）</li>
+      <li><strong>全テスト実行</strong>がPRでも強制される</li>
+      <li><strong>E2Eテストが毎回</strong>実行される（本当に必要？）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-ci7-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>差分テスト（affected tests）の目的は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci7-1" style="display:none;">
+      A. テストカバレッジを上げる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ci7-1" style="display:none;">
+      B. 変更に関連するテストだけ実行して時間を短縮
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci7-1" style="display:none;">
+      C. 失敗したテストだけ再実行する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci7-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ci7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ci8">
+  <h1>ブランチ戦略とテスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>PR（プルリクエスト）時のテスト戦略</li>
+      <li>mainブランチの保護設定</li>
+      <li>ブランチごとのテスト範囲</li>
+    </ul>
+  </div>
+
+  <h2>ブランチとテストの関係</h2>
+
+  <p>
+    ブランチによって<strong>実行すべきテストの範囲</strong>が異なります。
+    適切な設計で効率とセキュリティを両立します。
+  </p>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      ブランチ別テスト戦略
+    </div>
+    <svg viewBox="0 0 550 280" style="width:100%;max-width:550px;display:block;margin:1rem auto;" role="img" aria-label="ブランチ別テスト戦略">
+      <title>ブランチごとのテスト範囲</title>
+
+      <defs>
+        <marker id="arrow-ci8" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#6366f1"/>
+        </marker>
+      </defs>
+
+      <!-- Feature branch -->
+      <rect x="20" y="30" width="150" height="60" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+      <text x="95" y="55" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Feature Branch</text>
+      <text x="95" y="75" text-anchor="middle" fill="#e0e7ff" font-size="9">Unit + 差分テスト</text>
+
+      <!-- 矢印 -->
+      <line x1="170" y1="60" x2="200" y2="60" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-ci8)"/>
+      <text x="185" y="50" fill="currentColor" font-size="9">PR</text>
+
+      <!-- PR -->
+      <rect x="210" y="30" width="150" height="60" rx="8" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="285" y="55" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Pull Request</text>
+      <text x="285" y="75" text-anchor="middle" fill="#fef3c7" font-size="9">Full Test + Lint + Type</text>
+
+      <!-- 矢印 -->
+      <line x1="360" y1="60" x2="390" y2="60" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-ci8)"/>
+      <text x="375" y="50" fill="currentColor" font-size="9">Merge</text>
+
+      <!-- Main -->
+      <rect x="400" y="30" width="130" height="60" rx="8" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="465" y="55" text-anchor="middle" fill="white" font-size="11" font-weight="bold">main</text>
+      <text x="465" y="75" text-anchor="middle" fill="#d1fae5" font-size="9">All + E2E + Deploy</text>
+
+      <!-- 説明 -->
+      <rect x="20" y="120" width="510" height="140" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+
+      <text x="40" y="145" fill="#3b82f6" font-size="11" font-weight="bold">Feature Branch:</text>
+      <text x="40" y="165" fill="currentColor" font-size="10">・高速フィードバック重視</text>
+      <text x="40" y="180" fill="currentColor" font-size="10">・差分テストで関連部分のみ</text>
+
+      <text x="200" y="145" fill="#f59e0b" font-size="11" font-weight="bold">Pull Request:</text>
+      <text x="200" y="165" fill="currentColor" font-size="10">・品質ゲート（マージ条件）</text>
+      <text x="200" y="180" fill="currentColor" font-size="10">・全テスト + 静的解析</text>
+
+      <text x="380" y="145" fill="#10b981" font-size="11" font-weight="bold">main:</text>
+      <text x="380" y="165" fill="currentColor" font-size="10">・最終確認 + E2E</text>
+      <text x="380" y="180" fill="currentColor" font-size="10">・デプロイパイプライン</text>
+
+      <text x="40" y="210" fill="currentColor" font-size="10" font-style="italic">※ mainは常にデプロイ可能な状態を維持</text>
+    </svg>
+  </div>
+
+  <h2>PRでのテスト設定</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      PRトリガーのワークフロー
+    </div>
+<pre><code># .github/workflows/pr-check.yml
+name: PR Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run type-check
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test -- --coverage
+      - uses: codecov/codecov-action@v4
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: [lint, test]  # lint, testが通ってから
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - run: npm run test:e2e</code></pre>
+  </div>
+
+  <h2>mainブランチの保護</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      ブランチ保護ルール
+    </div>
+<pre><code># GitHubの設定（Settings > Branches > Branch protection rules）
+
+Protected branch: main
+
+✓ Require a pull request before merging
+  ✓ Require approvals: 1
+  ✓ Dismiss stale pull request approvals when new commits are pushed
+
+✓ Require status checks to pass before merging
+  Required checks:
+  - lint
+  - test
+  - e2e
+
+✓ Require branches to be up to date before merging
+
+✓ Do not allow bypassing the above settings</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      GitHub ActionsでのRequired Status Checks
+    </div>
+<pre><code># ジョブ名がStatus Checkとして登録される
+jobs:
+  lint:        # ← "lint" がチェック名になる
+    runs-on: ubuntu-latest
+    ...
+
+  test:        # ← "test" がチェック名になる
+    runs-on: ubuntu-latest
+    ...
+
+  # 複数ジョブの結果を1つにまとめる場合
+  all-checks:
+    runs-on: ubuntu-latest
+    needs: [lint, test, e2e]
+    steps:
+      - run: echo "All checks passed!"</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>mainへの直接プッシュ</strong>が許可されている</li>
+      <li><strong>Required status checks</strong>が設定されていない</li>
+      <li><strong>PRなしでマージ</strong>可能な設定</li>
+      <li><strong>Force push</strong>が許可されている</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-ci8-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>mainブランチを保護する最も重要な理由は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci8-1" style="display:none;">
+      A. コミット履歴を綺麗に保つため
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ci8-1" style="display:none;">
+      B. テストを通過したコードだけが本番に反映されるようにするため
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci8-1" style="display:none;">
+      C. ブランチ数を減らすため
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci8-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-ci8-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>Feature Branchで差分テストを使う理由は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ci8-2" style="display:none;">
+      A. 高速なフィードバックを得るため
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci8-2" style="display:none;">
+      B. テストカバレッジを上げるため
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci8-2" style="display:none;">
+      C. コストを削減するため
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci8-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ci8')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ci9">
+  <h1>自動テストのメンテナンス</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>壊れたテストへの対処法</li>
+      <li>古いテストの整理</li>
+      <li>テスト負債の管理</li>
+    </ul>
+  </div>
+
+  <h2>テストも負債になる</h2>
+
+  <p>
+    テストは資産ですが、メンテナンスしないと<strong>負債</strong>になります。
+    壊れたテスト、古いテストは開発速度を下げます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：庭の手入れ
+    </div>
+    <p>
+      庭を放置すると雑草だらけになり、美しい花も埋もれてしまいます。<br>
+      定期的な手入れで、庭（テストスイート）を健全に保つ必要があります。
+    </p>
+  </div>
+
+  <h2>壊れたテストの対処</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      放置してはいけない
+    </div>
+    <p>壊れたテストを放置すると...</p>
+    <ul>
+      <li>「また失敗してる」とテスト結果を<strong>無視する習慣</strong>が生まれる</li>
+      <li>本当のバグを見逃す</li>
+      <li>新しいテストを書く意欲が下がる</li>
+    </ul>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">悪い対処法</div>
+<pre><code>// ❌ とりあえずスキップ
+test.skip('壊れてるテスト', () => {
+  // TODO: 直す
+});
+
+// ❌ 無意味なコメントアウト
+// test('古いテスト', () => {
+//   ...
+// });
+
+// ❌ 常にtrueにする
+test('動かないテスト', () => {
+  expect(true).toBe(true);  // 元のコードを削除
+});</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">正しい対処法</div>
+<pre><code>// ⭕ 原因を特定して修正
+test('修正したテスト', () => {
+  // 仕様変更に合わせてテストを更新
+  expect(newBehavior()).toBe(expected);
+});
+
+// ⭕ 不要なら削除（履歴はGitにある）
+// テストごと削除
+
+// ⭕ 一時的なスキップは期限付きで
+test.skip('一時スキップ: Issue #123で対応', () => {
+  // 2024-02-01までに対応
+});</code></pre>
+    </div>
+  </div>
+
+  <h2>テスト負債の可視化</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      スキップされたテストの検出
+    </div>
+<pre><code># Jest: スキップされたテストを一覧
+npx jest --listTests | xargs grep -l "\.skip\|xit\|xdescribe"
+
+# ESLintルールで検出
+// .eslintrc.js
+module.exports = {
+  rules: {
+    'jest/no-disabled-tests': 'warn',
+    'jest/no-focused-tests': 'error',
+  },
+};
+
+# GitHub Actionsで定期チェック
+- name: Check for skipped tests
+  run: |
+    SKIPPED=$(grep -r "\.skip\|xit\|xdescribe" --include="*.test.*" . | wc -l)
+    echo "Skipped tests: $SKIPPED"
+    if [ $SKIPPED -gt 10 ]; then
+      echo "Too many skipped tests!"
+      exit 1
+    fi</code></pre>
+  </div>
+
+  <h2>テストの整理基準</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      削除を検討すべきテスト
+    </div>
+    <ul>
+      <li><strong>実装と乖離</strong>：仕様変更で意味をなさなくなったテスト</li>
+      <li><strong>重複テスト</strong>：同じことを複数箇所でテスト</li>
+      <li><strong>価値の低いテスト</strong>：ゲッター/セッターの単純テスト</li>
+      <li><strong>Flakyのまま放置</strong>：修正できないなら削除</li>
+      <li><strong>削除された機能</strong>：もう存在しない機能のテスト</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      定期メンテナンスの習慣
+    </div>
+<pre><code># 月次でテスト健全性をチェック
+チェックリスト:
+□ スキップされたテストを確認（10件以下が目標）
+□ Flakyテストを特定・修正
+□ カバレッジの低下がないか確認
+□ テスト実行時間のトレンド確認
+□ 古いスナップショットの更新</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>.skip()が理由なく</strong>追加されている</li>
+      <li><strong>テストが削除される</strong>が代替テストがない</li>
+      <li><strong>expect(true).toBe(true)</strong>のような無意味なテスト</li>
+      <li><strong>コメントアウトされた</strong>テストコード</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-ci9-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>壊れたテストへの最も適切な対応は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci9-1" style="display:none;">
+      A. .skip()を追加して後で直す
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ci9-1" style="display:none;">
+      B. 原因を特定し、テストか実装を修正する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci9-1" style="display:none;">
+      C. expect(true).toBe(true)に置き換える
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci9-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-ci9-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>削除を検討すべきテストはどれ？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci9-2" style="display:none;">
+      A. 複雑なビジネスロジックのテスト
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ci9-2" style="display:none;">
+      B. 削除された機能のテスト
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci9-2" style="display:none;">
+      C. エッジケースをカバーするテスト
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci9-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ci9')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ci10">
+  <h1>テスト環境の自動化</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Dockerを使ったテスト環境構築</li>
+      <li>Testcontainersの活用</li>
+      <li>再現可能なテスト環境の設計</li>
+    </ul>
+  </div>
+
+  <h2>なぜ環境の自動化が必要か</h2>
+
+  <p>
+    「ローカルでは動くのにCIで失敗する」問題を解決するため、
+    <strong>環境を統一</strong>することが重要です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：レシピと調理環境
+    </div>
+    <p>
+      同じレシピでも、使うオーブンが違えば焼き加減が変わります。<br>
+      テストも同じ。環境が違えば結果が変わる可能性があります。
+    </p>
+    <p style="margin:0;">
+      Dockerで「同じ調理環境」を用意すれば、誰がやっても同じ結果に。
+    </p>
+  </div>
+
+  <h2>Dockerでのテスト環境</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      テスト用Dockerfile
+    </div>
+<pre><code># Dockerfile.test
+FROM node:20-slim
+
+WORKDIR /app
+
+# 依存関係のみ先にコピー（キャッシュ活用）
+COPY package*.json ./
+RUN npm ci
+
+# ソースコードをコピー
+COPY . .
+
+# テスト実行
+CMD ["npm", "test"]</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      docker-compose.test.yml
+    </div>
+<pre><code># docker-compose.test.yml
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    environment:
+      - NODE_ENV=test
+      - DATABASE_URL=postgres://test:test@db:5432/testdb
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: testdb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5</code></pre>
+  </div>
+
+  <h2>Testcontainersの活用</h2>
+
+  <p>
+    <strong>Testcontainers</strong>は、テストコードから直接Dockerコンテナを
+    起動・管理できるライブラリです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      Testcontainersの例（Node.js）
+    </div>
+<pre><code>// tests/db.test.ts
+import { PostgreSqlContainer } from '@testcontainers/postgresql';
+
+describe('Database tests', () => {
+  let container;
+  let connectionUrl;
+
+  beforeAll(async () => {
+    // PostgreSQLコンテナを起動
+    container = await new PostgreSqlContainer()
+      .withDatabase('testdb')
+      .withUsername('test')
+      .withPassword('test')
+      .start();
+
+    connectionUrl = container.getConnectionUri();
+  }, 60000);  // タイムアウト60秒
+
+  afterAll(async () => {
+    await container.stop();
+  });
+
+  test('connects to database', async () => {
+    const client = new Client({ connectionString: connectionUrl });
+    await client.connect();
+    const result = await client.query('SELECT 1');
+    expect(result.rows[0]).toEqual({ '?column?': 1 });
+    await client.end();
+  });
+});</code></pre>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      Testcontainersの利点
+    </div>
+    <svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="Testcontainersの利点">
+      <title>Testcontainersの特徴</title>
+
+      <!-- 利点1 -->
+      <rect x="10" y="20" width="150" height="60" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+      <text x="85" y="45" text-anchor="middle" fill="white" font-size="11" font-weight="bold">本物のDB</text>
+      <text x="85" y="65" text-anchor="middle" fill="#e0e7ff" font-size="9">モックではなく実DB</text>
+
+      <!-- 利点2 -->
+      <rect x="175" y="20" width="150" height="60" rx="8" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="250" y="45" text-anchor="middle" fill="white" font-size="11" font-weight="bold">分離された環境</text>
+      <text x="250" y="65" text-anchor="middle" fill="#d1fae5" font-size="9">テストごとに独立</text>
+
+      <!-- 利点3 -->
+      <rect x="340" y="20" width="150" height="60" rx="8" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="415" y="45" text-anchor="middle" fill="white" font-size="11" font-weight="bold">自動クリーンアップ</text>
+      <text x="415" y="65" text-anchor="middle" fill="#fef3c7" font-size="9">テスト後に自動削除</text>
+
+      <!-- 利点4 -->
+      <rect x="90" y="100" width="150" height="60" rx="8" fill="#8b5cf6" stroke="#7c3aed" stroke-width="2"/>
+      <text x="165" y="125" text-anchor="middle" fill="white" font-size="11" font-weight="bold">ポータブル</text>
+      <text x="165" y="145" text-anchor="middle" fill="#e0e7ff" font-size="9">ローカル/CI同一環境</text>
+
+      <!-- 利点5 -->
+      <rect x="260" y="100" width="150" height="60" rx="8" fill="#ec4899" stroke="#db2777" stroke-width="2"/>
+      <text x="335" y="125" text-anchor="middle" fill="white" font-size="11" font-weight="bold">様々なサービス</text>
+      <text x="335" y="145" text-anchor="middle" fill="#fce7f3" font-size="9">Redis, Kafka, etc.</text>
+    </svg>
+  </div>
+
+  <h2>GitHub ActionsでのDocker活用</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span>
+      サービスコンテナの設定
+    </div>
+<pre><code># .github/workflows/test.yml
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test
+        env:
+          DATABASE_URL: postgres://test:test@localhost:5432/testdb
+          REDIS_URL: redis://localhost:6379</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>healthcheckがない</strong>サービス定義</li>
+      <li><strong>ローカルとCIで異なる</strong>DB設定</li>
+      <li><strong>テスト後にデータが残る</strong>設計</li>
+      <li><strong>ポート番号のハードコード</strong></li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-ci10-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>Testcontainersを使う最大のメリットは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci10-1" style="display:none;">
+      A. テスト実行速度が上がる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ci10-1" style="display:none;">
+      B. 本物のDBでテストでき、環境差異がなくなる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci10-1" style="display:none;">
+      C. モックを書く必要がなくなる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci10-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-ci10-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>GitHub Actionsのservicesでhealthcheckを設定する理由は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci10-2" style="display:none;">
+      A. サービスの使用量を監視するため
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ci10-2" style="display:none;">
+      B. サービスが準備完了してからテストを開始するため
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ci10-2" style="display:none;">
+      C. サービスのログを収集するため
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci10-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ci10')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>

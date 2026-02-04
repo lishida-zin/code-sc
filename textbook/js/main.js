@@ -417,7 +417,103 @@ const sectionMapping = {
   'ai-a7': 'level7/phase8.html',
   'ai-a8': 'level7/phase8.html',
   'ai-a9': 'level7/phase8.html',
-  'ai-a10': 'level7/phase8.html'
+  'ai-a10': 'level7/phase8.html',
+
+  // Level 8 - Phase 1: テスト基礎・マインドセット
+  'testing1': 'level8/phase1.html',
+  'testing2': 'level8/phase1.html',
+  'testing3': 'level8/phase1.html',
+  'testing4': 'level8/phase1.html',
+  'testing5': 'level8/phase1.html',
+  'testing6': 'level8/phase1.html',
+  'testing7': 'level8/phase1.html',
+  'testing8': 'level8/phase1.html',
+  'testing9': 'level8/phase1.html',
+  'testing10': 'level8/phase1.html',
+
+  // Level 8 - Phase 2: 単体テスト
+  'unit1': 'level8/phase2.html',
+  'unit2': 'level8/phase2.html',
+  'unit3': 'level8/phase2.html',
+  'unit4': 'level8/phase2.html',
+  'unit5': 'level8/phase2.html',
+  'unit6': 'level8/phase2.html',
+  'unit7': 'level8/phase2.html',
+  'unit8': 'level8/phase2.html',
+  'unit9': 'level8/phase2.html',
+  'unit10': 'level8/phase2.html',
+
+  // Level 8 - Phase 3: 結合テスト・APIテスト
+  'int1': 'level8/phase3.html',
+  'int2': 'level8/phase3.html',
+  'int3': 'level8/phase3.html',
+  'int4': 'level8/phase3.html',
+  'int5': 'level8/phase3.html',
+  'int6': 'level8/phase3.html',
+  'int7': 'level8/phase3.html',
+  'int8': 'level8/phase3.html',
+  'int9': 'level8/phase3.html',
+  'int10': 'level8/phase3.html',
+
+  // Level 8 - Phase 4: E2Eテスト
+  'e2e1': 'level8/phase4.html',
+  'e2e2': 'level8/phase4.html',
+  'e2e3': 'level8/phase4.html',
+  'e2e4': 'level8/phase4.html',
+  'e2e5': 'level8/phase4.html',
+  'e2e6': 'level8/phase4.html',
+  'e2e7': 'level8/phase4.html',
+  'e2e8': 'level8/phase4.html',
+  'e2e9': 'level8/phase4.html',
+  'e2e10': 'level8/phase4.html',
+
+  // Level 8 - Phase 5: テスト設計技法
+  'tech1': 'level8/phase5.html',
+  'tech2': 'level8/phase5.html',
+  'tech3': 'level8/phase5.html',
+  'tech4': 'level8/phase5.html',
+  'tech5': 'level8/phase5.html',
+  'tech6': 'level8/phase5.html',
+  'tech7': 'level8/phase5.html',
+  'tech8': 'level8/phase5.html',
+  'tech9': 'level8/phase5.html',
+  'tech10': 'level8/phase5.html',
+
+  // Level 8 - Phase 6: TDD/BDD
+  'tdd1': 'level8/phase6.html',
+  'tdd2': 'level8/phase6.html',
+  'tdd3': 'level8/phase6.html',
+  'tdd4': 'level8/phase6.html',
+  'tdd5': 'level8/phase6.html',
+  'tdd6': 'level8/phase6.html',
+  'tdd7': 'level8/phase6.html',
+  'tdd8': 'level8/phase6.html',
+  'tdd9': 'level8/phase6.html',
+  'tdd10': 'level8/phase6.html',
+
+  // Level 8 - Phase 7: CI/CDとテスト自動化
+  'ci1': 'level8/phase7.html',
+  'ci2': 'level8/phase7.html',
+  'ci3': 'level8/phase7.html',
+  'ci4': 'level8/phase7.html',
+  'ci5': 'level8/phase7.html',
+  'ci6': 'level8/phase7.html',
+  'ci7': 'level8/phase7.html',
+  'ci8': 'level8/phase7.html',
+  'ci9': 'level8/phase7.html',
+  'ci10': 'level8/phase7.html',
+
+  // Level 8 - Phase 8: 品質保証・品質管理
+  'qa1': 'level8/phase8.html',
+  'qa2': 'level8/phase8.html',
+  'qa3': 'level8/phase8.html',
+  'qa4': 'level8/phase8.html',
+  'qa5': 'level8/phase8.html',
+  'qa6': 'level8/phase8.html',
+  'qa7': 'level8/phase8.html',
+  'qa8': 'level8/phase8.html',
+  'qa9': 'level8/phase8.html',
+  'qa10': 'level8/phase8.html'
 };
 
 // 読み込み済みファイルを追跡
@@ -798,6 +894,21 @@ function updateProgress() {
   const level7Count = completed.filter(s => level7Sections.includes(s)).length;
   const level7Progress = document.getElementById('level7-progress');
   if (level7Progress) level7Progress.value = level7Count;
+
+  // Level 8
+  const level8Sections = [
+    'testing1','testing2','testing3','testing4','testing5','testing6','testing7','testing8','testing9','testing10',
+    'unit1','unit2','unit3','unit4','unit5','unit6','unit7','unit8','unit9','unit10',
+    'int1','int2','int3','int4','int5','int6','int7','int8','int9','int10',
+    'e2e1','e2e2','e2e3','e2e4','e2e5','e2e6','e2e7','e2e8','e2e9','e2e10',
+    'tech1','tech2','tech3','tech4','tech5','tech6','tech7','tech8','tech9','tech10',
+    'tdd1','tdd2','tdd3','tdd4','tdd5','tdd6','tdd7','tdd8','tdd9','tdd10',
+    'ci1','ci2','ci3','ci4','ci5','ci6','ci7','ci8','ci9','ci10',
+    'qa1','qa2','qa3','qa4','qa5','qa6','qa7','qa8','qa9','qa10'
+  ];
+  const level8Count = completed.filter(s => level8Sections.includes(s)).length;
+  const level8Progress = document.getElementById('level8-progress');
+  if (level8Progress) level8Progress.value = level8Count;
 }
 
 // 初期化

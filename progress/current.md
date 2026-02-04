@@ -2,8 +2,8 @@
 > 目標: 実務シニア＆フルスタック
 
 ## 現在地
-- **Level**: 7 まで教科書完成
-- **状態**: 全カリキュラム・教科書の作成完了
+- **Level**: 8 完了
+- **状態**: 教科書作成完了
 
 ## 教科書の確認方法
 ```powershell
@@ -22,56 +22,47 @@ cd textbook && python -m http.server 8080
 | 4 | Node.js/API/DB | 44 | ✅ 完了 |
 | 5 | インフラ/DevOps | 56 | ✅ 完了 |
 | 6 | 設計原則とパターン | 78 | ✅ 完了 |
-| 7 | 実践設計とAI活用 | 80 | ✅ 完了（NEW）|
-| **合計** | - | **331セクション** | - |
+| 7 | 実践設計とAI活用 | 80 | ✅ 完了 |
+| 8 | テスト戦略・品質保証 | 80 | ✅ 完了 |
+| **合計** | - | **411セクション** | - |
 
 ## 今回完了した作業（2026-02-04）
 
-### Level 7 教科書作成
-| Phase | テーマ | セクションID |
-|-------|--------|-------------|
-| Phase 1 | データモデリング基礎 | data1-data10 |
-| Phase 2 | DB設計応用 | dba1-dba10 |
-| Phase 3 | クラウド基礎 | cloud1-cloud10 |
-| Phase 4 | クラウド応用 | cloud-a1〜cloud-a10 |
-| Phase 5 | 要件定義 | req1-req10 |
-| Phase 6 | 非機能要件 | nfr1-nfr10 |
-| Phase 7 | AI基礎 | ai1-ai10 |
-| Phase 8 | AI応用 | ai-a1〜ai-a10 |
+### Level 8 教科書作成完了
+
+**テーマ**: テスト戦略・品質保証
+
+| Phase | テーマ | セクションID | ファイル |
+|-------|--------|-------------|----------|
+| Phase 1 | テスト基礎・マインドセット | testing1-10 | phase1.html |
+| Phase 2 | 単体テスト | unit1-10 | phase2.html |
+| Phase 3 | 結合テスト・APIテスト | int1-10 | phase3.html |
+| Phase 4 | E2Eテスト | e2e1-10 | phase4.html |
+| Phase 5 | テスト設計技法 | tech1-10 | phase5.html |
+| Phase 6 | TDD/BDD | tdd1-10 | phase6.html |
+| Phase 7 | CI/CDとテスト自動化 | ci1-10 | phase7.html |
+| Phase 8 | 品質保証・品質管理 | qa1-10 | phase8.html |
 
 **作成ファイル**:
-- `curriculum/level7.md` - カリキュラム
-- `textbook/level7/phase1-8.html` - 教科書HTML（8ファイル）
-- `textbook/index.html` - ナビ・ダッシュボード更新
-- `textbook/js/main.js` - sectionMapping更新
+- `curriculum/level8.md` - カリキュラム
+- `textbook/level8/phase1.html` 〜 `phase8.html` - 教科書HTML
+- `textbook/index.html` - ナビゲーション・ダッシュボード更新
+- `textbook/js/main.js` - sectionMapping・進捗計算更新
 
-**含まれる要素**:
-- SVG図解: 24個（各Phase 3個）
-- クイズ: 80問以上
-- 完了ボタン: 全セクション
+**関連資格**:
+- JSTQB認定テスト技術者
+- ISTQB Foundation Level
 
-## 次回セッションでやること（候補）
+## 次のステップ
 
-### 1. 学習開始
-教科書が完成したので、実際の学習を開始できます：
-- Level 3（React/TypeScript）から順に進める
-- または興味のあるLevelから始める
-
-### 2. 教科書の改善・追加
-- Level 6/7 の内容レビュー・改善
-- 追加のSVG図解
-- クイズの追加
-- 実践演習の強化
-
-### 3. Level 8 以降の検討（必要に応じて）
-- テスト戦略・品質保証
-- チーム開発・プロジェクト管理
-- キャリア・ソフトスキル
+1. **Level 8の学習**: 教科書を読み進める
+2. **資格取得検討**: JSTQB Foundation Level
+3. **Level 9検討**: チーム開発・プロジェクト管理
 
 ## 参照ファイル
 | ファイル | 内容 |
 |----------|------|
 | `curriculum/overview.md` | 全体ロードマップ |
-| `curriculum/level7.md` | Level 7 カリキュラム |
+| `curriculum/level8.md` | Level 8 カリキュラム |
 | `textbook/index.html` | 教科書メイン |
 | `CLAUDE.md` | プロジェクトルール |
