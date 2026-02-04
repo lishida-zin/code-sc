@@ -1,0 +1,1124 @@
+<!-- ============================================
+     Level 8 Phase 1: テスト基礎・マインドセット
+     ============================================ -->
+
+<section id="testing1">
+  <h1>テストの目的</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>なぜテストをするのか</li>
+      <li>テストの価値とROI</li>
+      <li>テストなしの代償</li>
+    </ul>
+  </div>
+
+  <h2>テストとは何か</h2>
+
+  <p>
+    <strong>テスト</strong>とは、ソフトウェアが期待通りに動作するかを検証する活動です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：家の検査
+    </div>
+    <p>
+      家を建てたら、引き渡し前に<strong>検査</strong>をしますよね。<br>
+      水道は出るか、電気は通るか、ドアは開くか...
+    </p>
+    <p style="margin:0;">
+      ソフトウェアも同じ。リリース前に「ちゃんと動くか」を確認するのがテストです。
+    </p>
+  </div>
+
+  <h2>なぜテストするのか</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      テストの目的
+    </div>
+    <svg viewBox="0 0 500 280" style="width:100%;max-width:500px;display:block;margin:1rem auto;">
+      <defs>
+        <marker id="arrow1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#3b82f6"/>
+        </marker>
+      </defs>
+
+      <!-- 中央のテスト -->
+      <circle cx="250" cy="140" r="50" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+      <text x="250" y="145" text-anchor="middle" fill="white" font-size="14" font-weight="bold">テスト</text>
+
+      <!-- 4つの目的 -->
+      <rect x="50" y="30" width="120" height="50" rx="8" fill="#10b981"/>
+      <text x="110" y="60" text-anchor="middle" fill="white" font-size="12">バグの早期発見</text>
+
+      <rect x="330" y="30" width="120" height="50" rx="8" fill="#f59e0b"/>
+      <text x="390" y="60" text-anchor="middle" fill="white" font-size="12">品質の保証</text>
+
+      <rect x="50" y="200" width="120" height="50" rx="8" fill="#8b5cf6"/>
+      <text x="110" y="230" text-anchor="middle" fill="white" font-size="12">変更への安心感</text>
+
+      <rect x="330" y="200" width="120" height="50" rx="8" fill="#ef4444"/>
+      <text x="390" y="230" text-anchor="middle" fill="white" font-size="12">ドキュメント</text>
+
+      <!-- 矢印 -->
+      <line x1="170" y1="55" x2="200" y2="100" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow1)"/>
+      <line x1="330" y1="55" x2="300" y2="100" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow1)"/>
+      <line x1="170" y1="225" x2="200" y2="180" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow1)"/>
+      <line x1="330" y1="225" x2="300" y2="180" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow1)"/>
+    </svg>
+  </div>
+
+  <h2>テストのROI（投資対効果）</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">テストなし</div>
+      <ul>
+        <li>本番でバグ発覚 → 緊急対応</li>
+        <li>修正コストが10〜100倍</li>
+        <li>ユーザーの信頼を失う</li>
+        <li>リファクタリングが怖い</li>
+      </ul>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">テストあり</div>
+      <ul>
+        <li>開発中にバグ発見 → 即修正</li>
+        <li>修正コストが最小</li>
+        <li>安心してリリース</li>
+        <li>自信を持ってリファクタ</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">💰</span>
+      バグ修正コストの法則
+    </div>
+    <p>
+      バグは<strong>発見が遅いほど修正コストが高くなる</strong>。
+    </p>
+    <table style="width:100%;">
+      <tr>
+        <th>発見フェーズ</th>
+        <th>相対コスト</th>
+      </tr>
+      <tr>
+        <td>設計時</td>
+        <td>1倍</td>
+      </tr>
+      <tr>
+        <td>開発時（単体テスト）</td>
+        <td>5倍</td>
+      </tr>
+      <tr>
+        <td>結合テスト時</td>
+        <td>10倍</td>
+      </tr>
+      <tr>
+        <td>本番リリース後</td>
+        <td>30〜100倍</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>テストがない機能</strong>：リリース後のバグリスク大</li>
+      <li><strong>テストが形骸化</strong>：常にパスするテストは無意味</li>
+      <li><strong>テストなしのリファクタ</strong>：既存機能を壊すリスク</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-testing1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>本番リリース後にバグを発見した場合、開発時に発見した場合と比べてどのくらいの修正コストがかかる？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing1" style="display:none;">
+      <span>同じくらい</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing1" style="display:none;">
+      <span>2〜3倍</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="本番リリース後のバグ修正は、緊急対応、ユーザー影響、信頼回復など多くのコストがかかります。">
+      <input type="radio" name="q-testing1" style="display:none;">
+      <span>30〜100倍</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('testing1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="testing2">
+  <h1>テストの種類</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>テストの種類と分類</li>
+      <li>各テストの目的と特徴</li>
+      <li>テストレベルの違い</li>
+    </ul>
+  </div>
+
+  <h2>テストの分類</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      テストの種類
+    </div>
+    <svg viewBox="0 0 500 300" style="width:100%;max-width:500px;display:block;margin:1rem auto;">
+      <!-- 単体テスト -->
+      <rect x="20" y="20" width="100" height="260" rx="8" fill="#3b82f6"/>
+      <text x="70" y="160" text-anchor="middle" fill="white" font-size="12" font-weight="bold" transform="rotate(-90, 70, 160)">単体テスト</text>
+
+      <!-- 結合テスト -->
+      <rect x="140" y="20" width="100" height="260" rx="8" fill="#10b981"/>
+      <text x="190" y="160" text-anchor="middle" fill="white" font-size="12" font-weight="bold" transform="rotate(-90, 190, 160)">結合テスト</text>
+
+      <!-- E2Eテスト -->
+      <rect x="260" y="20" width="100" height="260" rx="8" fill="#f59e0b"/>
+      <text x="310" y="160" text-anchor="middle" fill="white" font-size="12" font-weight="bold" transform="rotate(-90, 310, 160)">E2Eテスト</text>
+
+      <!-- 受入テスト -->
+      <rect x="380" y="20" width="100" height="260" rx="8" fill="#8b5cf6"/>
+      <text x="430" y="160" text-anchor="middle" fill="white" font-size="12" font-weight="bold" transform="rotate(-90, 430, 160)">受入テスト</text>
+
+      <!-- 特徴テキスト -->
+      <text x="70" y="50" text-anchor="middle" fill="white" font-size="9">関数単位</text>
+      <text x="190" y="50" text-anchor="middle" fill="white" font-size="9">コンポーネント連携</text>
+      <text x="310" y="50" text-anchor="middle" fill="white" font-size="9">ユーザー視点</text>
+      <text x="430" y="50" text-anchor="middle" fill="white" font-size="9">ビジネス要件</text>
+    </svg>
+  </div>
+
+  <h2>各テストの詳細</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>種類</th>
+        <th>対象</th>
+        <th>目的</th>
+        <th>実行者</th>
+      </tr>
+      <tr>
+        <td><strong>単体テスト</strong></td>
+        <td>関数、メソッド</td>
+        <td>個々の部品が正しく動くか</td>
+        <td>開発者</td>
+      </tr>
+      <tr>
+        <td><strong>結合テスト</strong></td>
+        <td>複数コンポーネント</td>
+        <td>部品同士が連携できるか</td>
+        <td>開発者/QA</td>
+      </tr>
+      <tr>
+        <td><strong>E2Eテスト</strong></td>
+        <td>システム全体</td>
+        <td>ユーザーフロー全体が動くか</td>
+        <td>QA/自動化</td>
+      </tr>
+      <tr>
+        <td><strong>受入テスト</strong></td>
+        <td>ビジネス要件</td>
+        <td>要件を満たしているか</td>
+        <td>PO/顧客</td>
+      </tr>
+      <tr>
+        <td><strong>回帰テスト</strong></td>
+        <td>既存機能</td>
+        <td>変更で壊れていないか</td>
+        <td>自動化</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>テストの例</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">単体テスト</div>
+<pre><code>// 関数単体をテスト
+test('合計を計算できる', () => {
+  const result = sum(1, 2);
+  expect(result).toBe(3);
+});</code></pre>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">E2Eテスト</div>
+<pre><code>// ユーザーフローをテスト
+test('商品を購入できる', async () => {
+  await page.goto('/products');
+  await page.click('.add-to-cart');
+  await page.click('.checkout');
+  await expect(page).toHaveURL('/success');
+});</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-testing2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>「ユーザーがログインして商品を購入する」というフロー全体をテストするのは何テスト？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing2" style="display:none;">
+      <span>単体テスト</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing2" style="display:none;">
+      <span>結合テスト</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="ユーザー視点でシステム全体のフローをテストするのがE2E（End-to-End）テストです。">
+      <input type="radio" name="q-testing2" style="display:none;">
+      <span>E2Eテスト</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('testing2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="testing3">
+  <h1>テストピラミッド</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>テストピラミッドの概念</li>
+      <li>各テストの比率</li>
+      <li>コストと速度のトレードオフ</li>
+    </ul>
+  </div>
+
+  <h2>テストピラミッドとは</h2>
+
+  <p>
+    <strong>テストピラミッド</strong>は、テストの理想的な比率を示すモデルです。
+  </p>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      テストピラミッド
+    </div>
+    <svg viewBox="0 0 400 300" style="width:100%;max-width:400px;display:block;margin:1rem auto;">
+      <!-- ピラミッド -->
+      <polygon points="200,20 350,280 50,280" fill="none" stroke="#ddd" stroke-width="2"/>
+
+      <!-- E2E（上） -->
+      <polygon points="200,20 250,100 150,100" fill="#ef4444"/>
+      <text x="200" y="70" text-anchor="middle" fill="white" font-size="11" font-weight="bold">E2E</text>
+      <text x="200" y="85" text-anchor="middle" fill="white" font-size="9">少ない</text>
+
+      <!-- 結合（中） -->
+      <polygon points="150,100 250,100 300,190 100,190" fill="#f59e0b"/>
+      <text x="200" y="150" text-anchor="middle" fill="white" font-size="12" font-weight="bold">結合テスト</text>
+      <text x="200" y="170" text-anchor="middle" fill="white" font-size="9">中程度</text>
+
+      <!-- 単体（下） -->
+      <polygon points="100,190 300,190 350,280 50,280" fill="#10b981"/>
+      <text x="200" y="240" text-anchor="middle" fill="white" font-size="14" font-weight="bold">単体テスト</text>
+      <text x="200" y="260" text-anchor="middle" fill="white" font-size="10">多い</text>
+
+      <!-- 右側のラベル -->
+      <text x="360" y="60" fill="#ef4444" font-size="10">遅い・高コスト</text>
+      <text x="360" y="250" fill="#10b981" font-size="10">速い・低コスト</text>
+      <line x1="355" y1="70" x2="355" y2="240" stroke="#999" stroke-width="1" stroke-dasharray="3"/>
+    </svg>
+  </div>
+
+  <h2>なぜピラミッド型なのか</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>テスト種類</th>
+        <th>実行速度</th>
+        <th>コスト</th>
+        <th>安定性</th>
+        <th>推奨比率</th>
+      </tr>
+      <tr>
+        <td><strong>単体テスト</strong></td>
+        <td>非常に速い</td>
+        <td>低い</td>
+        <td>高い</td>
+        <td>70%</td>
+      </tr>
+      <tr>
+        <td><strong>結合テスト</strong></td>
+        <td>普通</td>
+        <td>中程度</td>
+        <td>中程度</td>
+        <td>20%</td>
+      </tr>
+      <tr>
+        <td><strong>E2Eテスト</strong></td>
+        <td>遅い</td>
+        <td>高い</td>
+        <td>低い</td>
+        <td>10%</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>逆ピラミッド（アンチパターン）</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      アイスクリームコーン
+    </div>
+    <p>E2Eテストが多すぎる状態を<strong>アイスクリームコーン</strong>と呼びます。</p>
+    <ul>
+      <li>テストが遅くてCI/CDが遅延</li>
+      <li>テストが不安定（Flaky）になりやすい</li>
+      <li>メンテナンスコストが高い</li>
+      <li>バグの原因特定が困難</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-testing3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>テストピラミッドで最も多くすべきテストは？</p>
+    <label class="quiz-option" data-correct="true" data-explanation="単体テストは速く、安定していて、コストが低いため、最も多く書くべきです。">
+      <input type="radio" name="q-testing3" style="display:none;">
+      <span>単体テスト</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing3" style="display:none;">
+      <span>結合テスト</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing3" style="display:none;">
+      <span>E2Eテスト</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('testing3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="testing4">
+  <h1>QAマインドセット</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>「壊す」視点でテストを考える</li>
+      <li>エッジケース思考</li>
+      <li>ハッピーパスの罠</li>
+    </ul>
+  </div>
+
+  <h2>開発者思考 vs QA思考</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">開発者思考</div>
+      <p>「正しく動くことを確認する」</p>
+      <ul>
+        <li>ハッピーパスのみテスト</li>
+        <li>自分のコードを信じる</li>
+        <li>「普通はこう使う」と想定</li>
+      </ul>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">QA思考</div>
+      <p>「どうしたら壊れるかを考える」</p>
+      <ul>
+        <li>異常系を積極的にテスト</li>
+        <li>ユーザーの予想外の行動を想定</li>
+        <li>「もしこうしたら？」を問う</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>エッジケースの例</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🎯</span>
+      考えるべきエッジケース
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th>入力タイプ</th>
+        <th>エッジケース</th>
+      </tr>
+      <tr>
+        <td>文字列</td>
+        <td>空文字、null、超長い文字、特殊文字、絵文字</td>
+      </tr>
+      <tr>
+        <td>数値</td>
+        <td>0、負数、小数、MAX_VALUE、NaN</td>
+      </tr>
+      <tr>
+        <td>配列</td>
+        <td>空配列、1要素、重複要素、null含む</td>
+      </tr>
+      <tr>
+        <td>日付</td>
+        <td>うるう年、月末、タイムゾーン、過去日</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      AIがやりがちな間違い
+    </div>
+<pre><code>// ❌ ハッピーパスのみ
+test('ユーザー名を取得できる', () => {
+  const user = getUser(1);
+  expect(user.name).toBe('太郎');
+});
+
+// ⭕ 異常系もテスト
+describe('ユーザー取得', () => {
+  test('正常: ユーザーを取得できる', () => {
+    const user = getUser(1);
+    expect(user.name).toBe('太郎');
+  });
+
+  test('異常: 存在しないIDでnullを返す', () => {
+    const user = getUser(999);
+    expect(user).toBeNull();
+  });
+
+  test('異常: 負のIDでエラー', () => {
+    expect(() => getUser(-1)).toThrow();
+  });
+});</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-testing4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>QAマインドセットで重要なのは？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing4" style="display:none;">
+      <span>正常系が動くことを確認する</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="QAは「どうしたら壊れるか」を考え、異常系やエッジケースを積極的にテストします。">
+      <input type="radio" name="q-testing4" style="display:none;">
+      <span>どうしたら壊れるかを考える</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing4" style="display:none;">
+      <span>できるだけ多くのテストを書く</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('testing4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="testing5">
+  <h1>テストの7原則</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ISTQBが定めるテストの7原則</li>
+      <li>各原則の意味と実践</li>
+    </ul>
+  </div>
+
+  <h2>ISTQB テストの7原則</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📜</span>
+      7つの原則
+    </div>
+    <ol>
+      <li><strong>テストは欠陥の存在を示す</strong>：欠陥がないことは証明できない</li>
+      <li><strong>全数テストは不可能</strong>：すべての組み合わせはテストできない</li>
+      <li><strong>早期テスト</strong>：早く始めるほど効果的</li>
+      <li><strong>欠陥の偏在</strong>：バグは特定の場所に集中する</li>
+      <li><strong>殺虫剤のパラドックス</strong>：同じテストではバグは見つからなくなる</li>
+      <li><strong>テストは状況次第</strong>：コンテキストによって最適なテストは異なる</li>
+      <li><strong>「欠陥ゼロ」の落とし穴</strong>：欠陥がなくても使えないシステムはある</li>
+    </ol>
+  </div>
+
+  <h2>特に重要な原則</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      全数テストは不可能
+    </div>
+    <p>
+      例：3つの入力フィールドがあり、それぞれ100通りの値を取る場合<br>
+      → 100 × 100 × 100 = <strong>100万通り</strong>の組み合わせ
+    </p>
+    <p style="margin:0;">
+      だから<strong>リスクベース</strong>でテストを選択する必要がある。
+    </p>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">🐛</span>
+      欠陥の偏在（パレートの法則）
+    </div>
+    <p>
+      全体の<strong>20%のモジュール</strong>に<strong>80%のバグ</strong>が存在する傾向がある。
+    </p>
+    <p style="margin:0;">
+      → バグが多い領域を特定し、重点的にテストする。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-testing5">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>「同じテストを繰り返すと、新しいバグが見つからなくなる」現象を何という？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing5" style="display:none;">
+      <span>パレートの法則</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="殺虫剤のパラドックス：同じテストでは新しいバグは見つからないため、テストを更新し続ける必要があります。">
+      <input type="radio" name="q-testing5" style="display:none;">
+      <span>殺虫剤のパラドックス</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing5" style="display:none;">
+      <span>テストピラミッド</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('testing5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="testing6">
+  <h1>ボックステスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ホワイトボックス/ブラックボックス/グレーボックス</li>
+      <li>各アプローチの使い分け</li>
+    </ul>
+  </div>
+
+  <h2>3つのテストアプローチ</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      ボックステストの分類
+    </div>
+    <svg viewBox="0 0 500 200" style="width:100%;max-width:500px;display:block;margin:1rem auto;">
+      <!-- ホワイトボックス -->
+      <rect x="20" y="40" width="140" height="120" rx="8" fill="white" stroke="#333" stroke-width="2"/>
+      <text x="90" y="30" text-anchor="middle" fill="#333" font-size="12" font-weight="bold">ホワイトボックス</text>
+      <text x="90" y="90" text-anchor="middle" fill="#333" font-size="10">内部構造を</text>
+      <text x="90" y="110" text-anchor="middle" fill="#333" font-size="10">知ってテスト</text>
+      <circle cx="60" cy="130" r="5" fill="#3b82f6"/>
+      <circle cx="90" cy="130" r="5" fill="#3b82f6"/>
+      <circle cx="120" cy="130" r="5" fill="#3b82f6"/>
+
+      <!-- ブラックボックス -->
+      <rect x="180" y="40" width="140" height="120" rx="8" fill="#333"/>
+      <text x="250" y="30" text-anchor="middle" fill="#333" font-size="12" font-weight="bold">ブラックボックス</text>
+      <text x="250" y="90" text-anchor="middle" fill="white" font-size="10">内部構造を</text>
+      <text x="250" y="110" text-anchor="middle" fill="white" font-size="10">知らずにテスト</text>
+      <text x="250" y="140" text-anchor="middle" fill="white" font-size="10">???</text>
+
+      <!-- グレーボックス -->
+      <rect x="340" y="40" width="140" height="120" rx="8" fill="#888"/>
+      <text x="410" y="30" text-anchor="middle" fill="#333" font-size="12" font-weight="bold">グレーボックス</text>
+      <text x="410" y="90" text-anchor="middle" fill="white" font-size="10">部分的に</text>
+      <text x="410" y="110" text-anchor="middle" fill="white" font-size="10">内部を知る</text>
+      <circle cx="380" cy="130" r="5" fill="#ddd"/>
+      <circle cx="410" cy="130" r="5" fill="#333"/>
+      <circle cx="440" cy="130" r="5" fill="#ddd"/>
+    </svg>
+  </div>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>アプローチ</th>
+        <th>内部構造</th>
+        <th>主な用途</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>ホワイトボックス</strong></td>
+        <td>知っている</td>
+        <td>単体テスト、分岐網羅</td>
+        <td>すべての条件分岐を通過</td>
+      </tr>
+      <tr>
+        <td><strong>ブラックボックス</strong></td>
+        <td>知らない</td>
+        <td>機能テスト、受入テスト</td>
+        <td>入力と出力のみ確認</td>
+      </tr>
+      <tr>
+        <td><strong>グレーボックス</strong></td>
+        <td>部分的</td>
+        <td>結合テスト、APIテスト</td>
+        <td>APIの仕様は知るが実装は知らない</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="quiz" id="quiz-testing6">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>内部構造を知らずに、入力と出力だけでテストするアプローチは？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing6" style="display:none;">
+      <span>ホワイトボックステスト</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="ブラックボックステストは内部を見ずに、仕様に基づいて入力と出力をテストします。">
+      <input type="radio" name="q-testing6" style="display:none;">
+      <span>ブラックボックステスト</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing6" style="display:none;">
+      <span>グレーボックステスト</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('testing6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="testing7">
+  <h1>静的テストと動的テスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>静的テストと動的テストの違い</li>
+      <li>それぞれの活用場面</li>
+    </ul>
+  </div>
+
+  <h2>静的テスト vs 動的テスト</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">静的テスト</div>
+      <p><strong>コードを実行しない</strong></p>
+      <ul>
+        <li>コードレビュー</li>
+        <li>静的解析（ESLint, TypeScript）</li>
+        <li>ドキュメントレビュー</li>
+      </ul>
+      <p>バグを早期に発見できる</p>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">動的テスト</div>
+      <p><strong>コードを実行する</strong></p>
+      <ul>
+        <li>単体テスト</li>
+        <li>結合テスト</li>
+        <li>E2Eテスト</li>
+      </ul>
+      <p>実際の動作を確認できる</p>
+    </div>
+  </div>
+
+  <h2>静的解析ツール</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔧</span>
+      代表的なツール
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th>ツール</th>
+        <th>目的</th>
+      </tr>
+      <tr>
+        <td>ESLint</td>
+        <td>JavaScript/TypeScriptのコード品質</td>
+      </tr>
+      <tr>
+        <td>TypeScript</td>
+        <td>型チェック</td>
+      </tr>
+      <tr>
+        <td>Prettier</td>
+        <td>コードフォーマット</td>
+      </tr>
+      <tr>
+        <td>SonarQube</td>
+        <td>コード品質・セキュリティ</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="quiz" id="quiz-testing7">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ESLintによるコードチェックは何テスト？</p>
+    <label class="quiz-option" data-correct="true" data-explanation="ESLintはコードを実行せずにチェックする静的解析ツールです。">
+      <input type="radio" name="q-testing7" style="display:none;">
+      <span>静的テスト</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing7" style="display:none;">
+      <span>動的テスト</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing7" style="display:none;">
+      <span>E2Eテスト</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('testing7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="testing8">
+  <h1>テスト計画</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>テスト計画の重要性</li>
+      <li>計画に含めるべき項目</li>
+      <li>リソース配分の考え方</li>
+    </ul>
+  </div>
+
+  <h2>テスト計画とは</h2>
+
+  <p>
+    <strong>テスト計画</strong>とは、何を、いつ、どのようにテストするかを定義するドキュメントです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      テスト計画に含める項目
+    </div>
+    <ul>
+      <li><strong>スコープ</strong>：何をテストするか/しないか</li>
+      <li><strong>テスト戦略</strong>：どのようなアプローチでテストするか</li>
+      <li><strong>リソース</strong>：人員、ツール、環境</li>
+      <li><strong>スケジュール</strong>：いつまでに完了するか</li>
+      <li><strong>リスク</strong>：想定されるリスクと対策</li>
+      <li><strong>完了基準</strong>：テスト終了の判断基準</li>
+    </ul>
+  </div>
+
+  <h2>リソース配分の考え方</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚖️</span>
+      リスクベースの配分
+    </div>
+    <p>
+      全機能を均等にテストするのではなく、<strong>リスクが高い機能に多くリソースを割く</strong>。
+    </p>
+    <ul>
+      <li>決済機能 → 重点テスト</li>
+      <li>認証機能 → 重点テスト</li>
+      <li>管理画面の見た目 → 軽めでOK</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-testing8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>テスト計画で最初に決めるべきことは？</p>
+    <label class="quiz-option" data-correct="true" data-explanation="まず「何をテストするか/しないか」のスコープを明確にすることが重要です。">
+      <input type="radio" name="q-testing8" style="display:none;">
+      <span>スコープ（何をテストするか）</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing8" style="display:none;">
+      <span>使用するツール</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing8" style="display:none;">
+      <span>テスト担当者</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing8')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('testing8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="testing9">
+  <h1>テストケース設計</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>良いテストケースの条件</li>
+      <li>再現性と独立性</li>
+      <li>期待値の明確化</li>
+    </ul>
+  </div>
+
+  <h2>良いテストケースの条件</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">✅</span>
+      良いテストケースの特徴
+    </div>
+    <ol>
+      <li><strong>再現性</strong>：何度実行しても同じ結果になる</li>
+      <li><strong>独立性</strong>：他のテストに依存しない</li>
+      <li><strong>明確な期待値</strong>：何が正しいか明確</li>
+      <li><strong>単一の検証</strong>：1つのテストで1つのことを検証</li>
+      <li><strong>わかりやすい名前</strong>：何をテストしているかわかる</li>
+    </ol>
+  </div>
+
+  <h2>テストケースの例</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">悪い例</div>
+<pre><code>test('test1', () => {
+  // 何をテストしている？
+  const result = process(data);
+  expect(result).toBeTruthy();
+  // 期待値が曖昧
+});</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">良い例</div>
+<pre><code>test('空の配列を渡すと空配列を返す', () => {
+  // 明確な入力
+  const input = [];
+  // 明確な操作
+  const result = filterActive(input);
+  // 明確な期待値
+  expect(result).toEqual([]);
+});</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-testing9">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>良いテストケースの条件として正しくないものは？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing9" style="display:none;">
+      <span>再現性がある</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing9" style="display:none;">
+      <span>他のテストに依存しない</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="テストは順序に依存せず、どの順番で実行しても同じ結果になるべきです。">
+      <input type="radio" name="q-testing9" style="display:none;">
+      <span>特定の順序で実行する必要がある</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('testing9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="testing10">
+  <h1>テスト環境</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>テスト環境の重要性</li>
+      <li>本番との差異の問題</li>
+      <li>テストデータ管理</li>
+    </ul>
+  </div>
+
+  <h2>テスト環境とは</h2>
+
+  <p>
+    テストを実行する環境。本番環境との<strong>差異</strong>がバグの見逃しにつながる。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      本番との差異の例
+    </div>
+    <ul>
+      <li>OSが違う（Windows vs Linux）</li>
+      <li>データベースのバージョンが違う</li>
+      <li>外部サービスがモックされている</li>
+      <li>データ量が違う（本番は100万件、テストは10件）</li>
+      <li>ネットワーク環境が違う</li>
+    </ul>
+  </div>
+
+  <h2>テストデータ管理</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      テストデータの種類
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th>種類</th>
+        <th>説明</th>
+        <th>用途</th>
+      </tr>
+      <tr>
+        <td><strong>シードデータ</strong></td>
+        <td>テスト前に投入する固定データ</td>
+        <td>初期状態の再現</td>
+      </tr>
+      <tr>
+        <td><strong>ファクトリ</strong></td>
+        <td>テスト内で動的に生成</td>
+        <td>柔軟なデータ作成</td>
+      </tr>
+      <tr>
+        <td><strong>フィクスチャ</strong></td>
+        <td>JSONなどで定義した固定データ</td>
+        <td>複雑なデータ構造</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>本番データの使用</strong>：個人情報の漏洩リスク</li>
+      <li><strong>環境依存のテスト</strong>：他の環境で動かない</li>
+      <li><strong>テストデータの汚染</strong>：テスト後にデータが残る</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-testing10">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>テスト環境で最も注意すべきことは？</p>
+    <label class="quiz-option" data-correct="true" data-explanation="テスト環境と本番環境の差異は、本番でのみ発生するバグの原因になります。">
+      <input type="radio" name="q-testing10" style="display:none;">
+      <span>本番環境との差異を最小限にする</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing10" style="display:none;">
+      <span>できるだけ多くのデータを用意する</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-testing10" style="display:none;">
+      <span>本番データをそのまま使う</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing10')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('testing10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
