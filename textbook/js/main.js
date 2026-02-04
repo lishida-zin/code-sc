@@ -227,7 +227,197 @@ const sectionMapping = {
   'obs5': 'level5/phase6.html',
   'obs6': 'level5/phase6.html',
   'obs7': 'level5/phase6.html',
-  'obs8': 'level5/phase6.html'
+  'obs8': 'level5/phase6.html',
+
+  // Level 6 - Phase 1: OOP基礎
+  'oop1': 'level6/phase1.html',
+  'oop2': 'level6/phase1.html',
+  'oop3': 'level6/phase1.html',
+  'oop4': 'level6/phase1.html',
+  'oop5': 'level6/phase1.html',
+  'oop6': 'level6/phase1.html',
+  'oop7': 'level6/phase1.html',
+  'oop8': 'level6/phase1.html',
+
+  // Level 6 - Phase 2: SOLID原則
+  'solid1': 'level6/phase2.html',
+  'solid2': 'level6/phase2.html',
+  'solid3': 'level6/phase2.html',
+  'solid4': 'level6/phase2.html',
+  'solid5': 'level6/phase2.html',
+  'solid6': 'level6/phase2.html',
+  'solid7': 'level6/phase2.html',
+  'solid8': 'level6/phase2.html',
+  'solid9': 'level6/phase2.html',
+  'solid10': 'level6/phase2.html',
+
+  // Level 6 - Phase 3: デザインパターン（生成・構造）
+  'pattern1': 'level6/phase3.html',
+  'pattern2': 'level6/phase3.html',
+  'pattern3': 'level6/phase3.html',
+  'pattern4': 'level6/phase3.html',
+  'pattern5': 'level6/phase3.html',
+  'pattern6': 'level6/phase3.html',
+  'pattern7': 'level6/phase3.html',
+  'pattern8': 'level6/phase3.html',
+  'pattern9': 'level6/phase3.html',
+  'pattern10': 'level6/phase3.html',
+
+  // Level 6 - Phase 4: デザインパターン（振る舞い）
+  'behavior1': 'level6/phase4.html',
+  'behavior2': 'level6/phase4.html',
+  'behavior3': 'level6/phase4.html',
+  'behavior4': 'level6/phase4.html',
+  'behavior5': 'level6/phase4.html',
+  'behavior6': 'level6/phase4.html',
+  'behavior7': 'level6/phase4.html',
+  'behavior8': 'level6/phase4.html',
+  'behavior9': 'level6/phase4.html',
+  'behavior10': 'level6/phase4.html',
+
+  // Level 6 - Phase 5: アーキテクチャ基礎
+  'arch1': 'level6/phase5.html',
+  'arch2': 'level6/phase5.html',
+  'arch3': 'level6/phase5.html',
+  'arch4': 'level6/phase5.html',
+  'arch5': 'level6/phase5.html',
+  'arch6': 'level6/phase5.html',
+  'arch7': 'level6/phase5.html',
+  'arch8': 'level6/phase5.html',
+  'arch9': 'level6/phase5.html',
+  'arch10': 'level6/phase5.html',
+
+  // Level 6 - Phase 6: クリーン/ヘキサゴナル
+  'clean1': 'level6/phase6.html',
+  'clean2': 'level6/phase6.html',
+  'clean3': 'level6/phase6.html',
+  'clean4': 'level6/phase6.html',
+  'clean5': 'level6/phase6.html',
+  'clean6': 'level6/phase6.html',
+  'clean7': 'level6/phase6.html',
+  'clean8': 'level6/phase6.html',
+  'clean9': 'level6/phase6.html',
+  'clean10': 'level6/phase6.html',
+
+  // Level 6 - Phase 7: DDD戦略的設計
+  'ddd-s1': 'level6/phase7.html',
+  'ddd-s2': 'level6/phase7.html',
+  'ddd-s3': 'level6/phase7.html',
+  'ddd-s4': 'level6/phase7.html',
+  'ddd-s5': 'level6/phase7.html',
+  'ddd-s6': 'level6/phase7.html',
+  'ddd-s7': 'level6/phase7.html',
+  'ddd-s8': 'level6/phase7.html',
+  'ddd-s9': 'level6/phase7.html',
+  'ddd-s10': 'level6/phase7.html',
+
+  // Level 6 - Phase 8: DDD戦術的設計
+  'ddd-t1': 'level6/phase8.html',
+  'ddd-t2': 'level6/phase8.html',
+  'ddd-t3': 'level6/phase8.html',
+  'ddd-t4': 'level6/phase8.html',
+  'ddd-t5': 'level6/phase8.html',
+  'ddd-t6': 'level6/phase8.html',
+  'ddd-t7': 'level6/phase8.html',
+  'ddd-t8': 'level6/phase8.html',
+  'ddd-t9': 'level6/phase8.html',
+  'ddd-t10': 'level6/phase8.html',
+
+  // Level 7 - Phase 1: データモデリング基礎
+  'data1': 'level7/phase1.html',
+  'data2': 'level7/phase1.html',
+  'data3': 'level7/phase1.html',
+  'data4': 'level7/phase1.html',
+  'data5': 'level7/phase1.html',
+  'data6': 'level7/phase1.html',
+  'data7': 'level7/phase1.html',
+  'data8': 'level7/phase1.html',
+  'data9': 'level7/phase1.html',
+  'data10': 'level7/phase1.html',
+
+  // Level 7 - Phase 2: DB設計応用
+  'dba1': 'level7/phase2.html',
+  'dba2': 'level7/phase2.html',
+  'dba3': 'level7/phase2.html',
+  'dba4': 'level7/phase2.html',
+  'dba5': 'level7/phase2.html',
+  'dba6': 'level7/phase2.html',
+  'dba7': 'level7/phase2.html',
+  'dba8': 'level7/phase2.html',
+  'dba9': 'level7/phase2.html',
+  'dba10': 'level7/phase2.html',
+
+  // Level 7 - Phase 3: クラウド基礎
+  'cloud1': 'level7/phase3.html',
+  'cloud2': 'level7/phase3.html',
+  'cloud3': 'level7/phase3.html',
+  'cloud4': 'level7/phase3.html',
+  'cloud5': 'level7/phase3.html',
+  'cloud6': 'level7/phase3.html',
+  'cloud7': 'level7/phase3.html',
+  'cloud8': 'level7/phase3.html',
+  'cloud9': 'level7/phase3.html',
+  'cloud10': 'level7/phase3.html',
+
+  // Level 7 - Phase 4: クラウド応用
+  'cloud-a1': 'level7/phase4.html',
+  'cloud-a2': 'level7/phase4.html',
+  'cloud-a3': 'level7/phase4.html',
+  'cloud-a4': 'level7/phase4.html',
+  'cloud-a5': 'level7/phase4.html',
+  'cloud-a6': 'level7/phase4.html',
+  'cloud-a7': 'level7/phase4.html',
+  'cloud-a8': 'level7/phase4.html',
+  'cloud-a9': 'level7/phase4.html',
+  'cloud-a10': 'level7/phase4.html',
+
+  // Level 7 - Phase 5: 要件定義
+  'req1': 'level7/phase5.html',
+  'req2': 'level7/phase5.html',
+  'req3': 'level7/phase5.html',
+  'req4': 'level7/phase5.html',
+  'req5': 'level7/phase5.html',
+  'req6': 'level7/phase5.html',
+  'req7': 'level7/phase5.html',
+  'req8': 'level7/phase5.html',
+  'req9': 'level7/phase5.html',
+  'req10': 'level7/phase5.html',
+
+  // Level 7 - Phase 6: 非機能要件
+  'nfr1': 'level7/phase6.html',
+  'nfr2': 'level7/phase6.html',
+  'nfr3': 'level7/phase6.html',
+  'nfr4': 'level7/phase6.html',
+  'nfr5': 'level7/phase6.html',
+  'nfr6': 'level7/phase6.html',
+  'nfr7': 'level7/phase6.html',
+  'nfr8': 'level7/phase6.html',
+  'nfr9': 'level7/phase6.html',
+  'nfr10': 'level7/phase6.html',
+
+  // Level 7 - Phase 7: AI基礎
+  'ai1': 'level7/phase7.html',
+  'ai2': 'level7/phase7.html',
+  'ai3': 'level7/phase7.html',
+  'ai4': 'level7/phase7.html',
+  'ai5': 'level7/phase7.html',
+  'ai6': 'level7/phase7.html',
+  'ai7': 'level7/phase7.html',
+  'ai8': 'level7/phase7.html',
+  'ai9': 'level7/phase7.html',
+  'ai10': 'level7/phase7.html',
+
+  // Level 7 - Phase 8: AI応用
+  'ai-a1': 'level7/phase8.html',
+  'ai-a2': 'level7/phase8.html',
+  'ai-a3': 'level7/phase8.html',
+  'ai-a4': 'level7/phase8.html',
+  'ai-a5': 'level7/phase8.html',
+  'ai-a6': 'level7/phase8.html',
+  'ai-a7': 'level7/phase8.html',
+  'ai-a8': 'level7/phase8.html',
+  'ai-a9': 'level7/phase8.html',
+  'ai-a10': 'level7/phase8.html'
 };
 
 // 読み込み済みファイルを追跡
@@ -578,6 +768,36 @@ function updateProgress() {
   const level5Count = completed.filter(s => level5Sections.includes(s)).length;
   const level5Progress = document.getElementById('level5-progress');
   if (level5Progress) level5Progress.value = level5Count;
+
+  // Level 6
+  const level6Sections = [
+    'oop1','oop2','oop3','oop4','oop5','oop6','oop7','oop8',
+    'solid1','solid2','solid3','solid4','solid5','solid6','solid7','solid8','solid9','solid10',
+    'pattern1','pattern2','pattern3','pattern4','pattern5','pattern6','pattern7','pattern8','pattern9','pattern10',
+    'behavior1','behavior2','behavior3','behavior4','behavior5','behavior6','behavior7','behavior8','behavior9','behavior10',
+    'arch1','arch2','arch3','arch4','arch5','arch6','arch7','arch8','arch9','arch10',
+    'clean1','clean2','clean3','clean4','clean5','clean6','clean7','clean8','clean9','clean10',
+    'ddd-s1','ddd-s2','ddd-s3','ddd-s4','ddd-s5','ddd-s6','ddd-s7','ddd-s8','ddd-s9','ddd-s10',
+    'ddd-t1','ddd-t2','ddd-t3','ddd-t4','ddd-t5','ddd-t6','ddd-t7','ddd-t8','ddd-t9','ddd-t10'
+  ];
+  const level6Count = completed.filter(s => level6Sections.includes(s)).length;
+  const level6Progress = document.getElementById('level6-progress');
+  if (level6Progress) level6Progress.value = level6Count;
+
+  // Level 7
+  const level7Sections = [
+    'data1','data2','data3','data4','data5','data6','data7','data8','data9','data10',
+    'dba1','dba2','dba3','dba4','dba5','dba6','dba7','dba8','dba9','dba10',
+    'cloud1','cloud2','cloud3','cloud4','cloud5','cloud6','cloud7','cloud8','cloud9','cloud10',
+    'cloud-a1','cloud-a2','cloud-a3','cloud-a4','cloud-a5','cloud-a6','cloud-a7','cloud-a8','cloud-a9','cloud-a10',
+    'req1','req2','req3','req4','req5','req6','req7','req8','req9','req10',
+    'nfr1','nfr2','nfr3','nfr4','nfr5','nfr6','nfr7','nfr8','nfr9','nfr10',
+    'ai1','ai2','ai3','ai4','ai5','ai6','ai7','ai8','ai9','ai10',
+    'ai-a1','ai-a2','ai-a3','ai-a4','ai-a5','ai-a6','ai-a7','ai-a8','ai-a9','ai-a10'
+  ];
+  const level7Count = completed.filter(s => level7Sections.includes(s)).length;
+  const level7Progress = document.getElementById('level7-progress');
+  if (level7Progress) level7Progress.value = level7Count;
 }
 
 // 初期化

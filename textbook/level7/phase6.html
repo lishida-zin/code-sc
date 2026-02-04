@@ -1,0 +1,2007 @@
+<!-- ============================================
+     Level 7 Phase 6: 非機能要件
+     ============================================ -->
+
+<section id="nfr1">
+  <h1>非機能要件の分類（ISO 25010）</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>機能要件と非機能要件の違い</li>
+      <li>ISO 25010品質モデルの8つの品質特性</li>
+      <li>非機能要件がなぜ重要か</li>
+    </ul>
+  </div>
+
+  <h2>機能要件 vs 非機能要件</h2>
+
+  <p>
+    システムの要件は<strong>2種類</strong>に分類されます。
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">機能要件（FR）</div>
+      <p>「何ができるか」</p>
+      <ul>
+        <li>ユーザー登録ができる</li>
+        <li>商品を検索できる</li>
+        <li>注文を確定できる</li>
+      </ul>
+      <p style="margin:0;">
+        <strong>What</strong>（システムが行う機能）
+      </p>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">非機能要件（NFR）</div>
+      <p>「どのように動くか」</p>
+      <ul>
+        <li>3秒以内に応答する</li>
+        <li>99.9%の可用性</li>
+        <li>同時1万ユーザーを処理</li>
+      </ul>
+      <p style="margin:0;">
+        <strong>How</strong>（品質・制約）
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：家の要件
+    </div>
+    <p>
+      <strong>機能要件</strong>：3LDK、キッチン、風呂がある<br>
+      <strong>非機能要件</strong>：耐震等級3、断熱性能UA値0.46以下、30年保証
+    </p>
+    <p style="margin:0;">
+      機能だけでは住めない。<strong>安全性・耐久性</strong>も必要。<br>
+      システムも同じで、非機能要件なしでは実用にならない。
+    </p>
+  </div>
+
+  <h2>ISO 25010 品質モデル</h2>
+
+  <p>
+    <strong>ISO/IEC 25010</strong>は、ソフトウェア品質の国際標準です。<br>
+    <strong>8つの品質特性</strong>を定義しています。
+  </p>
+
+  <!-- 品質特性ツリーSVG -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      ISO 25010 品質特性ツリー
+    </div>
+    <svg viewBox="0 0 700 420" style="width:100%;max-width:700px;display:block;margin:1rem auto;" role="img" aria-label="ISO 25010品質特性ツリー">
+      <title>ISO 25010品質特性ツリー</title>
+
+      <!-- 中央のルート -->
+      <rect x="280" y="10" width="140" height="40" rx="8" fill="#6366f1" stroke="#4f46e5" stroke-width="2"/>
+      <text x="350" y="35" text-anchor="middle" fill="white" font-size="13" font-weight="bold">製品品質</text>
+
+      <!-- 接続線（ルートから各特性へ） -->
+      <line x1="350" y1="50" x2="350" y2="70" stroke="#6366f1" stroke-width="2"/>
+      <line x1="350" y1="70" x2="60" y2="70" stroke="#6366f1" stroke-width="2"/>
+      <line x1="350" y1="70" x2="640" y2="70" stroke="#6366f1" stroke-width="2"/>
+
+      <!-- 垂直線 -->
+      <line x1="60" y1="70" x2="60" y2="90" stroke="#6366f1" stroke-width="2"/>
+      <line x1="145" y1="70" x2="145" y2="90" stroke="#6366f1" stroke-width="2"/>
+      <line x1="230" y1="70" x2="230" y2="90" stroke="#6366f1" stroke-width="2"/>
+      <line x1="310" y1="70" x2="310" y2="90" stroke="#6366f1" stroke-width="2"/>
+      <line x1="390" y1="70" x2="390" y2="90" stroke="#6366f1" stroke-width="2"/>
+      <line x1="470" y1="70" x2="470" y2="90" stroke="#6366f1" stroke-width="2"/>
+      <line x1="555" y1="70" x2="555" y2="90" stroke="#6366f1" stroke-width="2"/>
+      <line x1="640" y1="70" x2="640" y2="90" stroke="#6366f1" stroke-width="2"/>
+
+      <!-- 8つの品質特性 -->
+      <!-- 機能適合性 -->
+      <rect x="10" y="90" width="100" height="35" rx="6" fill="#3b82f6"/>
+      <text x="60" y="112" text-anchor="middle" fill="white" font-size="11" font-weight="bold">機能適合性</text>
+      <text x="60" y="140" text-anchor="middle" fill="#64748b" font-size="9">完全性</text>
+      <text x="60" y="152" text-anchor="middle" fill="#64748b" font-size="9">正確性</text>
+      <text x="60" y="164" text-anchor="middle" fill="#64748b" font-size="9">適切性</text>
+
+      <!-- 性能効率性 -->
+      <rect x="95" y="90" width="100" height="35" rx="6" fill="#10b981"/>
+      <text x="145" y="112" text-anchor="middle" fill="white" font-size="11" font-weight="bold">性能効率性</text>
+      <text x="145" y="140" text-anchor="middle" fill="#64748b" font-size="9">時間効率性</text>
+      <text x="145" y="152" text-anchor="middle" fill="#64748b" font-size="9">資源効率性</text>
+      <text x="145" y="164" text-anchor="middle" fill="#64748b" font-size="9">容量満足性</text>
+
+      <!-- 互換性 -->
+      <rect x="180" y="90" width="100" height="35" rx="6" fill="#f59e0b"/>
+      <text x="230" y="112" text-anchor="middle" fill="white" font-size="11" font-weight="bold">互換性</text>
+      <text x="230" y="140" text-anchor="middle" fill="#64748b" font-size="9">共存性</text>
+      <text x="230" y="152" text-anchor="middle" fill="#64748b" font-size="9">相互運用性</text>
+
+      <!-- 使用性 -->
+      <rect x="260" y="90" width="100" height="35" rx="6" fill="#ef4444"/>
+      <text x="310" y="112" text-anchor="middle" fill="white" font-size="11" font-weight="bold">使用性</text>
+      <text x="310" y="140" text-anchor="middle" fill="#64748b" font-size="9">認識性</text>
+      <text x="310" y="152" text-anchor="middle" fill="#64748b" font-size="9">習得性</text>
+      <text x="310" y="164" text-anchor="middle" fill="#64748b" font-size="9">操作性</text>
+
+      <!-- 信頼性 -->
+      <rect x="340" y="90" width="100" height="35" rx="6" fill="#8b5cf6"/>
+      <text x="390" y="112" text-anchor="middle" fill="white" font-size="11" font-weight="bold">信頼性</text>
+      <text x="390" y="140" text-anchor="middle" fill="#64748b" font-size="9">成熟性</text>
+      <text x="390" y="152" text-anchor="middle" fill="#64748b" font-size="9">可用性</text>
+      <text x="390" y="164" text-anchor="middle" fill="#64748b" font-size="9">障害許容性</text>
+      <text x="390" y="176" text-anchor="middle" fill="#64748b" font-size="9">回復性</text>
+
+      <!-- セキュリティ -->
+      <rect x="420" y="90" width="100" height="35" rx="6" fill="#ec4899"/>
+      <text x="470" y="112" text-anchor="middle" fill="white" font-size="11" font-weight="bold">セキュリティ</text>
+      <text x="470" y="140" text-anchor="middle" fill="#64748b" font-size="9">機密性</text>
+      <text x="470" y="152" text-anchor="middle" fill="#64748b" font-size="9">インテグリティ</text>
+      <text x="470" y="164" text-anchor="middle" fill="#64748b" font-size="9">否認防止性</text>
+      <text x="470" y="176" text-anchor="middle" fill="#64748b" font-size="9">責任追跡性</text>
+      <text x="470" y="188" text-anchor="middle" fill="#64748b" font-size="9">真正性</text>
+
+      <!-- 保守性 -->
+      <rect x="505" y="90" width="100" height="35" rx="6" fill="#06b6d4"/>
+      <text x="555" y="112" text-anchor="middle" fill="white" font-size="11" font-weight="bold">保守性</text>
+      <text x="555" y="140" text-anchor="middle" fill="#64748b" font-size="9">モジュール性</text>
+      <text x="555" y="152" text-anchor="middle" fill="#64748b" font-size="9">再利用性</text>
+      <text x="555" y="164" text-anchor="middle" fill="#64748b" font-size="9">解析性</text>
+      <text x="555" y="176" text-anchor="middle" fill="#64748b" font-size="9">修正性</text>
+      <text x="555" y="188" text-anchor="middle" fill="#64748b" font-size="9">試験性</text>
+
+      <!-- 移植性 -->
+      <rect x="590" y="90" width="100" height="35" rx="6" fill="#84cc16"/>
+      <text x="640" y="112" text-anchor="middle" fill="white" font-size="11" font-weight="bold">移植性</text>
+      <text x="640" y="140" text-anchor="middle" fill="#64748b" font-size="9">適応性</text>
+      <text x="640" y="152" text-anchor="middle" fill="#64748b" font-size="9">設置性</text>
+      <text x="640" y="164" text-anchor="middle" fill="#64748b" font-size="9">置換性</text>
+
+      <!-- 凡例 -->
+      <rect x="10" y="380" width="680" height="35" rx="4" fill="#f8fafc" stroke="#e2e8f0"/>
+      <text x="25" y="402" fill="#64748b" font-size="10">※各品質特性の下にある項目は「品質副特性」です。これらを具体的な指標（SLI）として定義します。</text>
+    </svg>
+  </div>
+
+  <h2>8つの品質特性の概要</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:18%;">品質特性</th>
+        <th style="width:35%;">意味</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>機能適合性</strong></td>
+        <td>機能がニーズを満たす度合い</td>
+        <td>全機能が仕様通り動作</td>
+      </tr>
+      <tr>
+        <td><strong>性能効率性</strong></td>
+        <td>使用リソースに対する性能</td>
+        <td>レスポンス3秒以内</td>
+      </tr>
+      <tr>
+        <td><strong>互換性</strong></td>
+        <td>他システムとの連携能力</td>
+        <td>API互換、データ形式</td>
+      </tr>
+      <tr>
+        <td><strong>使用性</strong></td>
+        <td>使いやすさ、学習しやすさ</td>
+        <td>直感的UI、ヘルプ充実</td>
+      </tr>
+      <tr>
+        <td><strong>信頼性</strong></td>
+        <td>障害なく動作し続ける能力</td>
+        <td>99.9%可用性、自動復旧</td>
+      </tr>
+      <tr>
+        <td><strong>セキュリティ</strong></td>
+        <td>情報・システムの保護</td>
+        <td>認証、暗号化、監査ログ</td>
+      </tr>
+      <tr>
+        <td><strong>保守性</strong></td>
+        <td>修正・改善のしやすさ</td>
+        <td>モジュール化、テスト容易</td>
+      </tr>
+      <tr>
+        <td><strong>移植性</strong></td>
+        <td>別環境への移行しやすさ</td>
+        <td>コンテナ化、クラウド移行</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>なぜ非機能要件が重要か</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      非機能要件を軽視した結果
+    </div>
+    <ul>
+      <li><strong>性能問題</strong>：リリース後に「遅すぎて使えない」</li>
+      <li><strong>スケール問題</strong>：ユーザー増加でシステムダウン</li>
+      <li><strong>セキュリティ事故</strong>：情報漏洩で信用失墜</li>
+      <li><strong>運用地獄</strong>：障害対応で開発が止まる</li>
+    </ul>
+    <p style="margin:0;">
+      <strong>非機能要件は「後から追加」が極めて困難</strong>です。<br>
+      設計段階から考慮する必要があります。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-nfr1-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>以下のうち「非機能要件」はどれ？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr1-1" style="display:none;">
+      A. ユーザーがパスワードを変更できる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-nfr1-1" style="display:none;">
+      B. 検索結果を2秒以内に表示する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr1-1" style="display:none;">
+      C. 商品をカートに追加できる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-nfr1-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-nfr1-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>ISO 25010の品質特性で「99.9%の稼働率」が該当するのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr1-2" style="display:none;">
+      A. 性能効率性
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-nfr1-2" style="display:none;">
+      B. 信頼性
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr1-2" style="display:none;">
+      C. セキュリティ
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-nfr1-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('nfr1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="nfr2">
+  <h1>性能要件の定義方法</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>性能要件の3つの観点（レイテンシ、スループット、容量）</li>
+      <li>パーセンタイルによる定義方法</li>
+      <li>性能要件の書き方</li>
+    </ul>
+  </div>
+
+  <h2>性能要件の3つの観点</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">観点</th>
+        <th style="width:30%;">意味</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>レイテンシ</strong></td>
+        <td>1リクエストの応答時間</td>
+        <td>API応答200ms以内</td>
+      </tr>
+      <tr>
+        <td><strong>スループット</strong></td>
+        <td>単位時間あたりの処理量</td>
+        <td>1000 req/sec</td>
+      </tr>
+      <tr>
+        <td><strong>容量</strong></td>
+        <td>扱えるデータ量・接続数</td>
+        <td>同時接続10万、DB100TB</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：高速道路
+    </div>
+    <p>
+      <strong>レイテンシ</strong>：東京→大阪まで何時間か（1台の移動時間）<br>
+      <strong>スループット</strong>：1時間に何台通れるか（処理能力）<br>
+      <strong>容量</strong>：同時に何台走れるか（キャパシティ）
+    </p>
+  </div>
+
+  <h2>パーセンタイルで定義する</h2>
+
+  <p>
+    「平均200ms」は<strong>意味がない</strong>指標です。<br>
+    なぜなら、一部のリクエストが極端に遅くても平均は良く見えるから。
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">悪い定義</div>
+<pre><code>// 平均は騙される
+平均レスポンス: 200ms
+
+// 実態
+- 90%は50ms
+- 10%は1500ms
+- 平均 = 195ms ← 良く見える！</code></pre>
+      <p style="margin:0;">
+        10人に1人は1.5秒待たされる
+      </p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">良い定義</div>
+<pre><code>// パーセンタイルで定義
+p50: 100ms以内  // 半分のリクエスト
+p95: 300ms以内  // 95%のリクエスト
+p99: 500ms以内  // 99%のリクエスト
+
+// これなら「ほぼ全員」の体験を保証</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📝</span>
+      パーセンタイルの意味
+    </div>
+    <ul>
+      <li><strong>p50（中央値）</strong>：半分のリクエストがこの時間以内</li>
+      <li><strong>p95</strong>：95%のリクエストがこの時間以内（100回中95回）</li>
+      <li><strong>p99</strong>：99%のリクエストがこの時間以内（100回中99回）</li>
+      <li><strong>p99.9</strong>：99.9%がこの時間以内（1000回中999回）</li>
+    </ul>
+    <p style="margin:0;">
+      <strong>SLAでよく使われるのはp95やp99</strong>です。
+    </p>
+  </div>
+
+  <h2>性能要件の書き方</h2>
+
+  <div class="card">
+<pre><code>【性能要件ドキュメント例】
+
+■ API性能要件
+| エンドポイント | p50 | p95 | p99 | スループット |
+|---------------|-----|-----|-----|-------------|
+| GET /users    | 50ms | 100ms | 200ms | 500 req/s |
+| POST /orders  | 100ms | 300ms | 500ms | 100 req/s |
+| GET /search   | 200ms | 500ms | 1s | 200 req/s |
+
+■ 容量要件
+- 同時接続ユーザー: 10,000人
+- データ保持期間: 5年
+- 1日あたりデータ増加量: 100GB
+
+■ 測定条件
+- 負荷条件: 通常負荷の2倍
+- ネットワーク: 同一リージョン内
+- データ量: 本番相当</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p><strong>曖昧な性能要件</strong>を見つけたら指摘：</p>
+    <ul>
+      <li>「高速であること」→ 数値で定義されていない</li>
+      <li>「平均200ms」→ パーセンタイルで定義すべき</li>
+      <li>「十分なスループット」→ 具体的な数値がない</li>
+      <li>測定条件が未定義 → 同じ条件で測れない</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-nfr2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>性能要件として最も適切な記述は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr2" style="display:none;">
+      A. APIは高速に応答すること
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr2" style="display:none;">
+      B. 平均レスポンスタイムは200ms以内
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-nfr2" style="display:none;">
+      C. p95レスポンスタイムは300ms以内（通常負荷時）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-nfr2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('nfr2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="nfr3">
+  <h1>信頼性・可用性の定量化</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>可用性の計算方法（ナイン）</li>
+      <li>MTBF / MTTR / MTTAの意味</li>
+      <li>信頼性設計の考え方</li>
+    </ul>
+  </div>
+
+  <h2>可用性とナイン</h2>
+
+  <p>
+    <strong>可用性</strong> = システムが使える時間の割合
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>可用性</th>
+        <th>通称</th>
+        <th>年間ダウンタイム</th>
+        <th>月間ダウンタイム</th>
+      </tr>
+      <tr>
+        <td>99%</td>
+        <td>2ナイン</td>
+        <td>3.65日</td>
+        <td>7.3時間</td>
+      </tr>
+      <tr>
+        <td>99.9%</td>
+        <td>3ナイン</td>
+        <td>8.76時間</td>
+        <td>43.8分</td>
+      </tr>
+      <tr>
+        <td>99.95%</td>
+        <td>3.5ナイン</td>
+        <td>4.38時間</td>
+        <td>21.9分</td>
+      </tr>
+      <tr>
+        <td>99.99%</td>
+        <td>4ナイン</td>
+        <td>52.6分</td>
+        <td>4.4分</td>
+      </tr>
+      <tr>
+        <td>99.999%</td>
+        <td>5ナイン</td>
+        <td>5.26分</td>
+        <td>26秒</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      ナインを1つ増やすコスト
+    </div>
+    <p>
+      <strong>99.9% → 99.99%</strong>（3ナイン→4ナイン）は<br>
+      コストが<strong>10倍以上</strong>かかることも珍しくない。
+    </p>
+    <ul>
+      <li>冗長化構成の複雑化</li>
+      <li>監視・運用体制の強化</li>
+      <li>自動復旧の高度化</li>
+    </ul>
+    <p style="margin:0;">
+      <strong>ビジネス要件に見合った可用性</strong>を選ぶことが重要。
+    </p>
+  </div>
+
+  <h2>MTBF / MTTR / MTTA</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:15%;">指標</th>
+        <th style="width:25%;">正式名称</th>
+        <th style="width:25%;">意味</th>
+        <th>計算</th>
+      </tr>
+      <tr>
+        <td><strong>MTBF</strong></td>
+        <td>Mean Time Between Failures</td>
+        <td>障害間の平均時間</td>
+        <td>稼働時間 / 障害回数</td>
+      </tr>
+      <tr>
+        <td><strong>MTTR</strong></td>
+        <td>Mean Time To Repair</td>
+        <td>平均復旧時間</td>
+        <td>総復旧時間 / 障害回数</td>
+      </tr>
+      <tr>
+        <td><strong>MTTA</strong></td>
+        <td>Mean Time To Acknowledge</td>
+        <td>平均認知時間</td>
+        <td>検知から対応開始まで</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📝</span>
+      可用性の計算式
+    </div>
+<pre><code>可用性 = MTBF / (MTBF + MTTR)
+
+例：
+- MTBF = 720時間（30日に1回障害）
+- MTTR = 0.5時間（30分で復旧）
+
+可用性 = 720 / (720 + 0.5) = 99.93%</code></pre>
+    <p style="margin:0;">
+      <strong>MTTRを短くする</strong>ことが可用性向上の鍵。
+    </p>
+  </div>
+
+  <h2>信頼性を高める設計</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">アプローチ</th>
+        <th style="width:35%;">説明</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>冗長化</strong></td>
+        <td>コンポーネントを複数用意</td>
+        <td>マルチAZ、レプリカDB</td>
+      </tr>
+      <tr>
+        <td><strong>フェイルオーバー</strong></td>
+        <td>障害時に自動で切り替え</td>
+        <td>アクティブ-スタンバイ</td>
+      </tr>
+      <tr>
+        <td><strong>グレースフルデグラデーション</strong></td>
+        <td>一部機能を落として継続</td>
+        <td>推薦機能停止で基本検索のみ</td>
+      </tr>
+      <tr>
+        <td><strong>サーキットブレーカー</strong></td>
+        <td>障害の連鎖を防ぐ</td>
+        <td>外部API障害時に即座にエラー返却</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="quiz" id="quiz-nfr3-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>99.9%の可用性で、年間のダウンタイムは約何時間？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr3-1" style="display:none;">
+      A. 約52分
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-nfr3-1" style="display:none;">
+      B. 約8.76時間
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr3-1" style="display:none;">
+      C. 約3.65日
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-nfr3-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-nfr3-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>可用性を高めるために最も効果的なのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr3-2" style="display:none;">
+      A. MTBFを長くする（障害を減らす）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-nfr3-2" style="display:none;">
+      B. MTTRを短くする（復旧を早める）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr3-2" style="display:none;">
+      C. 障害を0にする
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-nfr3-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('nfr3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="nfr4">
+  <h1>SLA / SLO / SLI の違いと設計</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>SLA、SLO、SLIの違い</li>
+      <li>エラーバジェットの考え方</li>
+      <li>適切なSLOの設計方法</li>
+    </ul>
+  </div>
+
+  <h2>SLA / SLO / SLI とは</h2>
+
+  <!-- SLA/SLO/SLI関係SVG -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      SLA / SLO / SLI の関係
+    </div>
+    <svg viewBox="0 0 600 320" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="SLA/SLO/SLI関係図">
+      <title>SLA/SLO/SLI の関係図</title>
+
+      <!-- 背景の階層構造 -->
+      <!-- SLA（最外層） -->
+      <rect x="20" y="20" width="560" height="280" rx="12" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+      <text x="50" y="50" fill="#dc2626" font-size="14" font-weight="bold">SLA（Service Level Agreement）</text>
+      <text x="50" y="70" fill="#b91c1c" font-size="11">顧客との契約。違反すると返金・ペナルティ</text>
+
+      <!-- SLO（中間層） -->
+      <rect x="50" y="90" width="500" height="190" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+      <text x="80" y="115" fill="#d97706" font-size="14" font-weight="bold">SLO（Service Level Objective）</text>
+      <text x="80" y="135" fill="#b45309" font-size="11">内部目標。SLAより厳しく設定</text>
+
+      <!-- SLI（最内層） -->
+      <rect x="80" y="155" width="440" height="105" rx="8" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+      <text x="110" y="180" fill="#16a34a" font-size="14" font-weight="bold">SLI（Service Level Indicator）</text>
+      <text x="110" y="200" fill="#15803d" font-size="11">測定可能な指標。実際の数値</text>
+
+      <!-- SLIの具体例 -->
+      <rect x="110" y="215" width="120" height="30" rx="4" fill="#86efac"/>
+      <text x="170" y="235" text-anchor="middle" fill="#166534" font-size="10">可用性: 99.95%</text>
+
+      <rect x="250" y="215" width="120" height="30" rx="4" fill="#86efac"/>
+      <text x="310" y="235" text-anchor="middle" fill="#166534" font-size="10">p99: 280ms</text>
+
+      <rect x="390" y="215" width="120" height="30" rx="4" fill="#86efac"/>
+      <text x="450" y="235" text-anchor="middle" fill="#166534" font-size="10">エラー率: 0.08%</text>
+
+      <!-- 矢印と説明 -->
+      <text x="380" y="55" fill="#dc2626" font-size="10">例: 可用性99.9%以上を保証。違反で10%返金</text>
+      <text x="380" y="120" fill="#d97706" font-size="10">例: 可用性99.95%を目標に運用</text>
+    </svg>
+  </div>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:15%;">用語</th>
+        <th style="width:25%;">正式名称</th>
+        <th style="width:30%;">意味</th>
+        <th>対象</th>
+      </tr>
+      <tr>
+        <td><strong>SLI</strong></td>
+        <td>Service Level Indicator</td>
+        <td>測定可能な品質指標</td>
+        <td>エンジニア</td>
+      </tr>
+      <tr>
+        <td><strong>SLO</strong></td>
+        <td>Service Level Objective</td>
+        <td>SLIの目標値（内部目標）</td>
+        <td>開発チーム</td>
+      </tr>
+      <tr>
+        <td><strong>SLA</strong></td>
+        <td>Service Level Agreement</td>
+        <td>顧客との契約（ペナルティ付き）</td>
+        <td>顧客・ビジネス</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：宅配便
+    </div>
+    <p>
+      <strong>SLI</strong>：「今日の配送で98%が翌日到着した」（実測値）<br>
+      <strong>SLO</strong>：「翌日到着率99%を目指す」（内部目標）<br>
+      <strong>SLA</strong>：「翌日届かなければ送料返金」（顧客との約束）
+    </p>
+  </div>
+
+  <h2>エラーバジェット</h2>
+
+  <p>
+    <strong>エラーバジェット</strong> = 「許容されるエラーの予算」
+  </p>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📝</span>
+      エラーバジェットの計算
+    </div>
+<pre><code>SLO: 可用性 99.9%
+→ 許容ダウンタイム = 0.1% = 月43.8分
+
+月初のエラーバジェット: 43.8分
+- 障害Aで10分ダウン → 残り33.8分
+- 障害Bで15分ダウン → 残り18.8分
+- デプロイ失敗で5分ダウン → 残り13.8分
+
+残りが少ない → リスクの高いリリースを延期</code></pre>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      エラーバジェットの活用
+    </div>
+    <ul>
+      <li><strong>バジェット余裕あり</strong>：積極的に新機能リリース</li>
+      <li><strong>バジェット残り少</strong>：安定性重視、リスク回避</li>
+      <li><strong>バジェット使い切り</strong>：新機能凍結、信頼性改善に集中</li>
+    </ul>
+    <p style="margin:0;">
+      <strong>開発速度と信頼性のバランス</strong>を取る仕組み。
+    </p>
+  </div>
+
+  <h2>SLO設計のベストプラクティス</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:30%;">原則</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td><strong>ユーザー視点で選ぶ</strong></td>
+        <td>CPU使用率ではなく、レスポンスタイムなど体験に直結する指標</td>
+      </tr>
+      <tr>
+        <td><strong>少数に絞る</strong></td>
+        <td>多すぎると管理不能。3〜5個程度</td>
+      </tr>
+      <tr>
+        <td><strong>SLA > SLO</strong></td>
+        <td>SLOはSLAより厳しく。余裕を持つ</td>
+      </tr>
+      <tr>
+        <td><strong>達成可能な目標</strong></td>
+        <td>100%は現実的でない。99.99%も高コスト</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p><strong>SLO設計の問題</strong>を見つけたら指摘：</p>
+    <ul>
+      <li>SLIが測定不可能（「ユーザー満足度」など曖昧）</li>
+      <li>SLOが100%（達成不可能）</li>
+      <li>SLOがSLAより緩い（余裕がない）</li>
+      <li>内部指標のみ（CPU使用率など、UXに直結しない）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-nfr4-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>SLA、SLO、SLIの関係で正しいのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr4-1" style="display:none;">
+      A. SLI > SLO > SLA（SLIが最も厳しい）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-nfr4-1" style="display:none;">
+      B. SLOはSLAより厳しく設定する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr4-1" style="display:none;">
+      C. SLAは内部目標、SLOは顧客契約
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-nfr4-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-nfr4-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>エラーバジェットを使い切った場合、最適な対応は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr4-2" style="display:none;">
+      A. SLOを緩和して調整する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-nfr4-2" style="display:none;">
+      B. 新機能リリースを止めて信頼性改善に集中
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr4-2" style="display:none;">
+      C. 来月のバジェットを前借りする
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-nfr4-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('nfr4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="nfr5">
+  <h1>セキュリティ要件の洗い出し</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>CIA三要素（機密性・完全性・可用性）</li>
+      <li>セキュリティ要件の分類</li>
+      <li>要件定義で考慮すべきポイント</li>
+    </ul>
+  </div>
+
+  <h2>CIA三要素</h2>
+
+  <p>
+    セキュリティの基本は<strong>CIA三要素</strong>です。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">要素</th>
+        <th style="width:20%;">英語</th>
+        <th style="width:30%;">意味</th>
+        <th>脅威例</th>
+      </tr>
+      <tr>
+        <td><strong>機密性</strong></td>
+        <td>Confidentiality</td>
+        <td>許可された人だけがアクセス</td>
+        <td>情報漏洩</td>
+      </tr>
+      <tr>
+        <td><strong>完全性</strong></td>
+        <td>Integrity</td>
+        <td>データが改ざんされていない</td>
+        <td>データ改ざん</td>
+      </tr>
+      <tr>
+        <td><strong>可用性</strong></td>
+        <td>Availability</td>
+        <td>必要な時に使える</td>
+        <td>DoS攻撃</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：銀行の金庫
+    </div>
+    <p>
+      <strong>機密性</strong>：権限者だけが金庫を開けられる<br>
+      <strong>完全性</strong>：お金が勝手に増減しない<br>
+      <strong>可用性</strong>：営業時間中は必ず引き出せる
+    </p>
+  </div>
+
+  <h2>セキュリティ要件の分類</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">カテゴリ</th>
+        <th style="width:40%;">要件例</th>
+        <th>実装例</th>
+      </tr>
+      <tr>
+        <td><strong>認証</strong></td>
+        <td>ユーザーが本人であることを確認</td>
+        <td>パスワード、MFA、生体認証</td>
+      </tr>
+      <tr>
+        <td><strong>認可</strong></td>
+        <td>許可された操作だけを許す</td>
+        <td>RBAC、ABAC、ACL</td>
+      </tr>
+      <tr>
+        <td><strong>暗号化</strong></td>
+        <td>データを読めない形で保存・送信</td>
+        <td>TLS、AES-256、ハッシュ化</td>
+      </tr>
+      <tr>
+        <td><strong>監査</strong></td>
+        <td>誰が何をしたか記録</td>
+        <td>監査ログ、アクセスログ</td>
+      </tr>
+      <tr>
+        <td><strong>入力検証</strong></td>
+        <td>不正な入力を防ぐ</td>
+        <td>サニタイズ、バリデーション</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>セキュリティ要件の書き方</h2>
+
+  <div class="card">
+<pre><code>【セキュリティ要件ドキュメント例】
+
+■ 認証要件
+- パスワードは12文字以上、大小文字・数字・記号を含む
+- ログイン失敗5回でアカウントロック（30分）
+- セッションタイムアウト: 30分
+- 管理者アカウントはMFA必須
+
+■ 暗号化要件
+- 通信: TLS 1.3以上
+- 保存データ: AES-256で暗号化
+- パスワード: bcrypt（コスト12以上）でハッシュ化
+
+■ 監査要件
+- 全APIアクセスをログに記録
+- ログ保持期間: 1年
+- ログは改ざん検知可能な形式で保存
+
+■ コンプライアンス
+- GDPR対応（EU顧客のデータ処理）
+- PCI DSS Level 1（クレジットカード取扱）</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p><strong>セキュリティ要件の漏れ</strong>を指摘：</p>
+    <ul>
+      <li>パスワードポリシーが未定義</li>
+      <li>暗号化アルゴリズムが古い（MD5、SHA-1）</li>
+      <li>監査ログの要件がない</li>
+      <li>セッション管理の要件がない</li>
+      <li>入力検証の基準がない</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-nfr5-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>CIA三要素で「データが改ざんされていない」を保証するのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr5-1" style="display:none;">
+      A. 機密性（Confidentiality）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-nfr5-1" style="display:none;">
+      B. 完全性（Integrity）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr5-1" style="display:none;">
+      C. 可用性（Availability）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-nfr5-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-nfr5-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>パスワード保存で最も適切なのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr5-2" style="display:none;">
+      A. AES-256で暗号化して保存
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-nfr5-2" style="display:none;">
+      B. bcryptでハッシュ化して保存
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr5-2" style="display:none;">
+      C. Base64でエンコードして保存
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-nfr5-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('nfr5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="nfr6">
+  <h1>STRIDE脅威モデリング</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>STRIDEモデルの6つの脅威カテゴリ</li>
+      <li>脅威モデリングの進め方</li>
+      <li>各脅威への対策</li>
+    </ul>
+  </div>
+
+  <h2>STRIDEとは</h2>
+
+  <p>
+    <strong>STRIDE</strong>は、Microsoftが開発した<strong>脅威分類フレームワーク</strong>です。<br>
+    6種類の脅威を体系的に洗い出します。
+  </p>
+
+  <!-- STRIDE脅威モデルSVG -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      STRIDE脅威モデル
+    </div>
+    <svg viewBox="0 0 650 400" style="width:100%;max-width:650px;display:block;margin:1rem auto;" role="img" aria-label="STRIDE脅威モデル図">
+      <title>STRIDE脅威モデル</title>
+
+      <!-- 中央の円 -->
+      <circle cx="325" cy="200" r="60" fill="#6366f1" stroke="#4f46e5" stroke-width="2"/>
+      <text x="325" y="195" text-anchor="middle" fill="white" font-size="14" font-weight="bold">STRIDE</text>
+      <text x="325" y="212" text-anchor="middle" fill="#e0e7ff" font-size="10">脅威モデル</text>
+
+      <!-- S: Spoofing -->
+      <rect x="20" y="30" width="180" height="80" rx="8" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
+      <text x="110" y="55" text-anchor="middle" fill="white" font-size="14" font-weight="bold">S: Spoofing</text>
+      <text x="110" y="75" text-anchor="middle" fill="#fee2e2" font-size="11">なりすまし</text>
+      <text x="110" y="95" text-anchor="middle" fill="#fecaca" font-size="9">他人になりすましてアクセス</text>
+      <line x1="200" y1="70" x2="265" y2="170" stroke="#ef4444" stroke-width="2"/>
+
+      <!-- T: Tampering -->
+      <rect x="235" y="30" width="180" height="80" rx="8" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="325" y="55" text-anchor="middle" fill="white" font-size="14" font-weight="bold">T: Tampering</text>
+      <text x="325" y="75" text-anchor="middle" fill="#fef3c7" font-size="11">改ざん</text>
+      <text x="325" y="95" text-anchor="middle" fill="#fde68a" font-size="9">データを不正に変更</text>
+      <line x1="325" y1="110" x2="325" y2="140" stroke="#f59e0b" stroke-width="2"/>
+
+      <!-- R: Repudiation -->
+      <rect x="450" y="30" width="180" height="80" rx="8" fill="#10b981" stroke="#059669" stroke-width="2"/>
+      <text x="540" y="55" text-anchor="middle" fill="white" font-size="14" font-weight="bold">R: Repudiation</text>
+      <text x="540" y="75" text-anchor="middle" fill="#d1fae5" font-size="11">否認</text>
+      <text x="540" y="95" text-anchor="middle" fill="#a7f3d0" font-size="9">「やってない」と主張</text>
+      <line x1="450" y1="70" x2="385" y2="170" stroke="#10b981" stroke-width="2"/>
+
+      <!-- I: Information Disclosure -->
+      <rect x="20" y="290" width="180" height="80" rx="8" fill="#3b82f6" stroke="#2563eb" stroke-width="2"/>
+      <text x="110" y="315" text-anchor="middle" fill="white" font-size="13" font-weight="bold">I: Info Disclosure</text>
+      <text x="110" y="335" text-anchor="middle" fill="#dbeafe" font-size="11">情報漏洩</text>
+      <text x="110" y="355" text-anchor="middle" fill="#bfdbfe" font-size="9">機密情報が漏れる</text>
+      <line x1="200" y1="330" x2="265" y2="230" stroke="#3b82f6" stroke-width="2"/>
+
+      <!-- D: Denial of Service -->
+      <rect x="235" y="290" width="180" height="80" rx="8" fill="#8b5cf6" stroke="#7c3aed" stroke-width="2"/>
+      <text x="325" y="315" text-anchor="middle" fill="white" font-size="13" font-weight="bold">D: Denial of Service</text>
+      <text x="325" y="335" text-anchor="middle" fill="#ede9fe" font-size="11">サービス拒否</text>
+      <text x="325" y="355" text-anchor="middle" fill="#ddd6fe" font-size="9">システムを使用不能に</text>
+      <line x1="325" y1="290" x2="325" y2="260" stroke="#8b5cf6" stroke-width="2"/>
+
+      <!-- E: Elevation of Privilege -->
+      <rect x="450" y="290" width="180" height="80" rx="8" fill="#ec4899" stroke="#db2777" stroke-width="2"/>
+      <text x="540" y="315" text-anchor="middle" fill="white" font-size="12" font-weight="bold">E: Elevation of Privilege</text>
+      <text x="540" y="335" text-anchor="middle" fill="#fce7f3" font-size="11">権限昇格</text>
+      <text x="540" y="355" text-anchor="middle" fill="#fbcfe8" font-size="9">より高い権限を不正取得</text>
+      <line x1="450" y1="330" x2="385" y2="230" stroke="#ec4899" stroke-width="2"/>
+    </svg>
+  </div>
+
+  <h2>各脅威と対策</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:12%;">脅威</th>
+        <th style="width:20%;">意味</th>
+        <th style="width:25%;">例</th>
+        <th>対策</th>
+      </tr>
+      <tr>
+        <td><strong>S</strong></td>
+        <td>なりすまし</td>
+        <td>偽のログインフォーム</td>
+        <td>多要素認証、証明書</td>
+      </tr>
+      <tr>
+        <td><strong>T</strong></td>
+        <td>改ざん</td>
+        <td>SQLインジェクション</td>
+        <td>入力検証、署名</td>
+      </tr>
+      <tr>
+        <td><strong>R</strong></td>
+        <td>否認</td>
+        <td>「注文してない」</td>
+        <td>監査ログ、電子署名</td>
+      </tr>
+      <tr>
+        <td><strong>I</strong></td>
+        <td>情報漏洩</td>
+        <td>APIでパスワード露出</td>
+        <td>暗号化、アクセス制御</td>
+      </tr>
+      <tr>
+        <td><strong>D</strong></td>
+        <td>サービス拒否</td>
+        <td>DDoS攻撃</td>
+        <td>レート制限、WAF</td>
+      </tr>
+      <tr>
+        <td><strong>E</strong></td>
+        <td>権限昇格</td>
+        <td>一般ユーザーが管理者に</td>
+        <td>最小権限、RBAC</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>脅威モデリングの進め方</h2>
+
+  <div class="card">
+<pre><code>【脅威モデリングの手順】
+
+1. システムを図示する（DFD: データフロー図）
+   - ユーザー、プロセス、データストア、外部システム
+   - データの流れを矢印で表現
+
+2. 境界を特定する（Trust Boundary）
+   - インターネット ↔ アプリ
+   - アプリ ↔ データベース
+   - 社内 ↔ 社外
+
+3. 各要素にSTRIDEを適用
+   - この通信で「なりすまし」は可能か？
+   - このデータは「改ざん」されうるか？
+   - ...
+
+4. 対策を検討・優先順位付け
+   - リスク = 影響度 × 発生確率
+   - 高リスクから対応</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p><strong>各STRIDEの観点</strong>でレビュー：</p>
+    <ul>
+      <li><strong>S</strong>：認証は十分か？セッション管理は？</li>
+      <li><strong>T</strong>：入力検証は？SQLインジェクション対策は？</li>
+      <li><strong>R</strong>：監査ログは記録されるか？</li>
+      <li><strong>I</strong>：機密データは暗号化されているか？</li>
+      <li><strong>D</strong>：レート制限は？リソース枯渇対策は？</li>
+      <li><strong>E</strong>：認可チェックは全APIにあるか？</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-nfr6-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>STRIDEの「R」が意味する脅威は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr6-1" style="display:none;">
+      A. Replay（リプレイ攻撃）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-nfr6-1" style="display:none;">
+      B. Repudiation（否認）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr6-1" style="display:none;">
+      C. Ransomware（ランサムウェア）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-nfr6-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-nfr6-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>「一般ユーザーがURLを直接叩いて管理画面にアクセスできた」はSTRIDEのどれ？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr6-2" style="display:none;">
+      A. S: Spoofing（なりすまし）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr6-2" style="display:none;">
+      B. I: Information Disclosure（情報漏洩）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-nfr6-2" style="display:none;">
+      C. E: Elevation of Privilege（権限昇格）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-nfr6-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('nfr6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="nfr7">
+  <h1>運用性・保守性の要件</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>運用性（Operability）の要件</li>
+      <li>保守性（Maintainability）の要件</li>
+      <li>DevOps/SREの観点</li>
+    </ul>
+  </div>
+
+  <h2>運用性とは</h2>
+
+  <p>
+    <strong>運用性</strong> = システムを安定して動かし続けるための特性
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">観点</th>
+        <th style="width:35%;">意味</th>
+        <th>要件例</th>
+      </tr>
+      <tr>
+        <td><strong>監視性</strong></td>
+        <td>状態が把握できる</td>
+        <td>メトリクス、ログ、トレース</td>
+      </tr>
+      <tr>
+        <td><strong>デプロイ容易性</strong></td>
+        <td>安全に素早くリリース</td>
+        <td>ロールバック可能、Blue-Green</td>
+      </tr>
+      <tr>
+        <td><strong>構成管理</strong></td>
+        <td>設定変更が容易</td>
+        <td>環境変数、Feature Flag</td>
+      </tr>
+      <tr>
+        <td><strong>障害対応</strong></td>
+        <td>問題を素早く解決</td>
+        <td>ランブック、自動復旧</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>保守性とは</h2>
+
+  <p>
+    <strong>保守性</strong> = システムを修正・拡張しやすい特性
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">観点</th>
+        <th style="width:35%;">意味</th>
+        <th>要件例</th>
+      </tr>
+      <tr>
+        <td><strong>モジュール性</strong></td>
+        <td>独立した部品に分割</td>
+        <td>疎結合、高凝集</td>
+      </tr>
+      <tr>
+        <td><strong>解析性</strong></td>
+        <td>問題箇所を特定しやすい</td>
+        <td>ドキュメント、コメント</td>
+      </tr>
+      <tr>
+        <td><strong>修正性</strong></td>
+        <td>変更の影響が局所的</td>
+        <td>インターフェース分離</td>
+      </tr>
+      <tr>
+        <td><strong>試験性</strong></td>
+        <td>テストしやすい</td>
+        <td>DI、モック可能</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>運用要件の書き方</h2>
+
+  <div class="card">
+<pre><code>【運用要件ドキュメント例】
+
+■ 監視要件
+- アプリケーションメトリクス: Prometheus形式で公開
+- ログ: JSON形式、構造化ログ、correlation ID付与
+- トレース: OpenTelemetry対応
+- アラート: Slack通知、PagerDuty連携
+
+■ デプロイ要件
+- デプロイ頻度: 1日複数回可能
+- ロールバック: 5分以内に前バージョンへ
+- デプロイ方式: Blue-Greenまたはカナリア
+- デプロイ時間: 15分以内
+
+■ 障害対応要件
+- ランブック: 全アラートに対応手順あり
+- オンコール: 24/365体制
+- MTTAの目標: 5分以内
+- MTTRの目標: 30分以内
+
+■ バックアップ要件
+- 頻度: 日次フルバックアップ、1時間ごと増分
+- 保持期間: 30日
+- リストア時間: 4時間以内
+- リストアテスト: 月1回実施</code></pre>
+  </div>
+
+  <h2>DevOps/SREの観点</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📝</span>
+      設計段階で考慮すべきこと
+    </div>
+    <ul>
+      <li><strong>Day 2 Operation</strong>：リリース後の運用を設計段階で考慮</li>
+      <li><strong>Observability</strong>：ログ・メトリクス・トレースの3本柱</li>
+      <li><strong>Chaos Engineering</strong>：障害を意図的に起こして耐性を確認</li>
+      <li><strong>Runbook</strong>：障害対応手順を事前に文書化</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p><strong>運用性の問題</strong>を見つけたら指摘：</p>
+    <ul>
+      <li>ログが出力されていない、または不十分</li>
+      <li>設定がハードコードされている</li>
+      <li>ヘルスチェックエンドポイントがない</li>
+      <li>テストがない、またはカバレッジが低い</li>
+      <li>デプロイ手順が手動で複雑</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-nfr7">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>「ログ・メトリクス・トレース」の3本柱を指す概念は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-nfr7" style="display:none;">
+      A. Observability（可観測性）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr7" style="display:none;">
+      B. Reliability（信頼性）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr7" style="display:none;">
+      C. Availability（可用性）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-nfr7')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('nfr7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="nfr8">
+  <h1>スケーラビリティの見積もり</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>スケールアップ vs スケールアウト</li>
+      <li>キャパシティプランニングの方法</li>
+      <li>成長予測と余裕の見積もり</li>
+    </ul>
+  </div>
+
+  <h2>スケーラビリティとは</h2>
+
+  <p>
+    <strong>スケーラビリティ</strong> = 負荷増加に対応できる能力
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">スケールアップ（垂直）</div>
+      <p>サーバーを強化する</p>
+      <ul>
+        <li>CPU、メモリを増設</li>
+        <li>シンプルだが限界あり</li>
+        <li>単一障害点のリスク</li>
+      </ul>
+      <p style="margin:0;">
+        例：EC2 t3.medium → t3.xlarge
+      </p>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">スケールアウト（水平）</div>
+      <p>サーバーを増やす</p>
+      <ul>
+        <li>同じサーバーを追加</li>
+        <li>理論上は無限に拡張可能</li>
+        <li>設計が複雑になる</li>
+      </ul>
+      <p style="margin:0;">
+        例：EC2 2台 → 10台
+      </p>
+    </div>
+  </div>
+
+  <h2>キャパシティプランニング</h2>
+
+  <div class="card">
+<pre><code>【キャパシティ見積もりの例】
+
+■ 現状の把握
+- 現在のDAU: 10,000人
+- ピーク時リクエスト: 100 req/s
+- 平均レスポンス: 200ms
+- サーバー: 2台（負荷50%）
+
+■ 成長予測（1年後）
+- 予測DAU: 50,000人（5倍）
+- 予測ピーク: 500 req/s
+
+■ 必要リソースの計算
+- 現在の処理能力: 200 req/s（2台 × 100 req/s/台）
+- 必要な処理能力: 500 req/s × 1.5（余裕）= 750 req/s
+- 必要サーバー数: 750 / 100 = 8台
+
+■ 余裕の考慮
+- 通常時の余裕: 30%
+- ピーク対応: 通常の2倍
+- 障害時の縮退: N+1構成</code></pre>
+  </div>
+
+  <h2>スケーラビリティ要件の書き方</h2>
+
+  <div class="card">
+<pre><code>【スケーラビリティ要件例】
+
+■ 容量要件
+- 初期: 同時接続 1,000人、DAU 10,000人
+- 1年後: 同時接続 5,000人、DAU 50,000人
+- 3年後: 同時接続 20,000人、DAU 200,000人
+
+■ スケーリング方式
+- Webサーバー: 水平スケーリング（オートスケール）
+- DBサーバー: 読み取りレプリカ追加
+- キャッシュ: Redisクラスター（シャーディング）
+
+■ オートスケール条件
+- CPU使用率70%超過で1台追加
+- CPU使用率30%未満で1台削減
+- 最小: 2台、最大: 20台
+- クールダウン: 5分
+
+■ データ増加見積もり
+- 1日あたり: 10GB
+- 1年後のデータ量: 3.6TB
+- 3年後のデータ量: 10TB以上</code></pre>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      スケーラビリティの罠
+    </div>
+    <ul>
+      <li><strong>データベースがボトルネック</strong>：アプリは増やせるがDBは増やしにくい</li>
+      <li><strong>セッション管理</strong>：サーバー間でセッション共有が必要</li>
+      <li><strong>キャッシュの整合性</strong>：複数サーバーでキャッシュが不整合</li>
+      <li><strong>ファイルストレージ</strong>：ローカルファイルは共有できない</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p><strong>スケーラビリティを阻害する</strong>設計：</p>
+    <ul>
+      <li>ローカルファイルへの書き込み（共有ストレージ未使用）</li>
+      <li>インメモリセッション（Redisなど外部化されていない）</li>
+      <li>シングルトンの乱用（状態を持つシングルトン）</li>
+      <li>同期的な重い処理（非同期/キュー化すべき）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-nfr8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>水平スケーリング（スケールアウト）の課題として正しいのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr8" style="display:none;">
+      A. CPUやメモリに物理的な上限がある
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-nfr8" style="display:none;">
+      B. セッションやキャッシュの共有が必要になる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr8" style="display:none;">
+      C. コストが高くなりすぎる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-nfr8')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('nfr8')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="nfr9">
+  <h1>品質特性のトレードオフ</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>品質特性間のトレードオフ</li>
+      <li>ATAM（Architecture Tradeoff Analysis Method）</li>
+      <li>意思決定の記録方法</li>
+    </ul>
+  </div>
+
+  <h2>トレードオフとは</h2>
+
+  <p>
+    <strong>すべての品質特性を最大化することは不可能</strong>です。<br>
+    ある特性を高めると、別の特性が犠牲になります。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">高める特性</th>
+        <th style="width:25%;">犠牲になる特性</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td>セキュリティ</td>
+        <td>使用性、性能</td>
+        <td>MFAで手間増加、暗号化で遅延</td>
+      </tr>
+      <tr>
+        <td>性能</td>
+        <td>保守性、セキュリティ</td>
+        <td>キャッシュで複雑化、検証省略</td>
+      </tr>
+      <tr>
+        <td>信頼性</td>
+        <td>コスト、性能</td>
+        <td>冗長化でコスト増、同期で遅延</td>
+      </tr>
+      <tr>
+        <td>保守性</td>
+        <td>性能</td>
+        <td>抽象化レイヤーでオーバーヘッド</td>
+      </tr>
+      <tr>
+        <td>機能の豊富さ</td>
+        <td>使用性</td>
+        <td>機能が多すぎて複雑に</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：車の設計
+    </div>
+    <p>
+      <strong>燃費</strong>を良くすると<strong>パワー</strong>が下がる<br>
+      <strong>安全装備</strong>を増やすと<strong>重量</strong>が増える<br>
+      <strong>コスト</strong>を下げると<strong>品質</strong>が下がる
+    </p>
+    <p style="margin:0;">
+      すべてを最高にはできない。<strong>優先順位</strong>を決める必要がある。
+    </p>
+  </div>
+
+  <h2>ATAM（Architecture Tradeoff Analysis Method）</h2>
+
+  <p>
+    <strong>ATAM</strong>は、アーキテクチャのトレードオフを分析する手法です。
+  </p>
+
+  <div class="card">
+<pre><code>【ATAMの手順】
+
+1. ビジネス目標の明確化
+   - 何を達成したいか？
+   - 最も重要なことは何か？
+
+2. 品質属性の優先順位付け
+   - 性能 > セキュリティ > 保守性
+   - または逆
+
+3. アーキテクチャアプローチの評価
+   - 各選択肢のメリット・デメリット
+   - どの品質に影響するか
+
+4. トレードオフポイントの特定
+   - 「これを選ぶとこれが犠牲になる」
+   - リスクの洗い出し
+
+5. 意思決定の記録（ADR）
+   - なぜその選択をしたか
+   - 他の選択肢は何だったか</code></pre>
+  </div>
+
+  <h2>ADR（Architecture Decision Record）</h2>
+
+  <div class="card">
+<pre><code>【ADRテンプレート】
+
+# ADR-001: セッション管理方式の選定
+
+## ステータス
+承認済み（2024-01-15）
+
+## コンテキスト
+ユーザーセッションの管理方式を決定する必要がある。
+現在、DAU 10,000人、1年後には50,000人を想定。
+
+## 選択肢
+1. サーバーサイドセッション（インメモリ）
+2. サーバーサイドセッション（Redis）
+3. JWT（クライアントサイド）
+
+## 決定
+**Redis によるサーバーサイドセッション**を採用
+
+## 根拠
+- スケーラビリティ: Redisはクラスター化可能
+- セキュリティ: JWTは無効化が困難
+- 複雑さ: インメモリはスケールアウト困難
+
+## トレードオフ
+- JWTより遅延が増加（数ms）
+- Redisの運用コストが発生
+
+## 結果
+セッション管理はRedisで一元化。
+TTL 30分、最大セッション数は1ユーザー5つまで。</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p><strong>トレードオフの記録漏れ</strong>を指摘：</p>
+    <ul>
+      <li>なぜこの技術を選んだか記録がない</li>
+      <li>他の選択肢との比較がない</li>
+      <li>デメリットが考慮されていない</li>
+      <li>将来の変更可能性が検討されていない</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-nfr9">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>セキュリティを高めたときに犠牲になりやすい特性は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-nfr9" style="display:none;">
+      A. 使用性（ユーザビリティ）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr9" style="display:none;">
+      B. 信頼性
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr9" style="display:none;">
+      C. 機能適合性
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-nfr9')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('nfr9')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="nfr10">
+  <h1>非機能要件レビューチェックリスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>非機能要件のレビュー観点</li>
+      <li>実践的なチェックリスト</li>
+      <li>Phase 6のまとめ</li>
+    </ul>
+  </div>
+
+  <h2>非機能要件レビューチェックリスト</h2>
+
+  <div class="card">
+    <h3>性能要件</h3>
+    <ul>
+      <li>[ ] レスポンスタイムがパーセンタイル（p95/p99）で定義されているか</li>
+      <li>[ ] スループット目標が具体的な数値で示されているか</li>
+      <li>[ ] 測定条件（負荷、データ量）が明記されているか</li>
+      <li>[ ] ピーク時の要件が定義されているか</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>信頼性・可用性</h3>
+    <ul>
+      <li>[ ] 可用性目標がナインで定義されているか（99.9%など）</li>
+      <li>[ ] MTTRの目標が設定されているか</li>
+      <li>[ ] 障害時の縮退運転が定義されているか</li>
+      <li>[ ] バックアップ・リストア要件があるか</li>
+      <li>[ ] 災害復旧（DR）要件が検討されているか</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>セキュリティ</h3>
+    <ul>
+      <li>[ ] 認証要件（パスワードポリシー、MFA）が定義されているか</li>
+      <li>[ ] 認可要件（権限モデル）が定義されているか</li>
+      <li>[ ] 暗号化要件（通信、保存データ）が明記されているか</li>
+      <li>[ ] 監査ログ要件があるか</li>
+      <li>[ ] コンプライアンス要件（GDPR、PCI DSSなど）が考慮されているか</li>
+      <li>[ ] STRIDE観点での脅威分析が行われているか</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>運用性・保守性</h3>
+    <ul>
+      <li>[ ] 監視要件（ログ、メトリクス、アラート）が定義されているか</li>
+      <li>[ ] デプロイ要件（頻度、時間、ロールバック）が明記されているか</li>
+      <li>[ ] 障害対応体制（オンコール、ランブック）が定義されているか</li>
+      <li>[ ] 設定変更の方法が明確か</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>スケーラビリティ</h3>
+    <ul>
+      <li>[ ] 現在と将来（1年後、3年後）の容量要件が定義されているか</li>
+      <li>[ ] スケーリング方式（スケールアップ/アウト）が明確か</li>
+      <li>[ ] オートスケール条件が具体的か</li>
+      <li>[ ] データ増加の見積もりがあるか</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>トレードオフと意思決定</h3>
+    <ul>
+      <li>[ ] 品質特性の優先順位が明確か</li>
+      <li>[ ] トレードオフが認識・記録されているか</li>
+      <li>[ ] 重要な意思決定がADRとして残されているか</li>
+      <li>[ ] SLA/SLO/SLIが適切に設計されているか</li>
+    </ul>
+  </div>
+
+  <h2>Phase 6 まとめ</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">🎉</span>
+      Phase 6 完了！
+    </div>
+    <p>
+      非機能要件の定義方法を学びました。
+    </p>
+    <ul>
+      <li><strong>ISO 25010</strong>：8つの品質特性で体系的に整理</li>
+      <li><strong>性能要件</strong>：パーセンタイルで具体的に定義</li>
+      <li><strong>可用性</strong>：ナイン、MTBF/MTTRで定量化</li>
+      <li><strong>SLA/SLO/SLI</strong>：エラーバジェットで運用</li>
+      <li><strong>セキュリティ</strong>：CIA三要素、STRIDEで網羅</li>
+      <li><strong>トレードオフ</strong>：ADRで意思決定を記録</li>
+    </ul>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📝</span>
+      シニアエンジニアとして
+    </div>
+    <p>
+      非機能要件は<strong>「後から追加」が困難</strong>です。<br>
+      設計段階で適切に定義することが、プロジェクト成功の鍵。
+    </p>
+    <p style="margin:0;">
+      <strong>「動けばいい」ではなく「どう動くべきか」</strong>を<br>
+      常に意識してレビューしましょう。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-nfr10-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>非機能要件レビューで最も重要な観点は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr10-1" style="display:none;">
+      A. 要件が「高い」「速い」など曖昧でないこと
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-nfr10-1" style="display:none;">
+      B. 要件が測定可能な数値で定義されていること
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr10-1" style="display:none;">
+      C. 要件が多いほど良いこと
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-nfr10-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-nfr10-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>非機能要件が不十分な場合に起こりうる問題は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr10-2" style="display:none;">
+      A. 機能が不足する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-nfr10-2" style="display:none;">
+      B. リリース後に性能問題やセキュリティ事故が発生する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr10-2" style="display:none;">
+      C. 開発コストが下がる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-nfr10-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-nfr10-3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      総合クイズ
+    </div>
+    <p>以下の要件定義の問題点は？</p>
+<pre><code>性能要件：
+- システムは高速に動作すること
+- 可用性は高いこと
+
+セキュリティ要件：
+- 適切なセキュリティ対策を講じること</code></pre>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr10-3" style="display:none;">
+      A. 要件が多すぎる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-nfr10-3" style="display:none;">
+      B. 具体的な数値や基準がなく、測定・検証できない
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-nfr10-3" style="display:none;">
+      C. 特に問題はない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-nfr10-3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('nfr10')">
+    <span class="icon">✓</span>
+    Phase 6を完了
+  </button>
+</section>

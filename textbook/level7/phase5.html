@@ -1,0 +1,1816 @@
+<!-- ============================================
+     Level 7 Phase 5: 要件定義
+     ============================================ -->
+
+<section id="req1">
+  <h1>要件定義とは</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>要件定義の目的と重要性</li>
+      <li>機能要件と非機能要件の違い</li>
+      <li>要件定義の失敗がもたらす影響</li>
+    </ul>
+  </div>
+
+  <h2>要件定義とは何か</h2>
+
+  <p>
+    <strong>要件定義</strong> = システムが「何を」すべきかを明確にすること
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：家を建てる前の打ち合わせ
+    </div>
+    <p>
+      家を建てる前に「どんな家が欲しいか」を決める。<br>
+      <strong>何部屋必要か、どんな設備が欲しいか、予算はいくらか。</strong>
+    </p>
+    <p style="margin:0;">
+      これを曖昧にしたまま建て始めると...<br>
+      「思っていたのと違う」「やり直し」の連続になる。
+    </p>
+  </div>
+
+  <h2>機能要件 vs 非機能要件</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">機能要件（Functional Requirements）</div>
+      <p><strong>「システムが何をするか」</strong></p>
+      <ul>
+        <li>ユーザー登録ができる</li>
+        <li>商品を検索できる</li>
+        <li>注文履歴を表示できる</li>
+        <li>在庫数を更新できる</li>
+      </ul>
+      <p style="margin:0;font-size:0.9rem;">
+        ビジネスの「やりたいこと」を表現
+      </p>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">非機能要件（Non-Functional Requirements）</div>
+      <p><strong>「システムがどうあるべきか」</strong></p>
+      <ul>
+        <li>応答時間は3秒以内</li>
+        <li>同時1000ユーザーに対応</li>
+        <li>99.9%の可用性</li>
+        <li>個人情報を暗号化</li>
+      </ul>
+      <p style="margin:0;font-size:0.9rem;">
+        品質・制約条件を表現
+      </p>
+    </div>
+  </div>
+
+  <h2>非機能要件の分類</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">カテゴリ</th>
+        <th style="width:35%;">内容</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>性能</strong></td>
+        <td>速度、スループット</td>
+        <td>ページ表示2秒以内</td>
+      </tr>
+      <tr>
+        <td><strong>可用性</strong></td>
+        <td>稼働率、障害復旧</td>
+        <td>99.9%稼働、RTO 4時間</td>
+      </tr>
+      <tr>
+        <td><strong>セキュリティ</strong></td>
+        <td>認証、暗号化、監査</td>
+        <td>2要素認証必須</td>
+      </tr>
+      <tr>
+        <td><strong>拡張性</strong></td>
+        <td>将来の成長対応</td>
+        <td>3年後10倍のユーザー</td>
+      </tr>
+      <tr>
+        <td><strong>保守性</strong></td>
+        <td>変更の容易さ</td>
+        <td>新機能追加2週間以内</td>
+      </tr>
+      <tr>
+        <td><strong>運用性</strong></td>
+        <td>監視、デプロイ</td>
+        <td>ダウンタイムなしデプロイ</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      非機能要件を軽視すると...
+    </div>
+    <p>
+      機能は動くが<strong>遅い、落ちる、セキュリティ事故</strong>が発生。<br>
+      後から対応すると<strong>コストが10倍以上</strong>かかることも。
+    </p>
+    <p style="margin:0;">
+      「性能は後で改善すればいい」は最も危険な思考です。
+    </p>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      レビューの観点
+    </div>
+    <p>要件定義書をレビューするとき：</p>
+    <ul>
+      <li><strong>非機能要件が書かれているか？</strong>（ないなら指摘）</li>
+      <li><strong>数値で測定可能か？</strong>（「速い」ではなく「2秒以内」）</li>
+      <li><strong>優先度がついているか？</strong></li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-req1-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>「ログイン機能を実装する」は何要件？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-req1-1" style="display:none;">
+      A. 機能要件
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req1-1" style="display:none;">
+      B. 非機能要件
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req1-1" style="display:none;">
+      C. どちらでもない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-req1-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-req1-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>「同時1000ユーザーに対応する」は何要件？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req1-2" style="display:none;">
+      A. 機能要件
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-req1-2" style="display:none;">
+      B. 非機能要件（性能/拡張性）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req1-2" style="display:none;">
+      C. どちらでもない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-req1-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('req1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="req2">
+  <h1>ステークホルダー分析</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ステークホルダーとは誰か</li>
+      <li>ステークホルダーの特定方法</li>
+      <li>利害関係の整理と優先度付け</li>
+    </ul>
+  </div>
+
+  <h2>ステークホルダーとは</h2>
+
+  <p>
+    <strong>ステークホルダー</strong> = プロジェクトに関係する全ての人・組織
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：結婚式の準備
+    </div>
+    <p>
+      結婚式のステークホルダーは新郎新婦だけではない。<br>
+      <strong>両家の親、友人、式場、料理人、司会者...</strong>
+    </p>
+    <p style="margin:0;">
+      全員の期待を把握しないと「誰かが不満」という事態に。
+    </p>
+  </div>
+
+  <h2>典型的なステークホルダー</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">ステークホルダー</th>
+        <th style="width:35%;">関心事</th>
+        <th>影響力</th>
+      </tr>
+      <tr>
+        <td><strong>経営層</strong></td>
+        <td>ROI、競合優位性、リスク</td>
+        <td>高（予算決定権）</td>
+      </tr>
+      <tr>
+        <td><strong>エンドユーザー</strong></td>
+        <td>使いやすさ、機能充実</td>
+        <td>中（実際に使う人）</td>
+      </tr>
+      <tr>
+        <td><strong>運用チーム</strong></td>
+        <td>保守性、監視、障害対応</td>
+        <td>中（運用を担う）</td>
+      </tr>
+      <tr>
+        <td><strong>開発チーム</strong></td>
+        <td>技術的実現可能性、期間</td>
+        <td>中（作る人）</td>
+      </tr>
+      <tr>
+        <td><strong>法務/コンプライアンス</strong></td>
+        <td>法令遵守、リスク</td>
+        <td>高（拒否権を持つ）</td>
+      </tr>
+      <tr>
+        <td><strong>外部パートナー</strong></td>
+        <td>連携仕様、スケジュール</td>
+        <td>状況による</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>ステークホルダーマップ</h2>
+
+  <p>
+    <strong>影響力</strong>と<strong>関心度</strong>で分類し、対応戦略を決める。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;text-align:center;">
+      <tr>
+        <td></td>
+        <td colspan="2" style="font-weight:bold;">関心度</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><strong>低い</strong></td>
+        <td><strong>高い</strong></td>
+      </tr>
+      <tr>
+        <td style="font-weight:bold;">影響力 高い</td>
+        <td style="background:#fef3c7;">満足させ続ける<br><small>（経営層の一部）</small></td>
+        <td style="background:#dcfce7;">密に管理する<br><small>（プロジェクトオーナー）</small></td>
+      </tr>
+      <tr>
+        <td style="font-weight:bold;">影響力 低い</td>
+        <td style="background:#e5e7eb;">監視のみ<br><small>（間接部門）</small></td>
+        <td style="background:#dbeafe;">情報提供を続ける<br><small>（エンドユーザー）</small></td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>要件の矛盾を見つける</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      ステークホルダー間の対立
+    </div>
+    <ul>
+      <li><strong>経営層</strong>：早くリリースしたい</li>
+      <li><strong>開発チーム</strong>：品質を担保したい</li>
+      <li><strong>ユーザー</strong>：機能を増やしてほしい</li>
+    </ul>
+    <p style="margin:0;">
+      これらの対立を<strong>事前に</strong>把握し、調整することが要件定義の重要な仕事。
+    </p>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      レビューの観点
+    </div>
+    <ul>
+      <li><strong>全ステークホルダーが特定されているか？</strong></li>
+      <li><strong>運用チームの意見は聞いたか？</strong>（見落としがち）</li>
+      <li><strong>法務確認は必要か？</strong>（個人情報を扱う場合は必須）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-req2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ステークホルダー分析で最も重要なことは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req2" style="display:none;">
+      A. 経営層の意見だけを聞く
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-req2" style="display:none;">
+      B. 全ての関係者を特定し、利害関係を整理する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req2" style="display:none;">
+      C. 開発チームの技術的意見を優先する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-req2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('req2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="req3">
+  <h1>ユースケースの書き方</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ユースケースとは何か</li>
+      <li>ユースケース記述の書き方</li>
+      <li>代替フロー・例外フローの重要性</li>
+    </ul>
+  </div>
+
+  <h2>ユースケースとは</h2>
+
+  <p>
+    <strong>ユースケース</strong> = ユーザーがシステムを使って達成する「目的」を記述したもの
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：レストランの注文
+    </div>
+    <p>
+      「料理を注文する」というユースケース：<br>
+      1. お客さんがメニューを見る<br>
+      2. 料理を選ぶ<br>
+      3. ウェイターに伝える<br>
+      4. 注文が厨房に伝わる
+    </p>
+    <p style="margin:0;">
+      <strong>誰が、何を、どうやって達成するか</strong>を明確にする。
+    </p>
+  </div>
+
+  <h2>ユースケース記述のテンプレート</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:30%;">項目</th>
+        <th>内容</th>
+      </tr>
+      <tr>
+        <td><strong>ユースケース名</strong></td>
+        <td>商品を購入する</td>
+      </tr>
+      <tr>
+        <td><strong>アクター</strong></td>
+        <td>会員ユーザー</td>
+      </tr>
+      <tr>
+        <td><strong>事前条件</strong></td>
+        <td>ユーザーがログイン済み、カートに商品がある</td>
+      </tr>
+      <tr>
+        <td><strong>事後条件</strong></td>
+        <td>注文が確定し、確認メールが送信される</td>
+      </tr>
+      <tr>
+        <td><strong>基本フロー</strong></td>
+        <td>1. カートを確認 → 2. 配送先入力 → 3. 支払い → 4. 確定</td>
+      </tr>
+      <tr>
+        <td><strong>代替フロー</strong></td>
+        <td>3a. クーポン適用時の割引処理</td>
+      </tr>
+      <tr>
+        <td><strong>例外フロー</strong></td>
+        <td>3b. 決済失敗時のエラー表示</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>基本フロー・代替フロー・例外フロー</h2>
+
+  <div class="card">
+<pre><code>【基本フロー】（Happy Path）
+1. ユーザーがカートページを開く
+2. システムがカート内容を表示する
+3. ユーザーが「購入手続きへ」を押す
+4. システムが配送先入力画面を表示する
+5. ユーザーが配送先を入力する
+6. ユーザーが支払い方法を選択する
+7. システムが決済処理を行う
+8. システムが注文完了画面を表示する
+9. システムが確認メールを送信する
+
+【代替フロー】
+5a. 登録済み住所を選択する場合
+    5a1. システムが登録済み住所一覧を表示
+    5a2. ユーザーが住所を選択
+    5a3. 基本フロー6へ
+
+【例外フロー】
+7a. 決済失敗の場合
+    7a1. システムがエラーメッセージを表示
+    7a2. ユーザーに再入力を促す
+    7a3. 基本フロー6へ戻る</code></pre>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      例外フローが重要な理由
+    </div>
+    <p>
+      <strong>バグの多くは例外フローで発生</strong>します。<br>
+      「正常系は動くが、エラー時に落ちる」が典型的な問題。
+    </p>
+    <p style="margin:0;">
+      例外フローを詳細に書くことで、<strong>テストケースの抜け漏れを防ぐ</strong>。
+    </p>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      レビューの観点
+    </div>
+    <ul>
+      <li><strong>事前条件・事後条件は明確か？</strong></li>
+      <li><strong>例外フローは網羅されているか？</strong></li>
+      <li><strong>アクターは正しく特定されているか？</strong></li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-req3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ユースケースで最も見落としやすいのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req3" style="display:none;">
+      A. ユースケース名
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-req3" style="display:none;">
+      B. 例外フロー（エラー時の処理）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req3" style="display:none;">
+      C. アクター
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-req3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('req3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="req4">
+  <h1>ユースケース図の読み方</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ユースケース図の構成要素</li>
+      <li>include / extend の違い</li>
+      <li>ユースケース図の読み解き方</li>
+    </ul>
+  </div>
+
+  <h2>ユースケース図とは</h2>
+
+  <p>
+    <strong>ユースケース図</strong> = システムの機能と利用者の関係を視覚化したもの
+  </p>
+
+  <!-- ユースケース図SVG -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      ユースケース図の例：ECサイト
+    </div>
+    <svg viewBox="0 0 500 350" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="ECサイトのユースケース図">
+      <title>ECサイトのユースケース図</title>
+
+      <!-- システム境界 -->
+      <rect x="120" y="20" width="280" height="310" rx="10" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="5,5"/>
+      <text x="260" y="45" text-anchor="middle" fill="#6366f1" font-size="14" font-weight="bold">ECサイト</text>
+
+      <!-- アクター：顧客 -->
+      <circle cx="50" cy="100" r="15" fill="none" stroke="#3b82f6" stroke-width="2"/>
+      <line x1="50" y1="115" x2="50" y2="150" stroke="#3b82f6" stroke-width="2"/>
+      <line x1="30" y1="130" x2="70" y2="130" stroke="#3b82f6" stroke-width="2"/>
+      <line x1="50" y1="150" x2="30" y2="180" stroke="#3b82f6" stroke-width="2"/>
+      <line x1="50" y1="150" x2="70" y2="180" stroke="#3b82f6" stroke-width="2"/>
+      <text x="50" y="200" text-anchor="middle" fill="#3b82f6" font-size="11">顧客</text>
+
+      <!-- アクター：管理者 -->
+      <circle cx="50" cy="270" r="15" fill="none" stroke="#ef4444" stroke-width="2"/>
+      <line x1="50" y1="285" x2="50" y2="320" stroke="#ef4444" stroke-width="2"/>
+      <line x1="30" y1="300" x2="70" y2="300" stroke="#ef4444" stroke-width="2"/>
+      <line x1="50" y1="320" x2="30" y2="350" stroke="#ef4444" stroke-width="2"/>
+      <line x1="50" y1="320" x2="70" y2="350" stroke="#ef4444" stroke-width="2"/>
+      <text x="50" y="370" text-anchor="middle" fill="#ef4444" font-size="11">管理者</text>
+
+      <!-- 外部システム：決済サービス -->
+      <rect x="430" y="130" width="60" height="40" rx="5" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="460" y="155" text-anchor="middle" fill="white" font-size="9" font-weight="bold">決済</text>
+      <text x="460" y="165" text-anchor="middle" fill="white" font-size="8">サービス</text>
+
+      <!-- ユースケース楕円 -->
+      <!-- 商品を検索 -->
+      <ellipse cx="200" cy="80" rx="55" ry="22" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+      <text x="200" y="85" text-anchor="middle" fill="#1e40af" font-size="10">商品を検索</text>
+
+      <!-- 商品を購入 -->
+      <ellipse cx="200" cy="150" rx="55" ry="22" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+      <text x="200" y="155" text-anchor="middle" fill="#1e40af" font-size="10">商品を購入</text>
+
+      <!-- 認証する（include） -->
+      <ellipse cx="330" cy="90" rx="45" ry="20" fill="#dcfce7" stroke="#10b981" stroke-width="2"/>
+      <text x="330" y="95" text-anchor="middle" fill="#047857" font-size="9">認証する</text>
+
+      <!-- 決済処理（include） -->
+      <ellipse cx="330" cy="150" rx="45" ry="20" fill="#dcfce7" stroke="#10b981" stroke-width="2"/>
+      <text x="330" y="155" text-anchor="middle" fill="#047857" font-size="9">決済処理</text>
+
+      <!-- クーポン適用（extend） -->
+      <ellipse cx="330" cy="210" rx="45" ry="20" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+      <text x="330" y="215" text-anchor="middle" fill="#92400e" font-size="9">クーポン適用</text>
+
+      <!-- 在庫管理 -->
+      <ellipse cx="200" cy="280" rx="55" ry="22" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+      <text x="200" y="285" text-anchor="middle" fill="#991b1b" font-size="10">在庫管理</text>
+
+      <!-- 関係線 -->
+      <!-- 顧客 → 商品を検索 -->
+      <line x1="70" y1="100" x2="145" y2="85" stroke="#3b82f6" stroke-width="1.5"/>
+      <!-- 顧客 → 商品を購入 -->
+      <line x1="70" y1="130" x2="145" y2="145" stroke="#3b82f6" stroke-width="1.5"/>
+      <!-- 管理者 → 在庫管理 -->
+      <line x1="70" y1="280" x2="145" y2="280" stroke="#ef4444" stroke-width="1.5"/>
+
+      <!-- include関係 -->
+      <line x1="255" y1="145" x2="285" y2="150" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <text x="270" y="140" text-anchor="middle" fill="#10b981" font-size="8">&lt;&lt;include&gt;&gt;</text>
+
+      <line x1="240" y1="130" x2="290" y2="100" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <text x="270" y="108" text-anchor="middle" fill="#10b981" font-size="8">&lt;&lt;include&gt;&gt;</text>
+
+      <!-- extend関係 -->
+      <line x1="285" y1="205" x2="255" y2="165" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <text x="280" y="180" text-anchor="middle" fill="#f59e0b" font-size="8">&lt;&lt;extend&gt;&gt;</text>
+
+      <!-- 決済サービス連携 -->
+      <line x1="375" y1="150" x2="430" y2="150" stroke="#f59e0b" stroke-width="1.5"/>
+    </svg>
+    <p style="text-align:center;margin:0;font-size:0.9rem;color:var(--text-muted);">
+      楕円=ユースケース、人型=アクター、破線=関係
+    </p>
+  </div>
+
+  <h2>構成要素</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">要素</th>
+        <th style="width:25%;">記号</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td><strong>アクター</strong></td>
+        <td>人型（棒人間）</td>
+        <td>システムを利用する人・外部システム</td>
+      </tr>
+      <tr>
+        <td><strong>ユースケース</strong></td>
+        <td>楕円</td>
+        <td>システムの機能（動詞で表現）</td>
+      </tr>
+      <tr>
+        <td><strong>システム境界</strong></td>
+        <td>四角形</td>
+        <td>システムの範囲を示す</td>
+      </tr>
+      <tr>
+        <td><strong>関連</strong></td>
+        <td>実線</td>
+        <td>アクターとユースケースの接続</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>include vs extend</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">&lt;&lt;include&gt;&gt;（含む）</div>
+      <p><strong>必ず実行される</strong>共通処理</p>
+      <ul>
+        <li>「商品を購入」は「認証する」を<strong>必ず含む</strong></li>
+        <li>基底ユースケースが子を呼び出す</li>
+      </ul>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">&lt;&lt;extend&gt;&gt;（拡張）</div>
+      <p><strong>条件付きで実行される</strong>追加処理</p>
+      <ul>
+        <li>「クーポン適用」は「商品を購入」を<strong>条件付きで拡張</strong></li>
+        <li>子が基底ユースケースを拡張する</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+<pre><code>// include: 必ず呼ばれる
+商品を購入する
+  ├── &lt;&lt;include&gt;&gt; 認証する      // 必須
+  └── &lt;&lt;include&gt;&gt; 決済処理する  // 必須
+
+// extend: 条件付きで呼ばれる
+商品を購入する
+  └── &lt;&lt;extend&gt;&gt; クーポン適用する [クーポンがある場合]</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      レビューの観点
+    </div>
+    <ul>
+      <li><strong>include/extendの方向は正しいか？</strong></li>
+      <li><strong>システム境界の外に必要なアクターはないか？</strong></li>
+      <li><strong>ユースケースが細かすぎないか？</strong>（CRUD個別は過剰）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-req4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>&lt;&lt;include&gt;&gt;と&lt;&lt;extend&gt;&gt;の違いは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req4" style="display:none;">
+      A. includeは任意、extendは必須
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-req4" style="display:none;">
+      B. includeは必須、extendは条件付き
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req4" style="display:none;">
+      C. どちらも同じ意味
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-req4')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('req4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="req5">
+  <h1>ユーザーストーリーとアクセプタンス基準</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ユーザーストーリーの書き方</li>
+      <li>INVEST基準</li>
+      <li>アクセプタンス基準（受入条件）の定義</li>
+    </ul>
+  </div>
+
+  <h2>ユーザーストーリーとは</h2>
+
+  <p>
+    <strong>ユーザーストーリー</strong> = ユーザー視点で書いた短い要件記述
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📝</span>
+      ユーザーストーリーのテンプレート
+    </div>
+<pre><code><strong>＜ユーザー種別＞</strong>として、
+<strong>＜達成したいこと＞</strong>をしたい。
+なぜなら<strong>＜理由/価値＞</strong>だから。
+
+---
+例：
+<strong>会員ユーザー</strong>として、
+<strong>購入履歴を確認</strong>したい。
+なぜなら<strong>過去の注文状況を把握</strong>したいから。</code></pre>
+  </div>
+
+  <h2>INVEST基準</h2>
+
+  <p>
+    良いユーザーストーリーは<strong>INVEST</strong>を満たす。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:15%;">基準</th>
+        <th style="width:25%;">意味</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td><strong>I</strong></td>
+        <td>Independent（独立）</td>
+        <td>他のストーリーに依存しない</td>
+      </tr>
+      <tr>
+        <td><strong>N</strong></td>
+        <td>Negotiable（交渉可能）</td>
+        <td>実装詳細は議論で決める</td>
+      </tr>
+      <tr>
+        <td><strong>V</strong></td>
+        <td>Valuable（価値がある）</td>
+        <td>ユーザーに価値を提供する</td>
+      </tr>
+      <tr>
+        <td><strong>E</strong></td>
+        <td>Estimable（見積可能）</td>
+        <td>工数を見積もれる具体性</td>
+      </tr>
+      <tr>
+        <td><strong>S</strong></td>
+        <td>Small（小さい）</td>
+        <td>1スプリントで完了できるサイズ</td>
+      </tr>
+      <tr>
+        <td><strong>T</strong></td>
+        <td>Testable（テスト可能）</td>
+        <td>完了条件が明確</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>アクセプタンス基準</h2>
+
+  <p>
+    <strong>アクセプタンス基準</strong> = 「何をもって完了とするか」の明確な条件
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      Gherkin形式（Given-When-Then）
+    </div>
+<pre><code>ストーリー：会員ユーザーとして、購入履歴を確認したい
+
+<strong>シナリオ：過去の注文一覧を表示</strong>
+Given: ログイン済みのユーザーがいる
+ And: 過去に3件の注文がある
+When: 購入履歴ページにアクセスする
+Then: 3件の注文が新しい順に表示される
+ And: 各注文に日付、金額、ステータスが表示される
+
+<strong>シナリオ：注文がない場合</strong>
+Given: ログイン済みのユーザーがいる
+ And: 過去の注文が0件
+When: 購入履歴ページにアクセスする
+Then: 「注文履歴がありません」と表示される</code></pre>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">曖昧なアクセプタンス基準</div>
+<pre><code>- 購入履歴が見える
+- 使いやすい画面
+- 速く表示される</code></pre>
+      <p style="margin:0;">
+        何をテストすればいいか分からない
+      </p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">明確なアクセプタンス基準</div>
+<pre><code>- 直近100件の注文が表示される
+- 注文日、金額、ステータスが表示
+- 3秒以内に表示される
+- 注文がない場合のメッセージ表示</code></pre>
+      <p style="margin:0;">
+        テストケースに直接変換できる
+      </p>
+    </div>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      レビューの観点
+    </div>
+    <ul>
+      <li><strong>ストーリーにビジネス価値が書かれているか？</strong></li>
+      <li><strong>アクセプタンス基準は具体的で測定可能か？</strong></li>
+      <li><strong>異常系のシナリオも含まれているか？</strong></li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-req5">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>INVESTの「T」は何を意味する？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req5" style="display:none;">
+      A. Technical（技術的）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-req5" style="display:none;">
+      B. Testable（テスト可能）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req5" style="display:none;">
+      C. Timely（タイムリー）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-req5')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('req5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="req6">
+  <h1>要件のトレーサビリティ</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>トレーサビリティとは何か</li>
+      <li>要件トレーサビリティマトリクス（RTM）</li>
+      <li>双方向トレーサビリティの重要性</li>
+    </ul>
+  </div>
+
+  <h2>トレーサビリティとは</h2>
+
+  <p>
+    <strong>トレーサビリティ</strong> = 要件がどこから来て、どこに実装されたかを追跡できること
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：料理のレシピ
+    </div>
+    <p>
+      「この料理になぜ塩が入っているの？」と聞かれたとき、<br>
+      「レシピの手順3に書いてある」と答えられる。
+    </p>
+    <p style="margin:0;">
+      <strong>実装の根拠を説明できる</strong>ことがトレーサビリティ。
+    </p>
+  </div>
+
+  <h2>トレーサビリティの方向</h2>
+
+  <!-- トレーサビリティSVG -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      双方向トレーサビリティ
+    </div>
+    <svg viewBox="0 0 500 200" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="双方向トレーサビリティの図">
+      <title>要件から実装、実装から要件への双方向追跡</title>
+
+      <!-- 矢印マーカー定義 -->
+      <defs>
+        <marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#3b82f6"/>
+        </marker>
+        <marker id="arrow-back" markerWidth="10" markerHeight="10" refX="1" refY="3" orient="auto">
+          <path d="M9,0 L9,6 L0,3 z" fill="#10b981"/>
+        </marker>
+      </defs>
+
+      <!-- ビジネス要求 -->
+      <rect x="30" y="30" width="100" height="50" rx="5" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
+      <text x="80" y="55" text-anchor="middle" fill="white" font-size="10" font-weight="bold">ビジネス</text>
+      <text x="80" y="70" text-anchor="middle" fill="white" font-size="10" font-weight="bold">要求</text>
+
+      <!-- ユーザー要件 -->
+      <rect x="160" y="30" width="100" height="50" rx="5" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="210" y="55" text-anchor="middle" fill="white" font-size="10" font-weight="bold">ユーザー</text>
+      <text x="210" y="70" text-anchor="middle" fill="white" font-size="10" font-weight="bold">要件</text>
+
+      <!-- 機能要件 -->
+      <rect x="290" y="30" width="100" height="50" rx="5" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="340" y="55" text-anchor="middle" fill="white" font-size="10" font-weight="bold">機能</text>
+      <text x="340" y="70" text-anchor="middle" fill="white" font-size="10" font-weight="bold">要件</text>
+
+      <!-- 実装/テスト -->
+      <rect x="420" y="30" width="70" height="50" rx="5" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+      <text x="455" y="55" text-anchor="middle" fill="white" font-size="10" font-weight="bold">実装</text>
+      <text x="455" y="70" text-anchor="middle" fill="white" font-size="10" font-weight="bold">テスト</text>
+
+      <!-- 前方トレーサビリティ（上の矢印） -->
+      <line x1="130" y1="45" x2="155" y2="45" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-forward)"/>
+      <line x1="260" y1="45" x2="285" y2="45" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-forward)"/>
+      <line x1="390" y1="45" x2="415" y2="45" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-forward)"/>
+
+      <!-- 後方トレーサビリティ（下の矢印） -->
+      <line x1="155" y1="70" x2="130" y2="70" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-back)"/>
+      <line x1="285" y1="70" x2="260" y2="70" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-back)"/>
+      <line x1="415" y1="70" x2="390" y2="70" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-back)"/>
+
+      <!-- ラベル -->
+      <text x="250" y="110" text-anchor="middle" fill="#3b82f6" font-size="11">→ 前方トレーサビリティ（要件→実装）</text>
+      <text x="250" y="130" text-anchor="middle" fill="#10b981" font-size="11">← 後方トレーサビリティ（実装→要件）</text>
+
+      <!-- 質問例 -->
+      <rect x="30" y="150" width="200" height="40" rx="5" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+      <text x="130" y="170" text-anchor="middle" fill="#1e40af" font-size="9">前方：「この要件はどこに実装？」</text>
+      <text x="130" y="183" text-anchor="middle" fill="#1e40af" font-size="9">テストケースは？</text>
+
+      <rect x="270" y="150" width="200" height="40" rx="5" fill="#dcfce7" stroke="#10b981" stroke-width="1"/>
+      <text x="370" y="170" text-anchor="middle" fill="#047857" font-size="9">後方：「このコードはなぜ必要？」</text>
+      <text x="370" y="183" text-anchor="middle" fill="#047857" font-size="9">どの要件に基づく？</text>
+    </svg>
+  </div>
+
+  <h2>要件トレーサビリティマトリクス（RTM）</h2>
+
+  <div class="card">
+    <table style="width:100%;font-size:0.9rem;">
+      <tr>
+        <th>要件ID</th>
+        <th>要件概要</th>
+        <th>設計</th>
+        <th>実装</th>
+        <th>テスト</th>
+        <th>状態</th>
+      </tr>
+      <tr>
+        <td>REQ-001</td>
+        <td>ユーザー登録</td>
+        <td>DES-101</td>
+        <td>USR-001</td>
+        <td>TC-001</td>
+        <td style="color:#10b981;">完了</td>
+      </tr>
+      <tr>
+        <td>REQ-002</td>
+        <td>ログイン</td>
+        <td>DES-102</td>
+        <td>AUTH-001</td>
+        <td>TC-002</td>
+        <td style="color:#10b981;">完了</td>
+      </tr>
+      <tr>
+        <td>REQ-003</td>
+        <td>商品検索</td>
+        <td>DES-201</td>
+        <td>-</td>
+        <td>-</td>
+        <td style="color:#f59e0b;">設計中</td>
+      </tr>
+      <tr>
+        <td>REQ-004</td>
+        <td>カート機能</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td style="color:#ef4444;">未着手</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>トレーサビリティがないと...</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      トレーサビリティ欠如の問題
+    </div>
+    <ul>
+      <li><strong>変更影響分析ができない</strong>：「この要件を変えたらどこに影響？」</li>
+      <li><strong>テスト漏れ</strong>：要件に対応するテストがあるか不明</li>
+      <li><strong>ゴールドプレーティング</strong>：要件にない機能を勝手に追加</li>
+      <li><strong>要件漏れ</strong>：実装されていない要件に気づかない</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      レビューの観点
+    </div>
+    <ul>
+      <li><strong>全要件にIDが振られているか？</strong></li>
+      <li><strong>実装・テストとの対応が記録されているか？</strong></li>
+      <li><strong>孤立した要件（どこにも紐づかない）はないか？</strong></li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-req6">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>「このコードはどの要件に基づいているか？」を調べるのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req6" style="display:none;">
+      A. 前方トレーサビリティ
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-req6" style="display:none;">
+      B. 後方トレーサビリティ
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req6" style="display:none;">
+      C. 垂直トレーサビリティ
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-req6')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('req6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="req7">
+  <h1>優先度付け（MoSCoW法）</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>要件の優先度付けの重要性</li>
+      <li>MoSCoW法の4分類</li>
+      <li>優先度付けの実践的なコツ</li>
+    </ul>
+  </div>
+
+  <h2>なぜ優先度付けが必要か</h2>
+
+  <p>
+    <strong>全ての要件を実装する時間とリソースはない。</strong><br>
+    何を先にやるか、何を諦めるかを決める必要がある。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：引っ越しの荷造り
+    </div>
+    <p>
+      トラックに全部は載らない。<br>
+      <strong>絶対必要なもの、あると便利なもの、なくても困らないもの</strong>を分類する。
+    </p>
+  </div>
+
+  <h2>MoSCoW法</h2>
+
+  <!-- MoSCoW優先度SVG -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      MoSCoW法による優先度分類
+    </div>
+    <svg viewBox="0 0 500 280" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="MoSCoW法の4分類を示す図">
+      <title>MoSCoW法：Must, Should, Could, Won't の4分類</title>
+
+      <!-- Must -->
+      <rect x="20" y="20" width="220" height="110" rx="8" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+      <text x="130" y="50" text-anchor="middle" fill="#991b1b" font-size="16" font-weight="bold">M - Must have</text>
+      <text x="130" y="70" text-anchor="middle" fill="#991b1b" font-size="11">絶対必要</text>
+      <line x1="40" y1="80" x2="220" y2="80" stroke="#fca5a5" stroke-width="1"/>
+      <text x="130" y="98" text-anchor="middle" fill="#7f1d1d" font-size="10">これがないとリリースできない</text>
+      <text x="130" y="115" text-anchor="middle" fill="#7f1d1d" font-size="10">法的要件、コア機能</text>
+
+      <!-- Should -->
+      <rect x="260" y="20" width="220" height="110" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+      <text x="370" y="50" text-anchor="middle" fill="#92400e" font-size="16" font-weight="bold">S - Should have</text>
+      <text x="370" y="70" text-anchor="middle" fill="#92400e" font-size="11">重要だが必須ではない</text>
+      <line x1="280" y1="80" x2="460" y2="80" stroke="#fcd34d" stroke-width="1"/>
+      <text x="370" y="98" text-anchor="middle" fill="#78350f" font-size="10">なくても動くが、あるべき</text>
+      <text x="370" y="115" text-anchor="middle" fill="#78350f" font-size="10">ユーザー体験を大きく向上</text>
+
+      <!-- Could -->
+      <rect x="20" y="150" width="220" height="110" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+      <text x="130" y="180" text-anchor="middle" fill="#1e40af" font-size="16" font-weight="bold">C - Could have</text>
+      <text x="130" y="200" text-anchor="middle" fill="#1e40af" font-size="11">あれば嬉しい</text>
+      <line x1="40" y1="210" x2="220" y2="210" stroke="#93c5fd" stroke-width="1"/>
+      <text x="130" y="228" text-anchor="middle" fill="#1e3a8a" font-size="10">時間があれば対応</text>
+      <text x="130" y="245" text-anchor="middle" fill="#1e3a8a" font-size="10">次フェーズ候補</text>
+
+      <!-- Won't -->
+      <rect x="260" y="150" width="220" height="110" rx="8" fill="#e5e7eb" stroke="#6b7280" stroke-width="2"/>
+      <text x="370" y="180" text-anchor="middle" fill="#374151" font-size="16" font-weight="bold">W - Won't have</text>
+      <text x="370" y="200" text-anchor="middle" fill="#374151" font-size="11">今回はやらない</text>
+      <line x1="280" y1="210" x2="460" y2="210" stroke="#9ca3af" stroke-width="1"/>
+      <text x="370" y="228" text-anchor="middle" fill="#1f2937" font-size="10">明示的に除外</text>
+      <text x="370" y="245" text-anchor="middle" fill="#1f2937" font-size="10">スコープ外であることを合意</text>
+    </svg>
+  </div>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">分類</th>
+        <th style="width:30%;">意味</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong style="color:#ef4444;">Must</strong></td>
+        <td>絶対必要。ないとリリース不可</td>
+        <td>ログイン、決済機能</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#f59e0b;">Should</strong></td>
+        <td>重要だが、なくても動く</td>
+        <td>パスワードリマインダー</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#3b82f6;">Could</strong></td>
+        <td>あれば嬉しい</td>
+        <td>お気に入り機能</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#6b7280;">Won't</strong></td>
+        <td>今回はやらない（明示的除外）</td>
+        <td>多言語対応</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>優先度付けの落とし穴</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      よくある失敗
+    </div>
+    <ul>
+      <li><strong>全部Mustになる</strong>：優先度付けの意味がない</li>
+      <li><strong>ステークホルダーごとに違う優先度</strong>：合意形成が必要</li>
+      <li><strong>Won'tが記録されない</strong>：後から「やると思ってた」問題</li>
+      <li><strong>非機能要件の優先度が低い</strong>：性能・セキュリティを軽視</li>
+    </ul>
+  </div>
+
+  <h2>優先度を決める観点</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>観点</th>
+        <th>質問</th>
+      </tr>
+      <tr>
+        <td><strong>ビジネス価値</strong></td>
+        <td>売上・コスト削減にどれだけ貢献するか？</td>
+      </tr>
+      <tr>
+        <td><strong>リスク</strong></td>
+        <td>やらなかったらどんなリスクがあるか？</td>
+      </tr>
+      <tr>
+        <td><strong>依存関係</strong></td>
+        <td>他の機能の前提条件になっているか？</td>
+      </tr>
+      <tr>
+        <td><strong>緊急度</strong></td>
+        <td>法規制や契約上の締め切りがあるか？</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      レビューの観点
+    </div>
+    <ul>
+      <li><strong>優先度の根拠は明確か？</strong></li>
+      <li><strong>ステークホルダー間で合意されているか？</strong></li>
+      <li><strong>Won'tが明示的に記録されているか？</strong></li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-req7">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>MoSCoWの「W」は何を意味する？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req7" style="display:none;">
+      A. Want（欲しい）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-req7" style="display:none;">
+      B. Won't have（今回はやらない）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req7" style="display:none;">
+      C. Will（やる予定）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-req7')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('req7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="req8">
+  <h1>要件の曖昧さを排除する技法</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>曖昧な要件の危険性</li>
+      <li>曖昧さを見つける方法</li>
+      <li>具体化するための質問技法</li>
+    </ul>
+  </div>
+
+  <h2>曖昧な要件とは</h2>
+
+  <p>
+    <strong>解釈の余地がある</strong>要件は、必ず問題を引き起こす。
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">曖昧な要件</div>
+      <ul>
+        <li>「使いやすい画面」</li>
+        <li>「高速に動作する」</li>
+        <li>「大量のデータを処理」</li>
+        <li>「適切なセキュリティ」</li>
+        <li>「必要に応じて通知」</li>
+      </ul>
+      <p style="margin:0;">
+        10人いれば10通りの解釈
+      </p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">具体的な要件</div>
+      <ul>
+        <li>「3クリック以内で目的達成」</li>
+        <li>「ページ表示2秒以内」</li>
+        <li>「100万件のデータを処理」</li>
+        <li>「TLS 1.3で暗号化」</li>
+        <li>「注文確定時にメール送信」</li>
+      </ul>
+      <p style="margin:0;">
+        誰が読んでも同じ理解
+      </p>
+    </div>
+  </div>
+
+  <h2>曖昧さを見つけるキーワード</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      要注意ワード
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th>ワード</th>
+        <th>問題</th>
+        <th>質問例</th>
+      </tr>
+      <tr>
+        <td>「など」「等」</td>
+        <td>範囲が不明確</td>
+        <td>具体的に何が含まれる？</td>
+      </tr>
+      <tr>
+        <td>「適切に」</td>
+        <td>基準が不明</td>
+        <td>何をもって適切とする？</td>
+      </tr>
+      <tr>
+        <td>「速く」「多く」</td>
+        <td>数値が不明</td>
+        <td>具体的な数値は？</td>
+      </tr>
+      <tr>
+        <td>「必要に応じて」</td>
+        <td>条件が不明</td>
+        <td>いつ、どんな条件で？</td>
+      </tr>
+      <tr>
+        <td>「できるだけ」</td>
+        <td>優先度が不明</td>
+        <td>最低ラインは？</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>具体化するための質問</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">❓</span>
+      5W1H + 数値化
+    </div>
+    <ul>
+      <li><strong>Who</strong>：誰が使う？権限は？</li>
+      <li><strong>What</strong>：具体的に何を？範囲は？</li>
+      <li><strong>When</strong>：いつ？頻度は？</li>
+      <li><strong>Where</strong>：どこで？環境は？</li>
+      <li><strong>Why</strong>：なぜ必要？目的は？</li>
+      <li><strong>How</strong>：どのように？手順は？</li>
+      <li><strong>How much/many</strong>：数値で表すと？</li>
+    </ul>
+  </div>
+
+  <h2>具体化の例</h2>
+
+  <div class="card">
+<pre><code>【曖昧】
+「商品検索は高速に動作すること」
+
+【質問】
+- 「高速」とは具体的に何秒以内？
+- 何件のデータを検索する想定？
+- どんなネットワーク環境を想定？
+
+【具体化後】
+「商品検索は、100万件のデータから
+ 3秒以内に結果を返すこと。
+ 検索条件：商品名、カテゴリ、価格範囲
+ 対象環境：4G回線以上」</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      レビューの観点
+    </div>
+    <ul>
+      <li><strong>曖昧ワードが含まれていないか？</strong></li>
+      <li><strong>数値で測定可能か？</strong></li>
+      <li><strong>境界条件は明確か？</strong>（最小、最大、エラー時）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-req8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>「大量のデータを処理できること」の問題点は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req8" style="display:none;">
+      A. 技術的に不可能
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-req8" style="display:none;">
+      B. 「大量」の定義が曖昧
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req8" style="display:none;">
+      C. 要件として不要
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-req8')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('req8')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="req9">
+  <h1>要件レビューのチェックポイント</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>要件レビューの目的</li>
+      <li>レビューで確認すべき観点</li>
+      <li>レビューの実施方法</li>
+    </ul>
+  </div>
+
+  <h2>要件レビューの目的</h2>
+
+  <p>
+    <strong>要件の問題を早期に発見する</strong>ことで、手戻りを防ぐ。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📈</span>
+      修正コストの法則
+    </div>
+    <p>
+      バグの修正コストは、工程が進むほど<strong>指数的に増大</strong>する。
+    </p>
+    <table style="width:100%;">
+      <tr>
+        <th>発見フェーズ</th>
+        <th>相対コスト</th>
+      </tr>
+      <tr>
+        <td>要件定義</td>
+        <td>1倍</td>
+      </tr>
+      <tr>
+        <td>設計</td>
+        <td>5倍</td>
+      </tr>
+      <tr>
+        <td>実装</td>
+        <td>10倍</td>
+      </tr>
+      <tr>
+        <td>テスト</td>
+        <td>20倍</td>
+      </tr>
+      <tr>
+        <td>本番リリース後</td>
+        <td>100倍以上</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>レビューチェックリスト</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      基本チェック項目
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">観点</th>
+        <th>確認内容</th>
+      </tr>
+      <tr>
+        <td><strong>完全性</strong></td>
+        <td>すべての機能・非機能要件が網羅されているか</td>
+      </tr>
+      <tr>
+        <td><strong>一貫性</strong></td>
+        <td>要件間に矛盾がないか</td>
+      </tr>
+      <tr>
+        <td><strong>明確性</strong></td>
+        <td>曖昧な表現がないか、誰が読んでも同じ理解か</td>
+      </tr>
+      <tr>
+        <td><strong>検証可能性</strong></td>
+        <td>テストで確認できるか</td>
+      </tr>
+      <tr>
+        <td><strong>追跡可能性</strong></td>
+        <td>要件IDが振られ、上位要件と紐づいているか</td>
+      </tr>
+      <tr>
+        <td><strong>実現可能性</strong></td>
+        <td>技術的・コスト的に実現可能か</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>よくある指摘パターン</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      レビューで見つかる典型的な問題
+    </div>
+    <ul>
+      <li><strong>抜け</strong>：エラー処理、境界条件が未定義</li>
+      <li><strong>矛盾</strong>：A画面とB画面で仕様が違う</li>
+      <li><strong>曖昧</strong>：「適切に処理する」などの表現</li>
+      <li><strong>過剰</strong>：実現困難または不要な要件</li>
+      <li><strong>不足</strong>：非機能要件がない</li>
+    </ul>
+  </div>
+
+  <h2>レビュー技法</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">技法</th>
+        <th>説明</th>
+        <th>適用場面</th>
+      </tr>
+      <tr>
+        <td><strong>ウォークスルー</strong></td>
+        <td>作成者が説明、参加者が質問</td>
+        <td>早期のドラフトレビュー</td>
+      </tr>
+      <tr>
+        <td><strong>インスペクション</strong></td>
+        <td>チェックリストに基づく形式的レビュー</td>
+        <td>重要な要件の最終確認</td>
+      </tr>
+      <tr>
+        <td><strong>ペアレビュー</strong></td>
+        <td>2人で読み合わせ</td>
+        <td>日常的な品質チェック</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      レビュー時の質問集
+    </div>
+    <ul>
+      <li>「この要件のテストケースを書けますか？」</li>
+      <li>「エラーの場合はどうなりますか？」</li>
+      <li>「データが0件/上限値の場合は？」</li>
+      <li>「この機能は誰がいつ使いますか？」</li>
+      <li>「この要件の根拠は何ですか？」</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-req9">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>要件レビューで最も重要な観点は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req9" style="display:none;">
+      A. 文章の美しさ
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-req9" style="display:none;">
+      B. テストで検証可能かどうか
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req9" style="display:none;">
+      C. ページ数の多さ
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-req9')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('req9')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="req10">
+  <h1>要件定義ドキュメントの構成</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>要件定義書（SRS）の標準構成</li>
+      <li>各セクションの書き方</li>
+      <li>ドキュメント管理のベストプラクティス</li>
+    </ul>
+  </div>
+
+  <h2>SRS（Software Requirements Specification）</h2>
+
+  <p>
+    <strong>SRS</strong> = ソフトウェア要件仕様書。IEEE 830規格が有名。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📄</span>
+      SRSの標準的な構成
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th style="width:5%;">章</th>
+        <th style="width:25%;">セクション</th>
+        <th>内容</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td><strong>はじめに</strong></td>
+        <td>目的、スコープ、用語定義、参照文書</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>全体説明</strong></td>
+        <td>製品の概要、ユーザー特性、制約、前提条件</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>機能要件</strong></td>
+        <td>ユースケース、画面仕様、業務フロー</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>非機能要件</strong></td>
+        <td>性能、セキュリティ、可用性、保守性</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>外部インターフェース</strong></td>
+        <td>UI、API、ハードウェア、他システム連携</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>付録</strong></td>
+        <td>用語集、データ辞書、変更履歴</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>各セクションの書き方のコツ</h2>
+
+  <div class="card">
+<pre><code><strong>1. はじめに</strong>
+- 目的：このドキュメントが何のために存在するか
+- スコープ：対象範囲と対象外を明記
+- 用語定義：プロジェクト固有の用語を説明
+
+<strong>3. 機能要件</strong>
+- 要件IDを振る（REQ-001, FR-001など）
+- 「〜できること」の形式で記述
+- 正常系・異常系を分けて記述
+
+<strong>4. 非機能要件</strong>
+- 必ず数値で定量化する
+- 測定方法も明記する
+- カテゴリ別に整理（性能/可用性/セキュリティ等）</code></pre>
+  </div>
+
+  <h2>ドキュメント管理</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>項目</th>
+        <th>ベストプラクティス</th>
+      </tr>
+      <tr>
+        <td><strong>バージョン管理</strong></td>
+        <td>Gitで管理、変更履歴を残す</td>
+      </tr>
+      <tr>
+        <td><strong>レビュー記録</strong></td>
+        <td>レビュー日、参加者、指摘事項を記録</td>
+      </tr>
+      <tr>
+        <td><strong>承認フロー</strong></td>
+        <td>ステークホルダーの承認を得る</td>
+      </tr>
+      <tr>
+        <td><strong>変更管理</strong></td>
+        <td>変更要求→影響分析→承認→反映</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      よくある失敗
+    </div>
+    <ul>
+      <li><strong>巨大な一枚岩ドキュメント</strong>：更新・レビューが困難</li>
+      <li><strong>バージョン管理なし</strong>：「どれが最新？」問題</li>
+      <li><strong>承認なしで開発開始</strong>：後から「そんな仕様ではない」</li>
+      <li><strong>変更履歴がない</strong>：なぜ変わったか分からない</li>
+    </ul>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">🎉</span>
+      Phase 5 完了！
+    </div>
+    <p>
+      要件定義の基礎を学びました。<br>
+      要件定義は<strong>プロジェクト成功の鍵</strong>です。
+    </p>
+    <p style="margin:0;">
+      曖昧な要件は曖昧な成果物につながる。<br>
+      <strong>「具体的に、測定可能に、合意を得て」</strong>が原則です。
+    </p>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      レビューの総まとめ
+    </div>
+    <ul>
+      <li><strong>機能要件と非機能要件の両方があるか？</strong></li>
+      <li><strong>曖昧な表現がないか？</strong></li>
+      <li><strong>テストで検証可能か？</strong></li>
+      <li><strong>トレーサビリティが確保されているか？</strong></li>
+      <li><strong>ステークホルダーの合意を得ているか？</strong></li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-req10">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>要件定義書で最も見落としがちなセクションは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req10" style="display:none;">
+      A. 機能要件
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-req10" style="display:none;">
+      B. 非機能要件
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-req10" style="display:none;">
+      C. はじめに
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-req10')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('req10')">
+    <span class="icon">✓</span>
+    Phase 5を完了
+  </button>
+</section>

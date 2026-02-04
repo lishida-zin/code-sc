@@ -1,0 +1,1753 @@
+<!-- ============================================
+     Level 7 Phase 2: DB設計応用
+     ============================================ -->
+
+<section id="dba1">
+  <h1>インデックスの仕組みと種類</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>インデックスが検索を高速化する仕組み</li>
+      <li>主要なインデックスの種類と特徴</li>
+      <li>インデックス設計の基本原則</li>
+    </ul>
+  </div>
+
+  <h2>インデックスとは</h2>
+
+  <p>
+    <strong>インデックス</strong> = データを高速に検索するための「索引」
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：本の索引
+    </div>
+    <p>
+      1000ページの本で「データベース」という単語を探すとき：
+    </p>
+    <p>
+      <strong>索引なし</strong>：1ページ目から順番に探す → O(n)<br>
+      <strong>索引あり</strong>：巻末の索引で「タ行」を見る → O(log n)
+    </p>
+    <p style="margin:0;">
+      データベースのインデックスも同じ原理。<br>
+      <strong>全件スキャンを回避</strong>して高速に検索できる。
+    </p>
+  </div>
+
+  <h2>インデックスなしの検索</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      フルテーブルスキャン
+    </div>
+<pre><code>-- 100万行のテーブルから検索
+SELECT * FROM users WHERE email = 'user@example.com';
+
+-- インデックスなし：全行を順番に確認
+-- → 最悪100万行を読み込む（O(n)）
+-- → 遅い！</code></pre>
+  </div>
+
+  <h2>インデックスありの検索</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      インデックススキャン
+    </div>
+<pre><code>-- emailカラムにインデックスを作成
+CREATE INDEX idx_users_email ON users(email);
+
+-- インデックスあり：B-tree構造で効率的に検索
+-- → 約20回の比較で見つかる（O(log n)）
+-- → 高速！</code></pre>
+  </div>
+
+  <h2>主要なインデックスの種類</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">種類</th>
+        <th style="width:35%;">特徴</th>
+        <th>適した用途</th>
+      </tr>
+      <tr>
+        <td><strong>B-tree</strong></td>
+        <td>最も一般的。範囲検索も可能</td>
+        <td>等価検索、範囲検索、ソート</td>
+      </tr>
+      <tr>
+        <td><strong>Hash</strong></td>
+        <td>等価検索のみ。O(1)で高速</td>
+        <td>完全一致検索のみ</td>
+      </tr>
+      <tr>
+        <td><strong>GIN/GiST</strong></td>
+        <td>全文検索、配列、JSON用</td>
+        <td>PostgreSQLの高度な検索</td>
+      </tr>
+      <tr>
+        <td><strong>Bitmap</strong></td>
+        <td>低カーディナリティ向け</td>
+        <td>性別、ステータスなど</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>複合インデックス</h2>
+
+  <p>
+    複数カラムを組み合わせたインデックスも作成できます。
+  </p>
+
+  <div class="card">
+<pre><code>-- 複合インデックス
+CREATE INDEX idx_orders_user_date
+ON orders(user_id, created_at);
+
+-- 効果的な検索パターン
+SELECT * FROM orders
+WHERE user_id = 123 AND created_at > '2026-01-01';
+
+-- 左端のカラムから順に使われる
+-- user_id単独の検索にも使える
+-- created_at単独の検索には使えない（左端原則）</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>WHERE句の頻出カラムにインデックスがない</strong></li>
+      <li><strong>複合インデックスの順序が不適切</strong>（カーディナリティを考慮していない）</li>
+      <li><strong>インデックスの過剰作成</strong>（INSERT/UPDATE性能低下）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-dba1-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>インデックスの主な目的は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-dba1-1" style="display:none;">
+      A. データの検索を高速化する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba1-1" style="display:none;">
+      B. データの整合性を保証する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba1-1" style="display:none;">
+      C. ストレージ容量を削減する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-dba1-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-dba1-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>複合インデックス <code>idx(user_id, created_at)</code> について正しいのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba1-2" style="display:none;">
+      A. created_at単独の検索でも高速になる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-dba1-2" style="display:none;">
+      B. user_id単独の検索で高速になる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba1-2" style="display:none;">
+      C. 順序は関係ない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-dba1-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('dba1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="dba2">
+  <h1>B-tree構造の理解</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>B-treeの構造と動作原理</li>
+      <li>なぜB-treeがデータベースで使われるか</li>
+      <li>B-treeの検索・挿入の計算量</li>
+    </ul>
+  </div>
+
+  <h2>B-treeとは</h2>
+
+  <p>
+    <strong>B-tree（Balanced tree）</strong> = 自己平衡多分木。<br>
+    ディスクI/Oを最小化するために設計されたデータ構造です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：図書館の分類システム
+    </div>
+    <p>
+      大きな図書館では、本を階層的に分類します：<br>
+      <strong>フロア → 棚 → 段 → 本</strong>
+    </p>
+    <p style="margin:0;">
+      B-treeも同じように、データを階層的に整理。<br>
+      各階層で「次にどこを見るか」が分かり、<strong>効率的にたどれる</strong>。
+    </p>
+  </div>
+
+  <h2>B-tree構造図</h2>
+
+  <!-- B-tree構造のSVG図 -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      B-tree構造
+    </div>
+    <svg viewBox="0 0 600 280" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="B-tree構造の図">
+      <title>B-tree構造の図</title>
+
+      <!-- ルートノード -->
+      <rect x="225" y="10" width="150" height="40" rx="5" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+      <text x="300" y="35" text-anchor="middle" fill="white" font-size="14" font-weight="bold">30 | 60</text>
+
+      <!-- 中間ノード（左） -->
+      <rect x="50" y="90" width="120" height="40" rx="5" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="110" y="115" text-anchor="middle" fill="white" font-size="13" font-weight="bold">10 | 20</text>
+
+      <!-- 中間ノード（中央） -->
+      <rect x="240" y="90" width="120" height="40" rx="5" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="300" y="115" text-anchor="middle" fill="white" font-size="13" font-weight="bold">40 | 50</text>
+
+      <!-- 中間ノード（右） -->
+      <rect x="430" y="90" width="120" height="40" rx="5" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="490" y="115" text-anchor="middle" fill="white" font-size="13" font-weight="bold">70 | 80</text>
+
+      <!-- リーフノード群 -->
+      <!-- 左グループ -->
+      <rect x="5" y="180" width="60" height="35" rx="4" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="35" y="202" text-anchor="middle" fill="white" font-size="11">5,8</text>
+
+      <rect x="75" y="180" width="60" height="35" rx="4" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="105" y="202" text-anchor="middle" fill="white" font-size="11">12,15</text>
+
+      <rect x="145" y="180" width="60" height="35" rx="4" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="175" y="202" text-anchor="middle" fill="white" font-size="11">22,25</text>
+
+      <!-- 中央グループ -->
+      <rect x="220" y="180" width="60" height="35" rx="4" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="250" y="202" text-anchor="middle" fill="white" font-size="11">32,35</text>
+
+      <rect x="290" y="180" width="60" height="35" rx="4" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="320" y="202" text-anchor="middle" fill="white" font-size="11">42,45</text>
+
+      <rect x="360" y="180" width="60" height="35" rx="4" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="390" y="202" text-anchor="middle" fill="white" font-size="11">52,55</text>
+
+      <!-- 右グループ -->
+      <rect x="435" y="180" width="60" height="35" rx="4" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="465" y="202" text-anchor="middle" fill="white" font-size="11">62,65</text>
+
+      <rect x="505" y="180" width="60" height="35" rx="4" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="535" y="202" text-anchor="middle" fill="white" font-size="11">72,75</text>
+
+      <!-- 接続線 -->
+      <!-- ルートから中間へ -->
+      <line x1="250" y1="50" x2="110" y2="90" stroke="#6366f1" stroke-width="2"/>
+      <line x1="300" y1="50" x2="300" y2="90" stroke="#6366f1" stroke-width="2"/>
+      <line x1="350" y1="50" x2="490" y2="90" stroke="#6366f1" stroke-width="2"/>
+
+      <!-- 中間からリーフへ -->
+      <line x1="80" y1="130" x2="35" y2="180" stroke="#10b981" stroke-width="1.5"/>
+      <line x1="110" y1="130" x2="105" y2="180" stroke="#10b981" stroke-width="1.5"/>
+      <line x1="140" y1="130" x2="175" y2="180" stroke="#10b981" stroke-width="1.5"/>
+
+      <line x1="270" y1="130" x2="250" y2="180" stroke="#10b981" stroke-width="1.5"/>
+      <line x1="300" y1="130" x2="320" y2="180" stroke="#10b981" stroke-width="1.5"/>
+      <line x1="330" y1="130" x2="390" y2="180" stroke="#10b981" stroke-width="1.5"/>
+
+      <line x1="460" y1="130" x2="465" y2="180" stroke="#10b981" stroke-width="1.5"/>
+      <line x1="520" y1="130" x2="535" y2="180" stroke="#10b981" stroke-width="1.5"/>
+
+      <!-- 凡例 -->
+      <rect x="30" y="240" width="15" height="15" rx="2" fill="#3b82f6"/>
+      <text x="50" y="252" fill="currentColor" font-size="11">ルートノード</text>
+
+      <rect x="150" y="240" width="15" height="15" rx="2" fill="#10b981"/>
+      <text x="170" y="252" fill="currentColor" font-size="11">中間ノード</text>
+
+      <rect x="280" y="240" width="15" height="15" rx="2" fill="#f59e0b"/>
+      <text x="300" y="252" fill="currentColor" font-size="11">リーフノード（実データへのポインタ）</text>
+    </svg>
+  </div>
+
+  <h2>B-treeの特徴</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:30%;">特徴</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td><strong>バランス保持</strong></td>
+        <td>すべてのリーフが同じ深さ。偏りがない</td>
+      </tr>
+      <tr>
+        <td><strong>多分岐</strong></td>
+        <td>1ノードに複数のキー。ディスク読み込み回数を減らす</td>
+      </tr>
+      <tr>
+        <td><strong>ソート済み</strong></td>
+        <td>キーが常にソートされている。範囲検索に強い</td>
+      </tr>
+      <tr>
+        <td><strong>O(log n)</strong></td>
+        <td>検索・挿入・削除すべてO(log n)</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>なぜB-treeがDBで使われるか</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      ディスクI/O最適化
+    </div>
+    <p>
+      データベースはディスク上にデータを保存します。<br>
+      ディスクアクセスは<strong>メモリの100,000倍遅い</strong>。
+    </p>
+    <p>
+      B-treeは1ノードを<strong>ディスクの1ブロック（通常4KB〜16KB）</strong>に対応させ、<br>
+      ディスク読み込み回数を最小化します。
+    </p>
+    <p style="margin:0;">
+      <strong>100万行のテーブル</strong>でも、<br>
+      B-treeなら<strong>3〜4回のディスクアクセス</strong>で検索できる。
+    </p>
+  </div>
+
+  <h2>B-treeの計算量</h2>
+
+  <div class="card">
+<pre><code>-- 100万行のテーブル（1,000,000行）
+-- B-tree（分岐数 = 100と仮定）
+
+-- 深さ = log_100(1,000,000) ≈ 3
+-- つまり3回の比較で目的のデータに到達
+
+-- 二分探索木なら
+-- 深さ = log_2(1,000,000) ≈ 20
+-- 20回の比較が必要
+
+-- B-treeは「広く浅い」木構造で効率的</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-dba2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>B-treeがデータベースで採用される主な理由は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba2" style="display:none;">
+      A. メモリ使用量が最小になるから
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-dba2" style="display:none;">
+      B. ディスクI/O回数を最小化できるから
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba2" style="display:none;">
+      C. 実装が簡単だから
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-dba2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('dba2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="dba3">
+  <h1>クエリ最適化の基礎</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>EXPLAINの読み方</li>
+      <li>よくあるパフォーマンス問題と対策</li>
+      <li>N+1問題の回避</li>
+    </ul>
+  </div>
+
+  <h2>EXPLAINとは</h2>
+
+  <p>
+    <strong>EXPLAIN</strong> = クエリの実行計画を確認するコマンド。<br>
+    「DBがどうやってデータを取得するか」が分かります。
+  </p>
+
+  <div class="card">
+<pre><code>-- 実行計画を確認
+EXPLAIN SELECT * FROM users WHERE email = 'user@example.com';
+
+-- PostgreSQLの出力例
+-- Seq Scan on users  (cost=0.00..1234.00 rows=1 width=100)
+--   Filter: (email = 'user@example.com'::text)
+
+-- 「Seq Scan」= フルテーブルスキャン → 遅い！</code></pre>
+  </div>
+
+  <h2>良い実行計画 vs 悪い実行計画</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">悪い例：Seq Scan</div>
+<pre><code>EXPLAIN SELECT * FROM users
+WHERE email = 'test@example.com';
+
+-- 結果
+Seq Scan on users
+  Filter: email = 'test@example.com'
+  Rows Removed by Filter: 999999
+
+-- 全行をスキャン → 遅い</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">良い例：Index Scan</div>
+<pre><code>-- インデックス作成後
+CREATE INDEX idx_email ON users(email);
+
+EXPLAIN SELECT * FROM users
+WHERE email = 'test@example.com';
+
+-- 結果
+Index Scan using idx_email on users
+  Index Cond: email = 'test@example.com'
+
+-- インデックスで直接アクセス → 高速</code></pre>
+    </div>
+  </div>
+
+  <h2>よくあるパフォーマンス問題</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      インデックスが使われないケース
+    </div>
+<pre><code>-- ❌ 関数でラップ → インデックス無効
+SELECT * FROM users WHERE LOWER(email) = 'test@example.com';
+
+-- ❌ 型の不一致 → インデックス無効
+SELECT * FROM users WHERE id = '123';  -- idがINTの場合
+
+-- ❌ LIKE前方一致以外 → インデックス無効
+SELECT * FROM users WHERE email LIKE '%@example.com';
+
+-- ❌ OR条件 → インデックスが効きにくい
+SELECT * FROM users WHERE email = 'a@test.com' OR name = 'test';</code></pre>
+  </div>
+
+  <h2>N+1問題</h2>
+
+  <p>
+    <strong>N+1問題</strong> = 1回のクエリで済むところを N+1回実行してしまう問題
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">N+1問題（悪い例）</div>
+<pre><code>// 1回目：全ユーザー取得
+const users = await db.query('SELECT * FROM users');
+
+// N回：各ユーザーの注文を個別に取得
+for (const user of users) {
+  const orders = await db.query(
+    'SELECT * FROM orders WHERE user_id = ?',
+    [user.id]
+  );
+}
+
+// users が1000人なら1001回のクエリ！</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">JOINで解決（良い例）</div>
+<pre><code>// 1回のクエリで全データ取得
+const result = await db.query(`
+  SELECT u.*, o.*
+  FROM users u
+  LEFT JOIN orders o ON u.id = o.user_id
+`);
+
+// または IN句で2回に抑える
+const users = await db.query('SELECT * FROM users');
+const userIds = users.map(u => u.id);
+const orders = await db.query(
+  'SELECT * FROM orders WHERE user_id IN (?)',
+  [userIds]
+);</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>ループ内でクエリ実行</strong> → N+1問題の兆候</li>
+      <li><strong>SELECT *</strong> → 必要なカラムだけ指定すべき</li>
+      <li><strong>インデックスなしの大量データ検索</strong> → EXPLAIN確認を推奨</li>
+      <li><strong>WHERE句に関数</strong> → インデックス無効化の可能性</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-dba3-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>N+1問題を解決する主な方法は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba3-1" style="display:none;">
+      A. インデックスを追加する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-dba3-1" style="display:none;">
+      B. JOINやIN句で1〜2回のクエリにまとめる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba3-1" style="display:none;">
+      C. キャッシュを使う
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-dba3-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-dba3-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>このクエリでインデックスが使われない理由は？</p>
+<pre><code>SELECT * FROM users WHERE UPPER(name) = 'JOHN';</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-dba3-2" style="display:none;">
+      A. 関数でカラムをラップしているから
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba3-2" style="display:none;">
+      B. SELECT * を使っているから
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba3-2" style="display:none;">
+      C. 文字列検索だから
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-dba3-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('dba3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="dba4">
+  <h1>トランザクションとACID特性</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>トランザクションの概念</li>
+      <li>ACID特性の意味</li>
+      <li>COMMITとROLLBACK</li>
+    </ul>
+  </div>
+
+  <h2>トランザクションとは</h2>
+
+  <p>
+    <strong>トランザクション</strong> = 複数の操作を1つの単位として扱う仕組み
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：銀行振込
+    </div>
+    <p>
+      AさんからBさんへ1万円を振り込む：
+    </p>
+    <ol>
+      <li>Aさんの口座から1万円を引く</li>
+      <li>Bさんの口座に1万円を足す</li>
+    </ol>
+    <p style="margin:0;">
+      この2つの操作は<strong>両方成功するか、両方失敗するか</strong>でなければならない。<br>
+      1だけ成功してお金が消えたら大問題！
+    </p>
+  </div>
+
+  <h2>ACID特性</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:15%;">特性</th>
+        <th style="width:25%;">英語</th>
+        <th>意味</th>
+      </tr>
+      <tr>
+        <td><strong>A</strong></td>
+        <td>Atomicity（原子性）</td>
+        <td>全部成功か全部失敗か。中途半端な状態は許さない</td>
+      </tr>
+      <tr>
+        <td><strong>C</strong></td>
+        <td>Consistency（一貫性）</td>
+        <td>制約違反のデータは保存されない</td>
+      </tr>
+      <tr>
+        <td><strong>I</strong></td>
+        <td>Isolation（分離性）</td>
+        <td>他のトランザクションの影響を受けない</td>
+      </tr>
+      <tr>
+        <td><strong>D</strong></td>
+        <td>Durability（永続性）</td>
+        <td>一度確定したデータは消えない</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>トランザクションの使い方</h2>
+
+  <div class="card">
+<pre><code>-- トランザクション開始
+BEGIN;
+
+-- 操作1：Aさんから引く
+UPDATE accounts SET balance = balance - 10000 WHERE user_id = 'A';
+
+-- 操作2：Bさんに足す
+UPDATE accounts SET balance = balance + 10000 WHERE user_id = 'B';
+
+-- すべて成功したらコミット
+COMMIT;
+
+-- エラーが起きたらロールバック
+-- ROLLBACK;</code></pre>
+  </div>
+
+  <h2>アプリケーションでの実装</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">トランザクションなし</div>
+<pre><code>// ❌ 危険：途中でエラーが起きると不整合
+await db.query(
+  'UPDATE accounts SET balance = balance - 10000 WHERE user_id = ?',
+  ['A']
+);
+// ここでエラーが起きると...
+await db.query(
+  'UPDATE accounts SET balance = balance + 10000 WHERE user_id = ?',
+  ['B']
+);
+// Aから引いたお金が消失！</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">トランザクションあり</div>
+<pre><code>// ⭕ 安全：エラー時は自動ロールバック
+await db.transaction(async (tx) => {
+  await tx.query(
+    'UPDATE accounts SET balance = balance - 10000 WHERE user_id = ?',
+    ['A']
+  );
+  await tx.query(
+    'UPDATE accounts SET balance = balance + 10000 WHERE user_id = ?',
+    ['B']
+  );
+});
+// エラー時は両方の操作が取り消される</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>複数テーブルの更新がトランザクションで囲まれていない</strong></li>
+      <li><strong>お金・在庫など重要データの操作にトランザクションがない</strong></li>
+      <li><strong>長時間トランザクション</strong>（ロック長期化の原因）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-dba4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ACIDのA（Atomicity）が保証することは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-dba4" style="display:none;">
+      A. トランザクション内の操作は全部成功か全部失敗のどちらか
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba4" style="display:none;">
+      B. データが永続的に保存される
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba4" style="display:none;">
+      C. 他のトランザクションと同時に実行できる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-dba4')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('dba4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="dba5">
+  <h1>分離レベルと同時実行制御</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>4つの分離レベルの違い</li>
+      <li>各レベルで起こりうる問題</li>
+      <li>分離レベルの選び方</li>
+    </ul>
+  </div>
+
+  <h2>分離レベルとは</h2>
+
+  <p>
+    <strong>分離レベル（Isolation Level）</strong> = 同時実行時にどこまで他のトランザクションの影響を受けるかを決める設定
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：作業部屋のドア
+    </div>
+    <p>
+      <strong>完全開放</strong>：誰でも入れる → 干渉が多い<br>
+      <strong>ノック必要</strong>：許可制 → 少し待つが安全<br>
+      <strong>完全施錠</strong>：誰も入れない → 安全だが効率悪い
+    </p>
+    <p style="margin:0;">
+      分離レベルが高いほど<strong>安全だが性能が下がる</strong>。<br>
+      用途に応じて適切なレベルを選ぶ必要があります。
+    </p>
+  </div>
+
+  <h2>分離レベル図解</h2>
+
+  <!-- トランザクション分離レベルのSVG図 -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      分離レベルと発生する問題
+    </div>
+    <svg viewBox="0 0 600 320" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="トランザクション分離レベルの比較図">
+      <title>トランザクション分離レベルの比較図</title>
+
+      <!-- 軸 -->
+      <line x1="50" y1="50" x2="50" y2="280" stroke="currentColor" stroke-width="2"/>
+      <line x1="50" y1="280" x2="580" y2="280" stroke="currentColor" stroke-width="2"/>
+
+      <!-- Y軸ラベル -->
+      <text x="30" y="170" text-anchor="middle" fill="currentColor" font-size="12" transform="rotate(-90, 30, 170)">安全性（高い→）</text>
+
+      <!-- X軸ラベル -->
+      <text x="315" y="310" text-anchor="middle" fill="currentColor" font-size="12">性能（高い→）</text>
+
+      <!-- 分離レベルのボックス -->
+      <!-- READ UNCOMMITTED -->
+      <rect x="450" y="230" width="120" height="40" rx="5" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
+      <text x="510" y="255" text-anchor="middle" fill="white" font-size="11" font-weight="bold">READ UNCOMMITTED</text>
+
+      <!-- READ COMMITTED -->
+      <rect x="330" y="170" width="120" height="40" rx="5" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="390" y="195" text-anchor="middle" fill="white" font-size="11" font-weight="bold">READ COMMITTED</text>
+
+      <!-- REPEATABLE READ -->
+      <rect x="200" y="110" width="120" height="40" rx="5" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+      <text x="260" y="135" text-anchor="middle" fill="white" font-size="11" font-weight="bold">REPEATABLE READ</text>
+
+      <!-- SERIALIZABLE -->
+      <rect x="70" y="60" width="120" height="40" rx="5" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="130" y="85" text-anchor="middle" fill="white" font-size="11" font-weight="bold">SERIALIZABLE</text>
+
+      <!-- 問題の説明 -->
+      <text x="520" y="220" text-anchor="middle" fill="#ef4444" font-size="9">ダーティリード</text>
+      <text x="520" y="208" text-anchor="middle" fill="#ef4444" font-size="9">ファントムリード</text>
+      <text x="520" y="196" text-anchor="middle" fill="#ef4444" font-size="9">反復不能読取り</text>
+
+      <text x="410" y="160" text-anchor="middle" fill="#f59e0b" font-size="9">ファントムリード</text>
+      <text x="410" y="148" text-anchor="middle" fill="#f59e0b" font-size="9">反復不能読取り</text>
+
+      <text x="280" y="100" text-anchor="middle" fill="#3b82f6" font-size="9">ファントムリード</text>
+
+      <text x="150" y="50" text-anchor="middle" fill="#10b981" font-size="9">問題なし</text>
+    </svg>
+  </div>
+
+  <h2>4つの分離レベル</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">レベル</th>
+        <th style="width:25%;">ダーティリード</th>
+        <th style="width:25%;">反復不能読取り</th>
+        <th>ファントムリード</th>
+      </tr>
+      <tr>
+        <td><strong>READ UNCOMMITTED</strong></td>
+        <td style="color:#ef4444;">発生する</td>
+        <td style="color:#ef4444;">発生する</td>
+        <td style="color:#ef4444;">発生する</td>
+      </tr>
+      <tr>
+        <td><strong>READ COMMITTED</strong></td>
+        <td style="color:#10b981;">防止</td>
+        <td style="color:#ef4444;">発生する</td>
+        <td style="color:#ef4444;">発生する</td>
+      </tr>
+      <tr>
+        <td><strong>REPEATABLE READ</strong></td>
+        <td style="color:#10b981;">防止</td>
+        <td style="color:#10b981;">防止</td>
+        <td style="color:#ef4444;">発生する</td>
+      </tr>
+      <tr>
+        <td><strong>SERIALIZABLE</strong></td>
+        <td style="color:#10b981;">防止</td>
+        <td style="color:#10b981;">防止</td>
+        <td style="color:#10b981;">防止</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>各問題の説明</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      同時実行で起こる問題
+    </div>
+    <p>
+      <strong>ダーティリード</strong>：他のトランザクションの未コミットデータを読む<br>
+      → ロールバックされたら不正なデータを使ってしまう
+    </p>
+    <p>
+      <strong>反復不能読取り</strong>：同じクエリで違う結果が返る<br>
+      → トランザクション中に他が更新したデータを読んでしまう
+    </p>
+    <p style="margin:0;">
+      <strong>ファントムリード</strong>：同じ条件で行数が変わる<br>
+      → トランザクション中に他が行を追加/削除した
+    </p>
+  </div>
+
+  <h2>どのレベルを選ぶべきか</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      実務での選択指針
+    </div>
+    <ul>
+      <li><strong>PostgreSQL</strong>：デフォルト READ COMMITTED、多くの場合これで十分</li>
+      <li><strong>MySQL (InnoDB)</strong>：デフォルト REPEATABLE READ</li>
+      <li><strong>金融系</strong>：SERIALIZABLE を検討（性能とのトレードオフ）</li>
+      <li><strong>レポート系</strong>：READ COMMITTED で十分な場合が多い</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-dba5">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>「ダーティリード」とは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-dba5" style="display:none;">
+      A. 他のトランザクションの未コミットデータを読んでしまうこと
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba5" style="display:none;">
+      B. 同じクエリを2回実行すると結果が変わること
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba5" style="display:none;">
+      C. 検索条件に合う行数が変わること
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-dba5')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('dba5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="dba6">
+  <h1>デッドロックの検出と回避</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>デッドロックが発生する仕組み</li>
+      <li>デッドロックの検出方法</li>
+      <li>デッドロックを防ぐ設計</li>
+    </ul>
+  </div>
+
+  <h2>デッドロックとは</h2>
+
+  <p>
+    <strong>デッドロック</strong> = 2つ以上のトランザクションが互いにロックを待ち合い、永遠に進まない状態
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：狭い道での対向車
+    </div>
+    <p>
+      2台の車が狭い一本道で鉢合わせ。<br>
+      どちらも「相手がバックしたら進む」と考えて動かない。
+    </p>
+    <p style="margin:0;">
+      データベースでも同じことが起きます：<br>
+      <strong>TX1</strong>：「Aをロック」→「Bを待つ」<br>
+      <strong>TX2</strong>：「Bをロック」→「Aを待つ」<br>
+      → 両方とも永遠に待ち続ける
+    </p>
+  </div>
+
+  <h2>デッドロックの例</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      デッドロック発生パターン
+    </div>
+<pre><code>-- Transaction 1
+BEGIN;
+UPDATE accounts SET balance = balance - 100 WHERE id = 1;  -- ロック取得
+-- ここで待機...
+UPDATE accounts SET balance = balance + 100 WHERE id = 2;  -- TX2のロック待ち
+
+-- Transaction 2（同時実行）
+BEGIN;
+UPDATE accounts SET balance = balance - 50 WHERE id = 2;   -- ロック取得
+-- ここで待機...
+UPDATE accounts SET balance = balance + 50 WHERE id = 1;   -- TX1のロック待ち
+
+-- TX1はTX2を待ち、TX2はTX1を待つ → デッドロック！</code></pre>
+  </div>
+
+  <h2>デッドロックの検出</h2>
+
+  <div class="card">
+    <p>
+      多くのDBMSは<strong>デッドロック検出機能</strong>を持っています。
+    </p>
+<pre><code>-- PostgreSQLでデッドロックを検出
+-- 一方のトランザクションを強制的にロールバック
+
+ERROR: deadlock detected
+DETAIL: Process 12345 waits for ShareLock on transaction 67890;
+        blocked by process 67890.
+        Process 67890 waits for ShareLock on transaction 12345;
+        blocked by process 12345.
+HINT: See server log for query details.</code></pre>
+  </div>
+
+  <h2>デッドロックの回避策</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">悪い例：順序がバラバラ</div>
+<pre><code>// TX1: A → B の順でロック
+await tx1.query('UPDATE ... WHERE id = 1');
+await tx1.query('UPDATE ... WHERE id = 2');
+
+// TX2: B → A の順でロック
+await tx2.query('UPDATE ... WHERE id = 2');
+await tx2.query('UPDATE ... WHERE id = 1');
+
+// 異なる順序 → デッドロックの可能性</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">良い例：順序を統一</div>
+<pre><code>// 両方とも ID昇順でロック
+// TX1: 1 → 2 の順
+await tx1.query('UPDATE ... WHERE id = 1');
+await tx1.query('UPDATE ... WHERE id = 2');
+
+// TX2: 1 → 2 の順（同じ順序）
+await tx2.query('UPDATE ... WHERE id = 1');
+await tx2.query('UPDATE ... WHERE id = 2');
+
+// 同じ順序 → デッドロック回避</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      デッドロック回避のベストプラクティス
+    </div>
+    <ol>
+      <li><strong>ロック順序を統一</strong>：常に同じ順序でロックを取得</li>
+      <li><strong>トランザクションを短く</strong>：ロック保持時間を最小化</li>
+      <li><strong>タイムアウト設定</strong>：長時間ロックを自動解除</li>
+      <li><strong>必要最小限のロック</strong>：行ロックを使い、テーブルロックを避ける</li>
+    </ol>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>複数テーブル/行の更新順序がバラバラ</strong></li>
+      <li><strong>長時間トランザクション</strong>（外部API呼び出しを含む等）</li>
+      <li><strong>SELECT ... FOR UPDATE の乱用</strong></li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-dba6">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>デッドロックを防ぐ最も効果的な方法は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-dba6" style="display:none;">
+      A. ロックを取得する順序を統一する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba6" style="display:none;">
+      B. トランザクションを使わない
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba6" style="display:none;">
+      C. インデックスを追加する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-dba6')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('dba6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="dba7">
+  <h1>パーティショニング戦略</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>パーティショニングの概念と目的</li>
+      <li>パーティショニングの種類</li>
+      <li>パーティション設計の指針</li>
+    </ul>
+  </div>
+
+  <h2>パーティショニングとは</h2>
+
+  <p>
+    <strong>パーティショニング</strong> = 大きなテーブルを複数の小さな部分に分割する技術
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：書類整理
+    </div>
+    <p>
+      10万枚の書類を1つの棚に入れると、探すのが大変。<br>
+      「年度別」「部署別」にファイリングすれば効率的。
+    </p>
+    <p style="margin:0;">
+      DBでも同じ。<strong>論理的には1つのテーブル</strong>だが、<br>
+      <strong>物理的には複数のパーティション</strong>に分割。
+    </p>
+  </div>
+
+  <h2>パーティショニングの種類</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">種類</th>
+        <th style="width:40%;">分割方法</th>
+        <th>適した用途</th>
+      </tr>
+      <tr>
+        <td><strong>Range</strong></td>
+        <td>値の範囲で分割（日付、ID範囲）</td>
+        <td>時系列データ、ログ</td>
+      </tr>
+      <tr>
+        <td><strong>List</strong></td>
+        <td>特定の値リストで分割</td>
+        <td>地域、カテゴリ</td>
+      </tr>
+      <tr>
+        <td><strong>Hash</strong></td>
+        <td>ハッシュ値で均等分割</td>
+        <td>均等分散が必要な場合</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>Rangeパーティショニングの例</h2>
+
+  <div class="card">
+<pre><code>-- PostgreSQLでの Range パーティショニング
+CREATE TABLE orders (
+    id BIGSERIAL,
+    user_id BIGINT,
+    created_at TIMESTAMP,
+    amount DECIMAL(10, 2)
+) PARTITION BY RANGE (created_at);
+
+-- 月別パーティション作成
+CREATE TABLE orders_2026_01 PARTITION OF orders
+    FOR VALUES FROM ('2026-01-01') TO ('2026-02-01');
+
+CREATE TABLE orders_2026_02 PARTITION OF orders
+    FOR VALUES FROM ('2026-02-01') TO ('2026-03-01');
+
+-- クエリは通常通り
+SELECT * FROM orders WHERE created_at >= '2026-01-15';
+-- 自動的に該当パーティションのみ検索（パーティションプルーニング）</code></pre>
+  </div>
+
+  <h2>パーティショニングのメリット</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      パーティショニングの効果
+    </div>
+    <ul>
+      <li><strong>クエリ性能向上</strong>：検索対象を絞り込める（パーティションプルーニング）</li>
+      <li><strong>メンテナンス効率</strong>：古いパーティションだけDROP/ARCHIVE</li>
+      <li><strong>並列処理</strong>：パーティション単位で並列スキャン</li>
+      <li><strong>ストレージ最適化</strong>：パーティションごとに異なるストレージに配置</li>
+    </ul>
+  </div>
+
+  <h2>パーティショニングの注意点</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      注意すべき点
+    </div>
+    <ul>
+      <li><strong>パーティションキーがWHERE句にない</strong>と全パーティションスキャン</li>
+      <li><strong>パーティション数が多すぎる</strong>とオーバーヘッド増大</li>
+      <li><strong>JOINが複雑</strong>になる場合がある</li>
+      <li><strong>UNIQUE制約</strong>にはパーティションキーを含める必要がある</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-dba7">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>時系列データ（ログ、注文履歴など）に最適なパーティショニング方式は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-dba7" style="display:none;">
+      A. Range（範囲）パーティショニング
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba7" style="display:none;">
+      B. Hash パーティショニング
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba7" style="display:none;">
+      C. List パーティショニング
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-dba7')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('dba7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="dba8">
+  <h1>シャーディングの設計</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>シャーディングとパーティショニングの違い</li>
+      <li>シャードキーの選び方</li>
+      <li>シャーディングの課題と対策</li>
+    </ul>
+  </div>
+
+  <h2>シャーディングとは</h2>
+
+  <p>
+    <strong>シャーディング</strong> = データを複数のデータベースサーバーに水平分割する技術
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：支店展開
+    </div>
+    <p>
+      1つの店舗では対応しきれなくなったら、支店を作る。<br>
+      各支店が独立して営業（= 独立したDBサーバー）。
+    </p>
+    <p style="margin:0;">
+      <strong>パーティショニング</strong>：1台のサーバー内で分割<br>
+      <strong>シャーディング</strong>：複数のサーバーに分散
+    </p>
+  </div>
+
+  <h2>シャーディング構成図</h2>
+
+  <!-- シャーディングのSVG図 -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      シャーディング構成
+    </div>
+    <svg viewBox="0 0 600 300" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="シャーディング構成の図">
+      <title>シャーディング構成の図</title>
+
+      <!-- アプリケーション -->
+      <rect x="225" y="10" width="150" height="50" rx="5" fill="#6366f1" stroke="#4f46e5" stroke-width="2"/>
+      <text x="300" y="40" text-anchor="middle" fill="white" font-size="13" font-weight="bold">Application</text>
+
+      <!-- シャードルーター -->
+      <rect x="200" y="90" width="200" height="45" rx="5" fill="#8b5cf6" stroke="#7c3aed" stroke-width="2"/>
+      <text x="300" y="118" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Shard Router / Proxy</text>
+
+      <!-- 矢印（アプリ → ルーター） -->
+      <line x1="300" y1="60" x2="300" y2="90" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-purple)"/>
+
+      <!-- シャード1 -->
+      <rect x="30" y="180" width="140" height="100" rx="5" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+      <text x="100" y="210" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Shard 1</text>
+      <text x="100" y="235" text-anchor="middle" fill="#e0e7ff" font-size="10">user_id: 1-1000</text>
+      <rect x="50" y="250" width="100" height="20" rx="3" fill="#1d4ed8"/>
+      <text x="100" y="264" text-anchor="middle" fill="white" font-size="9">DB Server A</text>
+
+      <!-- シャード2 -->
+      <rect x="230" y="180" width="140" height="100" rx="5" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="300" y="210" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Shard 2</text>
+      <text x="300" y="235" text-anchor="middle" fill="#d1fae5" font-size="10">user_id: 1001-2000</text>
+      <rect x="250" y="250" width="100" height="20" rx="3" fill="#047857"/>
+      <text x="300" y="264" text-anchor="middle" fill="white" font-size="9">DB Server B</text>
+
+      <!-- シャード3 -->
+      <rect x="430" y="180" width="140" height="100" rx="5" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="500" y="210" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Shard 3</text>
+      <text x="500" y="235" text-anchor="middle" fill="#fef3c7" font-size="10">user_id: 2001-3000</text>
+      <rect x="450" y="250" width="100" height="20" rx="3" fill="#d97706"/>
+      <text x="500" y="264" text-anchor="middle" fill="white" font-size="9">DB Server C</text>
+
+      <!-- 矢印（ルーター → シャード） -->
+      <line x1="230" y1="135" x2="100" y2="180" stroke="#8b5cf6" stroke-width="2"/>
+      <line x1="300" y1="135" x2="300" y2="180" stroke="#8b5cf6" stroke-width="2"/>
+      <line x1="370" y1="135" x2="500" y2="180" stroke="#8b5cf6" stroke-width="2"/>
+
+      <defs>
+        <marker id="arrow-purple" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#6366f1"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <h2>シャードキーの選び方</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">キー候補</th>
+        <th style="width:35%;">メリット</th>
+        <th>デメリット</th>
+      </tr>
+      <tr>
+        <td><strong>user_id</strong></td>
+        <td>ユーザー単位で完結しやすい</td>
+        <td>人気ユーザーに偏る可能性</td>
+      </tr>
+      <tr>
+        <td><strong>tenant_id</strong></td>
+        <td>マルチテナントに最適</td>
+        <td>テナント間クエリが困難</td>
+      </tr>
+      <tr>
+        <td><strong>geo_region</strong></td>
+        <td>地域ごとにサーバー配置可能</td>
+        <td>グローバルクエリが困難</td>
+      </tr>
+      <tr>
+        <td><strong>hash(id)</strong></td>
+        <td>均等分散</td>
+        <td>範囲クエリが全シャードスキャン</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>シャーディングの課題</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      シャーディングの難しさ
+    </div>
+    <ul>
+      <li><strong>クロスシャードクエリ</strong>：複数シャードにまたがるJOINは困難</li>
+      <li><strong>トランザクション</strong>：分散トランザクションは複雑</li>
+      <li><strong>リシャーディング</strong>：データ移動が大変</li>
+      <li><strong>ホットスポット</strong>：特定シャードへのアクセス集中</li>
+    </ul>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      シャーディング設計の原則
+    </div>
+    <ol>
+      <li><strong>可能な限り避ける</strong>：まずはスケールアップ、パーティショニングを検討</li>
+      <li><strong>シャードキーを慎重に選ぶ</strong>：クエリパターンを分析</li>
+      <li><strong>シャード間の依存を最小化</strong>：1シャードで完結する設計</li>
+      <li><strong>リシャーディング計画</strong>：将来の分割を見据える</li>
+    </ol>
+  </div>
+
+  <div class="quiz" id="quiz-dba8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>シャーディングとパーティショニングの違いは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-dba8" style="display:none;">
+      A. シャーディングは複数サーバーに分散、パーティショニングは1サーバー内で分割
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba8" style="display:none;">
+      B. シャーディングはインデックス、パーティショニングはテーブル分割
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba8" style="display:none;">
+      C. 同じ意味の別名
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-dba8')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('dba8')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="dba9">
+  <h1>レプリケーションとフェイルオーバー</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>レプリケーションの種類と特徴</li>
+      <li>プライマリとレプリカの役割</li>
+      <li>フェイルオーバーの仕組み</li>
+    </ul>
+  </div>
+
+  <h2>レプリケーションとは</h2>
+
+  <p>
+    <strong>レプリケーション</strong> = データベースの複製を作成し、同期を保つ仕組み
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：バックアップ要員
+    </div>
+    <p>
+      主担当（プライマリ）が休むとき、<br>
+      同じ情報を持つバックアップ担当（レプリカ）が対応。
+    </p>
+    <p style="margin:0;">
+      <strong>目的</strong>：<br>
+      1. 可用性向上（障害時に切り替え）<br>
+      2. 読み取り負荷分散（レプリカで読み取り）
+    </p>
+  </div>
+
+  <h2>レプリケーションの種類</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">種類</th>
+        <th style="width:35%;">特徴</th>
+        <th>トレードオフ</th>
+      </tr>
+      <tr>
+        <td><strong>同期レプリケーション</strong></td>
+        <td>全レプリカに書き込み完了まで待つ</td>
+        <td>データ一貫性◎、性能△</td>
+      </tr>
+      <tr>
+        <td><strong>非同期レプリケーション</strong></td>
+        <td>プライマリ書き込み後すぐ応答</td>
+        <td>性能◎、データ遅延あり</td>
+      </tr>
+      <tr>
+        <td><strong>半同期レプリケーション</strong></td>
+        <td>1つのレプリカには同期</td>
+        <td>バランス型</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>読み書き分離</h2>
+
+  <div class="card">
+<pre><code>// 読み書き分離パターン
+class DatabasePool {
+  private primary: Connection;    // 書き込み用
+  private replicas: Connection[]; // 読み取り用
+
+  // 書き込みはプライマリへ
+  async write(query: string): Promise&lt;void&gt; {
+    return this.primary.execute(query);
+  }
+
+  // 読み取りはレプリカへ（ラウンドロビン）
+  async read(query: string): Promise&lt;any&gt; {
+    const replica = this.getNextReplica();
+    return replica.execute(query);
+  }
+}
+
+// 使用例
+await db.write('INSERT INTO users ...');  // プライマリ
+await db.read('SELECT * FROM users');     // レプリカ</code></pre>
+  </div>
+
+  <h2>フェイルオーバー</h2>
+
+  <p>
+    <strong>フェイルオーバー</strong> = プライマリ障害時にレプリカを昇格させる仕組み
+  </p>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      フェイルオーバーの流れ
+    </div>
+    <ol>
+      <li><strong>障害検出</strong>：ヘルスチェックでプライマリ異常を検知</li>
+      <li><strong>昇格判断</strong>：最も同期が進んでいるレプリカを選択</li>
+      <li><strong>切り替え</strong>：レプリカを新プライマリに昇格</li>
+      <li><strong>接続切り替え</strong>：アプリケーションの接続先を変更</li>
+    </ol>
+  </div>
+
+  <h2>レプリケーションラグ</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      レプリカ遅延に注意
+    </div>
+<pre><code>// ❌ 書き込み直後に読み取り → 古いデータの可能性
+await db.write('INSERT INTO users (name) VALUES ("Alice")');
+const user = await db.read('SELECT * FROM users WHERE name = "Alice"');
+// レプリケーションラグでまだ反映されていない可能性！
+
+// ⭕ 書き込み直後はプライマリから読む
+await db.write('INSERT INTO users (name) VALUES ("Alice")');
+const user = await db.primary('SELECT * FROM users WHERE name = "Alice"');
+// または十分な待機時間を設ける</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-dba9">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>非同期レプリケーションの特徴は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba9" style="display:none;">
+      A. データの一貫性が常に保証される
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-dba9" style="display:none;">
+      B. 書き込み性能は高いが、レプリカに遅延が生じる可能性がある
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba9" style="display:none;">
+      C. 全レプリカへの書き込み完了を待つ
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-dba9')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('dba9')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="dba10">
+  <h1>DB設計レビューチェックリスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>DB設計レビューの観点</li>
+      <li>よくある設計ミスと対策</li>
+      <li>本番運用を見据えた設計</li>
+    </ul>
+  </div>
+
+  <h2>スキーマ設計のチェック</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      テーブル設計
+    </div>
+    <ul>
+      <li><strong>正規化レベル</strong>：適切か？過度な正規化/非正規化になっていないか？</li>
+      <li><strong>主キー</strong>：自然キーか代理キーか？UUIDのパフォーマンス影響は？</li>
+      <li><strong>外部キー制約</strong>：参照整合性が保証されているか？</li>
+      <li><strong>NOT NULL</strong>：NULLを許容すべきカラムか明確か？</li>
+      <li><strong>デフォルト値</strong>：適切に設定されているか？</li>
+    </ul>
+  </div>
+
+  <h2>インデックス設計のチェック</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      インデックス
+    </div>
+    <ul>
+      <li><strong>WHERE句</strong>：頻繁に検索されるカラムにインデックスがあるか？</li>
+      <li><strong>複合インデックス</strong>：カラム順序は適切か？（カーディナリティ順）</li>
+      <li><strong>カバリングインデックス</strong>：必要に応じて検討されているか？</li>
+      <li><strong>過剰インデックス</strong>：不要なインデックスで更新性能を落としていないか？</li>
+    </ul>
+  </div>
+
+  <h2>クエリ設計のチェック</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      クエリパターン
+    </div>
+    <ul>
+      <li><strong>N+1問題</strong>：ループ内クエリが発生していないか？</li>
+      <li><strong>SELECT *</strong>：必要なカラムだけ取得しているか？</li>
+      <li><strong>EXPLAIN</strong>：本番データ量で実行計画を確認したか？</li>
+      <li><strong>ページング</strong>：OFFSET/LIMITの性能問題を考慮しているか？</li>
+    </ul>
+  </div>
+
+  <h2>トランザクション設計のチェック</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      トランザクション
+    </div>
+    <ul>
+      <li><strong>トランザクション境界</strong>：適切な範囲で囲まれているか？</li>
+      <li><strong>分離レベル</strong>：要件に合った分離レベルか？</li>
+      <li><strong>デッドロック</strong>：ロック順序は統一されているか？</li>
+      <li><strong>長時間トランザクション</strong>：外部API呼び出しを含んでいないか？</li>
+    </ul>
+  </div>
+
+  <h2>スケーラビリティのチェック</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      将来の拡張性
+    </div>
+    <ul>
+      <li><strong>データ量予測</strong>：1年後、3年後のデータ量を見積もっているか？</li>
+      <li><strong>パーティショニング</strong>：大量データ対策が考慮されているか？</li>
+      <li><strong>シャーディング</strong>：必要な場合、シャードキーの設計は妥当か？</li>
+      <li><strong>レプリケーション</strong>：読み取り負荷分散が考慮されているか？</li>
+    </ul>
+  </div>
+
+  <h2>運用観点のチェック</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      本番運用
+    </div>
+    <ul>
+      <li><strong>バックアップ</strong>：復旧手順が確立されているか？</li>
+      <li><strong>監視</strong>：スロークエリ、コネクション数の監視設定があるか？</li>
+      <li><strong>マイグレーション</strong>：無停止でのスキーマ変更が可能か？</li>
+      <li><strong>監査ログ</strong>：重要データの変更履歴が残るか？</li>
+    </ul>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">🎉</span>
+      Phase 2 完了！
+    </div>
+    <p>
+      DB設計応用を学びました。
+    </p>
+    <p style="margin:0;">
+      これらの知識は、<strong>高トラフィックなシステム</strong>や<br>
+      <strong>ミッションクリティカルなアプリケーション</strong>の設計で必須です。<br>
+      コードレビューでDB周りの問題を見抜ける力がつきました。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-dba10-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>本番環境でスキーマ変更を行う際、最も重要な考慮事項は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba10-1" style="display:none;">
+      A. 変更のコード行数を最小にする
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-dba10-1" style="display:none;">
+      B. 無停止（ダウンタイムなし）で変更できるか
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba10-1" style="display:none;">
+      C. 最新のDB機能を使っているか
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-dba10-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-dba10-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>DB設計レビューで「神クラス」に相当する問題は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba10-2" style="display:none;">
+      A. テーブルにインデックスがない
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-dba10-2" style="display:none;">
+      B. 1つのテーブルに多すぎるカラムと責務がある
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-dba10-2" style="display:none;">
+      C. 外部キー制約がない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-dba10-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('dba10')">
+    <span class="icon">✓</span>
+    Phase 2を完了
+  </button>
+</section>

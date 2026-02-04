@@ -1,0 +1,1846 @@
+<!-- ============================================
+     Level 7 Phase 7: AI基礎
+     ============================================ -->
+
+<section id="ai1">
+  <h1>生成AIの仕組み（LLMの基礎）</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>LLM（大規模言語モデル）とは何か</li>
+      <li>トランスフォーマーアーキテクチャの概要</li>
+      <li>生成AIが「考える」仕組み</li>
+    </ul>
+  </div>
+
+  <h2>LLMとは</h2>
+
+  <p>
+    <strong>LLM（Large Language Model）</strong> = 大量のテキストデータで訓練された、次の単語を予測するモデル
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：超博識な予測マシン
+    </div>
+    <p>
+      LLMは「世界中の本を読んだ人」のようなもの。<br>
+      「空は」と言われたら「青い」と<strong>予測</strong>できる。
+    </p>
+    <p style="margin:0;">
+      でも、本当に「理解」しているわけではない。<br>
+      <strong>パターンマッチング</strong>の超高度版です。
+    </p>
+  </div>
+
+  <h2>トランスフォーマーアーキテクチャ</h2>
+
+  <p>
+    2017年のGoogle論文「Attention Is All You Need」で提案された<br>
+    <strong>Transformer</strong>が、現代のLLMの基盤です。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">構成要素</th>
+        <th style="width:35%;">役割</th>
+        <th>たとえ</th>
+      </tr>
+      <tr>
+        <td><strong>Attention</strong></td>
+        <td>重要な部分に注目する</td>
+        <td>文章の中で関連する単語を見つける</td>
+      </tr>
+      <tr>
+        <td><strong>Encoder</strong></td>
+        <td>入力を理解する</td>
+        <td>質問を解釈する</td>
+      </tr>
+      <tr>
+        <td><strong>Decoder</strong></td>
+        <td>出力を生成する</td>
+        <td>回答を作成する</td>
+      </tr>
+      <tr>
+        <td><strong>トークン化</strong></td>
+        <td>テキストを数値に変換</td>
+        <td>単語を番号に置き換える</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>生成の仕組み：自己回帰</h2>
+
+  <p>
+    LLMは<strong>1トークンずつ</strong>生成します（自己回帰）。
+  </p>
+
+  <div class="card">
+<pre><code>// 生成の流れ（概念）
+入力: "東京の天気は"
+↓
+予測: "晴れ" (確率0.4), "曇り" (確率0.3), "雨" (確率0.2)...
+↓
+選択: "晴れ" (temperature/top_pで確率的に選択)
+↓
+新しい入力: "東京の天気は晴れ"
+↓
+次の予測: "です" (確率0.5), "でしょう" (確率0.3)...
+↓
+繰り返し...</code></pre>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      LLMの重要な特性
+    </div>
+    <ul>
+      <li><strong>確率的</strong>：同じ入力でも異なる出力が出る</li>
+      <li><strong>ステートレス</strong>：前回の会話を覚えていない（コンテキストで渡す）</li>
+      <li><strong>知識のカットオフ</strong>：訓練データ以降の情報を知らない</li>
+      <li><strong>ハルシネーション</strong>：もっともらしい嘘をつく</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-ai1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>LLMが文章を生成する仕組みは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai1" style="display:none;">
+      A. 文章全体を一度に生成する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ai1" style="display:none;">
+      B. 次のトークンを確率的に予測し、1つずつ生成する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai1" style="display:none;">
+      C. データベースから文章を検索して返す
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ai1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ai1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ai2">
+  <h1>プロンプトエンジニアリング入門</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>プロンプトエンジニアリングとは</li>
+      <li>効果的なプロンプトの構成要素</li>
+      <li>システムプロンプトとユーザープロンプト</li>
+    </ul>
+  </div>
+
+  <h2>プロンプトエンジニアリングとは</h2>
+
+  <p>
+    <strong>プロンプトエンジニアリング</strong> = AIから望む出力を得るための入力（プロンプト）を設計する技術
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：依頼書の書き方
+    </div>
+    <p>
+      優秀なアシスタントに仕事を頼むとき、<br>
+      <strong>曖昧な指示</strong>より<strong>具体的な指示</strong>の方が良い結果が出る。
+    </p>
+    <p style="margin:0;">
+      LLMも同じ。<br>
+      「いい感じに」より「〜の形式で、〜の観点から」と伝える。
+    </p>
+  </div>
+
+  <h2>効果的なプロンプトの構成</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">要素</th>
+        <th style="width:35%;">説明</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>役割（Role）</strong></td>
+        <td>AIに演じさせる役割</td>
+        <td>「あなたはシニアエンジニアです」</td>
+      </tr>
+      <tr>
+        <td><strong>コンテキスト</strong></td>
+        <td>背景情報</td>
+        <td>「このコードはECサイトのカート機能です」</td>
+      </tr>
+      <tr>
+        <td><strong>タスク</strong></td>
+        <td>何をしてほしいか</td>
+        <td>「セキュリティの観点でレビューしてください」</td>
+      </tr>
+      <tr>
+        <td><strong>制約</strong></td>
+        <td>出力の形式や条件</td>
+        <td>「3点以内で、重要度順に」</td>
+      </tr>
+      <tr>
+        <td><strong>例示</strong></td>
+        <td>期待する出力の例</td>
+        <td>「例: 1. XSS脆弱性 - input未サニタイズ」</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>システムプロンプト vs ユーザープロンプト</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">システムプロンプト</div>
+      <p>AIの振る舞いを定義する<strong>裏方の指示</strong></p>
+<pre><code>// API呼び出し時のsystem role
+{
+  "role": "system",
+  "content": "あなたはコードレビューの専門家です。
+セキュリティ、パフォーマンス、保守性の観点で
+問題点を指摘してください。"
+}</code></pre>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">ユーザープロンプト</div>
+      <p>ユーザーからの<strong>具体的な依頼</strong></p>
+<pre><code>// API呼び出し時のuser role
+{
+  "role": "user",
+  "content": "以下のコードをレビューしてください。
+function login(user, pass) {
+  const query = \`SELECT * FROM users
+    WHERE name='${user}'\`;
+  // ...
+}"
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      よくある失敗
+    </div>
+    <ul>
+      <li><strong>曖昧すぎる</strong>：「良くしてください」→何を？</li>
+      <li><strong>情報不足</strong>：コンテキストがなく、的外れな回答に</li>
+      <li><strong>長すぎる</strong>：重要な情報が埋もれる</li>
+      <li><strong>矛盾する指示</strong>：「簡潔に、でも詳しく」</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-ai2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>効果的なプロンプトに含めるべき要素は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai2" style="display:none;">
+      A. できるだけ短く、タスクだけを伝える
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ai2" style="display:none;">
+      B. 役割、コンテキスト、タスク、制約を明確に伝える
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai2" style="display:none;">
+      C. 全ての可能性を網羅した長文で伝える
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ai2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ai2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ai3">
+  <h1>Few-shot / Zero-shotプロンプト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Zero-shot、One-shot、Few-shotの違い</li>
+      <li>それぞれの使い分け</li>
+      <li>Chain-of-Thought（思考の連鎖）</li>
+    </ul>
+  </div>
+
+  <h2>Shot = 例示の数</h2>
+
+  <p>
+    「Shot」は<strong>例示の数</strong>を表します。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">種類</th>
+        <th style="width:30%;">意味</th>
+        <th>特徴</th>
+      </tr>
+      <tr>
+        <td><strong>Zero-shot</strong></td>
+        <td>例示なし</td>
+        <td>シンプルなタスク向け</td>
+      </tr>
+      <tr>
+        <td><strong>One-shot</strong></td>
+        <td>1つの例示</td>
+        <td>形式を示すのに十分な場合</td>
+      </tr>
+      <tr>
+        <td><strong>Few-shot</strong></td>
+        <td>複数の例示</td>
+        <td>複雑なタスク、精度向上</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>Zero-shot vs Few-shot</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">Zero-shot（例示なし）</div>
+<pre><code>// プロンプト
+"以下のテキストの感情を判定してください。
+テキスト: この製品は最悪だった"
+
+// 出力（形式が不安定）
+"このテキストはネガティブな感情を表しています。
+製品に対する強い不満が..."</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">Few-shot（例示あり）</div>
+<pre><code>// プロンプト
+"以下のテキストの感情を判定してください。
+
+例1:
+テキスト: 素晴らしい買い物でした
+感情: positive
+
+例2:
+テキスト: 普通でした
+感情: neutral
+
+判定してください:
+テキスト: この製品は最悪だった
+感情:"
+
+// 出力（形式が安定）
+"negative"</code></pre>
+    </div>
+  </div>
+
+  <h2>Chain-of-Thought（CoT）</h2>
+
+  <p>
+    <strong>「考える過程を示す」</strong>ことで、複雑な推論の精度が上がる技術。
+  </p>
+
+  <div class="card">
+<pre><code>// Chain-of-Thoughtプロンプト
+"問題: カフェで3人がそれぞれコーヒー(400円)とケーキ(500円)を注文しました。
+合計金額は？
+
+ステップバイステップで考えてください：
+
+1人分の金額 = コーヒー400円 + ケーキ500円 = 900円
+3人分の合計 = 900円 × 3 = 2,700円
+
+答え: 2,700円"
+
+// 「ステップバイステップで」と促すだけでも効果的
+"Let's think step by step"</code></pre>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      使い分けのガイド
+    </div>
+    <ul>
+      <li><strong>Zero-shot</strong>：簡単な質問、一般的なタスク</li>
+      <li><strong>One-shot</strong>：出力形式を指定したい場合</li>
+      <li><strong>Few-shot</strong>：複雑なタスク、特定のパターンに従わせたい場合</li>
+      <li><strong>CoT</strong>：数学、論理、複数ステップの推論</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-ai3-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>Few-shotプロンプトの特徴は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ai3-1" style="display:none;">
+      A. 複数の例を示すことで、AIに期待する出力パターンを学習させる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai3-1" style="display:none;">
+      B. 例示なしでタスクを実行させる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai3-1" style="display:none;">
+      C. モデルを再訓練する手法
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ai3-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-ai3-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>Chain-of-Thought（CoT）が効果的なのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai3-2" style="display:none;">
+      A. 簡単な翻訳タスク
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ai3-2" style="display:none;">
+      B. 複数ステップの論理的推論が必要なタスク
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai3-2" style="display:none;">
+      C. テキストの要約
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ai3-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ai3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ai4">
+  <h1>LLM APIの呼び出しパターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>LLM APIの基本構造</li>
+      <li>主要なパラメータの意味</li>
+      <li>ストリーミングレスポンス</li>
+    </ul>
+  </div>
+
+  <h2>API呼び出しの基本</h2>
+
+  <p>
+    主要なLLM API（OpenAI、Anthropic、Google等）は<br>
+    <strong>類似した構造</strong>を持っています。
+  </p>
+
+  <!-- LLM API呼び出しフローのSVG図解 -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      LLM API呼び出しフロー
+    </div>
+    <svg viewBox="0 0 600 280" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="LLM API呼び出しフロー">
+      <title>LLM API呼び出しフロー</title>
+      <defs>
+        <marker id="arrow-flow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#6366f1"/>
+        </marker>
+      </defs>
+
+      <!-- アプリケーション -->
+      <rect x="20" y="100" width="120" height="80" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+      <text x="80" y="135" text-anchor="middle" fill="white" font-size="12" font-weight="bold">アプリケーション</text>
+      <text x="80" y="155" text-anchor="middle" fill="#e0e7ff" font-size="10">プロンプト構築</text>
+
+      <!-- 矢印1 -->
+      <line x1="140" y1="140" x2="190" y2="140" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-flow)"/>
+      <text x="165" y="130" text-anchor="middle" fill="currentColor" font-size="9">HTTPリクエスト</text>
+
+      <!-- API Gateway -->
+      <rect x="200" y="100" width="100" height="80" rx="8" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="250" y="135" text-anchor="middle" fill="white" font-size="12" font-weight="bold">API Gateway</text>
+      <text x="250" y="155" text-anchor="middle" fill="#d1fae5" font-size="10">認証・レート制限</text>
+
+      <!-- 矢印2 -->
+      <line x1="300" y1="140" x2="350" y2="140" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-flow)"/>
+
+      <!-- LLM -->
+      <rect x="360" y="80" width="120" height="120" rx="8" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="420" y="125" text-anchor="middle" fill="white" font-size="12" font-weight="bold">LLM</text>
+      <text x="420" y="145" text-anchor="middle" fill="#fef3c7" font-size="10">トークン化</text>
+      <text x="420" y="160" text-anchor="middle" fill="#fef3c7" font-size="10">推論実行</text>
+      <text x="420" y="175" text-anchor="middle" fill="#fef3c7" font-size="10">テキスト生成</text>
+
+      <!-- レスポンス矢印 -->
+      <path d="M420,200 L420,240 L80,240 L80,180" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrow-response)"/>
+      <text x="250" y="255" text-anchor="middle" fill="currentColor" font-size="9">レスポンス（JSON / ストリーム）</text>
+
+      <defs>
+        <marker id="arrow-response" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#ef4444"/>
+        </marker>
+      </defs>
+
+      <!-- 凡例 -->
+      <text x="500" y="30" text-anchor="start" fill="currentColor" font-size="10">リクエスト内容:</text>
+      <text x="500" y="45" text-anchor="start" fill="#666" font-size="9">- messages[]</text>
+      <text x="500" y="58" text-anchor="start" fill="#666" font-size="9">- model</text>
+      <text x="500" y="71" text-anchor="start" fill="#666" font-size="9">- temperature</text>
+    </svg>
+  </div>
+
+  <div class="card">
+<pre><code>// OpenAI API呼び出しの例
+import OpenAI from 'openai';
+
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+const response = await client.chat.completions.create({
+  model: 'gpt-4o',
+  messages: [
+    { role: 'system', content: 'あなたはコードレビューの専門家です' },
+    { role: 'user', content: 'このコードをレビューしてください: ...' }
+  ],
+  temperature: 0.7,
+  max_tokens: 1000,
+});
+
+console.log(response.choices[0].message.content);</code></pre>
+  </div>
+
+  <h2>主要なパラメータ</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">パラメータ</th>
+        <th style="width:35%;">説明</th>
+        <th>推奨値</th>
+      </tr>
+      <tr>
+        <td><code>temperature</code></td>
+        <td>出力のランダム性（0-2）</td>
+        <td>創造的: 0.7-1.0 / 正確性: 0.1-0.3</td>
+      </tr>
+      <tr>
+        <td><code>max_tokens</code></td>
+        <td>出力の最大トークン数</td>
+        <td>用途に応じて設定</td>
+      </tr>
+      <tr>
+        <td><code>top_p</code></td>
+        <td>確率上位p%から選択</td>
+        <td>0.9-1.0（temperatureと同時調整は避ける）</td>
+      </tr>
+      <tr>
+        <td><code>stop</code></td>
+        <td>生成を停止する文字列</td>
+        <td>特定の区切りで止めたい場合</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>ストリーミングレスポンス</h2>
+
+  <p>
+    <strong>ストリーミング</strong>を使うと、生成途中の出力を逐次受け取れます。
+  </p>
+
+  <div class="card">
+<pre><code>// ストリーミングレスポンスの例
+const stream = await client.chat.completions.create({
+  model: 'gpt-4o',
+  messages: [{ role: 'user', content: '長文を生成してください' }],
+  stream: true,  // ストリーミング有効化
+});
+
+for await (const chunk of stream) {
+  const content = chunk.choices[0]?.delta?.content || '';
+  process.stdout.write(content);  // 逐次出力
+}</code></pre>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      ストリーミングのメリット
+    </div>
+    <ul>
+      <li><strong>UX向上</strong>：ユーザーが待つ時間が体感的に短くなる</li>
+      <li><strong>早期中断</strong>：不要と判断したら途中で止められる</li>
+      <li><strong>リアルタイム処理</strong>：チャットUIに最適</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-ai4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>temperatureパラメータの効果は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai4" style="display:none;">
+      A. 出力の長さを制御する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ai4" style="display:none;">
+      B. 出力のランダム性（創造性）を制御する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai4" style="display:none;">
+      C. APIの応答速度を制御する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ai4')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ai4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ai5">
+  <h1>レート制限とリトライ戦略</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>レート制限の仕組み</li>
+      <li>エクスポネンシャルバックオフ</li>
+      <li>リトライ実装パターン</li>
+    </ul>
+  </div>
+
+  <h2>レート制限とは</h2>
+
+  <p>
+    LLM APIは<strong>リクエスト数</strong>と<strong>トークン数</strong>に制限があります。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>制限の種類</th>
+        <th>説明</th>
+        <th>対策</th>
+      </tr>
+      <tr>
+        <td><strong>RPM</strong></td>
+        <td>1分あたりのリクエスト数</td>
+        <td>リクエスト間隔を空ける</td>
+      </tr>
+      <tr>
+        <td><strong>TPM</strong></td>
+        <td>1分あたりのトークン数</td>
+        <td>プロンプト/出力を短くする</td>
+      </tr>
+      <tr>
+        <td><strong>RPD</strong></td>
+        <td>1日あたりのリクエスト数</td>
+        <td>使用量を監視する</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      429エラー（Too Many Requests）
+    </div>
+    <p>
+      レート制限に達すると<strong>429エラー</strong>が返されます。<br>
+      適切なリトライ戦略が必要です。
+    </p>
+<pre><code>// 429エラーのレスポンス例
+{
+  "error": {
+    "message": "Rate limit reached",
+    "type": "rate_limit_error",
+    "code": "rate_limit_exceeded"
+  }
+}</code></pre>
+  </div>
+
+  <h2>エクスポネンシャルバックオフ</h2>
+
+  <p>
+    リトライ間隔を<strong>指数関数的に増やす</strong>戦略。
+  </p>
+
+  <div class="card">
+<pre><code>// エクスポネンシャルバックオフの実装
+async function callWithRetry&lt;T&gt;(
+  fn: () => Promise&lt;T&gt;,
+  maxRetries = 5,
+  baseDelay = 1000
+): Promise&lt;T&gt; {
+  for (let attempt = 0; attempt &lt; maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (!isRetryableError(error) || attempt === maxRetries - 1) {
+        throw error;
+      }
+
+      // 指数バックオフ + ジッター
+      const delay = baseDelay * Math.pow(2, attempt)
+                  + Math.random() * 1000;
+      console.log(`Retry in ${delay}ms (attempt ${attempt + 1})`);
+      await sleep(delay);
+    }
+  }
+  throw new Error('Max retries exceeded');
+}
+
+function isRetryableError(error: unknown): boolean {
+  if (error instanceof APIError) {
+    return [429, 500, 502, 503, 504].includes(error.status);
+  }
+  return false;
+}</code></pre>
+  </div>
+
+  <h2>リトライのベストプラクティス</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      実装のポイント
+    </div>
+    <ul>
+      <li><strong>ジッター追加</strong>：同時リクエストの衝突を避ける</li>
+      <li><strong>最大リトライ数</strong>：無限ループを防ぐ</li>
+      <li><strong>リトライ可能エラーの判定</strong>：400エラーはリトライしない</li>
+      <li><strong>Retry-Afterヘッダー確認</strong>：APIが指定する待機時間を尊重</li>
+    </ul>
+  </div>
+
+  <div class="card">
+<pre><code>// Retry-Afterヘッダーを使った実装
+async function callWithRetryAfter&lt;T&gt;(fn: () => Promise&lt;T&gt;): Promise&lt;T&gt; {
+  try {
+    return await fn();
+  } catch (error) {
+    if (error instanceof APIError && error.status === 429) {
+      const retryAfter = parseInt(error.headers['retry-after'] || '60');
+      console.log(`Rate limited. Waiting ${retryAfter}s`);
+      await sleep(retryAfter * 1000);
+      return fn();  // 1回だけリトライ
+    }
+    throw error;
+  }
+}</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-ai5">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>エクスポネンシャルバックオフの特徴は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai5" style="display:none;">
+      A. 一定間隔でリトライする
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ai5" style="display:none;">
+      B. リトライごとに待機時間を指数関数的に増やす
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai5" style="display:none;">
+      C. エラーが発生したら即座に再試行する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ai5')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ai5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ai6">
+  <h1>AIレスポンスのキャッシュ戦略</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>なぜキャッシュが重要か</li>
+      <li>キャッシュキーの設計</li>
+      <li>キャッシュ実装パターン</li>
+    </ul>
+  </div>
+
+  <h2>なぜキャッシュが必要か</h2>
+
+  <p>
+    LLM APIは<strong>遅い</strong>（数秒）かつ<strong>高い</strong>（トークン課金）。<br>
+    同じ質問には<strong>キャッシュ</strong>で対応するのが効率的です。
+  </p>
+
+  <!-- キャッシュ戦略のSVG図解 -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      キャッシュ戦略の概要
+    </div>
+    <svg viewBox="0 0 550 320" style="width:100%;max-width:550px;display:block;margin:1rem auto;" role="img" aria-label="AIレスポンスのキャッシュ戦略">
+      <title>AIレスポンスのキャッシュ戦略</title>
+      <defs>
+        <marker id="arrow-cache" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#6366f1"/>
+        </marker>
+        <marker id="arrow-hit" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#10b981"/>
+        </marker>
+        <marker id="arrow-miss" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#ef4444"/>
+        </marker>
+      </defs>
+
+      <!-- リクエスト -->
+      <rect x="20" y="130" width="100" height="60" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+      <text x="70" y="155" text-anchor="middle" fill="white" font-size="11" font-weight="bold">リクエスト</text>
+      <text x="70" y="170" text-anchor="middle" fill="#e0e7ff" font-size="9">プロンプト</text>
+
+      <!-- 矢印: リクエスト -> キャッシュ -->
+      <line x1="120" y1="160" x2="170" y2="160" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-cache)"/>
+
+      <!-- キャッシュ -->
+      <rect x="180" y="110" width="120" height="100" rx="8" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="240" y="135" text-anchor="middle" fill="white" font-size="11" font-weight="bold">キャッシュ</text>
+      <text x="240" y="155" text-anchor="middle" fill="#fef3c7" font-size="9">Redis / Memory</text>
+      <text x="240" y="190" text-anchor="middle" fill="white" font-size="10">キー: hash(prompt)</text>
+
+      <!-- キャッシュヒット（上の矢印） -->
+      <path d="M240,110 L240,60 L70,60 L70,130" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-hit)"/>
+      <rect x="120" y="40" width="80" height="25" rx="4" fill="#10b981"/>
+      <text x="160" y="57" text-anchor="middle" fill="white" font-size="10" font-weight="bold">HIT: 即返却</text>
+
+      <!-- キャッシュミス（右の矢印） -->
+      <line x1="300" y1="160" x2="350" y2="160" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow-miss)"/>
+      <text x="325" y="150" text-anchor="middle" fill="#ef4444" font-size="9">MISS</text>
+
+      <!-- LLM API -->
+      <rect x="360" y="130" width="100" height="60" rx="8" fill="#8b5cf6" stroke="#6d28d9" stroke-width="2"/>
+      <text x="410" y="155" text-anchor="middle" fill="white" font-size="11" font-weight="bold">LLM API</text>
+      <text x="410" y="170" text-anchor="middle" fill="#e0e7ff" font-size="9">推論実行</text>
+
+      <!-- 保存矢印 -->
+      <path d="M410,190 L410,260 L240,260 L240,210" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrow-save)"/>
+      <text x="325" y="275" text-anchor="middle" fill="currentColor" font-size="9">結果をキャッシュに保存</text>
+
+      <defs>
+        <marker id="arrow-save" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#f59e0b"/>
+        </marker>
+      </defs>
+
+      <!-- メリット表示 -->
+      <rect x="480" y="20" width="60" height="80" rx="4" fill="none" stroke="#ddd" stroke-width="1"/>
+      <text x="510" y="40" text-anchor="middle" fill="currentColor" font-size="9" font-weight="bold">効果</text>
+      <text x="510" y="55" text-anchor="middle" fill="#10b981" font-size="8">コスト削減</text>
+      <text x="510" y="70" text-anchor="middle" fill="#10b981" font-size="8">高速化</text>
+      <text x="510" y="85" text-anchor="middle" fill="#10b981" font-size="8">API負荷軽減</text>
+    </svg>
+  </div>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>比較</th>
+        <th>キャッシュなし</th>
+        <th>キャッシュあり</th>
+      </tr>
+      <tr>
+        <td><strong>レイテンシ</strong></td>
+        <td>2-10秒</td>
+        <td>10-50ms（ヒット時）</td>
+      </tr>
+      <tr>
+        <td><strong>コスト</strong></td>
+        <td>毎回課金</td>
+        <td>ヒット時は無料</td>
+      </tr>
+      <tr>
+        <td><strong>レート制限</strong></td>
+        <td>すぐ到達</td>
+        <td>大幅に軽減</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>キャッシュキーの設計</h2>
+
+  <p>
+    <strong>何をキーにするか</strong>が重要です。
+  </p>
+
+  <div class="card">
+<pre><code>// キャッシュキーの生成例
+import crypto from 'crypto';
+
+interface CacheKeyParams {
+  model: string;
+  systemPrompt: string;
+  userPrompt: string;
+  temperature: number;
+}
+
+function generateCacheKey(params: CacheKeyParams): string {
+  // 順序を固定して正規化
+  const normalized = JSON.stringify({
+    model: params.model,
+    system: params.systemPrompt,
+    user: params.userPrompt,
+    temp: params.temperature,
+  });
+
+  return crypto
+    .createHash('sha256')
+    .update(normalized)
+    .digest('hex');
+}</code></pre>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      キャッシュの注意点
+    </div>
+    <ul>
+      <li><strong>temperature > 0</strong>：出力が毎回異なるのでキャッシュ不向き</li>
+      <li><strong>パーソナライズ</strong>：ユーザー固有の情報はキャッシュしない</li>
+      <li><strong>鮮度</strong>：情報が古くなる問題（TTL設定）</li>
+      <li><strong>プロンプト漏洩</strong>：キャッシュキーからプロンプト推測を防ぐ</li>
+    </ul>
+  </div>
+
+  <h2>キャッシュ実装パターン</h2>
+
+  <div class="card">
+<pre><code>// シンプルなキャッシュ実装
+class LLMCache {
+  private cache: Map&lt;string, { value: string; expiry: number }&gt; = new Map();
+  private ttlMs: number;
+
+  constructor(ttlMinutes = 60) {
+    this.ttlMs = ttlMinutes * 60 * 1000;
+  }
+
+  async getOrFetch(
+    key: string,
+    fetchFn: () => Promise&lt;string&gt;
+  ): Promise&lt;string&gt; {
+    const cached = this.cache.get(key);
+
+    if (cached && cached.expiry > Date.now()) {
+      console.log('Cache HIT');
+      return cached.value;
+    }
+
+    console.log('Cache MISS - calling API');
+    const value = await fetchFn();
+
+    this.cache.set(key, {
+      value,
+      expiry: Date.now() + this.ttlMs,
+    });
+
+    return value;
+  }
+}
+
+// 使用例
+const cache = new LLMCache(60);  // 60分TTL
+const response = await cache.getOrFetch(
+  generateCacheKey({ model, systemPrompt, userPrompt, temperature: 0 }),
+  () => callLLMApi(prompt)
+);</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-ai6">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>LLMレスポンスのキャッシュに適さないケースは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai6" style="display:none;">
+      A. 同じ質問が頻繁に来るFAQシステム
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ai6" style="display:none;">
+      B. temperature > 0 で創造的な出力を求める場合
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai6" style="display:none;">
+      C. 固定されたプロンプトでコード生成する場合
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ai6')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ai6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ai7">
+  <h1>トークンとコスト計算</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>トークンとは何か</li>
+      <li>トークン数の見積もり方法</li>
+      <li>コスト最適化のテクニック</li>
+    </ul>
+  </div>
+
+  <h2>トークンとは</h2>
+
+  <p>
+    <strong>トークン</strong> = LLMが処理する最小単位（単語の断片）
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：文字と音節
+    </div>
+    <p>
+      「こんにちは」は5文字だが、発音すると「こ・ん・に・ち・は」の5音節。<br>
+      LLMにとっての「音節」がトークンです。
+    </p>
+    <p style="margin:0;">
+      英語: 1トークン ≒ 4文字 / 0.75単語<br>
+      日本語: 1トークン ≒ 1-2文字（効率が悪い）
+    </p>
+  </div>
+
+  <h2>トークン数の見積もり</h2>
+
+  <!-- コスト計算のSVG図解 -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      トークンとコストの関係
+    </div>
+    <svg viewBox="0 0 500 240" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="トークンとコスト計算の図">
+      <title>トークンとコスト計算</title>
+
+      <!-- 入力トークン -->
+      <rect x="30" y="40" width="180" height="80" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+      <text x="120" y="65" text-anchor="middle" fill="white" font-size="12" font-weight="bold">入力トークン</text>
+      <text x="120" y="85" text-anchor="middle" fill="#e0e7ff" font-size="10">プロンプト + コンテキスト</text>
+      <text x="120" y="105" text-anchor="middle" fill="#fef08a" font-size="11" font-weight="bold">$0.01 / 1K tokens</text>
+
+      <!-- 出力トークン -->
+      <rect x="290" y="40" width="180" height="80" rx="8" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="380" y="65" text-anchor="middle" fill="white" font-size="12" font-weight="bold">出力トークン</text>
+      <text x="380" y="85" text-anchor="middle" fill="#d1fae5" font-size="10">生成されたテキスト</text>
+      <text x="380" y="105" text-anchor="middle" fill="#fef08a" font-size="11" font-weight="bold">$0.03 / 1K tokens</text>
+
+      <!-- プラス記号 -->
+      <text x="250" y="85" text-anchor="middle" fill="currentColor" font-size="24" font-weight="bold">+</text>
+
+      <!-- 合計コスト -->
+      <rect x="140" y="150" width="220" height="70" rx="8" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="250" y="175" text-anchor="middle" fill="white" font-size="12" font-weight="bold">合計コスト</text>
+      <text x="250" y="200" text-anchor="middle" fill="white" font-size="14" font-weight="bold">(入力 x 単価) + (出力 x 単価)</text>
+
+      <!-- 矢印 -->
+      <line x1="120" y1="120" x2="200" y2="150" stroke="#6366f1" stroke-width="2"/>
+      <line x1="380" y1="120" x2="300" y2="150" stroke="#6366f1" stroke-width="2"/>
+
+      <!-- 注釈 -->
+      <text x="250" y="235" text-anchor="middle" fill="#666" font-size="9">※料金はモデルにより異なる（例: GPT-4o）</text>
+    </svg>
+  </div>
+
+  <div class="card">
+<pre><code>// トークン数の概算
+function estimateTokens(text: string): number {
+  // 英語: 約4文字で1トークン
+  // 日本語: 約1.5文字で1トークン
+  const englishRatio = 4;
+  const japaneseRatio = 1.5;
+
+  const japaneseChars = (text.match(/[\u3000-\u9fff]/g) || []).length;
+  const otherChars = text.length - japaneseChars;
+
+  return Math.ceil(
+    japaneseChars / japaneseRatio + otherChars / englishRatio
+  );
+}
+
+// より正確にはtiktokenライブラリを使用
+import { encoding_for_model } from 'tiktoken';
+
+const enc = encoding_for_model('gpt-4o');
+const tokens = enc.encode('こんにちは、世界！');
+console.log(`Tokens: ${tokens.length}`);  // 正確なトークン数</code></pre>
+  </div>
+
+  <h2>コスト計算の例</h2>
+
+  <div class="card">
+<pre><code>// コスト計算関数
+interface TokenUsage {
+  promptTokens: number;
+  completionTokens: number;
+}
+
+interface ModelPricing {
+  inputPerMillion: number;   // 入力100万トークンあたりの価格（ドル）
+  outputPerMillion: number;  // 出力100万トークンあたりの価格（ドル）
+}
+
+const PRICING: Record&lt;string, ModelPricing&gt; = {
+  'gpt-4o': { inputPerMillion: 2.5, outputPerMillion: 10 },
+  'gpt-4o-mini': { inputPerMillion: 0.15, outputPerMillion: 0.6 },
+  'claude-3-5-sonnet': { inputPerMillion: 3, outputPerMillion: 15 },
+};
+
+function calculateCost(model: string, usage: TokenUsage): number {
+  const pricing = PRICING[model];
+  if (!pricing) throw new Error(`Unknown model: ${model}`);
+
+  const inputCost = (usage.promptTokens / 1_000_000) * pricing.inputPerMillion;
+  const outputCost = (usage.completionTokens / 1_000_000) * pricing.outputPerMillion;
+
+  return inputCost + outputCost;
+}
+
+// 使用例
+const cost = calculateCost('gpt-4o', {
+  promptTokens: 1000,
+  completionTokens: 500
+});
+console.log(`Cost: $${cost.toFixed(4)}`);  // $0.0075</code></pre>
+  </div>
+
+  <h2>コスト最適化</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      コスト削減のテクニック
+    </div>
+    <ul>
+      <li><strong>プロンプト圧縮</strong>：不要な情報を削除、簡潔に</li>
+      <li><strong>適切なモデル選択</strong>：簡単なタスクには安いモデル</li>
+      <li><strong>max_tokens制限</strong>：必要以上に長い出力を防ぐ</li>
+      <li><strong>キャッシュ活用</strong>：同じリクエストは再利用</li>
+      <li><strong>バッチ処理</strong>：複数リクエストをまとめる</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-ai7-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>トークンについて正しいのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai7-1" style="display:none;">
+      A. 1トークン = 1文字
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ai7-1" style="display:none;">
+      B. 日本語は英語より多くのトークンを消費する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai7-1" style="display:none;">
+      C. 出力トークンは課金されない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ai7-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-ai7-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>LLM APIのコスト削減で効果的なのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai7-2" style="display:none;">
+      A. 常に最高性能のモデルを使用する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ai7-2" style="display:none;">
+      B. タスクの複雑さに応じてモデルを使い分ける
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai7-2" style="display:none;">
+      C. プロンプトをできるだけ長く詳細にする
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ai7-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ai7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ai8">
+  <h1>AI出力の検証とガードレール</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>なぜAI出力の検証が必要か</li>
+      <li>出力バリデーションの実装</li>
+      <li>ガードレールの設計パターン</li>
+    </ul>
+  </div>
+
+  <h2>なぜ検証が必要か</h2>
+
+  <p>
+    LLMの出力は<strong>信頼できない</strong>前提で設計する必要があります。
+  </p>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      AI出力のリスク
+    </div>
+    <ul>
+      <li><strong>形式エラー</strong>：期待したJSONが返らない</li>
+      <li><strong>ハルシネーション</strong>：存在しない情報を生成</li>
+      <li><strong>プロンプトインジェクション</strong>：悪意ある入力で挙動変更</li>
+      <li><strong>有害コンテンツ</strong>：不適切な内容の生成</li>
+      <li><strong>機密情報漏洩</strong>：訓練データの一部が出力される</li>
+    </ul>
+  </div>
+
+  <h2>出力バリデーション</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">バリデーションなし</div>
+<pre><code>// 危険: 出力をそのまま使用
+const response = await callLLM(prompt);
+const data = JSON.parse(response);  // パースエラーの可能性
+return data.result;  // undefined の可能性</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">バリデーションあり</div>
+<pre><code>import { z } from 'zod';
+
+// スキーマ定義
+const ResponseSchema = z.object({
+  result: z.string().min(1),
+  confidence: z.number().min(0).max(1),
+});
+
+// 安全にパース
+function parseResponse(raw: string) {
+  try {
+    const json = JSON.parse(raw);
+    return ResponseSchema.parse(json);
+  } catch (e) {
+    console.error('Invalid response:', raw);
+    throw new Error('AI response validation failed');
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>ガードレールの実装</h2>
+
+  <div class="card">
+<pre><code>// 多層的なガードレール
+class AIGuardrails {
+  // 入力のサニタイズ
+  sanitizeInput(input: string): string {
+    // プロンプトインジェクション対策
+    const suspicious = /ignore previous|system prompt|act as/i;
+    if (suspicious.test(input)) {
+      throw new Error('Suspicious input detected');
+    }
+
+    // 長さ制限
+    if (input.length > 10000) {
+      throw new Error('Input too long');
+    }
+
+    return input.trim();
+  }
+
+  // 出力の検証
+  validateOutput(output: string): string {
+    // 有害コンテンツチェック（簡易版）
+    const harmful = /password|credit card|ssn|api.?key/i;
+    if (harmful.test(output)) {
+      console.warn('Potentially sensitive content detected');
+      return '[Content filtered]';
+    }
+
+    // PII（個人情報）のマスキング
+    return this.maskPII(output);
+  }
+
+  private maskPII(text: string): string {
+    // メールアドレスをマスク
+    return text.replace(
+      /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
+      '[EMAIL REDACTED]'
+    );
+  }
+}</code></pre>
+  </div>
+
+  <h2>構造化出力の強制</h2>
+
+  <div class="card">
+<pre><code>// JSON Modeの使用（OpenAI）
+const response = await client.chat.completions.create({
+  model: 'gpt-4o',
+  messages: [
+    {
+      role: 'system',
+      content: `必ず以下のJSON形式で回答してください:
+{
+  "answer": "回答文",
+  "confidence": 0.0-1.0,
+  "sources": ["参考情報"]
+}`
+    },
+    { role: 'user', content: userQuestion }
+  ],
+  response_format: { type: 'json_object' },  // JSON強制
+});
+
+// Anthropicのツール使用機能でも構造化可能</code></pre>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      ガードレールのチェックリスト
+    </div>
+    <ul>
+      <li><strong>入力検証</strong>：長さ制限、禁止パターン</li>
+      <li><strong>出力検証</strong>：スキーマ検証、型チェック</li>
+      <li><strong>コンテンツフィルタ</strong>：有害/機密情報の検出</li>
+      <li><strong>レート制限</strong>：悪用防止</li>
+      <li><strong>ログ記録</strong>：監査可能性の確保</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-ai8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>AI出力のガードレールとして適切なのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai8" style="display:none;">
+      A. AI出力を常に信頼してそのまま使用する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ai8" style="display:none;">
+      B. 出力をスキーマで検証し、有害コンテンツをフィルタする
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai8" style="display:none;">
+      C. エラーが起きたら無視して処理を続行する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ai8')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ai8')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ai9">
+  <h1>ハルシネーションの対処法</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ハルシネーションとは何か</li>
+      <li>なぜ起こるのか</li>
+      <li>軽減・検出のテクニック</li>
+    </ul>
+  </div>
+
+  <h2>ハルシネーションとは</h2>
+
+  <p>
+    <strong>ハルシネーション</strong> = AIがもっともらしいが誤った情報を生成すること
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：自信満々の嘘つき
+    </div>
+    <p>
+      LLMは「わかりません」と言うより、<br>
+      <strong>それっぽい答え</strong>を生成する傾向がある。
+    </p>
+    <p style="margin:0;">
+      存在しない論文を引用したり、<br>
+      架空の人物の経歴を語ったりする。
+    </p>
+  </div>
+
+  <h2>なぜ起こるのか</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:30%;">原因</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td><strong>訓練データの限界</strong></td>
+        <td>知らない情報でも答えようとする</td>
+      </tr>
+      <tr>
+        <td><strong>確率的生成</strong></td>
+        <td>「正しさ」より「尤もらしさ」を優先</td>
+      </tr>
+      <tr>
+        <td><strong>文脈の誤解</strong></td>
+        <td>質問の意図を取り違える</td>
+      </tr>
+      <tr>
+        <td><strong>パターンマッチング</strong></td>
+        <td>似た情報を混同して組み合わせる</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>軽減テクニック</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      ハルシネーション対策
+    </div>
+    <ol>
+      <li>
+        <strong>RAG（Retrieval-Augmented Generation）</strong><br>
+        外部知識ベースから関連情報を取得してプロンプトに含める
+      </li>
+      <li>
+        <strong>温度を下げる</strong><br>
+        temperature=0に近づけると創造性が減り、一貫性が上がる
+      </li>
+      <li>
+        <strong>「わからない」を許容する指示</strong><br>
+        「確信がない場合は『不明』と答えてください」
+      </li>
+      <li>
+        <strong>出典要求</strong><br>
+        「回答の根拠となる情報源を示してください」
+      </li>
+      <li>
+        <strong>セルフチェック</strong><br>
+        生成した回答を別のプロンプトで検証させる
+      </li>
+    </ol>
+  </div>
+
+  <div class="card">
+<pre><code>// ハルシネーション軽減のプロンプト例
+const systemPrompt = `
+あなたは正確性を重視するアシスタントです。
+
+以下のルールを厳守してください：
+1. 確信がない場合は「不明です」と正直に答える
+2. 推測する場合は「〜と思われます」と明示する
+3. 事実を述べる場合は、その根拠を示す
+4. 存在しない情報を作り出さない
+
+ユーザーの質問に対し、以下の情報のみを使って回答してください：
+---
+${retrievedContext}
+---
+
+上記の情報にない内容は「この情報では回答できません」と答えてください。
+`;
+
+// セルフチェックの実装
+async function verifyResponse(question: string, answer: string): Promise&lt;boolean&gt; {
+  const verificationPrompt = `
+以下の質問と回答を検証してください。
+
+質問: ${question}
+回答: ${answer}
+
+この回答に事実と異なる可能性のある記述はありますか？
+JSONで回答: { "hasIssues": boolean, "issues": string[] }
+`;
+
+  const result = await callLLM(verificationPrompt);
+  return !JSON.parse(result).hasIssues;
+}</code></pre>
+  </div>
+
+  <h2>検出の限界</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      完全な検出は不可能
+    </div>
+    <p>
+      ハルシネーションを100%検出することは<strong>不可能</strong>です。<br>
+      以下の場合は特に注意が必要：
+    </p>
+    <ul>
+      <li><strong>専門知識</strong>：医療、法律、金融の情報</li>
+      <li><strong>最新情報</strong>：訓練データ以降のニュース</li>
+      <li><strong>数値・統計</strong>：正確な数字は特に危険</li>
+      <li><strong>人物情報</strong>：存在や経歴の捏造</li>
+    </ul>
+    <p style="margin:0;">
+      <strong>重要な判断</strong>には必ず人間による検証を入れましょう。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ai9-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>ハルシネーションが起きやすいのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai9-1" style="display:none;">
+      A. temperatureを0に設定した場合
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ai9-1" style="display:none;">
+      B. 訓練データにない最新の情報を質問した場合
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai9-1" style="display:none;">
+      C. RAGで関連情報を提供した場合
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ai9-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-ai9-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>ハルシネーション軽減に効果的なのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai9-2" style="display:none;">
+      A. AIの回答を無条件に信頼する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ai9-2" style="display:none;">
+      B. 「確信がない場合は不明と答えて」と指示する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai9-2" style="display:none;">
+      C. temperatureを最大にして創造性を高める
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ai9-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ai9')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="ai10">
+  <h1>AI倫理とガバナンス</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>AI開発における倫理的課題</li>
+      <li>責任あるAI利用の原則</li>
+      <li>組織でのAIガバナンス</li>
+    </ul>
+  </div>
+
+  <h2>AI倫理の主要課題</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">課題</th>
+        <th style="width:35%;">説明</th>
+        <th>対策</th>
+      </tr>
+      <tr>
+        <td><strong>バイアス</strong></td>
+        <td>訓練データの偏りが出力に反映</td>
+        <td>多様なデータ、定期的な監査</td>
+      </tr>
+      <tr>
+        <td><strong>プライバシー</strong></td>
+        <td>個人情報の学習・出力リスク</td>
+        <td>PII除去、データ最小化</td>
+      </tr>
+      <tr>
+        <td><strong>透明性</strong></td>
+        <td>判断根拠が不明（ブラックボックス）</td>
+        <td>説明可能AI、ログ記録</td>
+      </tr>
+      <tr>
+        <td><strong>責任所在</strong></td>
+        <td>AI判断による損害の責任は誰に</td>
+        <td>Human-in-the-loop、保険</td>
+      </tr>
+      <tr>
+        <td><strong>悪用</strong></td>
+        <td>詐欺、偽情報、サイバー攻撃</td>
+        <td>利用規約、監視、制限</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>責任あるAI利用の原則</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      開発者が守るべき原則
+    </div>
+    <ol>
+      <li>
+        <strong>透明性（Transparency）</strong><br>
+        AIを使用していることをユーザーに明示する
+      </li>
+      <li>
+        <strong>公平性（Fairness）</strong><br>
+        特定のグループに不利益を与えないよう設計する
+      </li>
+      <li>
+        <strong>プライバシー（Privacy）</strong><br>
+        必要最小限のデータのみ使用し、適切に保護する
+      </li>
+      <li>
+        <strong>安全性（Safety）</strong><br>
+        有害な出力を防ぐガードレールを実装する
+      </li>
+      <li>
+        <strong>説明責任（Accountability）</strong><br>
+        AIの判断を監査可能にし、問題時に対応できるようにする
+      </li>
+    </ol>
+  </div>
+
+  <h2>組織でのAIガバナンス</h2>
+
+  <div class="card">
+<pre><code>// AIガバナンスのチェックリスト（コード例）
+interface AIUsagePolicy {
+  // 利用目的の明確化
+  purpose: string;
+
+  // データ取り扱い
+  dataPolicy: {
+    personalDataAllowed: boolean;
+    retentionPeriod: string;
+    anonymization: boolean;
+  };
+
+  // 監視と監査
+  monitoring: {
+    loggingEnabled: boolean;
+    auditFrequency: 'daily' | 'weekly' | 'monthly';
+    alertThresholds: Record&lt;string, number&gt;;
+  };
+
+  // Human-in-the-loop
+  humanReview: {
+    required: boolean;
+    scenarios: string[];  // レビュー必須のケース
+  };
+
+  // インシデント対応
+  incidentResponse: {
+    contactEmail: string;
+    escalationPath: string[];
+  };
+}
+
+// 実際のポリシー定義例
+const productionPolicy: AIUsagePolicy = {
+  purpose: 'カスタマーサポート自動応答',
+  dataPolicy: {
+    personalDataAllowed: false,
+    retentionPeriod: '30days',
+    anonymization: true,
+  },
+  monitoring: {
+    loggingEnabled: true,
+    auditFrequency: 'weekly',
+    alertThresholds: {
+      'error_rate': 0.05,
+      'harmful_content': 0.001,
+    },
+  },
+  humanReview: {
+    required: true,
+    scenarios: ['苦情対応', '返金要求', '法的問い合わせ'],
+  },
+  incidentResponse: {
+    contactEmail: 'ai-ethics@example.com',
+    escalationPath: ['チームリード', 'VP Engineering', 'CTO'],
+  },
+};</code></pre>
+  </div>
+
+  <h2>法規制の動向</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      知っておくべき規制
+    </div>
+    <ul>
+      <li><strong>EU AI Act</strong>：リスクベースの規制、高リスクAIに厳格な要件</li>
+      <li><strong>GDPR</strong>：自動意思決定に対する説明権</li>
+      <li><strong>日本のAI原則</strong>：人間中心、公平性、透明性を重視</li>
+      <li><strong>著作権問題</strong>：訓練データと生成物の権利</li>
+    </ul>
+    <p style="margin:0;">
+      規制は急速に変化しています。<br>
+      <strong>最新動向を常にチェック</strong>することが重要です。
+    </p>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">🎉</span>
+      Phase 7 完了！
+    </div>
+    <p>
+      AI基礎を学びました。<br>
+      LLMの仕組み、プロンプトエンジニアリング、API利用、<br>
+      そして倫理的な配慮まで、実務で必要な知識を身につけました。
+    </p>
+    <p style="margin:0;">
+      AIを活用したシステム開発では、<br>
+      <strong>技術と倫理の両面</strong>を常に意識しましょう。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ai10-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>AIシステム開発で最も重要な倫理原則は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai10-1" style="display:none;">
+      A. 最高性能のモデルを常に使用する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ai10-1" style="display:none;">
+      B. 透明性、公平性、プライバシー、安全性を確保する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai10-1" style="display:none;">
+      C. コストを最優先で削減する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ai10-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-ai10-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>Human-in-the-loopが必要なケースは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai10-2" style="display:none;">
+      A. 天気予報の表示
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-ai10-2" style="display:none;">
+      B. 採用候補者のスクリーニング
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-ai10-2" style="display:none;">
+      C. スペルチェック
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ai10-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ai10')">
+    <span class="icon">✓</span>
+    Phase 7を完了
+  </button>
+</section>

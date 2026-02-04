@@ -1,0 +1,1933 @@
+<!-- ============================================
+     Level 7 Phase 4: クラウド応用
+     ============================================ -->
+
+<section id="cloud-a1">
+  <h1>マルチリージョン設計</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>マルチリージョンアーキテクチャの必要性</li>
+      <li>アクティブ-アクティブ vs アクティブ-スタンバイ</li>
+      <li>データ同期の課題と解決策</li>
+    </ul>
+  </div>
+
+  <h2>なぜマルチリージョンが必要か</h2>
+
+  <p>
+    単一リージョンでの運用には<strong>リスクと制約</strong>があります。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：支店展開
+    </div>
+    <p>
+      東京に1店舗だけの会社 → 地震で全滅のリスク。<br>
+      大阪・福岡にも支店があれば、1つが被災しても事業継続可能。
+    </p>
+    <p style="margin:0;">
+      クラウドも同じ。<strong>複数リージョン</strong>に展開することで、<br>
+      自然災害やリージョン障害から守れます。
+    </p>
+  </div>
+
+  <h2>マルチリージョンの利点</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">利点</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td><strong>高可用性</strong></td>
+        <td>1つのリージョンが障害でも他でサービス継続</td>
+      </tr>
+      <tr>
+        <td><strong>低レイテンシ</strong></td>
+        <td>ユーザーに近いリージョンから応答</td>
+      </tr>
+      <tr>
+        <td><strong>コンプライアンス</strong></td>
+        <td>データ居住地要件（GDPR等）への対応</td>
+      </tr>
+      <tr>
+        <td><strong>災害復旧</strong></td>
+        <td>地理的に離れた場所でのバックアップ</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- マルチリージョンアーキテクチャ SVG図 -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      マルチリージョンアーキテクチャ
+    </div>
+    <svg viewBox="0 0 600 350" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="マルチリージョンアーキテクチャ図">
+      <title>マルチリージョンアーキテクチャの構成</title>
+
+      <!-- 背景 -->
+      <rect x="0" y="0" width="600" height="350" fill="none"/>
+
+      <!-- グローバルロードバランサー -->
+      <rect x="220" y="10" width="160" height="45" rx="8" fill="#6366f1" stroke="#4f46e5" stroke-width="2"/>
+      <text x="300" y="32" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Global Load Balancer</text>
+      <text x="300" y="47" text-anchor="middle" fill="#e0e7ff" font-size="9">(DNS / CDN)</text>
+
+      <!-- 矢印（LBからリージョンへ） -->
+      <line x1="250" y1="55" x2="150" y2="100" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-purple)"/>
+      <line x1="350" y1="55" x2="450" y2="100" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-purple)"/>
+
+      <!-- リージョン1（東京） -->
+      <rect x="20" y="100" width="260" height="230" rx="10" fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="5,5"/>
+      <text x="150" y="120" text-anchor="middle" fill="#3b82f6" font-size="12" font-weight="bold">東京リージョン (Primary)</text>
+
+      <!-- ALB -->
+      <rect x="100" y="135" width="100" height="30" rx="5" fill="#3b82f6"/>
+      <text x="150" y="155" text-anchor="middle" fill="white" font-size="10">ALB</text>
+
+      <!-- アプリサーバー群 -->
+      <rect x="40" y="180" width="60" height="40" rx="4" fill="#10b981"/>
+      <text x="70" y="205" text-anchor="middle" fill="white" font-size="9">App 1</text>
+      <rect x="120" y="180" width="60" height="40" rx="4" fill="#10b981"/>
+      <text x="150" y="205" text-anchor="middle" fill="white" font-size="9">App 2</text>
+      <rect x="200" y="180" width="60" height="40" rx="4" fill="#10b981"/>
+      <text x="230" y="205" text-anchor="middle" fill="white" font-size="9">App 3</text>
+
+      <!-- データベース -->
+      <ellipse cx="100" cy="280" rx="50" ry="25" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="100" y="275" text-anchor="middle" fill="white" font-size="9" font-weight="bold">DB</text>
+      <text x="100" y="288" text-anchor="middle" fill="white" font-size="8">(Primary)</text>
+
+      <!-- キャッシュ -->
+      <rect x="180" y="260" width="80" height="35" rx="4" fill="#ef4444"/>
+      <text x="220" y="282" text-anchor="middle" fill="white" font-size="9">Redis</text>
+
+      <!-- リージョン2（大阪） -->
+      <rect x="320" y="100" width="260" height="230" rx="10" fill="none" stroke="#10b981" stroke-width="2" stroke-dasharray="5,5"/>
+      <text x="450" y="120" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">大阪リージョン (Secondary)</text>
+
+      <!-- ALB -->
+      <rect x="400" y="135" width="100" height="30" rx="5" fill="#10b981"/>
+      <text x="450" y="155" text-anchor="middle" fill="white" font-size="10">ALB</text>
+
+      <!-- アプリサーバー群 -->
+      <rect x="340" y="180" width="60" height="40" rx="4" fill="#10b981" opacity="0.7"/>
+      <text x="370" y="205" text-anchor="middle" fill="white" font-size="9">App 1</text>
+      <rect x="420" y="180" width="60" height="40" rx="4" fill="#10b981" opacity="0.7"/>
+      <text x="450" y="205" text-anchor="middle" fill="white" font-size="9">App 2</text>
+      <rect x="500" y="180" width="60" height="40" rx="4" fill="#10b981" opacity="0.7"/>
+      <text x="530" y="205" text-anchor="middle" fill="white" font-size="9">App 3</text>
+
+      <!-- データベース（レプリカ） -->
+      <ellipse cx="400" cy="280" rx="50" ry="25" fill="#f59e0b" stroke="#d97706" stroke-width="2" opacity="0.8"/>
+      <text x="400" y="275" text-anchor="middle" fill="white" font-size="9" font-weight="bold">DB</text>
+      <text x="400" y="288" text-anchor="middle" fill="white" font-size="8">(Replica)</text>
+
+      <!-- キャッシュ -->
+      <rect x="480" y="260" width="80" height="35" rx="4" fill="#ef4444" opacity="0.8"/>
+      <text x="520" y="282" text-anchor="middle" fill="white" font-size="9">Redis</text>
+
+      <!-- レプリケーション矢印 -->
+      <line x1="150" y1="280" x2="350" y2="280" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4,4"/>
+      <text x="250" y="275" text-anchor="middle" fill="#f59e0b" font-size="9">レプリケーション</text>
+
+      <!-- 矢印マーカー定義 -->
+      <defs>
+        <marker id="arrow-purple" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#6366f1"/>
+        </marker>
+      </defs>
+    </svg>
+    <p style="text-align:center;margin:0;font-size:0.9rem;color:var(--text-muted);">
+      グローバルLBがトラフィックを振り分け、DBはリージョン間でレプリケーション
+    </p>
+  </div>
+
+  <h2>アクティブ-アクティブ vs アクティブ-スタンバイ</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">アクティブ-アクティブ</div>
+      <ul>
+        <li>両リージョンが<strong>同時に稼働</strong></li>
+        <li>トラフィックを分散</li>
+        <li>低レイテンシ（最寄りで処理）</li>
+        <li>データ同期が複雑</li>
+        <li>コストは高い</li>
+      </ul>
+<pre><code>// Active-Active構成
+リージョンA: 50%のトラフィック
+リージョンB: 50%のトラフィック
+→ 両方が書き込み可能（コンフリクト管理必要）</code></pre>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">アクティブ-スタンバイ</div>
+      <ul>
+        <li>Primary のみが<strong>通常稼働</strong></li>
+        <li>Secondary は待機状態</li>
+        <li>障害時にフェイルオーバー</li>
+        <li>データ同期はシンプル</li>
+        <li>コストは抑えめ</li>
+      </ul>
+<pre><code>// Active-Standby構成
+リージョンA: 100%のトラフィック（Primary）
+リージョンB: 0%（Standby、障害時に昇格）
+→ 単方向レプリケーションで済む</code></pre>
+    </div>
+  </div>
+
+  <h2>データ同期の課題</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      CAP定理の制約
+    </div>
+    <p>
+      分散システムでは<strong>Consistency（一貫性）</strong>、<strong>Availability（可用性）</strong>、<strong>Partition Tolerance（分断耐性）</strong>の3つを同時に満たせない。
+    </p>
+    <ul>
+      <li><strong>CA</strong>：単一リージョン（分断に弱い）</li>
+      <li><strong>CP</strong>：一貫性重視（可用性を犠牲）</li>
+      <li><strong>AP</strong>：可用性重視（結果整合性を許容）</li>
+    </ul>
+    <p style="margin:0;">
+      マルチリージョンでは通常<strong>AP</strong>を選択し、<br>
+      <strong>結果整合性（Eventual Consistency）</strong>を受け入れます。
+    </p>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      設計レビューの観点
+    </div>
+    <p>マルチリージョン設計で確認すべき点：</p>
+    <ul>
+      <li><strong>フェイルオーバー時間</strong>：RTO要件を満たすか</li>
+      <li><strong>データ損失</strong>：RPO要件を満たすか</li>
+      <li><strong>DNS TTL</strong>：フェイルオーバー時の切り替え時間</li>
+      <li><strong>セッション管理</strong>：リージョン間でセッション共有するか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cloud-a1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>マルチリージョンでアクティブ-アクティブ構成を選ぶ主な理由は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a1" style="display:none;">
+      A. コストを最小化したい
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud-a1" style="display:none;">
+      B. 低レイテンシと高可用性を両立したい
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a1" style="display:none;">
+      C. データ同期をシンプルにしたい
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud-a1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud-a1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud-a2">
+  <h1>災害復旧（DR）の設計</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>災害復旧（DR）の基本概念</li>
+      <li>DRの4つの戦略（Pilot Light, Warm Standby等）</li>
+      <li>DR計画の策定と訓練</li>
+    </ul>
+  </div>
+
+  <h2>災害復旧（DR）とは</h2>
+
+  <p>
+    <strong>DR（Disaster Recovery）</strong> = 災害発生時にシステムを復旧する計画と仕組み
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：火災保険と避難訓練
+    </div>
+    <p>
+      <strong>バックアップ</strong> = 火災保険（被害を補償）<br>
+      <strong>DR計画</strong> = 避難訓練（いざという時の行動計画）
+    </p>
+    <p style="margin:0;">
+      保険だけでは家は建て直せない。<br>
+      <strong>どこに避難し、どう復旧するか</strong>の計画が必要です。
+    </p>
+  </div>
+
+  <h2>DR戦略の4パターン</h2>
+
+  <!-- DR構成 SVG図 -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      DR戦略とRTO/RPO/コストの関係
+    </div>
+    <svg viewBox="0 0 600 320" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="DR戦略のRTO/RPO/コスト比較図">
+      <title>DR戦略（Backup & Restore, Pilot Light, Warm Standby, Multi-Site Active-Active）の比較</title>
+
+      <!-- 軸 -->
+      <line x1="80" y1="280" x2="570" y2="280" stroke="currentColor" stroke-width="2"/>
+      <line x1="80" y1="280" x2="80" y2="40" stroke="currentColor" stroke-width="2"/>
+
+      <!-- X軸ラベル -->
+      <text x="325" y="310" text-anchor="middle" fill="currentColor" font-size="12" font-weight="bold">コスト / 複雑性 →</text>
+
+      <!-- Y軸ラベル -->
+      <text x="25" y="160" text-anchor="middle" fill="currentColor" font-size="12" font-weight="bold" transform="rotate(-90, 25, 160)">復旧速度 (低RTO) →</text>
+
+      <!-- Backup & Restore -->
+      <circle cx="140" cy="240" r="35" fill="#ef4444" opacity="0.8"/>
+      <text x="140" y="235" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Backup</text>
+      <text x="140" y="248" text-anchor="middle" fill="white" font-size="9" font-weight="bold">& Restore</text>
+      <text x="140" y="290" text-anchor="middle" fill="#ef4444" font-size="10">RTO: 24時間+</text>
+
+      <!-- Pilot Light -->
+      <circle cx="260" cy="180" r="40" fill="#f59e0b" opacity="0.8"/>
+      <text x="260" y="175" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Pilot</text>
+      <text x="260" y="190" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Light</text>
+      <text x="260" y="235" text-anchor="middle" fill="#f59e0b" font-size="10">RTO: 数時間</text>
+
+      <!-- Warm Standby -->
+      <circle cx="390" cy="120" r="45" fill="#10b981" opacity="0.8"/>
+      <text x="390" y="115" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Warm</text>
+      <text x="390" y="130" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Standby</text>
+      <text x="390" y="180" text-anchor="middle" fill="#10b981" font-size="10">RTO: 数十分</text>
+
+      <!-- Multi-Site Active-Active -->
+      <circle cx="520" cy="70" r="45" fill="#3b82f6" opacity="0.8"/>
+      <text x="520" y="60" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Multi-Site</text>
+      <text x="520" y="73" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Active-</text>
+      <text x="520" y="86" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Active</text>
+      <text x="520" y="130" text-anchor="middle" fill="#3b82f6" font-size="10">RTO: ほぼゼロ</text>
+
+      <!-- 矢印（トレンド） -->
+      <path d="M140,220 Q300,150 520,70" stroke="#6366f1" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
+    </svg>
+    <p style="text-align:center;margin:0;font-size:0.9rem;color:var(--text-muted);">
+      コストをかけるほど復旧時間（RTO）は短縮できる
+    </p>
+  </div>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:22%;">戦略</th>
+        <th style="width:20%;">RTO</th>
+        <th style="width:18%;">コスト</th>
+        <th>特徴</th>
+      </tr>
+      <tr>
+        <td><strong>Backup & Restore</strong></td>
+        <td>24時間+</td>
+        <td>最低</td>
+        <td>バックアップからの復元。最もシンプル</td>
+      </tr>
+      <tr>
+        <td><strong>Pilot Light</strong></td>
+        <td>数時間</td>
+        <td>低</td>
+        <td>最小限のコアシステムを常時稼働</td>
+      </tr>
+      <tr>
+        <td><strong>Warm Standby</strong></td>
+        <td>数十分</td>
+        <td>中</td>
+        <td>縮小版の本番環境を常時稼働</td>
+      </tr>
+      <tr>
+        <td><strong>Multi-Site Active-Active</strong></td>
+        <td>ほぼゼロ</td>
+        <td>最高</td>
+        <td>複数サイトで同時稼働</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>各戦略の詳細</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      Pilot Light（パイロットライト）
+    </div>
+    <p>
+      ガスコンロの種火のように、<strong>最小限のコアコンポーネント</strong>だけを稼働させておく。
+    </p>
+<pre><code>// Pilot Light構成
+DRサイト:
+- DB: レプリカを常時同期 ✓
+- アプリサーバー: AMI/イメージのみ保持（停止状態）
+- LB: 設定済み（無効状態）
+
+災害時:
+1. アプリサーバーを起動（数分）
+2. スケールアウト（数十分）
+3. DNS切り替え
+→ RTO: 1〜数時間</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🌡️</span>
+      Warm Standby
+    </div>
+    <p>
+      本番の<strong>縮小版</strong>を常時稼働。災害時はスケールアップするだけ。
+    </p>
+<pre><code>// Warm Standby構成
+本番: App x 10台, DB Primary
+DRサイト: App x 2台（稼働中）, DB Replica
+
+災害時:
+1. DRサイトのAppを10台にスケールアウト
+2. DBをPrimaryに昇格
+3. DNS切り替え
+→ RTO: 数十分</code></pre>
+  </div>
+
+  <h2>DR計画の重要ポイント</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      DR計画レビューの観点
+    </div>
+    <ul>
+      <li><strong>明文化された手順書</strong>：誰でも実行できるか</li>
+      <li><strong>定期的な訓練</strong>：年1回以上のDR訓練を実施</li>
+      <li><strong>連絡体制</strong>：オンコール、エスカレーションパス</li>
+      <li><strong>復旧優先度</strong>：どのシステムから復旧するか</li>
+      <li><strong>テスト結果</strong>：実際に復旧できることを確認済みか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cloud-a2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>「Pilot Light」戦略の特徴として正しいのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a2" style="display:none;">
+      A. 全てのコンポーネントが常時フル稼働
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud-a2" style="display:none;">
+      B. DBなどコアコンポーネントのみ常時同期、他は停止状態
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a2" style="display:none;">
+      C. バックアップのみでDRサイトは存在しない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud-a2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud-a2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud-a3">
+  <h1>RTO/RPOの定義と計算</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>RTO（Recovery Time Objective）の定義</li>
+      <li>RPO（Recovery Point Objective）の定義</li>
+      <li>ビジネス要件からの算出方法</li>
+    </ul>
+  </div>
+
+  <h2>RTO と RPO</h2>
+
+  <p>
+    災害復旧計画で最も重要な<strong>2つの指標</strong>です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：病院の緊急対応
+    </div>
+    <p>
+      <strong>RTO</strong> = 救急車が到着するまでの時間（許容できる停止時間）<br>
+      <strong>RPO</strong> = 最後の健康診断からの経過時間（許容できるデータ損失）
+    </p>
+    <p style="margin:0;">
+      RTOが短いほど、すぐに治療を開始できる。<br>
+      RPOが短いほど、最新の健康状態を把握できる。
+    </p>
+  </div>
+
+  <!-- RTO/RPO説明 SVG図 -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      RTO/RPOのタイムライン
+    </div>
+    <svg viewBox="0 0 600 200" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="RTO/RPOのタイムライン図">
+      <title>RTO（復旧時間目標）とRPO（復旧ポイント目標）の関係</title>
+
+      <!-- タイムライン -->
+      <line x1="50" y1="100" x2="550" y2="100" stroke="currentColor" stroke-width="3"/>
+
+      <!-- 障害発生点 -->
+      <circle cx="300" cy="100" r="8" fill="#ef4444"/>
+      <line x1="300" y1="100" x2="300" y2="40" stroke="#ef4444" stroke-width="2"/>
+      <text x="300" y="30" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">障害発生</text>
+
+      <!-- 最後のバックアップ -->
+      <circle cx="150" cy="100" r="6" fill="#10b981"/>
+      <line x1="150" y1="100" x2="150" y2="140" stroke="#10b981" stroke-width="2"/>
+      <text x="150" y="160" text-anchor="middle" fill="#10b981" font-size="10">最後の</text>
+      <text x="150" y="175" text-anchor="middle" fill="#10b981" font-size="10">バックアップ</text>
+
+      <!-- 復旧完了 -->
+      <circle cx="450" cy="100" r="6" fill="#3b82f6"/>
+      <line x1="450" y1="100" x2="450" y2="140" stroke="#3b82f6" stroke-width="2"/>
+      <text x="450" y="160" text-anchor="middle" fill="#3b82f6" font-size="10">復旧完了</text>
+
+      <!-- RPO範囲 -->
+      <line x1="150" y1="70" x2="300" y2="70" stroke="#f59e0b" stroke-width="3"/>
+      <polygon points="150,70 160,65 160,75" fill="#f59e0b"/>
+      <polygon points="300,70 290,65 290,75" fill="#f59e0b"/>
+      <text x="225" y="60" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">RPO</text>
+      <text x="225" y="85" text-anchor="middle" fill="#f59e0b" font-size="9">失われるデータ量</text>
+
+      <!-- RTO範囲 -->
+      <line x1="300" y1="130" x2="450" y2="130" stroke="#6366f1" stroke-width="3"/>
+      <polygon points="300,130 310,125 310,135" fill="#6366f1"/>
+      <polygon points="450,130 440,125 440,135" fill="#6366f1"/>
+      <text x="375" y="120" text-anchor="middle" fill="#6366f1" font-size="11" font-weight="bold">RTO</text>
+      <text x="375" y="145" text-anchor="middle" fill="#6366f1" font-size="9">停止時間</text>
+
+      <!-- 時間軸 -->
+      <text x="50" y="190" text-anchor="start" fill="currentColor" font-size="10">過去</text>
+      <text x="550" y="190" text-anchor="end" fill="currentColor" font-size="10">未来</text>
+    </svg>
+    <p style="text-align:center;margin:0;font-size:0.9rem;color:var(--text-muted);">
+      RPO = データ損失の許容範囲、RTO = ダウンタイムの許容範囲
+    </p>
+  </div>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:15%;">指標</th>
+        <th style="width:35%;">定義</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>RTO</strong></td>
+        <td>障害発生から復旧完了までの<strong>許容時間</strong></td>
+        <td>RTO=4時間 → 4時間以内に復旧必須</td>
+      </tr>
+      <tr>
+        <td><strong>RPO</strong></td>
+        <td>障害発生時に<strong>失っても許容できる</strong>データ量（時間）</td>
+        <td>RPO=1時間 → 最大1時間分のデータ損失OK</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>ビジネス要件からの算出</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💰</span>
+      損失計算の例
+    </div>
+<pre><code>// ECサイトの例
+1時間あたりの売上: 1,000万円
+1時間あたりの運用コスト: 50万円
+
+【RTO算出】
+許容できる損失: 5,000万円
+→ RTO = 5,000万 / 1,050万 ≈ 4.8時間
+→ RTO目標: 4時間（余裕を持たせる）
+
+【RPO算出】
+- 注文データ: 損失不可 → RPO = 0（同期レプリケーション）
+- アクセスログ: 1時間分まで許容 → RPO = 1時間
+- キャッシュデータ: 再構築可能 → RPO = 考慮不要</code></pre>
+  </div>
+
+  <h2>RTO/RPOと実装コスト</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      トレードオフ
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th>RTO/RPO</th>
+        <th>必要な実装</th>
+        <th>コスト</th>
+      </tr>
+      <tr>
+        <td>RTO: 24h, RPO: 24h</td>
+        <td>日次バックアップ</td>
+        <td>低</td>
+      </tr>
+      <tr>
+        <td>RTO: 4h, RPO: 1h</td>
+        <td>Pilot Light + 1時間ごとのバックアップ</td>
+        <td>中</td>
+      </tr>
+      <tr>
+        <td>RTO: 1h, RPO: 15min</td>
+        <td>Warm Standby + 継続的レプリケーション</td>
+        <td>高</td>
+      </tr>
+      <tr>
+        <td>RTO: 0, RPO: 0</td>
+        <td>Active-Active + 同期レプリケーション</td>
+        <td>最高</td>
+      </tr>
+    </table>
+    <p style="margin:0;">
+      <strong>RPO=0は非常に高コスト</strong>。本当に必要か要件を精査すること。
+    </p>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      設計レビューの観点
+    </div>
+    <ul>
+      <li><strong>RTO/RPOの根拠</strong>：ビジネス要件から算出されているか</li>
+      <li><strong>現実的な目標</strong>：予算と技術で実現可能か</li>
+      <li><strong>テスト済み</strong>：実際に目標を達成できることを確認済みか</li>
+      <li><strong>データ種別ごとの設定</strong>：一律ではなく重要度に応じて設定</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cloud-a3-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>RPO（Recovery Point Objective）が示すのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a3-1" style="display:none;">
+      A. 障害発生から復旧完了までの時間
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud-a3-1" style="display:none;">
+      B. 障害発生時に失っても許容できるデータ量（時間）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a3-1" style="display:none;">
+      C. バックアップの保存期間
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud-a3-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-cloud-a3-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>「RPO = 0」を実現するために必要なのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a3-2" style="display:none;">
+      A. 日次バックアップ
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a3-2" style="display:none;">
+      B. 非同期レプリケーション
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud-a3-2" style="display:none;">
+      C. 同期レプリケーション
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud-a3-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud-a3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud-a4">
+  <h1>バックアップ戦略</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>3-2-1バックアップルール</li>
+      <li>バックアップの種類（フル/差分/増分）</li>
+      <li>バックアップのテストと検証</li>
+    </ul>
+  </div>
+
+  <h2>3-2-1 バックアップルール</h2>
+
+  <p>
+    バックアップの<strong>黄金律</strong>と呼ばれる基本原則です。
+  </p>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      3-2-1 ルール
+    </div>
+    <ul>
+      <li><strong>3</strong>つのコピーを持つ（本番 + バックアップ2つ）</li>
+      <li><strong>2</strong>つの異なるメディアに保存（SSD + S3 など）</li>
+      <li><strong>1</strong>つは別の場所に保管（別リージョン、オフサイト）</li>
+    </ul>
+<pre><code>// 3-2-1の実装例
+本番DB: RDS (ap-northeast-1)
+バックアップ1: RDS自動スナップショット（同リージョン、別AZ）
+バックアップ2: S3クロスリージョンレプリケーション（ap-northeast-3）
+
+→ ランサムウェア、リージョン障害、人為的ミスに対応</code></pre>
+  </div>
+
+  <h2>バックアップの種類</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">種類</th>
+        <th style="width:35%;">内容</th>
+        <th>特徴</th>
+      </tr>
+      <tr>
+        <td><strong>フルバックアップ</strong></td>
+        <td>全データをコピー</td>
+        <td>復元が簡単、時間とストレージ大</td>
+      </tr>
+      <tr>
+        <td><strong>差分バックアップ</strong></td>
+        <td>最後のフルからの変更分</td>
+        <td>復元：フル + 最新差分</td>
+      </tr>
+      <tr>
+        <td><strong>増分バックアップ</strong></td>
+        <td>前回バックアップからの変更分</td>
+        <td>最小ストレージ、復元は複雑</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+<pre><code>// バックアップスケジュール例
+日曜 00:00: フルバックアップ
+月〜土 00:00: 増分バックアップ
+毎時 00分: WALアーカイブ（PostgreSQL）
+
+復元時:
+1. 日曜のフルバックアップを復元
+2. 月〜土の増分を順番に適用
+3. WALを適用してPITR（Point-in-Time Recovery）</code></pre>
+  </div>
+
+  <h2>イミュータブルバックアップ</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      ランサムウェア対策
+    </div>
+    <p>
+      <strong>イミュータブル（不変）バックアップ</strong>：一度作成したら変更・削除不可
+    </p>
+<pre><code>// S3 Object Lock（WORM: Write Once Read Many）
+aws s3api put-object-lock-configuration \
+  --bucket my-backup-bucket \
+  --object-lock-configuration '{
+    "ObjectLockEnabled": "Enabled",
+    "Rule": {
+      "DefaultRetention": {
+        "Mode": "GOVERNANCE",
+        "Days": 30
+      }
+    }
+  }'
+
+// 30日間は削除不可（管理者でも）
+// ランサムウェアに感染してもバックアップは守られる</code></pre>
+  </div>
+
+  <h2>バックアップのテスト</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      レビューの観点
+    </div>
+    <p><strong>バックアップは復元できて初めて意味がある</strong></p>
+    <ul>
+      <li><strong>定期的な復元テスト</strong>：月1回以上実施しているか</li>
+      <li><strong>復元手順書</strong>：明文化されているか</li>
+      <li><strong>復元時間の計測</strong>：RTOを満たせるか</li>
+      <li><strong>データ整合性の検証</strong>：復元後のデータは正しいか</li>
+    </ul>
+<pre><code>// 復元テストの自動化例
+# 毎月1日に自動実行
+0 3 1 * * /scripts/backup-restore-test.sh
+
+# スクリプト内容:
+# 1. 最新バックアップから別環境に復元
+# 2. 基本的なクエリを実行してデータ検証
+# 3. 結果をSlackに通知
+# 4. テスト環境を削除</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-cloud-a4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>3-2-1バックアップルールの「1」が意味するのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a4" style="display:none;">
+      A. 1時間ごとにバックアップする
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a4" style="display:none;">
+      B. 1つのメディアに保存する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud-a4" style="display:none;">
+      C. 1つは別の場所（オフサイト）に保管する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud-a4')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud-a4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud-a5">
+  <h1>コスト最適化の手法</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>クラウドコストの構成要素</li>
+      <li>リザーブドインスタンス vs スポットインスタンス</li>
+      <li>コスト最適化のベストプラクティス</li>
+    </ul>
+  </div>
+
+  <h2>クラウドコストの構成</h2>
+
+  <p>
+    クラウドのコストは<strong>使った分だけ</strong>ですが、最適化しないと高額になります。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">コスト項目</th>
+        <th style="width:35%;">内容</th>
+        <th>最適化のポイント</th>
+      </tr>
+      <tr>
+        <td><strong>コンピュート</strong></td>
+        <td>EC2, Lambda, ECS</td>
+        <td>RI, スポット, 適切なサイジング</td>
+      </tr>
+      <tr>
+        <td><strong>ストレージ</strong></td>
+        <td>S3, EBS, RDS</td>
+        <td>ライフサイクル, 不要データ削除</td>
+      </tr>
+      <tr>
+        <td><strong>データ転送</strong></td>
+        <td>リージョン間, インターネット</td>
+        <td>CDN活用, 同一AZ配置</td>
+      </tr>
+      <tr>
+        <td><strong>その他</strong></td>
+        <td>監視, DNS, サポート</td>
+        <td>必要なものだけ利用</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>インスタンス購入オプション</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">オンデマンド</div>
+      <ul>
+        <li>いつでも起動・停止可能</li>
+        <li>秒単位の課金</li>
+        <li>最も高い単価</li>
+        <li>用途：開発環境、不定期な負荷</li>
+      </ul>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">リザーブド（RI）</div>
+      <ul>
+        <li>1年/3年の長期契約</li>
+        <li><strong>最大72%割引</strong></li>
+        <li>キャパシティ予約あり</li>
+        <li>用途：本番環境、ベースライン負荷</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-orange">
+      <div class="compare-title">スポットインスタンス</div>
+      <ul>
+        <li>余剰キャパシティを利用</li>
+        <li><strong>最大90%割引</strong></li>
+        <li>2分前通知で中断の可能性</li>
+        <li>用途：バッチ処理、CI/CD</li>
+      </ul>
+    </div>
+    <div class="compare-purple">
+      <div class="compare-title">Savings Plans</div>
+      <ul>
+        <li>使用量をコミット（$/時間）</li>
+        <li>最大66%割引</li>
+        <li>EC2, Lambda, Fargateに適用</li>
+        <li>用途：マルチサービス環境</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>コスト最適化のベストプラクティス</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💰</span>
+      即効性のある施策
+    </div>
+    <ol>
+      <li><strong>未使用リソースの削除</strong>
+<pre><code># 使われていないEBSボリュームを検索
+aws ec2 describe-volumes \
+  --filters Name=status,Values=available \
+  --query 'Volumes[*].{ID:VolumeId,Size:Size}'</code></pre>
+      </li>
+      <li><strong>適切なインスタンスサイズ</strong>
+<pre><code># CPU使用率が低いインスタンスを特定
+# → AWS Compute Optimizer / Cost Explorer を活用</code></pre>
+      </li>
+      <li><strong>S3ライフサイクルポリシー</strong>
+<pre><code>{
+  "Rules": [{
+    "ID": "MoveToGlacier",
+    "Status": "Enabled",
+    "Transitions": [{
+      "Days": 90,
+      "StorageClass": "GLACIER"
+    }],
+    "Expiration": { "Days": 365 }
+  }]
+}</code></pre>
+      </li>
+    </ol>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コストレビューの観点
+    </div>
+    <ul>
+      <li><strong>タグ付け</strong>：全リソースにコスト配分タグがあるか</li>
+      <li><strong>予算アラート</strong>：閾値超過時の通知設定</li>
+      <li><strong>定期レビュー</strong>：月次でコスト分析しているか</li>
+      <li><strong>開発環境の停止</strong>：夜間・休日は停止しているか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cloud-a5">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>本番環境のベースライン負荷に最適なインスタンス購入オプションは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a5" style="display:none;">
+      A. スポットインスタンス
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud-a5" style="display:none;">
+      B. リザーブドインスタンス
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a5" style="display:none;">
+      C. オンデマンドインスタンス
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud-a5')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud-a5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud-a6">
+  <h1>Well-Architected Framework概要</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Well-Architected Frameworkとは</li>
+      <li>5つの柱の概要</li>
+      <li>Well-Architected Reviewの活用</li>
+    </ul>
+  </div>
+
+  <h2>Well-Architected Frameworkとは</h2>
+
+  <p>
+    AWSが提供する<strong>クラウド設計のベストプラクティス集</strong>です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：建築基準法
+    </div>
+    <p>
+      建物を建てるとき、<strong>耐震基準</strong>や<strong>消防法</strong>を守る。<br>
+      クラウドシステムにも「守るべき基準」がある。
+    </p>
+    <p style="margin:0;">
+      Well-Architected Framework = <strong>クラウドの建築基準法</strong>
+    </p>
+  </div>
+
+  <!-- Well-Architected 5柱 SVG図 -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      Well-Architected Framework の5つの柱
+    </div>
+    <svg viewBox="0 0 600 280" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="Well-Architected Frameworkの5つの柱">
+      <title>Well-Architected Frameworkの5つの柱（セキュリティ、信頼性、パフォーマンス効率、コスト最適化、運用優秀性）</title>
+
+      <!-- 基盤 -->
+      <rect x="50" y="230" width="500" height="30" rx="5" fill="#6366f1"/>
+      <text x="300" y="250" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Well-Architected Framework</text>
+
+      <!-- 柱1: セキュリティ -->
+      <rect x="60" y="70" width="80" height="160" rx="5" fill="#ef4444"/>
+      <text x="100" y="140" text-anchor="middle" fill="white" font-size="10" font-weight="bold" transform="rotate(-90, 100, 140)">Security</text>
+      <text x="100" y="55" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="bold">セキュリティ</text>
+
+      <!-- 柱2: 信頼性 -->
+      <rect x="160" y="70" width="80" height="160" rx="5" fill="#f59e0b"/>
+      <text x="200" y="140" text-anchor="middle" fill="white" font-size="10" font-weight="bold" transform="rotate(-90, 200, 140)">Reliability</text>
+      <text x="200" y="55" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold">信頼性</text>
+
+      <!-- 柱3: パフォーマンス効率 -->
+      <rect x="260" y="70" width="80" height="160" rx="5" fill="#10b981"/>
+      <text x="300" y="140" text-anchor="middle" fill="white" font-size="9" font-weight="bold" transform="rotate(-90, 300, 140)">Performance</text>
+      <text x="300" y="45" text-anchor="middle" fill="#10b981" font-size="9" font-weight="bold">パフォーマンス</text>
+      <text x="300" y="57" text-anchor="middle" fill="#10b981" font-size="9" font-weight="bold">効率</text>
+
+      <!-- 柱4: コスト最適化 -->
+      <rect x="360" y="70" width="80" height="160" rx="5" fill="#3b82f6"/>
+      <text x="400" y="140" text-anchor="middle" fill="white" font-size="9" font-weight="bold" transform="rotate(-90, 400, 140)">Cost Optimization</text>
+      <text x="400" y="45" text-anchor="middle" fill="#3b82f6" font-size="9" font-weight="bold">コスト</text>
+      <text x="400" y="57" text-anchor="middle" fill="#3b82f6" font-size="9" font-weight="bold">最適化</text>
+
+      <!-- 柱5: 運用優秀性 -->
+      <rect x="460" y="70" width="80" height="160" rx="5" fill="#8b5cf6"/>
+      <text x="500" y="140" text-anchor="middle" fill="white" font-size="9" font-weight="bold" transform="rotate(-90, 500, 140)">Operational Excellence</text>
+      <text x="500" y="45" text-anchor="middle" fill="#8b5cf6" font-size="9" font-weight="bold">運用</text>
+      <text x="500" y="57" text-anchor="middle" fill="#8b5cf6" font-size="9" font-weight="bold">優秀性</text>
+
+      <!-- 屋根（ビジネス価値） -->
+      <polygon points="300,5 50,60 550,60" fill="none" stroke="#6366f1" stroke-width="2"/>
+      <text x="300" y="25" text-anchor="middle" fill="currentColor" font-size="11" font-weight="bold">ビジネス価値の実現</text>
+    </svg>
+    <p style="text-align:center;margin:0;font-size:0.9rem;color:var(--text-muted);">
+      5つの柱がビジネス価値を支える
+    </p>
+  </div>
+
+  <h2>5つの柱の概要</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">柱</th>
+        <th>重点領域</th>
+      </tr>
+      <tr>
+        <td><strong style="color:#ef4444;">セキュリティ</strong></td>
+        <td>IAM、暗号化、ネットワーク保護、インシデント対応</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#f59e0b;">信頼性</strong></td>
+        <td>障害回復、変更管理、需要管理、キャパシティ計画</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#10b981;">パフォーマンス効率</strong></td>
+        <td>適切なリソース選択、モニタリング、トレードオフ</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#3b82f6;">コスト最適化</strong></td>
+        <td>支出認識、費用対効果、需要と供給のマッチング</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#8b5cf6;">運用優秀性</strong></td>
+        <td>組織、準備、運用、進化のサイクル</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>Well-Architected Review</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      レビューの実施方法
+    </div>
+    <ol>
+      <li><strong>AWS Well-Architected Tool</strong>を使用</li>
+      <li>各柱に対する質問に回答（〜100問）</li>
+      <li>高リスク/中リスク項目を特定</li>
+      <li>改善計画を策定</li>
+      <li>定期的にレビューを繰り返す（四半期ごと推奨）</li>
+    </ol>
+<pre><code># AWS CLIでワークロードを作成
+aws wellarchitected create-workload \
+  --workload-name "MyApplication" \
+  --environment PRODUCTION \
+  --lenses wellarchitected \
+  --review-owner "architect@example.com"</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      設計レビューの観点
+    </div>
+    <ul>
+      <li><strong>定期的なレビュー</strong>：四半期ごとに実施しているか</li>
+      <li><strong>改善の追跡</strong>：高リスク項目の是正計画があるか</li>
+      <li><strong>ステークホルダーの参加</strong>：開発・運用・セキュリティが参加</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cloud-a6">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Well-Architected Frameworkの5つの柱に含まれないのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a6" style="display:none;">
+      A. セキュリティ
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud-a6" style="display:none;">
+      B. スケーラビリティ
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a6" style="display:none;">
+      C. コスト最適化
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud-a6')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud-a6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud-a7">
+  <h1>セキュリティの柱</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>セキュリティの設計原則</li>
+      <li>アイデンティティとアクセス管理</li>
+      <li>検出コントロールと保護</li>
+    </ul>
+  </div>
+
+  <h2>セキュリティの設計原則</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:30%;">原則</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td><strong>最小権限の原則</strong></td>
+        <td>必要最小限のアクセス権のみを付与</td>
+      </tr>
+      <tr>
+        <td><strong>多層防御</strong></td>
+        <td>複数のセキュリティレイヤーで保護</td>
+      </tr>
+      <tr>
+        <td><strong>全レイヤーでの保護</strong></td>
+        <td>エッジ、VPC、サブネット、インスタンス全て</td>
+      </tr>
+      <tr>
+        <td><strong>トレーサビリティ</strong></td>
+        <td>全てのアクションをログに記録</td>
+      </tr>
+      <tr>
+        <td><strong>自動化</strong></td>
+        <td>セキュリティチェックを自動化</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>アイデンティティとアクセス管理</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">アンチパターン</div>
+<pre><code>// ❌ ルートユーザーの日常利用
+// ❌ 共有アカウント
+// ❌ 長期的なアクセスキー
+// ❌ ワイルドカード権限
+
+{
+  "Effect": "Allow",
+  "Action": "*",
+  "Resource": "*"
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">ベストプラクティス</div>
+<pre><code>// ⭕ IAMユーザー/ロールを使用
+// ⭕ MFAを有効化
+// ⭕ 一時的な認証情報（STS）
+// ⭕ 最小権限ポリシー
+
+{
+  "Effect": "Allow",
+  "Action": "s3:GetObject",
+  "Resource": "arn:aws:s3:::bucket/*",
+  "Condition": {
+    "StringEquals": {
+      "aws:PrincipalTag/Department": "Engineering"
+    }
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>検出コントロール</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      必須の監視設定
+    </div>
+    <ul>
+      <li><strong>CloudTrail</strong>：全APIコールをログ記録</li>
+      <li><strong>GuardDuty</strong>：脅威検出（不正なAPIコール、マルウェア通信等）</li>
+      <li><strong>Config</strong>：リソース設定の変更追跡</li>
+      <li><strong>Security Hub</strong>：セキュリティ状態の一元管理</li>
+    </ul>
+<pre><code># GuardDutyの有効化
+aws guardduty create-detector --enable
+
+# 検出結果の通知設定
+aws events put-rule \
+  --name "GuardDutyFindings" \
+  --event-pattern '{
+    "source": ["aws.guardduty"],
+    "detail-type": ["GuardDuty Finding"]
+  }'</code></pre>
+  </div>
+
+  <h2>データ保護</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      暗号化の必須事項
+    </div>
+    <ul>
+      <li><strong>転送中の暗号化</strong>：TLS 1.2以上を強制</li>
+      <li><strong>保管時の暗号化</strong>：KMSまたはSSE-S3</li>
+      <li><strong>キー管理</strong>：KMSでローテーション設定</li>
+    </ul>
+<pre><code>// S3バケットポリシー：HTTPSを強制
+{
+  "Effect": "Deny",
+  "Principal": "*",
+  "Action": "s3:*",
+  "Resource": "arn:aws:s3:::bucket/*",
+  "Condition": {
+    "Bool": { "aws:SecureTransport": "false" }
+  }
+}</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      セキュリティレビューの観点
+    </div>
+    <ul>
+      <li><strong>ルートアカウントのMFA</strong>：有効になっているか</li>
+      <li><strong>CloudTrail</strong>：全リージョンで有効か</li>
+      <li><strong>S3パブリックアクセス</strong>：ブロック設定されているか</li>
+      <li><strong>セキュリティグループ</strong>：0.0.0.0/0からのSSHがないか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cloud-a7-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>「最小権限の原則」を正しく実装しているのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a7-1" style="display:none;">
+      A. 管理者全員にAdministratorAccessを付与
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud-a7-1" style="display:none;">
+      B. 各ロールに必要なリソースとアクションのみを許可
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a7-1" style="display:none;">
+      C. 開発環境では全員にフルアクセスを付与
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud-a7-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-cloud-a7-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>以下のセキュリティグループルールの問題点は？</p>
+<pre><code>Type: SSH
+Protocol: TCP
+Port: 22
+Source: 0.0.0.0/0</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud-a7-2" style="display:none;">
+      A. 全世界からSSHアクセスが可能で危険
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a7-2" style="display:none;">
+      B. ポート22は閉じるべき
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a7-2" style="display:none;">
+      C. 問題なし
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud-a7-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud-a7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud-a8">
+  <h1>信頼性の柱</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>信頼性の設計原則</li>
+      <li>障害からの回復</li>
+      <li>需要の変化への対応</li>
+    </ul>
+  </div>
+
+  <h2>信頼性の設計原則</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:30%;">原則</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td><strong>障害からの自動回復</strong></td>
+        <td>監視とオートスケーリングで自動復旧</td>
+      </tr>
+      <tr>
+        <td><strong>復旧手順のテスト</strong></td>
+        <td>カオスエンジニアリング、定期的なDR訓練</td>
+      </tr>
+      <tr>
+        <td><strong>水平スケーリング</strong></td>
+        <td>単一障害点を避け、分散する</td>
+      </tr>
+      <tr>
+        <td><strong>キャパシティの推測をやめる</strong></td>
+        <td>オートスケーリングで需要に追従</td>
+      </tr>
+      <tr>
+        <td><strong>変更管理の自動化</strong></td>
+        <td>CI/CD、Infrastructure as Code</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>障害からの回復</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔄</span>
+      Auto Scaling による自動回復
+    </div>
+<pre><code># Auto Scaling Group設定
+aws autoscaling create-auto-scaling-group \
+  --auto-scaling-group-name my-asg \
+  --min-size 2 \
+  --max-size 10 \
+  --desired-capacity 4 \
+  --health-check-type ELB \
+  --health-check-grace-period 300
+
+# ヘルスチェックに失敗したインスタンスは
+# 自動的に終了され、新しいインスタンスが起動</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🧪</span>
+      カオスエンジニアリング
+    </div>
+    <p>
+      <strong>意図的に障害を発生させて</strong>システムの回復力をテストする。
+    </p>
+<pre><code># AWS Fault Injection Simulator
+aws fis create-experiment-template \
+  --description "Terminate 30% of instances" \
+  --actions '{
+    "terminateInstances": {
+      "actionId": "aws:ec2:terminate-instances",
+      "parameters": {
+        "percentage": "30"
+      },
+      "targets": { "Instances": "myInstances" }
+    }
+  }'
+
+# 実験実行 → 自動回復を確認
+# → 問題があれば設計を改善</code></pre>
+  </div>
+
+  <h2>需要の変化への対応</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">固定キャパシティ</div>
+<pre><code>// ❌ ピーク時に合わせた固定サイズ
+// 通常時: リソースの50%が無駄
+// 予想外のスパイク: サービスダウン
+
+インスタンス数: 10台（固定）
+平均使用率: 20%
+ピーク時: 過負荷でダウン</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">オートスケーリング</div>
+<pre><code>// ⭕ 需要に応じて自動調整
+// 通常時: 最小構成でコスト削減
+// スパイク時: 自動でスケールアウト
+
+最小: 2台
+最大: 20台
+ターゲット使用率: 60%
+→ 需要に追従、コスト最適化</code></pre>
+    </div>
+  </div>
+
+  <h2>回復力の高いアーキテクチャ</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      必須の設計パターン
+    </div>
+    <ul>
+      <li><strong>マルチAZ配置</strong>：単一AZ障害への耐性</li>
+      <li><strong>ヘルスチェック</strong>：異常インスタンスの自動除外</li>
+      <li><strong>サーキットブレーカー</strong>：障害の連鎖を防止</li>
+      <li><strong>リトライとバックオフ</strong>：一時的障害からの回復</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      信頼性レビューの観点
+    </div>
+    <ul>
+      <li><strong>単一障害点（SPOF）</strong>：存在しないか</li>
+      <li><strong>DR訓練</strong>：定期的に実施しているか</li>
+      <li><strong>依存サービスの障害</strong>：対策があるか</li>
+      <li><strong>RTO/RPO</strong>：達成可能な設計か</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cloud-a8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>「カオスエンジニアリング」の目的は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a8" style="display:none;">
+      A. システムを混乱させてセキュリティをテストする
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud-a8" style="display:none;">
+      B. 意図的に障害を発生させて回復力を検証する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a8" style="display:none;">
+      C. ランダムなテストケースを生成する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud-a8')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud-a8')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud-a9">
+  <h1>パフォーマンス効率の柱</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>パフォーマンス効率の設計原則</li>
+      <li>適切なリソースの選択</li>
+      <li>継続的なパフォーマンス改善</li>
+    </ul>
+  </div>
+
+  <h2>パフォーマンス効率の設計原則</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:30%;">原則</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td><strong>最新技術の活用</strong></td>
+        <td>マネージドサービス、サーバーレスを活用</td>
+      </tr>
+      <tr>
+        <td><strong>グローバル展開</strong></td>
+        <td>ユーザーに近い場所からサービス提供</td>
+      </tr>
+      <tr>
+        <td><strong>サーバーレスの活用</strong></td>
+        <td>インフラ管理の負担を軽減</td>
+      </tr>
+      <tr>
+        <td><strong>実験の奨励</strong></td>
+        <td>異なるアーキテクチャを試す</td>
+      </tr>
+      <tr>
+        <td><strong>メカニカルシンパシー</strong></td>
+        <td>技術の特性を理解して活用</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>適切なリソースの選択</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🖥️</span>
+      コンピュートの選択
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th>サービス</th>
+        <th>適したワークロード</th>
+      </tr>
+      <tr>
+        <td><strong>EC2</strong></td>
+        <td>長時間実行、特定のOS/ランタイム要件</td>
+      </tr>
+      <tr>
+        <td><strong>Lambda</strong></td>
+        <td>イベント駆動、短時間処理（15分以内）</td>
+      </tr>
+      <tr>
+        <td><strong>ECS/EKS</strong></td>
+        <td>コンテナワークロード、マイクロサービス</td>
+      </tr>
+      <tr>
+        <td><strong>Fargate</strong></td>
+        <td>コンテナ + サーバーレス</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💾</span>
+      ストレージの選択
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th>サービス</th>
+        <th>適したユースケース</th>
+      </tr>
+      <tr>
+        <td><strong>S3</strong></td>
+        <td>オブジェクトストレージ、静的コンテンツ</td>
+      </tr>
+      <tr>
+        <td><strong>EBS gp3</strong></td>
+        <td>汎用SSD、一般的なワークロード</td>
+      </tr>
+      <tr>
+        <td><strong>EBS io2</strong></td>
+        <td>高IOPS、データベース</td>
+      </tr>
+      <tr>
+        <td><strong>EFS</strong></td>
+        <td>共有ファイルシステム</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>パフォーマンスの監視と最適化</h2>
+
+  <div class="card">
+<pre><code># CloudWatchメトリクスの監視
+aws cloudwatch get-metric-statistics \
+  --namespace AWS/EC2 \
+  --metric-name CPUUtilization \
+  --dimensions Name=InstanceId,Value=i-1234567890abcdef0 \
+  --start-time 2024-01-01T00:00:00Z \
+  --end-time 2024-01-02T00:00:00Z \
+  --period 3600 \
+  --statistics Average
+
+# パフォーマンスInsightsでRDSのボトルネック特定
+# → どのクエリがリソースを消費しているか可視化</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      パフォーマンスレビューの観点
+    </div>
+    <ul>
+      <li><strong>キャッシュ戦略</strong>：CloudFront、ElastiCache活用</li>
+      <li><strong>データベース最適化</strong>：インデックス、リードレプリカ</li>
+      <li><strong>非同期処理</strong>：SQS、Step Functionsの活用</li>
+      <li><strong>コールドスタート</strong>：Lambda Provisioned Concurrency</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cloud-a9">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>イベント駆動で短時間（数秒〜数分）の処理に最適なコンピュートは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a9" style="display:none;">
+      A. EC2 オンデマンドインスタンス
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud-a9" style="display:none;">
+      B. Lambda
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a9" style="display:none;">
+      C. EC2 リザーブドインスタンス
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud-a9')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud-a9')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud-a10">
+  <h1>運用優秀性とコスト最適化の柱</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>運用優秀性の設計原則</li>
+      <li>コスト最適化の設計原則</li>
+      <li>継続的な改善サイクル</li>
+    </ul>
+  </div>
+
+  <h2>運用優秀性の設計原則</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:30%;">原則</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td><strong>運用をコード化</strong></td>
+        <td>Infrastructure as Code、自動化スクリプト</td>
+      </tr>
+      <tr>
+        <td><strong>小さく頻繁な変更</strong></td>
+        <td>大きなリリースより小さな変更を頻繁に</td>
+      </tr>
+      <tr>
+        <td><strong>運用手順の改善</strong></td>
+        <td>ランブックの整備、自動化の推進</td>
+      </tr>
+      <tr>
+        <td><strong>障害の予測</strong></td>
+        <td>ゲームデイ、カオスエンジニアリング</td>
+      </tr>
+      <tr>
+        <td><strong>全ての障害から学ぶ</strong></td>
+        <td>ポストモーテム、継続的改善</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>運用の自動化</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🤖</span>
+      自動化すべき運用タスク
+    </div>
+<pre><code># Systems Manager Automation
+# パッチ適用の自動化
+aws ssm create-maintenance-window \
+  --name "WeeklyPatchWindow" \
+  --schedule "cron(0 2 ? * SUN *)" \
+  --duration 4 \
+  --cutoff 1
+
+# EventBridgeルール
+# 特定イベントでLambdaをトリガー
+aws events put-rule \
+  --name "AutoRemediateSecurityGroupRule" \
+  --event-pattern '{
+    "source": ["aws.ec2"],
+    "detail-type": ["AWS API Call via CloudTrail"],
+    "detail": {
+      "eventName": ["AuthorizeSecurityGroupIngress"]
+    }
+  }'</code></pre>
+  </div>
+
+  <h2>コスト最適化の設計原則</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:30%;">原則</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td><strong>クラウド財務管理</strong></td>
+        <td>コストを可視化し、組織全体で意識</td>
+      </tr>
+      <tr>
+        <td><strong>消費モデルの採用</strong></td>
+        <td>使った分だけ支払う</td>
+      </tr>
+      <tr>
+        <td><strong>効率の測定</strong></td>
+        <td>ビジネス成果とコストを関連付け</td>
+      </tr>
+      <tr>
+        <td><strong>差別化しない作業への投資をやめる</strong></td>
+        <td>マネージドサービスの活用</td>
+      </tr>
+      <tr>
+        <td><strong>支出の分析</strong></td>
+        <td>タグ付け、Cost Explorer活用</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>継続的改善のサイクル</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔄</span>
+      改善サイクル
+    </div>
+    <ol>
+      <li><strong>計測</strong>：メトリクス収集、コスト分析</li>
+      <li><strong>分析</strong>：ボトルネック特定、無駄の発見</li>
+      <li><strong>改善</strong>：最適化の実施</li>
+      <li><strong>検証</strong>：効果測定</li>
+      <li><strong>標準化</strong>：ベストプラクティスを組織に展開</li>
+    </ol>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      運用・コストレビューの観点
+    </div>
+    <ul>
+      <li><strong>ランブック</strong>：主要な運用手順が文書化されているか</li>
+      <li><strong>ポストモーテム</strong>：障害後の振り返りを実施しているか</li>
+      <li><strong>コスト配分タグ</strong>：全リソースにタグ付けされているか</li>
+      <li><strong>予算アラート</strong>：閾値超過時の通知があるか</li>
+      <li><strong>未使用リソース</strong>：定期的に棚卸ししているか</li>
+    </ul>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">🎉</span>
+      Phase 4 完了！
+    </div>
+    <p>
+      クラウド応用を学びました。<br>
+      マルチリージョン、DR、Well-Architectedの知識は<br>
+      <strong>本番運用で必須</strong>のスキルです。
+    </p>
+    <p style="margin:0;">
+      次のPhaseでは、これまでの知識を総合した<br>
+      <strong>実践的なアーキテクチャ設計</strong>を学びます。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-cloud-a10-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>運用優秀性の「全ての障害から学ぶ」を実践するために行うのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a10-1" style="display:none;">
+      A. 障害を起こした担当者を処分する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud-a10-1" style="display:none;">
+      B. ポストモーテム（振り返り）を実施し、再発防止策を講じる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a10-1" style="display:none;">
+      C. 障害情報を外部に公開しない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud-a10-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-cloud-a10-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>コスト最適化の「差別化しない作業への投資をやめる」とは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud-a10-2" style="display:none;">
+      A. 自社で管理する必要のないものはマネージドサービスを使う
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a10-2" style="display:none;">
+      B. 全てを自社で開発・運用する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud-a10-2" style="display:none;">
+      C. コスト削減のためにセキュリティ投資を減らす
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud-a10-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud-a10')">
+    <span class="icon">✓</span>
+    Phase 4を完了
+  </button>
+</section>

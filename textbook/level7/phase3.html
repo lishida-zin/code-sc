@@ -1,0 +1,2057 @@
+<!-- ============================================
+     Level 7 Phase 3: クラウド基礎
+     ============================================ -->
+
+<section id="cloud1">
+  <h1>クラウドコンピューティングとは</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>クラウドコンピューティングの定義と歴史</li>
+      <li>オンプレミスとの違い</li>
+      <li>クラウドの5つの特徴（NIST定義）</li>
+    </ul>
+  </div>
+
+  <h2>クラウドとは何か</h2>
+
+  <p>
+    <strong>クラウドコンピューティング</strong> = インターネット経由でコンピューティングリソースを利用するモデル
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：電気のように使う
+    </div>
+    <p>
+      昔は工場ごとに<strong>発電機</strong>を持っていた。<br>
+      今は<strong>電力会社</strong>から必要な分だけ電気を買う。
+    </p>
+    <p style="margin:0;">
+      サーバーも同じ。<br>
+      昔は自社で<strong>サーバールーム</strong>を持っていた。<br>
+      今は<strong>クラウドプロバイダー</strong>から必要な分だけ借りる。
+    </p>
+  </div>
+
+  <h2>オンプレミス vs クラウド</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">オンプレミス（自社所有）</div>
+      <ul>
+        <li>サーバー購入に<strong>数週間〜数ヶ月</strong></li>
+        <li><strong>初期費用</strong>が高額（CAPEX）</li>
+        <li>ピーク時に合わせて購入 → 普段は遊休</li>
+        <li>自社で<strong>運用・保守</strong>が必要</li>
+        <li>物理的な障害対応は自己責任</li>
+      </ul>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">クラウド</div>
+      <ul>
+        <li>サーバー起動は<strong>数分</strong></li>
+        <li><strong>従量課金</strong>（OPEX）</li>
+        <li>必要な時に増やし、不要な時に減らせる</li>
+        <li>インフラ運用は<strong>プロバイダー任せ</strong></li>
+        <li>複数データセンターで冗長化</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>NISTによる5つの特徴</h2>
+
+  <p>
+    米国国立標準技術研究所（NIST）がクラウドの特徴を定義しています。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:30%;">特徴</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td><strong>オンデマンド・セルフサービス</strong></td>
+        <td>人を介さず、自分でリソースを調達できる</td>
+      </tr>
+      <tr>
+        <td><strong>幅広いネットワークアクセス</strong></td>
+        <td>インターネット経由でどこからでもアクセス</td>
+      </tr>
+      <tr>
+        <td><strong>リソースプーリング</strong></td>
+        <td>複数のユーザーでリソースを共有</td>
+      </tr>
+      <tr>
+        <td><strong>迅速な弾力性</strong></td>
+        <td>需要に応じてリソースを素早くスケール</td>
+      </tr>
+      <tr>
+        <td><strong>測定可能なサービス</strong></td>
+        <td>使用量を計測し、従量課金</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>クラウドの歴史</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📜</span>
+      知っておきたい歴史
+    </div>
+    <ul>
+      <li><strong>2006年</strong>：AWS（Amazon Web Services）がEC2/S3を開始</li>
+      <li><strong>2008年</strong>：Google App Engine（PaaS）開始</li>
+      <li><strong>2010年</strong>：Microsoft Azure正式リリース</li>
+      <li><strong>2011年</strong>：NISTがクラウドの定義を公開</li>
+      <li><strong>2014年</strong>：Google Cloud Platform本格展開</li>
+    </ul>
+    <p style="margin:0;">
+      AWSの登場がクラウド時代の幕開け。<br>
+      もともとAmazonは自社ECサイト用に大量のサーバーを持っていた。<br>
+      その余剰リソースを外部に提供したのがAWSの始まり。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-cloud1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>クラウドの「従量課金」の主なメリットは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud1" style="display:none;">
+      A. 必ずコストが安くなる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud1" style="display:none;">
+      B. 初期投資なく、使った分だけ支払える
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud1" style="display:none;">
+      C. 無制限に使い放題になる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud2">
+  <h1>IaaS / PaaS / SaaS の違い</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>3つのサービスモデルの違い</li>
+      <li>責任共有モデル</li>
+      <li>どのモデルを選ぶべきか</li>
+    </ul>
+  </div>
+
+  <h2>3つのサービスモデル</h2>
+
+  <p>
+    クラウドサービスは「どこまで管理してもらうか」で分類されます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：住居の選択
+    </div>
+    <p>
+      <strong>IaaS</strong> = 土地を借りて自分で家を建てる<br>
+      <strong>PaaS</strong> = 建売住宅を借りる（内装は自由）<br>
+      <strong>SaaS</strong> = ホテルに泊まる（全部お任せ）
+    </p>
+  </div>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:15%;">モデル</th>
+        <th style="width:25%;">正式名称</th>
+        <th style="width:30%;">提供されるもの</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>IaaS</strong></td>
+        <td>Infrastructure as a Service</td>
+        <td>仮想マシン、ネットワーク、ストレージ</td>
+        <td>AWS EC2, Azure VM, GCE</td>
+      </tr>
+      <tr>
+        <td><strong>PaaS</strong></td>
+        <td>Platform as a Service</td>
+        <td>ランタイム、ミドルウェア、OS</td>
+        <td>Heroku, App Engine, Azure App Service</td>
+      </tr>
+      <tr>
+        <td><strong>SaaS</strong></td>
+        <td>Software as a Service</td>
+        <td>完成されたアプリケーション</td>
+        <td>Gmail, Salesforce, Slack</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>責任共有モデル</h2>
+
+  <p>
+    「どこまでがプロバイダーの責任で、どこからがユーザーの責任か」を明確にしたモデルです。
+  </p>
+
+  <div class="card">
+<pre><code>┌─────────────────────────────────────────────────────────┐
+│                    責任の範囲                           │
+├─────────────────┬──────────────┬──────────────┬─────────┤
+│                 │    IaaS      │    PaaS      │  SaaS   │
+├─────────────────┼──────────────┼──────────────┼─────────┤
+│ アプリケーション │  ユーザー    │  ユーザー    │プロバイダー│
+│ データ          │  ユーザー    │  ユーザー    │ 共有    │
+│ ランタイム      │  ユーザー    │プロバイダー  │プロバイダー│
+│ ミドルウェア    │  ユーザー    │プロバイダー  │プロバイダー│
+│ OS              │  ユーザー    │プロバイダー  │プロバイダー│
+│ 仮想化          │プロバイダー  │プロバイダー  │プロバイダー│
+│ サーバー        │プロバイダー  │プロバイダー  │プロバイダー│
+│ ストレージ      │プロバイダー  │プロバイダー  │プロバイダー│
+│ ネットワーク    │プロバイダー  │プロバイダー  │プロバイダー│
+└─────────────────┴──────────────┴──────────────┴─────────┘</code></pre>
+  </div>
+
+  <h2>どのモデルを選ぶべきか</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      選定の指針
+    </div>
+    <ul>
+      <li><strong>IaaS</strong>：細かい制御が必要、既存システムの移行、特殊な設定が必要</li>
+      <li><strong>PaaS</strong>：アプリ開発に集中したい、素早くデプロイしたい</li>
+      <li><strong>SaaS</strong>：開発不要、すぐに使いたい、標準機能で十分</li>
+    </ul>
+    <p style="margin:0;">
+      <strong>原則</strong>：できるだけ高いレイヤー（SaaS > PaaS > IaaS）を選ぶ。<br>
+      運用負荷を減らし、本業に集中できる。
+    </p>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビュー・設計レビューの観点
+    </div>
+    <ul>
+      <li><strong>IaaSで自前実装</strong>しているものが、PaaS/SaaSで代替できないか</li>
+      <li><strong>責任範囲の認識</strong>：セキュリティパッチは誰が当てる？</li>
+      <li><strong>ベンダーロックイン</strong>：特定サービスに依存しすぎていないか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cloud2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>OSのセキュリティパッチを自分で当てる必要があるのは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud2" style="display:none;">
+      A. IaaS
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud2" style="display:none;">
+      B. PaaS
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud2" style="display:none;">
+      C. SaaS
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud3">
+  <h1>スケーリング（垂直 vs 水平）</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>垂直スケーリング（スケールアップ）とは</li>
+      <li>水平スケーリング（スケールアウト）とは</li>
+      <li>それぞれのメリット・デメリット</li>
+    </ul>
+  </div>
+
+  <h2>スケーリングとは</h2>
+
+  <p>
+    <strong>スケーリング</strong> = 処理能力を増減させること
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：レストランの拡張
+    </div>
+    <p>
+      <strong>垂直スケーリング</strong> = シェフをより腕の良い人に変える<br>
+      <strong>水平スケーリング</strong> = シェフの人数を増やす
+    </p>
+  </div>
+
+  <!-- スケーリング比較 SVG図 -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      垂直スケーリング vs 水平スケーリング
+    </div>
+    <svg viewBox="0 0 500 280" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="垂直スケーリングと水平スケーリングの比較図">
+      <title>垂直スケーリング vs 水平スケーリング</title>
+
+      <!-- 左側：垂直スケーリング -->
+      <text x="120" y="20" text-anchor="middle" fill="#3b82f6" font-size="14" font-weight="bold">垂直スケーリング</text>
+      <text x="120" y="38" text-anchor="middle" fill="#6b7280" font-size="10">（スケールアップ）</text>
+
+      <!-- 小さいサーバー -->
+      <rect x="80" y="200" width="80" height="50" rx="4" fill="#93c5fd" stroke="#3b82f6" stroke-width="2"/>
+      <text x="120" y="230" text-anchor="middle" fill="#1e3a5f" font-size="10">2 CPU / 4GB</text>
+
+      <!-- 矢印 -->
+      <line x1="120" y1="190" x2="120" y2="130" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrow-scale-up)"/>
+      <text x="140" y="165" fill="#3b82f6" font-size="10">強化</text>
+
+      <!-- 大きいサーバー -->
+      <rect x="60" y="55" width="120" height="70" rx="4" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+      <text x="120" y="85" text-anchor="middle" fill="white" font-size="11" font-weight="bold">16 CPU</text>
+      <text x="120" y="105" text-anchor="middle" fill="white" font-size="11" font-weight="bold">64GB</text>
+
+      <!-- 中央の仕切り -->
+      <line x1="250" y1="30" x2="250" y2="270" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="5,5"/>
+
+      <!-- 右側：水平スケーリング -->
+      <text x="380" y="20" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">水平スケーリング</text>
+      <text x="380" y="38" text-anchor="middle" fill="#6b7280" font-size="10">（スケールアウト）</text>
+
+      <!-- 1台のサーバー -->
+      <rect x="350" y="200" width="60" height="40" rx="4" fill="#6ee7b7" stroke="#10b981" stroke-width="2"/>
+      <text x="380" y="225" text-anchor="middle" fill="#064e3b" font-size="9">Server</text>
+
+      <!-- 矢印 -->
+      <line x1="380" y1="190" x2="380" y2="140" stroke="#10b981" stroke-width="3" marker-end="url(#arrow-scale-out)"/>
+      <text x="400" y="165" fill="#10b981" font-size="10">追加</text>
+
+      <!-- 複数のサーバー -->
+      <rect x="280" y="55" width="55" height="35" rx="4" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="307" y="78" text-anchor="middle" fill="white" font-size="9">Server 1</text>
+
+      <rect x="345" y="55" width="55" height="35" rx="4" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="372" y="78" text-anchor="middle" fill="white" font-size="9">Server 2</text>
+
+      <rect x="410" y="55" width="55" height="35" rx="4" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="437" y="78" text-anchor="middle" fill="white" font-size="9">Server 3</text>
+
+      <rect x="345" y="100" width="55" height="35" rx="4" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="372" y="123" text-anchor="middle" fill="white" font-size="9">Server 4</text>
+
+      <!-- 矢印マーカー定義 -->
+      <defs>
+        <marker id="arrow-scale-up" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#3b82f6"/>
+        </marker>
+        <marker id="arrow-scale-out" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#10b981"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <h2>垂直スケーリング（スケールアップ）</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:15%;">項目</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td><strong>方法</strong></td>
+        <td>1台のサーバーのCPU・メモリ・ディスクを増強</td>
+      </tr>
+      <tr>
+        <td><strong>メリット</strong></td>
+        <td>シンプル、アプリ変更不要、データ一貫性が保ちやすい</td>
+      </tr>
+      <tr>
+        <td><strong>デメリット</strong></td>
+        <td>物理的な上限がある、ダウンタイムが必要な場合がある</td>
+      </tr>
+      <tr>
+        <td><strong>向いている</strong></td>
+        <td>データベース、ステートフルなアプリ</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>水平スケーリング（スケールアウト）</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:15%;">項目</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td><strong>方法</strong></td>
+        <td>同じ構成のサーバーを台数を増やす</td>
+      </tr>
+      <tr>
+        <td><strong>メリット</strong></td>
+        <td>理論上無限にスケール可能、冗長性確保、ダウンタイムなし</td>
+      </tr>
+      <tr>
+        <td><strong>デメリット</strong></td>
+        <td>アプリがステートレスである必要、データ同期が複雑</td>
+      </tr>
+      <tr>
+        <td><strong>向いている</strong></td>
+        <td>Webサーバー、APIサーバー、ステートレスなアプリ</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>オートスケーリング</h2>
+
+  <p>
+    クラウドでは<strong>負荷に応じて自動でスケール</strong>できます。
+  </p>
+
+  <div class="card">
+<pre><code># AWS Auto Scaling の設定例（概念）
+AutoScalingGroup:
+  MinSize: 2          # 最小2台
+  MaxSize: 10         # 最大10台
+  DesiredCapacity: 2  # 通常は2台
+
+ScalingPolicy:
+  # CPU使用率70%を超えたら1台追加
+  TargetValue: 70
+  MetricType: CPUUtilization
+  ScaleOutCooldown: 300  # 5分間は連続スケールしない</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>ステートフルな設計</strong>でスケールアウトできない</li>
+      <li><strong>セッションをサーバーに保存</strong>している（Redis等に外出しすべき）</li>
+      <li><strong>スケールダウン時のGraceful Shutdown</strong>が考慮されていない</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cloud3-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>水平スケーリングに向いているのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud3-1" style="display:none;">
+      A. セッション情報をメモリに持つアプリ
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud3-1" style="display:none;">
+      B. ステートレスなAPIサーバー
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud3-1" style="display:none;">
+      C. 単一マスターのRDBMS
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud3-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-cloud3-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>垂直スケーリングのデメリットは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud3-2" style="display:none;">
+      A. 物理的な上限がある
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud3-2" style="display:none;">
+      B. アプリの大幅な変更が必要
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud3-2" style="display:none;">
+      C. コストが必ず高くなる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud3-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud4">
+  <h1>可用性と耐障害性の基礎</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>可用性（Availability）の定義とSLA</li>
+      <li>耐障害性（Fault Tolerance）とは</li>
+      <li>冗長化のパターン</li>
+    </ul>
+  </div>
+
+  <h2>可用性とは</h2>
+
+  <p>
+    <strong>可用性</strong> = システムが正常に稼働している時間の割合
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：コンビニの営業時間
+    </div>
+    <p>
+      24時間営業のコンビニは<strong>可用性が高い</strong>。<br>
+      いつ行っても開いている。
+    </p>
+    <p style="margin:0;">
+      逆に、しょっちゅう閉まっている店は<strong>可用性が低い</strong>。<br>
+      システムも同じで、ダウンタイムが少ないほど可用性が高い。
+    </p>
+  </div>
+
+  <h2>SLA（サービスレベル合意）</h2>
+
+  <p>
+    可用性は<strong>「何個9があるか」（ナイン）</strong>で表現されます。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">可用性</th>
+        <th style="width:25%;">ダウンタイム/年</th>
+        <th style="width:25%;">ダウンタイム/月</th>
+        <th>呼び方</th>
+      </tr>
+      <tr>
+        <td>99%</td>
+        <td>3.65日</td>
+        <td>7.2時間</td>
+        <td>ツーナイン</td>
+      </tr>
+      <tr>
+        <td>99.9%</td>
+        <td>8.76時間</td>
+        <td>43.2分</td>
+        <td>スリーナイン</td>
+      </tr>
+      <tr>
+        <td>99.99%</td>
+        <td>52.56分</td>
+        <td>4.32分</td>
+        <td>フォーナイン</td>
+      </tr>
+      <tr>
+        <td>99.999%</td>
+        <td>5.26分</td>
+        <td>25.9秒</td>
+        <td>ファイブナイン</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      SLAの現実
+    </div>
+    <p>
+      AWS EC2のSLAは<strong>99.99%</strong>（月4.32分のダウンタイム許容）。<br>
+      しかし、これは<strong>複数AZ構成</strong>の場合の話。
+    </p>
+    <p style="margin:0;">
+      単一サーバーに依存すると、SLAは保証されない。<br>
+      <strong>冗長化</strong>が可用性の鍵。
+    </p>
+  </div>
+
+  <h2>耐障害性（Fault Tolerance）</h2>
+
+  <p>
+    <strong>耐障害性</strong> = 一部が故障しても全体が停止しない能力
+  </p>
+
+  <!-- 可用性パターン SVG図 -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      冗長化パターン
+    </div>
+    <svg viewBox="0 0 500 320" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="冗長化パターンの比較図">
+      <title>冗長化パターン（単一構成 vs 冗長構成）</title>
+
+      <!-- 左側：単一障害点あり -->
+      <text x="120" y="20" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="bold">単一障害点あり</text>
+
+      <!-- ユーザー -->
+      <circle cx="120" cy="60" r="20" fill="#6b7280"/>
+      <text x="120" y="65" text-anchor="middle" fill="white" font-size="10">User</text>
+
+      <!-- 矢印 -->
+      <line x1="120" y1="80" x2="120" y2="110" stroke="#6b7280" stroke-width="2"/>
+
+      <!-- 単一サーバー -->
+      <rect x="70" y="115" width="100" height="50" rx="4" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
+      <text x="120" y="140" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Server</text>
+      <text x="120" y="155" text-anchor="middle" fill="#fee2e2" font-size="9">SPOF</text>
+
+      <!-- X印 -->
+      <line x1="170" y1="130" x2="190" y2="150" stroke="#dc2626" stroke-width="3"/>
+      <line x1="190" y1="130" x2="170" y2="150" stroke="#dc2626" stroke-width="3"/>
+
+      <!-- 矢印 -->
+      <line x1="120" y1="165" x2="120" y2="195" stroke="#6b7280" stroke-width="2"/>
+
+      <!-- DB -->
+      <ellipse cx="120" cy="230" rx="50" ry="25" fill="#fbbf24" stroke="#d97706" stroke-width="2"/>
+      <text x="120" y="235" text-anchor="middle" fill="#78350f" font-size="11">Database</text>
+
+      <text x="120" y="290" text-anchor="middle" fill="#ef4444" font-size="10">サーバー故障 = 全停止</text>
+
+      <!-- 中央の仕切り -->
+      <line x1="250" y1="10" x2="250" y2="310" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="5,5"/>
+
+      <!-- 右側：冗長構成 -->
+      <text x="380" y="20" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">冗長構成</text>
+
+      <!-- ユーザー -->
+      <circle cx="380" cy="60" r="20" fill="#6b7280"/>
+      <text x="380" y="65" text-anchor="middle" fill="white" font-size="10">User</text>
+
+      <!-- 矢印 -->
+      <line x1="380" y1="80" x2="380" y2="100" stroke="#6b7280" stroke-width="2"/>
+
+      <!-- ロードバランサー -->
+      <rect x="330" y="105" width="100" height="30" rx="4" fill="#8b5cf6" stroke="#7c3aed" stroke-width="2"/>
+      <text x="380" y="125" text-anchor="middle" fill="white" font-size="10">Load Balancer</text>
+
+      <!-- 矢印（分岐） -->
+      <line x1="350" y1="135" x2="320" y2="165" stroke="#6b7280" stroke-width="2"/>
+      <line x1="410" y1="135" x2="440" y2="165" stroke="#6b7280" stroke-width="2"/>
+
+      <!-- サーバー1 -->
+      <rect x="280" y="170" width="70" height="40" rx="4" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="315" y="195" text-anchor="middle" fill="white" font-size="10">Server 1</text>
+
+      <!-- サーバー2 -->
+      <rect x="410" y="170" width="70" height="40" rx="4" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="445" y="195" text-anchor="middle" fill="white" font-size="10">Server 2</text>
+
+      <!-- 矢印 -->
+      <line x1="315" y1="210" x2="350" y2="240" stroke="#6b7280" stroke-width="2"/>
+      <line x1="445" y1="210" x2="410" y2="240" stroke="#6b7280" stroke-width="2"/>
+
+      <!-- DB（レプリカ） -->
+      <ellipse cx="380" cy="265" rx="60" ry="25" fill="#fbbf24" stroke="#d97706" stroke-width="2"/>
+      <text x="380" y="262" text-anchor="middle" fill="#78350f" font-size="9">Primary</text>
+      <text x="380" y="275" text-anchor="middle" fill="#78350f" font-size="9">+ Replica</text>
+
+      <text x="380" y="310" text-anchor="middle" fill="#10b981" font-size="10">1台故障しても継続稼働</text>
+    </svg>
+  </div>
+
+  <h2>冗長化の基本パターン</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">パターン</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td><strong>Active-Standby</strong></td>
+        <td>1台が稼働、1台が待機。障害時に切り替え</td>
+      </tr>
+      <tr>
+        <td><strong>Active-Active</strong></td>
+        <td>複数台が同時に稼働。負荷分散も兼ねる</td>
+      </tr>
+      <tr>
+        <td><strong>マルチAZ</strong></td>
+        <td>複数のデータセンター（AZ）に分散配置</td>
+      </tr>
+      <tr>
+        <td><strong>マルチリージョン</strong></td>
+        <td>複数の地理的リージョンに分散配置</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビュー・設計レビューの観点
+    </div>
+    <p><strong>単一障害点（SPOF）</strong>を見つけましょう：</p>
+    <ul>
+      <li>単一のDBサーバー</li>
+      <li>単一のAPIサーバー</li>
+      <li>単一のロードバランサー</li>
+      <li>単一のAZ（データセンター）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cloud4-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>99.99%（フォーナイン）の可用性とは、年間どのくらいのダウンタイム？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud4-1" style="display:none;">
+      A. 約8時間
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud4-1" style="display:none;">
+      B. 約52分
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud4-1" style="display:none;">
+      C. 約5分
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud4-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-cloud4-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>SPOF（単一障害点）の例として正しいのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud4-2" style="display:none;">
+      A. ロードバランサーの背後にある複数サーバー
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud4-2" style="display:none;">
+      B. 単一のマスターデータベース
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud4-2" style="display:none;">
+      C. マルチAZ構成のS3バケット
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud4-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud5">
+  <h1>ロードバランシングの仕組み</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ロードバランサーの役割</li>
+      <li>負荷分散アルゴリズム</li>
+      <li>L4 vs L7ロードバランサー</li>
+    </ul>
+  </div>
+
+  <h2>ロードバランサーとは</h2>
+
+  <p>
+    <strong>ロードバランサー</strong> = トラフィックを複数のサーバーに分散させる装置
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：受付係
+    </div>
+    <p>
+      病院の受付係が患者を<strong>空いている診察室に振り分ける</strong>のと同じ。<br>
+      全員が1番の診察室に殺到したら待ち時間が長くなる。
+    </p>
+    <p style="margin:0;">
+      ロードバランサーは「受付係」として、<br>
+      リクエストを<strong>適切なサーバーに振り分ける</strong>。
+    </p>
+  </div>
+
+  <h2>負荷分散アルゴリズム</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">アルゴリズム</th>
+        <th style="width:35%;">動作</th>
+        <th>向いている場面</th>
+      </tr>
+      <tr>
+        <td><strong>ラウンドロビン</strong></td>
+        <td>順番に振り分け（1→2→3→1→...）</td>
+        <td>サーバーの性能が均一</td>
+      </tr>
+      <tr>
+        <td><strong>最小接続数</strong></td>
+        <td>接続数が最も少ないサーバーへ</td>
+        <td>処理時間にばらつきがある</td>
+      </tr>
+      <tr>
+        <td><strong>IPハッシュ</strong></td>
+        <td>クライアントIPで振り分け先を決定</td>
+        <td>セッション維持が必要</td>
+      </tr>
+      <tr>
+        <td><strong>重み付け</strong></td>
+        <td>サーバーごとに処理比率を設定</td>
+        <td>サーバーの性能差がある</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>L4 vs L7 ロードバランサー</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">L4（トランスポート層）</div>
+      <ul>
+        <li>IP/ポートで振り分け</li>
+        <li><strong>高速</strong>（パケットを見るだけ）</li>
+        <li>HTTPの中身は見ない</li>
+        <li>例：AWS NLB、TCP/UDP負荷分散</li>
+      </ul>
+<pre><code># L4の振り分け例
+# IPとポートだけで判断
+192.168.1.100:80 → Server A
+192.168.1.101:80 → Server B</code></pre>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">L7（アプリケーション層）</div>
+      <ul>
+        <li>HTTPヘッダー/パスで振り分け</li>
+        <li><strong>柔軟</strong>（URLで振り分け等）</li>
+        <li>SSL終端、キャッシュも可能</li>
+        <li>例：AWS ALB、Nginx、HAProxy</li>
+      </ul>
+<pre><code># L7の振り分け例
+# URLパスで判断
+/api/*    → API Server
+/images/* → Static Server
+/admin/*  → Admin Server</code></pre>
+    </div>
+  </div>
+
+  <h2>ヘルスチェック</h2>
+
+  <p>
+    ロードバランサーは<strong>定期的にサーバーの状態を確認</strong>します。
+  </p>
+
+  <div class="card">
+<pre><code># ALBヘルスチェック設定例
+HealthCheck:
+  Protocol: HTTP
+  Path: /health
+  Port: 80
+  HealthyThreshold: 2    # 2回連続成功で復帰
+  UnhealthyThreshold: 3  # 3回連続失敗で除外
+  Timeout: 5             # 5秒でタイムアウト
+  Interval: 30           # 30秒ごとにチェック</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>ヘルスチェックエンドポイント</strong>が実装されているか</li>
+      <li>ヘルスチェックが<strong>実際の依存サービス</strong>も確認しているか</li>
+      <li><strong>セッションスティッキー</strong>に頼りすぎていないか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cloud5">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>URLパスに基づいて振り分けを行うのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud5" style="display:none;">
+      A. L4ロードバランサー
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud5" style="display:none;">
+      B. L7ロードバランサー
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud5" style="display:none;">
+      C. DNSラウンドロビン
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud5')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud6">
+  <h1>CDNとエッジコンピューティング</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>CDN（Content Delivery Network）の仕組み</li>
+      <li>キャッシュ戦略</li>
+      <li>エッジコンピューティングとは</li>
+    </ul>
+  </div>
+
+  <h2>CDNとは</h2>
+
+  <p>
+    <strong>CDN</strong> = 世界中に分散配置されたサーバー群でコンテンツを配信
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：コンビニの配送センター
+    </div>
+    <p>
+      東京の本社倉庫から北海道のお店に直接配送 → <strong>遅い</strong><br>
+      北海道に配送センターを置いて、そこから配送 → <strong>速い</strong>
+    </p>
+    <p style="margin:0;">
+      CDNは「配送センター」をユーザーの近くに置くことで、<br>
+      コンテンツを<strong>高速に配信</strong>します。
+    </p>
+  </div>
+
+  <h2>CDNの仕組み</h2>
+
+  <div class="card">
+<pre><code>┌─────────────────────────────────────────────────────────┐
+│                   CDNの動作フロー                        │
+└─────────────────────────────────────────────────────────┘
+
+1. ユーザーがコンテンツをリクエスト
+   └─→ DNSが最寄りのエッジサーバーを返す
+
+2. エッジサーバーがキャッシュを確認
+   ├─→ キャッシュあり → 即座にレスポンス（キャッシュヒット）
+   └─→ キャッシュなし → オリジンサーバーに取得しにいく
+
+3. オリジンから取得したコンテンツ
+   └─→ エッジにキャッシュ保存 → ユーザーに返却
+
+次回以降の同じリクエスト
+   └─→ エッジから直接配信（高速）</code></pre>
+  </div>
+
+  <h2>キャッシュ戦略</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">コンテンツ種別</th>
+        <th style="width:35%;">キャッシュ時間</th>
+        <th>理由</th>
+      </tr>
+      <tr>
+        <td><strong>静的アセット</strong><br>（JS, CSS, 画像）</td>
+        <td>長期間（1年等）</td>
+        <td>ファイル名にハッシュ付与で更新対応</td>
+      </tr>
+      <tr>
+        <td><strong>HTML</strong></td>
+        <td>短期間（数分）or キャッシュなし</td>
+        <td>コンテンツ更新を反映するため</td>
+      </tr>
+      <tr>
+        <td><strong>API</strong></td>
+        <td>ケースバイケース</td>
+        <td>データ鮮度の要件による</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+<pre><code># キャッシュ制御ヘッダー例
+# 静的アセット（1年キャッシュ）
+Cache-Control: public, max-age=31536000, immutable
+
+# HTML（キャッシュしない）
+Cache-Control: no-cache, no-store, must-revalidate
+
+# API（5分キャッシュ）
+Cache-Control: public, max-age=300</code></pre>
+  </div>
+
+  <h2>エッジコンピューティング</h2>
+
+  <p>
+    <strong>エッジコンピューティング</strong> = ユーザーに近い場所で処理を実行
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:30%;">サービス</th>
+        <th>できること</th>
+      </tr>
+      <tr>
+        <td><strong>CloudFront Functions</strong></td>
+        <td>URLリダイレクト、ヘッダー操作、簡単な認証</td>
+      </tr>
+      <tr>
+        <td><strong>Lambda@Edge</strong></td>
+        <td>より複雑な処理、動的コンテンツ生成</td>
+      </tr>
+      <tr>
+        <td><strong>Cloudflare Workers</strong></td>
+        <td>フルスタックなエッジアプリケーション</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>静的アセットにCache-Control</strong>が設定されているか</li>
+      <li><strong>個人情報を含むページ</strong>がキャッシュされていないか</li>
+      <li>キャッシュ無効化（Purge）の<strong>仕組みがあるか</strong></li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cloud6">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>CDNの主な目的は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud6" style="display:none;">
+      A. サーバーのセキュリティを強化する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud6" style="display:none;">
+      B. ユーザーに近い場所からコンテンツを配信し高速化する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud6" style="display:none;">
+      C. データベースの負荷を分散する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud6')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud7">
+  <h1>サーキットブレーカーパターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>サーキットブレーカーパターンとは</li>
+      <li>3つの状態と遷移</li>
+      <li>実装のポイント</li>
+    </ul>
+  </div>
+
+  <h2>サーキットブレーカーとは</h2>
+
+  <p>
+    <strong>サーキットブレーカー</strong> = 障害を検知して自動的に遮断するパターン
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：電気のブレーカー
+    </div>
+    <p>
+      家の電気ブレーカーは、過電流を検知すると<strong>自動で遮断</strong>する。<br>
+      これにより、火災（大障害）を防ぐ。
+    </p>
+    <p style="margin:0;">
+      ソフトウェアでも同じ。<br>
+      外部サービスが障害を起こしたら、<strong>一時的に遮断</strong>して、<br>
+      <strong>連鎖障害（カスケード障害）</strong>を防ぐ。
+    </p>
+  </div>
+
+  <h2>なぜ必要か：カスケード障害</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      カスケード障害の例
+    </div>
+<pre><code>1. 外部決済サービスがダウン
+   ↓
+2. 決済APIのタイムアウト待ち（30秒）でリクエストが滞留
+   ↓
+3. スレッドプールが枯渇、コネクションプールが枯渇
+   ↓
+4. 関係ない機能（商品一覧など）も応答不能に
+   ↓
+5. システム全体がダウン</code></pre>
+    <p style="margin:0;">
+      1つのサービスの障害が、<strong>システム全体を巻き込む</strong>。
+    </p>
+  </div>
+
+  <h2>3つの状態</h2>
+
+  <!-- サーキットブレーカー SVG図 -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      サーキットブレーカーの状態遷移
+    </div>
+    <svg viewBox="0 0 500 280" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="サーキットブレーカーの状態遷移図">
+      <title>サーキットブレーカーの3つの状態</title>
+
+      <!-- Closed（正常） -->
+      <circle cx="100" cy="140" r="50" fill="#10b981" stroke="#047857" stroke-width="3"/>
+      <text x="100" y="135" text-anchor="middle" fill="white" font-size="12" font-weight="bold">CLOSED</text>
+      <text x="100" y="152" text-anchor="middle" fill="#d1fae5" font-size="9">正常通過</text>
+
+      <!-- Open（遮断） -->
+      <circle cx="400" cy="140" r="50" fill="#ef4444" stroke="#dc2626" stroke-width="3"/>
+      <text x="400" y="135" text-anchor="middle" fill="white" font-size="12" font-weight="bold">OPEN</text>
+      <text x="400" y="152" text-anchor="middle" fill="#fee2e2" font-size="9">即座に失敗</text>
+
+      <!-- Half-Open（試行） -->
+      <circle cx="250" cy="50" r="45" fill="#f59e0b" stroke="#d97706" stroke-width="3"/>
+      <text x="250" y="45" text-anchor="middle" fill="white" font-size="11" font-weight="bold">HALF-OPEN</text>
+      <text x="250" y="62" text-anchor="middle" fill="#fef3c7" font-size="9">試験的に通過</text>
+
+      <!-- Closed → Open -->
+      <path d="M 150 130 Q 250 100 350 130" fill="none" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow-circuit-red)"/>
+      <text x="250" y="125" text-anchor="middle" fill="#ef4444" font-size="9">エラー閾値超過</text>
+
+      <!-- Open → Half-Open -->
+      <path d="M 380 95 Q 330 50 295 50" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow-circuit-orange)"/>
+      <text x="350" y="55" text-anchor="middle" fill="#f59e0b" font-size="9">タイムアウト後</text>
+
+      <!-- Half-Open → Closed -->
+      <path d="M 210 65 Q 150 80 115 95" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-circuit-green)"/>
+      <text x="145" y="65" text-anchor="middle" fill="#10b981" font-size="9">成功</text>
+
+      <!-- Half-Open → Open -->
+      <path d="M 290 65 Q 350 80 385 95" fill="none" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow-circuit-red2)"/>
+      <text x="355" y="65" text-anchor="middle" fill="#ef4444" font-size="9">失敗</text>
+
+      <!-- 凡例 -->
+      <rect x="20" y="230" width="460" height="40" rx="4" fill="#f3f4f6" stroke="#e5e7eb"/>
+      <text x="250" y="255" text-anchor="middle" fill="#374151" font-size="10">
+        CLOSED: リクエスト通過 → OPEN: 即座にエラー返却 → HALF-OPEN: 試験的に1件通過
+      </text>
+
+      <!-- 矢印マーカー定義 -->
+      <defs>
+        <marker id="arrow-circuit-red" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#ef4444"/>
+        </marker>
+        <marker id="arrow-circuit-red2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#ef4444"/>
+        </marker>
+        <marker id="arrow-circuit-orange" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#f59e0b"/>
+        </marker>
+        <marker id="arrow-circuit-green" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#10b981"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">状態</th>
+        <th style="width:40%;">動作</th>
+        <th>遷移条件</th>
+      </tr>
+      <tr>
+        <td><strong>Closed</strong></td>
+        <td>リクエストを通常通り処理</td>
+        <td>エラー率が閾値を超えたらOpenへ</td>
+      </tr>
+      <tr>
+        <td><strong>Open</strong></td>
+        <td>リクエストを即座に失敗させる</td>
+        <td>一定時間後にHalf-Openへ</td>
+      </tr>
+      <tr>
+        <td><strong>Half-Open</strong></td>
+        <td>限定的にリクエストを試行</td>
+        <td>成功→Closed、失敗→Open</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>実装例（概念）</h2>
+
+  <div class="card">
+<pre><code>class CircuitBreaker {
+  private state: 'CLOSED' | 'OPEN' | 'HALF_OPEN' = 'CLOSED';
+  private failureCount = 0;
+  private lastFailureTime: number | null = null;
+
+  private readonly threshold = 5;       // 5回失敗でOpen
+  private readonly timeout = 30000;     // 30秒後にHalf-Open
+
+  async call&lt;T&gt;(fn: () => Promise&lt;T&gt;): Promise&lt;T&gt; {
+    if (this.state === 'OPEN') {
+      if (Date.now() - this.lastFailureTime! > this.timeout) {
+        this.state = 'HALF_OPEN';
+      } else {
+        throw new Error('Circuit is OPEN');  // 即座に失敗
+      }
+    }
+
+    try {
+      const result = await fn();
+      this.onSuccess();
+      return result;
+    } catch (error) {
+      this.onFailure();
+      throw error;
+    }
+  }
+
+  private onSuccess(): void {
+    this.failureCount = 0;
+    this.state = 'CLOSED';
+  }
+
+  private onFailure(): void {
+    this.failureCount++;
+    this.lastFailureTime = Date.now();
+    if (this.failureCount >= this.threshold) {
+      this.state = 'OPEN';
+    }
+  }
+}</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li>外部サービス呼び出しに<strong>サーキットブレーカー</strong>が適用されているか</li>
+      <li><strong>フォールバック処理</strong>（代替動作）が実装されているか</li>
+      <li>閾値やタイムアウトが<strong>設定可能</strong>になっているか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cloud7-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>サーキットブレーカーが「OPEN」状態のとき、リクエストはどうなる？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud7-1" style="display:none;">
+      A. 通常通り処理される
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud7-1" style="display:none;">
+      B. 即座に失敗が返される
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud7-1" style="display:none;">
+      C. キューに入れられて後で処理される
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud7-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-cloud7-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>サーキットブレーカーの主な目的は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud7-2" style="display:none;">
+      A. 処理速度を上げる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud7-2" style="display:none;">
+      B. 障害の連鎖（カスケード障害）を防ぐ
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud7-2" style="display:none;">
+      C. セキュリティを強化する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud7-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud8">
+  <h1>リトライとバックオフ戦略</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>リトライが必要な場面</li>
+      <li>指数バックオフとは</li>
+      <li>ジッターの重要性</li>
+    </ul>
+  </div>
+
+  <h2>リトライとは</h2>
+
+  <p>
+    <strong>リトライ</strong> = 一時的な障害に対して、再度処理を試みること
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：電話の再ダイヤル
+    </div>
+    <p>
+      電話が話し中なら、<strong>しばらく待ってからかけ直す</strong>。<br>
+      すぐにかけ直しても、まだ話し中の可能性が高い。
+    </p>
+    <p style="margin:0;">
+      ネットワークも同じ。<br>
+      一時的な障害なら、<strong>少し待ってリトライ</strong>すれば成功する。
+    </p>
+  </div>
+
+  <h2>リトライすべき/すべきでないエラー</h2>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">リトライすべき（一時的障害）</div>
+      <ul>
+        <li>ネットワークタイムアウト</li>
+        <li>503 Service Unavailable</li>
+        <li>429 Too Many Requests</li>
+        <li>接続エラー</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">リトライすべきでない</div>
+      <ul>
+        <li>400 Bad Request（リクエストが不正）</li>
+        <li>401 Unauthorized（認証エラー）</li>
+        <li>403 Forbidden（権限なし）</li>
+        <li>404 Not Found（リソースなし）</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>指数バックオフ（Exponential Backoff）</h2>
+
+  <p>
+    リトライ間隔を<strong>指数的に増やす</strong>戦略です。
+  </p>
+
+  <div class="card">
+<pre><code>// 指数バックオフの例
+1回目リトライ: 1秒後
+2回目リトライ: 2秒後
+3回目リトライ: 4秒後
+4回目リトライ: 8秒後
+5回目リトライ: 16秒後
+...
+
+// 計算式: delay = baseDelay * 2^(attempt - 1)</code></pre>
+  </div>
+
+  <h2>ジッター（Jitter）の重要性</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      ジッターなしの問題：Thundering Herd
+    </div>
+    <p>
+      1000クライアントが同時に障害を検知 → 全員が1秒後にリトライ<br>
+      → <strong>サーバーに1000リクエストが殺到</strong> → また障害
+    </p>
+    <p style="margin:0;">
+      これを<strong>Thundering Herd（雷鳴の群れ）問題</strong>といいます。
+    </p>
+  </div>
+
+  <div class="card">
+<pre><code>// ジッター付き指数バックオフ
+function calculateDelay(attempt: number): number {
+  const baseDelay = 1000;  // 1秒
+  const maxDelay = 30000;  // 最大30秒
+
+  // 指数バックオフ
+  const exponentialDelay = baseDelay * Math.pow(2, attempt - 1);
+
+  // 上限を設定
+  const cappedDelay = Math.min(exponentialDelay, maxDelay);
+
+  // ジッター（0〜100%のランダム）を追加
+  const jitter = Math.random() * cappedDelay;
+
+  return cappedDelay + jitter;
+}
+
+// 結果例（attempt=3の場合）
+// 基本: 4000ms
+// ジッター: 0〜4000ms
+// 実際の待機: 4000〜8000ms（ランダム）</code></pre>
+  </div>
+
+  <h2>実装例</h2>
+
+  <div class="card">
+<pre><code>async function fetchWithRetry&lt;T&gt;(
+  fn: () => Promise&lt;T&gt;,
+  maxRetries = 3
+): Promise&lt;T&gt; {
+  let lastError: Error;
+
+  for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error as Error;
+
+      // リトライ不可能なエラーは即座に失敗
+      if (!isRetryable(error)) {
+        throw error;
+      }
+
+      // 最大リトライ回数に達したら失敗
+      if (attempt > maxRetries) {
+        break;
+      }
+
+      // ジッター付き指数バックオフで待機
+      const delay = calculateDelay(attempt);
+      await sleep(delay);
+    }
+  }
+
+  throw lastError!;
+}
+
+function isRetryable(error: unknown): boolean {
+  if (error instanceof HttpError) {
+    return [408, 429, 500, 502, 503, 504].includes(error.status);
+  }
+  return true;  // ネットワークエラー等はリトライ
+}</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>リトライ上限</strong>が設定されているか（無限リトライは危険）</li>
+      <li><strong>べき等でない操作</strong>をリトライしていないか</li>
+      <li><strong>ジッター</strong>が含まれているか</li>
+      <li>リトライ対象のエラーを<strong>適切に判定</strong>しているか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cloud8-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>指数バックオフでリトライ間隔を増やす理由は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud8-1" style="display:none;">
+      A. コードをシンプルにするため
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud8-1" style="display:none;">
+      B. サーバーの回復時間を確保し、負荷を軽減するため
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud8-1" style="display:none;">
+      C. ユーザー体験を向上させるため
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud8-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-cloud8-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>リトライすべきでないHTTPステータスコードは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud8-2" style="display:none;">
+      A. 503 Service Unavailable
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud8-2" style="display:none;">
+      B. 404 Not Found
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud8-2" style="display:none;">
+      C. 429 Too Many Requests
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud8-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud8')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud9">
+  <h1>ヘルスチェックと自動回復</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ヘルスチェックの種類（Liveness / Readiness）</li>
+      <li>ヘルスチェックエンドポイントの設計</li>
+      <li>自動回復（Self-Healing）の仕組み</li>
+    </ul>
+  </div>
+
+  <h2>ヘルスチェックとは</h2>
+
+  <p>
+    <strong>ヘルスチェック</strong> = サービスが正常に動作しているか確認する仕組み
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：定期健康診断
+    </div>
+    <p>
+      人間も定期的に健康診断を受ける。<br>
+      問題が見つかれば早めに治療できる。
+    </p>
+    <p style="margin:0;">
+      サービスも同じ。<br>
+      定期的にチェックして、<strong>問題があれば早めに対処</strong>する。
+    </p>
+  </div>
+
+  <h2>Liveness vs Readiness</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">Liveness Probe</div>
+      <p><strong>「生きているか？」</strong></p>
+      <ul>
+        <li>アプリケーションが<strong>応答可能</strong>か</li>
+        <li>失敗すると<strong>再起動</strong>される</li>
+        <li>デッドロック検出に有効</li>
+      </ul>
+<pre><code>// シンプルなLivenessチェック
+app.get('/healthz', (req, res) => {
+  res.status(200).send('OK');
+});</code></pre>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">Readiness Probe</div>
+      <p><strong>「準備ができているか？」</strong></p>
+      <ul>
+        <li>トラフィックを<strong>受け入れ可能</strong>か</li>
+        <li>失敗すると<strong>トラフィックが来なくなる</strong></li>
+        <li>起動時やDB接続待ちに使用</li>
+      </ul>
+<pre><code>// 依存サービスも確認するReadinessチェック
+app.get('/ready', async (req, res) => {
+  const dbOk = await checkDatabase();
+  const cacheOk = await checkCache();
+  if (dbOk && cacheOk) {
+    res.status(200).send('Ready');
+  } else {
+    res.status(503).send('Not Ready');
+  }
+});</code></pre>
+    </div>
+  </div>
+
+  <h2>ヘルスチェックエンドポイントの設計</h2>
+
+  <div class="card">
+<pre><code>// 詳細なヘルスチェックレスポンス
+{
+  "status": "healthy",  // healthy | degraded | unhealthy
+  "timestamp": "2026-02-04T10:00:00Z",
+  "version": "1.2.3",
+  "checks": {
+    "database": {
+      "status": "healthy",
+      "latency_ms": 5
+    },
+    "cache": {
+      "status": "healthy",
+      "latency_ms": 1
+    },
+    "external_api": {
+      "status": "degraded",
+      "message": "High latency detected",
+      "latency_ms": 2500
+    }
+  }
+}</code></pre>
+  </div>
+
+  <h2>自動回復（Self-Healing）</h2>
+
+  <p>
+    <strong>自動回復</strong> = 障害を検知して自動的に修復する仕組み
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">障害</th>
+        <th style="width:35%;">自動回復</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td>プロセスクラッシュ</td>
+        <td>コンテナ再起動</td>
+        <td>Kubernetes restartPolicy</td>
+      </tr>
+      <tr>
+        <td>メモリリーク</td>
+        <td>定期的なローリング再起動</td>
+        <td>cronジョブでの再起動</td>
+      </tr>
+      <tr>
+        <td>サーバー障害</td>
+        <td>新しいインスタンス起動</td>
+        <td>Auto Scaling Group</td>
+      </tr>
+      <tr>
+        <td>AZ障害</td>
+        <td>別AZへフェイルオーバー</td>
+        <td>Multi-AZ RDS</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+<pre><code># Kubernetes Liveness/Readiness設定例
+spec:
+  containers:
+  - name: app
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 8080
+      initialDelaySeconds: 30    # 起動後30秒待ってからチェック開始
+      periodSeconds: 10          # 10秒ごとにチェック
+      failureThreshold: 3        # 3回失敗で再起動
+    readinessProbe:
+      httpGet:
+        path: /ready
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      failureThreshold: 3        # 3回失敗でトラフィック停止</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <ul>
+      <li><strong>ヘルスチェックエンドポイント</strong>が実装されているか</li>
+      <li>Liveness が<strong>依存サービスを含まない</strong>こと（含むと連鎖再起動）</li>
+      <li>Readiness が<strong>必要な依存をチェック</strong>していること</li>
+      <li><strong>initialDelaySeconds</strong>が適切か（起動時間より長く）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cloud9-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>Liveness Probeが失敗するとどうなる？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud9-1" style="display:none;">
+      A. トラフィックが停止する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud9-1" style="display:none;">
+      B. コンテナが再起動される
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud9-1" style="display:none;">
+      C. アラートが送信される
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud9-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-cloud9-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>Liveness ProbeでDBへの接続を確認しない理由は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud9-2" style="display:none;">
+      A. パフォーマンスが悪化するから
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud9-2" style="display:none;">
+      B. DB障害時に全コンテナが再起動され、事態が悪化するから
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud9-2" style="display:none;">
+      C. DBへの接続はReadinessでのみ確認すべきだから
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud9-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud9')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="cloud10">
+  <h1>クラウドサービス選定の観点</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>クラウドサービス選定の判断軸</li>
+      <li>コスト最適化の考え方</li>
+      <li>ベンダーロックインへの対処</li>
+    </ul>
+  </div>
+
+  <h2>サービス選定の判断軸</h2>
+
+  <p>
+    クラウドサービスを選ぶとき、複数の観点から<strong>トレードオフ</strong>を考えます。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">観点</th>
+        <th style="width:40%;">考慮事項</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>コスト</strong></td>
+        <td>初期費用、運用費用、隠れコスト</td>
+        <td>データ転送料、ストレージ料金</td>
+      </tr>
+      <tr>
+        <td><strong>パフォーマンス</strong></td>
+        <td>レイテンシ、スループット、スケーラビリティ</td>
+        <td>リージョン選択、インスタンスタイプ</td>
+      </tr>
+      <tr>
+        <td><strong>可用性</strong></td>
+        <td>SLA、冗長性、障害復旧時間</td>
+        <td>99.99% vs 99.9%、Multi-AZ</td>
+      </tr>
+      <tr>
+        <td><strong>セキュリティ</strong></td>
+        <td>認証、暗号化、コンプライアンス</td>
+        <td>HIPAA、GDPR対応</td>
+      </tr>
+      <tr>
+        <td><strong>運用性</strong></td>
+        <td>監視、ログ、自動化のしやすさ</td>
+        <td>マネージドサービスの活用</td>
+      </tr>
+      <tr>
+        <td><strong>柔軟性</strong></td>
+        <td>ベンダーロックイン、移行性</td>
+        <td>標準技術の採用</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>コスト最適化</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💰</span>
+      コスト最適化の主な手法
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">手法</th>
+        <th style="width:35%;">説明</th>
+        <th>削減率目安</th>
+      </tr>
+      <tr>
+        <td><strong>リザーブドインスタンス</strong></td>
+        <td>1年/3年の長期契約で割引</td>
+        <td>30-70%</td>
+      </tr>
+      <tr>
+        <td><strong>スポットインスタンス</strong></td>
+        <td>余剰キャパシティを低価格で利用</td>
+        <td>60-90%</td>
+      </tr>
+      <tr>
+        <td><strong>適切なサイジング</strong></td>
+        <td>使用率に合わせたインスタンス選択</td>
+        <td>20-40%</td>
+      </tr>
+      <tr>
+        <td><strong>自動スケーリング</strong></td>
+        <td>需要に応じてリソースを増減</td>
+        <td>10-30%</td>
+      </tr>
+      <tr>
+        <td><strong>不要リソースの削除</strong></td>
+        <td>使っていないリソースの特定と削除</td>
+        <td>5-20%</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      見落としがちなコスト
+    </div>
+    <ul>
+      <li><strong>データ転送料</strong>：リージョン間、インターネット向け</li>
+      <li><strong>API呼び出し料</strong>：S3 GET/PUT、Lambda呼び出し</li>
+      <li><strong>ストレージ料</strong>：スナップショット、ログの蓄積</li>
+      <li><strong>NATゲートウェイ</strong>：意外と高い</li>
+    </ul>
+  </div>
+
+  <h2>ベンダーロックイン</h2>
+
+  <p>
+    <strong>ベンダーロックイン</strong> = 特定のベンダーに依存し、移行が困難になること
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">ロックインしやすい</div>
+      <ul>
+        <li>AWS Lambda + DynamoDB + API Gateway</li>
+        <li>Firebase全部入り</li>
+        <li>独自の認証/認可サービス</li>
+      </ul>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">移行しやすい</div>
+      <ul>
+        <li>Kubernetes（どこでも動く）</li>
+        <li>PostgreSQL/MySQL（標準DB）</li>
+        <li>Terraform（マルチクラウド対応）</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>選定のフローチャート</h2>
+
+  <div class="card">
+<pre><code>1. 要件の明確化
+   └─→ パフォーマンス要件は？可用性要件は？
+
+2. マネージドサービスで実現可能か？
+   ├─→ Yes → マネージドサービスを優先検討
+   └─→ No → IaaS/コンテナで自前構築
+
+3. コスト試算
+   └─→ 初期費用、運用費用、成長時のコスト
+
+4. ロックインリスクの評価
+   └─→ 移行コスト vs 生産性向上のトレードオフ
+
+5. PoC（概念実証）
+   └─→ 小規模で検証してから本番採用</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      設計レビューの観点
+    </div>
+    <ul>
+      <li><strong>なぜこのサービスを選んだか</strong>が説明できるか</li>
+      <li>コスト試算は<strong>成長を見込んで</strong>いるか</li>
+      <li><strong>代替案</strong>との比較検討がされているか</li>
+      <li>ロックインリスクを<strong>認識</strong>しているか</li>
+    </ul>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">🎉</span>
+      Phase 3 完了！
+    </div>
+    <p>
+      クラウド基礎を学びました。<br>
+      クラウドの本質は「<strong>リソースを柔軟に使う</strong>」ことです。
+    </p>
+    <p style="margin:0;">
+      重要なポイント：
+    </p>
+    <ul style="margin-top:0.5rem;">
+      <li>IaaS/PaaS/SaaSの責任分界点</li>
+      <li>スケールアップ vs スケールアウト</li>
+      <li>高可用性 = 冗長化 + 自動回復</li>
+      <li>サーキットブレーカーで連鎖障害を防ぐ</li>
+      <li>リトライは指数バックオフ + ジッター</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-cloud10-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>リザーブドインスタンスの特徴は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud10-1" style="display:none;">
+      A. 必要なときだけ使える
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud10-1" style="display:none;">
+      B. 長期契約で割引を受けられる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud10-1" style="display:none;">
+      C. 最も高性能なインスタンスが使える
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud10-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-cloud10-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>ベンダーロックインを避けるアプローチとして適切なのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud10-2" style="display:none;">
+      A. 一社のサービスで統一する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-cloud10-2" style="display:none;">
+      B. 標準的な技術（Kubernetes、PostgreSQL等）を採用する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-cloud10-2" style="display:none;">
+      C. クラウドを使わずオンプレミスにする
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-cloud10-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('cloud10')">
+    <span class="icon">✓</span>
+    Phase 3を完了
+  </button>
+</section>

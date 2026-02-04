@@ -1,0 +1,2376 @@
+<!-- ============================================
+     Level 7 Phase 1: データモデリング基礎
+     ============================================ -->
+
+<section id="data1">
+  <h1>データモデリングとは</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>データモデリングの目的と重要性</li>
+      <li>概念モデル・論理モデル・物理モデルの違い</li>
+      <li>各モデルの役割と使いどころ</li>
+    </ul>
+  </div>
+
+  <h2>データモデリングとは何か</h2>
+
+  <p>
+    <strong>データモデリング</strong>とは、データの構造・関係・制約を設計することです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：家の設計
+    </div>
+    <p>
+      家を建てる前に<strong>設計図</strong>を描くように、<br>
+      データベースを作る前に<strong>データモデル</strong>を設計します。
+    </p>
+    <p style="margin:0;">
+      設計図なしに家を建てると、あとから「部屋が足りない」「配管が通らない」という問題が起きます。<br>
+      データモデルも同じ。設計なしに作ると<strong>修正コストが膨大</strong>になります。
+    </p>
+  </div>
+
+  <h2>なぜデータモデリングが重要か</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      設計なしの代償
+    </div>
+    <ul>
+      <li><strong>データの重複</strong>：同じ情報が複数箇所に → 不整合の原因</li>
+      <li><strong>拡張困難</strong>：新しい要件に対応できない構造</li>
+      <li><strong>パフォーマンス問題</strong>：非効率なクエリが必要になる</li>
+      <li><strong>保守性の低下</strong>：何がどこにあるか分からない</li>
+    </ul>
+  </div>
+
+  <h2>3つのモデルレベル</h2>
+
+  <p>
+    データモデリングには<strong>3つの抽象度</strong>があります。
+  </p>
+
+  <!-- 3つのモデルの関係図 -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      概念・論理・物理モデルの関係
+    </div>
+    <svg viewBox="0 0 500 300" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="データモデルの3つのレベルを示す図">
+      <title>概念モデル・論理モデル・物理モデルの関係</title>
+
+      <!-- 背景の矢印 -->
+      <defs>
+        <marker id="arrow-down" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#6366f1"/>
+        </marker>
+      </defs>
+
+      <!-- 概念モデル（上） -->
+      <rect x="125" y="20" width="250" height="60" rx="10" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+      <text x="250" y="45" text-anchor="middle" fill="white" font-size="14" font-weight="bold">概念モデル</text>
+      <text x="250" y="65" text-anchor="middle" fill="#e0e7ff" font-size="11">ビジネス視点・WHAT</text>
+
+      <!-- 矢印1 -->
+      <line x1="250" y1="80" x2="250" y2="110" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-down)"/>
+      <text x="280" y="100" fill="currentColor" font-size="10">詳細化</text>
+
+      <!-- 論理モデル（中） -->
+      <rect x="125" y="120" width="250" height="60" rx="10" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="250" y="145" text-anchor="middle" fill="white" font-size="14" font-weight="bold">論理モデル</text>
+      <text x="250" y="165" text-anchor="middle" fill="#d1fae5" font-size="11">データ構造・HOW</text>
+
+      <!-- 矢印2 -->
+      <line x1="250" y1="180" x2="250" y2="210" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-down)"/>
+      <text x="280" y="200" fill="currentColor" font-size="10">実装化</text>
+
+      <!-- 物理モデル（下） -->
+      <rect x="125" y="220" width="250" height="60" rx="10" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="250" y="245" text-anchor="middle" fill="white" font-size="14" font-weight="bold">物理モデル</text>
+      <text x="250" y="265" text-anchor="middle" fill="#fef3c7" font-size="11">実装詳細・WHERE</text>
+
+      <!-- 左側のラベル -->
+      <text x="110" y="55" text-anchor="end" fill="#3b82f6" font-size="10">抽象的</text>
+      <text x="110" y="255" text-anchor="end" fill="#f59e0b" font-size="10">具体的</text>
+      <line x1="115" y1="60" x2="115" y2="245" stroke="#ddd" stroke-width="1" stroke-dasharray="4,4"/>
+    </svg>
+  </div>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">モデル</th>
+        <th style="width:25%;">目的</th>
+        <th style="width:30%;">対象者</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>概念モデル</strong></td>
+        <td>ビジネス要件を表現</td>
+        <td>経営者、業務担当者</td>
+        <td>「顧客が注文を行う」</td>
+      </tr>
+      <tr>
+        <td><strong>論理モデル</strong></td>
+        <td>データ構造を定義</td>
+        <td>設計者、アーキテクト</td>
+        <td>顧客(ID, 名前)、注文(ID, 顧客ID)</td>
+      </tr>
+      <tr>
+        <td><strong>物理モデル</strong></td>
+        <td>実装詳細を決定</td>
+        <td>DBA、開発者</td>
+        <td>customer_id INT PRIMARY KEY</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>各モデルの詳細</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">概念モデル</div>
+      <ul>
+        <li>技術用語を使わない</li>
+        <li>ビジネスの「もの」と「関係」だけを表現</li>
+        <li>属性や型は含まない</li>
+      </ul>
+<pre><code>顧客 ──注文する──→ 商品
+         │
+         └─配送先─→ 住所</code></pre>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">論理モデル</div>
+      <ul>
+        <li>エンティティと属性を定義</li>
+        <li>主キー・外部キーを設計</li>
+        <li>正規化を適用</li>
+      </ul>
+<pre><code>顧客(顧客ID, 名前, メール)
+注文(注文ID, 顧客ID, 注文日)
+注文明細(明細ID, 注文ID, 商品ID)</code></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🔧</span>
+      物理モデル
+    </div>
+<pre><code>CREATE TABLE customers (
+  customer_id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  INDEX idx_email (email)
+) ENGINE=InnoDB;</code></pre>
+    <p style="margin:0;">
+      データ型、インデックス、ストレージエンジンなど<strong>実装の詳細</strong>を決定します。
+    </p>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>概念モデルなしで実装</strong>：ビジネス要件を理解していない可能性</li>
+      <li><strong>論理モデルがない</strong>：正規化の検討がされていない</li>
+      <li><strong>物理モデルが最適化されていない</strong>：インデックス不足など</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-data1-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>「顧客が商品を注文する」という要件を最初に表現するのはどのモデル？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data1-1" style="display:none;">
+      A. 概念モデル
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data1-1" style="display:none;">
+      B. 論理モデル
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data1-1" style="display:none;">
+      C. 物理モデル
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data1-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-data1-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>インデックスやデータ型を決定するのはどのモデル？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data1-2" style="display:none;">
+      A. 概念モデル
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data1-2" style="display:none;">
+      B. 論理モデル
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data1-2" style="display:none;">
+      C. 物理モデル
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data1-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('data1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="data2">
+  <h1>エンティティと属性の設計</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>エンティティの識別方法</li>
+      <li>属性の種類と設計指針</li>
+      <li>よくある設計ミス</li>
+    </ul>
+  </div>
+
+  <h2>エンティティとは</h2>
+
+  <p>
+    <strong>エンティティ</strong>とは、データとして管理したい「もの」や「概念」です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：管理台帳
+    </div>
+    <p>
+      会社で管理する「もの」を考えてみましょう。
+    </p>
+    <ul style="margin:0;">
+      <li><strong>従業員台帳</strong>：従業員エンティティ</li>
+      <li><strong>商品台帳</strong>：商品エンティティ</li>
+      <li><strong>注文履歴</strong>：注文エンティティ</li>
+    </ul>
+    <p style="margin:0;">
+      「台帳を作って管理したいもの」がエンティティになります。
+    </p>
+  </div>
+
+  <h2>エンティティの見つけ方</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      エンティティ発見のヒント
+    </div>
+    <ul>
+      <li><strong>名詞に注目</strong>：「顧客」「注文」「商品」</li>
+      <li><strong>識別可能</strong>：一意に特定できるか？</li>
+      <li><strong>複数存在</strong>：複数のインスタンスがあるか？</li>
+      <li><strong>属性を持つ</strong>：関連する情報があるか？</li>
+    </ul>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">エンティティになるもの</div>
+      <ul>
+        <li>顧客（ID、名前、メール...）</li>
+        <li>注文（ID、日付、金額...）</li>
+        <li>商品（ID、名前、価格...）</li>
+        <li>従業員（ID、名前、部署...）</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">エンティティにならないもの</div>
+      <ul>
+        <li>「購入する」（動詞 → 関連または属性）</li>
+        <li>「合計金額」（計算結果 → 導出属性）</li>
+        <li>「日本円」（単位 → 属性の一部）</li>
+        <li>「TRUE/FALSE」（値 → 属性値）</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>属性とは</h2>
+
+  <p>
+    <strong>属性</strong>とは、エンティティが持つ特性・情報です。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">属性の種類</th>
+        <th style="width:35%;">説明</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>単純属性</strong></td>
+        <td>それ以上分解できない</td>
+        <td>年齢、価格</td>
+      </tr>
+      <tr>
+        <td><strong>複合属性</strong></td>
+        <td>複数の部分に分解可能</td>
+        <td>住所 → 都道府県、市区町村、番地</td>
+      </tr>
+      <tr>
+        <td><strong>導出属性</strong></td>
+        <td>他の属性から計算できる</td>
+        <td>年齢（生年月日から）、合計金額</td>
+      </tr>
+      <tr>
+        <td><strong>多値属性</strong></td>
+        <td>複数の値を持つ</td>
+        <td>電話番号（複数）、趣味（複数）</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>属性設計のベストプラクティス</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      良い属性設計
+    </div>
+    <ul>
+      <li><strong>原子性</strong>：1つの属性に1つの意味</li>
+      <li><strong>完全性</strong>：必要な情報が揃っている</li>
+      <li><strong>非冗長</strong>：同じ情報の重複がない</li>
+      <li><strong>一貫性</strong>：命名規則が統一されている</li>
+    </ul>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">よくある設計ミス</div>
+<pre><code>-- ❌ 複数の情報を1つの属性に
+顧客(
+  id,
+  name_and_address,  -- 名前と住所を結合？
+  tel1_tel2,         -- 電話番号をカンマ区切り？
+)</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">正しい設計</div>
+<pre><code>-- ⭕ 属性を適切に分離
+顧客(
+  id,
+  name,
+  prefecture,
+  city,
+  address_line
+)
+電話番号(
+  id,
+  customer_id,
+  phone_number,
+  type  -- 携帯/自宅/勤務先
+)</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>カンマ区切りの値</strong>：多値属性を1カラムに格納</li>
+      <li><strong>name1, name2, name3...</strong>：繰り返し属性 → 別テーブルに</li>
+      <li><strong>address（1行）</strong>：複合属性を分解していない</li>
+      <li><strong>age（年齢）</strong>：導出属性を保存している → birth_dateから計算すべき</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-data2-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>「顧客の年齢」を保存する場合、どちらが適切？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data2-1" style="display:none;">
+      A. age INT として保存
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data2-1" style="display:none;">
+      B. birth_date DATE として保存し、年齢は計算で求める
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data2-1" style="display:none;">
+      C. どちらでも同じ
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data2-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-data2-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>このカラム設計の問題点は？</p>
+<pre><code>CREATE TABLE users (
+  id INT PRIMARY KEY,
+  hobbies VARCHAR(500)  -- "読書,映画,旅行"
+);</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data2-2" style="display:none;">
+      A. 多値属性を1カラムに格納している（正規化違反）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data2-2" style="display:none;">
+      B. VARCHAR(500)が長すぎる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data2-2" style="display:none;">
+      C. 特に問題はない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data2-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('data2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="data3">
+  <h1>リレーションシップの種類</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>1:1（1対1）リレーションシップ</li>
+      <li>1:N（1対多）リレーションシップ</li>
+      <li>N:N（多対多）リレーションシップ</li>
+    </ul>
+  </div>
+
+  <h2>リレーションシップとは</h2>
+
+  <p>
+    <strong>リレーションシップ</strong>とは、エンティティ間の関連性・つながりです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：人間関係
+    </div>
+    <p>
+      「AさんとBさんは親子関係」のように、<br>
+      エンティティ同士も<strong>関係</strong>を持ちます。
+    </p>
+    <p style="margin:0;">
+      「顧客が注文を行う」の「行う」がリレーションシップです。
+    </p>
+  </div>
+
+  <h2>1:1（1対1）リレーションシップ</h2>
+
+  <p>
+    <strong>1つ</strong>のエンティティが<strong>1つ</strong>のエンティティに対応します。
+  </p>
+
+  <div class="card">
+<pre><code>-- 従業員と社員証の関係（1:1）
+-- 1人の従業員に1枚の社員証
+
+従業員(従業員ID, 名前, 部署)
+       ↓ 1:1
+社員証(社員証ID, 従業員ID, 発行日, 有効期限)</code></pre>
+    <p style="margin:0;">
+      <strong>使いどころ</strong>：テーブル分割（アクセス頻度の違い、機密情報の分離）
+    </p>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      1:1の注意点
+    </div>
+    <p>
+      1:1リレーションシップは<strong>本当に必要か？</strong>を考えましょう。
+    </p>
+    <ul style="margin:0;">
+      <li>理由なく分割すると、JOIN増加でパフォーマンス低下</li>
+      <li>分割理由：機密データ分離、NULL多発回避、履歴管理</li>
+    </ul>
+  </div>
+
+  <h2>1:N（1対多）リレーションシップ</h2>
+
+  <p>
+    <strong>1つ</strong>のエンティティが<strong>複数</strong>のエンティティに対応します。<br>
+    <strong>最も一般的</strong>なリレーションシップです。
+  </p>
+
+  <div class="card">
+<pre><code>-- 顧客と注文の関係（1:N）
+-- 1人の顧客が複数の注文を行う
+
+顧客(顧客ID, 名前, メール)
+       ↓ 1:N
+注文(注文ID, 顧客ID, 注文日, 合計金額)
+    └─ 外部キーで「多」側から「1」側を参照</code></pre>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      1:Nの実装パターン
+    </div>
+    <p>「多」側のテーブルに外部キーを持たせます。</p>
+<pre><code>CREATE TABLE orders (
+  order_id INT PRIMARY KEY,
+  customer_id INT NOT NULL,  -- 外部キー
+  order_date DATE NOT NULL,
+  FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);</code></pre>
+  </div>
+
+  <h2>N:N（多対多）リレーションシップ</h2>
+
+  <p>
+    <strong>複数</strong>のエンティティが<strong>複数</strong>のエンティティに対応します。
+  </p>
+
+  <div class="card">
+<pre><code>-- 学生と講座の関係（N:N）
+-- 1人の学生が複数の講座を受講
+-- 1つの講座に複数の学生が参加
+
+学生(学生ID, 名前)
+       ↓ N:N
+講座(講座ID, 講座名)</code></pre>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      N:Nの実装：中間テーブル
+    </div>
+    <p>
+      N:Nは直接実装できません。<strong>中間テーブル</strong>で1:Nに分解します。
+    </p>
+<pre><code>-- 中間テーブル（受講テーブル）
+学生(学生ID, 名前)
+       ↓ 1:N
+受講(学生ID, 講座ID, 受講日, 成績)  -- 中間テーブル
+       ↓ N:1
+講座(講座ID, 講座名)
+
+-- 結果的に 学生 1:N 受講 N:1 講座 となる</code></pre>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">よくある間違い</div>
+<pre><code>-- ❌ N:Nをカンマ区切りで実装
+CREATE TABLE students (
+  student_id INT PRIMARY KEY,
+  name VARCHAR(100),
+  course_ids VARCHAR(500)  -- "1,2,3"
+);</code></pre>
+      <p style="margin:0;">検索・更新が困難、整合性も保てない</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">正しい実装</div>
+<pre><code>-- ⭕ 中間テーブルを使用
+CREATE TABLE enrollments (
+  student_id INT,
+  course_id INT,
+  enrolled_at DATE,
+  PRIMARY KEY (student_id, course_id),
+  FOREIGN KEY (student_id) REFERENCES students(student_id),
+  FOREIGN KEY (course_id) REFERENCES courses(course_id)
+);</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>配列/JSON/カンマ区切り</strong>でN:Nを実装している</li>
+      <li><strong>中間テーブルに外部キー制約がない</strong></li>
+      <li><strong>意味のない1:1分割</strong>（パフォーマンス劣化の原因）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-data3-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>「1人の著者が複数の本を書く、1冊の本には1人の著者」この関係は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data3-1" style="display:none;">
+      A. 1:1（1対1）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data3-1" style="display:none;">
+      B. 1:N（1対多）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data3-1" style="display:none;">
+      C. N:N（多対多）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data3-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-data3-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>N:N（多対多）を実装する正しい方法は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data3-2" style="display:none;">
+      A. 一方のテーブルに配列カラムを作る
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data3-2" style="display:none;">
+      B. 中間テーブル（連関エンティティ）を作成する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data3-2" style="display:none;">
+      C. 両方のテーブルに外部キーを持たせる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data3-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('data3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="data4">
+  <h1>ER図の読み方・書き方</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ER図（Entity-Relationship Diagram）の基本要素</li>
+      <li>カーディナリティの表記法</li>
+      <li>ER図を読み解くコツ</li>
+    </ul>
+  </div>
+
+  <h2>ER図とは</h2>
+
+  <p>
+    <strong>ER図</strong>は、エンティティとリレーションシップを視覚化した図です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：地図
+    </div>
+    <p>
+      地図が土地の関係を示すように、<br>
+      ER図は<strong>データの関係</strong>を示します。
+    </p>
+    <p style="margin:0;">
+      ER図があれば、コードを読まなくてもデータ構造が分かります。
+    </p>
+  </div>
+
+  <h2>ER図の基本要素</h2>
+
+  <!-- ER図の基本要素SVG -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      ER図の構成要素
+    </div>
+    <svg viewBox="0 0 500 280" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="ER図の基本要素を示す図">
+      <title>ER図の基本要素</title>
+
+      <!-- エンティティ（矩形） -->
+      <rect x="30" y="30" width="120" height="80" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2" rx="5"/>
+      <text x="90" y="60" text-anchor="middle" fill="white" font-size="12" font-weight="bold">顧客</text>
+      <line x1="30" y1="70" x2="150" y2="70" stroke="white" stroke-width="1"/>
+      <text x="90" y="88" text-anchor="middle" fill="#e0e7ff" font-size="10">顧客ID (PK)</text>
+      <text x="90" y="102" text-anchor="middle" fill="#e0e7ff" font-size="10">名前, メール</text>
+
+      <!-- 説明ラベル1 -->
+      <text x="90" y="130" text-anchor="middle" fill="currentColor" font-size="10">エンティティ</text>
+      <text x="90" y="145" text-anchor="middle" fill="#666" font-size="9">（テーブル）</text>
+
+      <!-- リレーションシップ（線） -->
+      <line x1="150" y1="70" x2="250" y2="70" stroke="#10b981" stroke-width="3"/>
+      <text x="200" y="60" text-anchor="middle" fill="#10b981" font-size="10">注文する</text>
+
+      <!-- 説明ラベル2 -->
+      <text x="200" y="95" text-anchor="middle" fill="currentColor" font-size="10">リレーションシップ</text>
+      <text x="200" y="110" text-anchor="middle" fill="#666" font-size="9">（関連）</text>
+
+      <!-- もう1つのエンティティ -->
+      <rect x="250" y="30" width="120" height="80" fill="#f59e0b" stroke="#d97706" stroke-width="2" rx="5"/>
+      <text x="310" y="60" text-anchor="middle" fill="white" font-size="12" font-weight="bold">注文</text>
+      <line x1="250" y1="70" x2="370" y2="70" stroke="white" stroke-width="1"/>
+      <text x="310" y="88" text-anchor="middle" fill="#fef3c7" font-size="10">注文ID (PK)</text>
+      <text x="310" y="102" text-anchor="middle" fill="#fef3c7" font-size="10">顧客ID (FK)</text>
+
+      <!-- カーディナリティ記号の説明 -->
+      <text x="250" y="180" text-anchor="middle" fill="currentColor" font-size="12" font-weight="bold">カーディナリティ記号</text>
+
+      <!-- 1の記号 -->
+      <line x1="50" y1="210" x2="100" y2="210" stroke="#333" stroke-width="2"/>
+      <line x1="100" y1="200" x2="100" y2="220" stroke="#333" stroke-width="2"/>
+      <text x="130" y="215" fill="currentColor" font-size="11">1（1つ）</text>
+
+      <!-- 多の記号（鳥の足） -->
+      <line x1="50" y1="245" x2="100" y2="245" stroke="#333" stroke-width="2"/>
+      <line x1="90" y1="235" x2="100" y2="245" stroke="#333" stroke-width="2"/>
+      <line x1="90" y1="255" x2="100" y2="245" stroke="#333" stroke-width="2"/>
+      <text x="130" y="250" fill="currentColor" font-size="11">N（多）</text>
+
+      <!-- 0または1 -->
+      <line x1="250" y1="210" x2="300" y2="210" stroke="#333" stroke-width="2"/>
+      <circle cx="310" cy="210" r="8" fill="none" stroke="#333" stroke-width="2"/>
+      <line x1="320" y1="200" x2="320" y2="220" stroke="#333" stroke-width="2"/>
+      <text x="350" y="215" fill="currentColor" font-size="11">0または1</text>
+
+      <!-- 0以上 -->
+      <line x1="250" y1="245" x2="300" y2="245" stroke="#333" stroke-width="2"/>
+      <circle cx="310" cy="245" r="8" fill="none" stroke="#333" stroke-width="2"/>
+      <line x1="310" y1="235" x2="320" y2="245" stroke="#333" stroke-width="2"/>
+      <line x1="310" y1="255" x2="320" y2="245" stroke="#333" stroke-width="2"/>
+      <text x="350" y="250" fill="currentColor" font-size="11">0以上（任意）</text>
+    </svg>
+  </div>
+
+  <h2>カーディナリティの表記法</h2>
+
+  <p>
+    <strong>カーディナリティ</strong>とは、リレーションシップにおける「数の制約」です。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">記号</th>
+        <th style="width:30%;">意味</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>1</strong></td>
+        <td>必ず1つ</td>
+        <td>注文には必ず1人の顧客</td>
+      </tr>
+      <tr>
+        <td><strong>0..1</strong></td>
+        <td>0または1つ</td>
+        <td>従業員は配偶者がいるかもしれない</td>
+      </tr>
+      <tr>
+        <td><strong>*（または N）</strong></td>
+        <td>0以上</td>
+        <td>顧客は0件以上の注文を持つ</td>
+      </tr>
+      <tr>
+        <td><strong>1..*</strong></td>
+        <td>1つ以上</td>
+        <td>注文には1つ以上の明細</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>ER図の表記法：IE記法 vs UML</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">IE記法（鳥の足）</div>
+      <ul>
+        <li>業務システムで広く使用</li>
+        <li>カーディナリティが直感的</li>
+        <li>「鳥の足」で多を表現</li>
+      </ul>
+<pre><code>顧客 ──┤├── 注文
+      1      N</code></pre>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">UML記法</div>
+      <ul>
+        <li>オブジェクト指向設計で使用</li>
+        <li>数値で表現</li>
+        <li>ER以外の図にも統一感</li>
+      </ul>
+<pre><code>顧客 1────* 注文</code></pre>
+    </div>
+  </div>
+
+  <h2>ER図を読むコツ</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      読み方のポイント
+    </div>
+    <ol>
+      <li><strong>主要エンティティを把握</strong>：中心となるテーブルを見つける</li>
+      <li><strong>リレーションシップを声に出す</strong>：「顧客が注文を行う」</li>
+      <li><strong>カーディナリティを確認</strong>：1人の顧客は何件の注文？</li>
+      <li><strong>外部キーの位置を確認</strong>：「多」側に外部キーがあるはず</li>
+    </ol>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>ER図を見たら以下を確認：</p>
+    <ul>
+      <li><strong>孤立したエンティティ</strong>：関連がないテーブルは不要では？</li>
+      <li><strong>循環参照</strong>：A→B→C→A となっていないか</li>
+      <li><strong>外部キーの方向</strong>：「多」側から「1」側を参照しているか</li>
+      <li><strong>命名の一貫性</strong>：customer_id と cust_id が混在していないか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-data4-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>ER図の「鳥の足」記号が示すものは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data4-1" style="display:none;">
+      A. 1（1つ）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data4-1" style="display:none;">
+      B. N（多）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data4-1" style="display:none;">
+      C. 0（なし）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data4-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-data4-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>1:Nリレーションシップで外部キーを持つのはどちら側？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data4-2" style="display:none;">
+      A. 1側（親テーブル）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data4-2" style="display:none;">
+      B. N側（子テーブル）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data4-2" style="display:none;">
+      C. どちらでもよい
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data4-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('data4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="data5">
+  <h1>正規化の基礎</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>正規化の目的</li>
+      <li>第1正規形（1NF）</li>
+      <li>第2正規形（2NF）</li>
+      <li>第3正規形（3NF）</li>
+    </ul>
+  </div>
+
+  <h2>正規化とは</h2>
+
+  <p>
+    <strong>正規化</strong>とは、データの重複を排除し、整合性を保つためのルールです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：書類整理
+    </div>
+    <p>
+      同じ情報が複数の書類に書かれていると、<br>
+      更新漏れで<strong>不整合</strong>が起きます。
+    </p>
+    <p style="margin:0;">
+      「住所変更」したら全書類を修正？<br>
+      正規化すれば、<strong>1箇所だけ</strong>変更すればOK。
+    </p>
+  </div>
+
+  <h2>正規化のレベル</h2>
+
+  <!-- 正規化の段階SVG -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      正規化の段階
+    </div>
+    <svg viewBox="0 0 500 200" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="正規化の段階を示す図">
+      <title>正規化の段階（非正規形から第3正規形まで）</title>
+
+      <defs>
+        <marker id="arrow-norm" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#6366f1"/>
+        </marker>
+      </defs>
+
+      <!-- 非正規形 -->
+      <rect x="20" y="80" width="80" height="50" rx="5" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
+      <text x="60" y="100" text-anchor="middle" fill="white" font-size="10" font-weight="bold">非正規形</text>
+      <text x="60" y="118" text-anchor="middle" fill="#fee2e2" font-size="8">繰返しあり</text>
+
+      <line x1="100" y1="105" x2="135" y2="105" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-norm)"/>
+
+      <!-- 第1正規形 -->
+      <rect x="140" y="80" width="80" height="50" rx="5" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="180" y="100" text-anchor="middle" fill="white" font-size="10" font-weight="bold">第1正規形</text>
+      <text x="180" y="118" text-anchor="middle" fill="#fef3c7" font-size="8">繰返し除去</text>
+
+      <line x1="220" y1="105" x2="255" y2="105" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-norm)"/>
+
+      <!-- 第2正規形 -->
+      <rect x="260" y="80" width="80" height="50" rx="5" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="300" y="100" text-anchor="middle" fill="white" font-size="10" font-weight="bold">第2正規形</text>
+      <text x="300" y="118" text-anchor="middle" fill="#d1fae5" font-size="8">部分依存除去</text>
+
+      <line x1="340" y1="105" x2="375" y2="105" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-norm)"/>
+
+      <!-- 第3正規形 -->
+      <rect x="380" y="80" width="80" height="50" rx="5" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+      <text x="420" y="100" text-anchor="middle" fill="white" font-size="10" font-weight="bold">第3正規形</text>
+      <text x="420" y="118" text-anchor="middle" fill="#e0e7ff" font-size="8">推移依存除去</text>
+
+      <!-- 下部の説明 -->
+      <text x="250" y="160" text-anchor="middle" fill="currentColor" font-size="11">← 正規化が進むほどデータの重複が減る →</text>
+      <text x="250" y="180" text-anchor="middle" fill="#666" font-size="10">実務では第3正規形まで適用するのが一般的</text>
+    </svg>
+  </div>
+
+  <h2>第1正規形（1NF）</h2>
+
+  <p>
+    <strong>繰り返し項目を排除</strong>する。1セルに1つの値だけ。
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">1NF違反</div>
+<pre><code>| 注文ID | 商品名              |
+|--------|---------------------|
+| 1      | りんご, みかん, バナナ |
+| 2      | メロン, いちご       |</code></pre>
+      <p style="margin:0;">1セルに複数の値（カンマ区切り）</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">1NF準拠</div>
+<pre><code>| 注文ID | 商品名   |
+|--------|----------|
+| 1      | りんご   |
+| 1      | みかん   |
+| 1      | バナナ   |
+| 2      | メロン   |
+| 2      | いちご   |</code></pre>
+      <p style="margin:0;">1行に1つの値</p>
+    </div>
+  </div>
+
+  <h2>第2正規形（2NF）</h2>
+
+  <p>
+    <strong>部分関数従属を排除</strong>する。複合主キーの一部だけに依存する属性を分離。
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">2NF違反</div>
+<pre><code>| 注文ID | 商品ID | 商品名   | 数量 |
+|--------|--------|----------|------|
+| 1      | A      | りんご   | 3    |
+| 1      | B      | みかん   | 2    |
+
+-- 商品名は商品IDのみに依存（注文IDは不要）
+-- = 部分関数従属</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">2NF準拠</div>
+<pre><code>注文明細:
+| 注文ID | 商品ID | 数量 |
+
+商品:
+| 商品ID | 商品名   |
+|--------|----------|
+| A      | りんご   |
+| B      | みかん   |
+
+-- 商品名を別テーブルに分離</code></pre>
+    </div>
+  </div>
+
+  <h2>第3正規形（3NF）</h2>
+
+  <p>
+    <strong>推移的関数従属を排除</strong>する。非キー属性から別の非キー属性への依存を分離。
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">3NF違反</div>
+<pre><code>| 社員ID | 部署ID | 部署名     |
+|--------|--------|------------|
+| 1      | D01    | 営業部     |
+| 2      | D01    | 営業部     |
+| 3      | D02    | 開発部     |
+
+-- 社員ID → 部署ID → 部署名
+-- = 推移的関数従属（部署名が重複）</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">3NF準拠</div>
+<pre><code>社員:
+| 社員ID | 部署ID |
+|--------|--------|
+| 1      | D01    |
+| 2      | D01    |
+| 3      | D02    |
+
+部署:
+| 部署ID | 部署名     |
+|--------|------------|
+| D01    | 営業部     |
+| D02    | 開発部     |</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      正規化のメリット
+    </div>
+    <ul>
+      <li><strong>更新異常の防止</strong>：1箇所変えれば全体に反映</li>
+      <li><strong>データ整合性</strong>：矛盾したデータが入らない</li>
+      <li><strong>ストレージ効率</strong>：重複がないので省スペース</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-data5-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>「1セルに複数の値をカンマ区切りで格納」は何の違反？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data5-1" style="display:none;">
+      A. 第1正規形（1NF）違反
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data5-1" style="display:none;">
+      B. 第2正規形（2NF）違反
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data5-1" style="display:none;">
+      C. 第3正規形（3NF）違反
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data5-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-data5-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>第3正規形で排除するのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data5-2" style="display:none;">
+      A. 繰り返し項目
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data5-2" style="display:none;">
+      B. 部分関数従属
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data5-2" style="display:none;">
+      C. 推移的関数従属
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data5-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('data5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="data6">
+  <h1>正規化の実践と非正規化</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>正規化の実践的な適用方法</li>
+      <li>非正規化とは何か</li>
+      <li>正規化と非正規化のトレードオフ</li>
+    </ul>
+  </div>
+
+  <h2>正規化の限界</h2>
+
+  <p>
+    正規化は万能ではありません。<strong>過度な正規化</strong>には問題があります。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      正規化しすぎると...
+    </div>
+    <ul>
+      <li><strong>JOIN地獄</strong>：1つのデータを取得するのに多数のJOINが必要</li>
+      <li><strong>パフォーマンス低下</strong>：JOINはコストが高い</li>
+      <li><strong>複雑なクエリ</strong>：SQLが読みにくくなる</li>
+    </ul>
+  </div>
+
+  <h2>非正規化とは</h2>
+
+  <p>
+    <strong>非正規化</strong>とは、意図的にデータを重複させ、読み取り性能を向上させることです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：レシート
+    </div>
+    <p>
+      レシートには「商品名」「単価」が印刷されています。<br>
+      本来は商品マスタを参照すべきですが、<strong>その時点の情報を保存</strong>しています。
+    </p>
+    <p style="margin:0;">
+      これは「非正規化」ですが、<strong>履歴として正しい</strong>選択です。<br>
+      （商品名が変わっても、過去のレシートは変わらない）
+    </p>
+  </div>
+
+  <h2>非正規化の例</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">正規化された設計</div>
+<pre><code>-- 毎回JOINが必要
+SELECT
+  o.order_id,
+  c.name AS customer_name,
+  p.name AS product_name
+FROM orders o
+JOIN customers c ON o.customer_id = c.id
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id;</code></pre>
+      <p style="margin:0;">データ整合性は高いがJOINが多い</p>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">非正規化された設計</div>
+<pre><code>-- JOINなしで取得可能
+SELECT
+  order_id,
+  customer_name,  -- 注文時点の名前を保存
+  product_name,   -- 注文時点の商品名を保存
+  price           -- 注文時点の価格を保存
+FROM order_details;</code></pre>
+      <p style="margin:0;">高速だがデータ重複がある</p>
+    </div>
+  </div>
+
+  <h2>非正規化の判断基準</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:40%;">非正規化すべき場合</th>
+        <th>正規化を維持すべき場合</th>
+      </tr>
+      <tr>
+        <td>読み取りが頻繁で更新が少ない</td>
+        <td>更新が頻繁</td>
+      </tr>
+      <tr>
+        <td>レポート・分析用テーブル</td>
+        <td>トランザクション処理</td>
+      </tr>
+      <tr>
+        <td>履歴データ（スナップショット）</td>
+        <td>マスタデータ</td>
+      </tr>
+      <tr>
+        <td>パフォーマンスが最優先</td>
+        <td>データ整合性が最優先</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>実践的なアプローチ</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      推奨される手順
+    </div>
+    <ol>
+      <li><strong>まず第3正規形まで正規化</strong>する</li>
+      <li><strong>パフォーマンス計測</strong>を行う</li>
+      <li><strong>問題がある場合のみ</strong>、計画的に非正規化</li>
+      <li><strong>非正規化の理由を文書化</strong>する</li>
+    </ol>
+    <p style="margin:0;">
+      「最初から非正規化」は避けましょう。<br>
+      測定なしの最適化は<strong>早すぎる最適化</strong>です。
+    </p>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら確認しましょう：</p>
+    <ul>
+      <li><strong>理由なき非正規化</strong>：パフォーマンス計測はしたか？</li>
+      <li><strong>更新処理の複雑化</strong>：複数箇所を更新する必要がないか？</li>
+      <li><strong>データ不整合のリスク</strong>：重複データの同期はどう保証する？</li>
+      <li><strong>過度な正規化</strong>：JOINが5つ以上なら再設計を検討</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-data6-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>非正規化が適切な場面は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data6-1" style="display:none;">
+      A. 更新が頻繁なマスタデータ
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data6-1" style="display:none;">
+      B. 読み取りが頻繁で更新が少ないレポート用テーブル
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data6-1" style="display:none;">
+      C. すべてのテーブルに対して最初から適用
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data6-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-data6-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>正規化と非正規化の正しいアプローチは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data6-2" style="display:none;">
+      A. 最初から非正規化して設計する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data6-2" style="display:none;">
+      B. まず正規化し、計測後に必要なら非正規化
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data6-2" style="display:none;">
+      C. 常に第5正規形まで正規化する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data6-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('data6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="data7">
+  <h1>主キーの設計戦略</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>自然キー（ナチュラルキー）とは</li>
+      <li>代理キー（サロゲートキー）とは</li>
+      <li>それぞれのメリット・デメリット</li>
+    </ul>
+  </div>
+
+  <h2>主キーとは</h2>
+
+  <p>
+    <strong>主キー（Primary Key）</strong>は、レコードを一意に識別するための属性です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      主キーの要件
+    </div>
+    <ul>
+      <li><strong>一意性</strong>：同じ値が存在しない</li>
+      <li><strong>非NULL</strong>：空であってはならない</li>
+      <li><strong>不変性</strong>：値が変わらないことが望ましい</li>
+    </ul>
+  </div>
+
+  <h2>自然キー vs 代理キー</h2>
+
+  <!-- 主キーの比較SVG -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      自然キーと代理キーの関係
+    </div>
+    <svg viewBox="0 0 500 220" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="自然キーと代理キーの比較図">
+      <title>自然キー（ナチュラルキー）vs 代理キー（サロゲートキー）</title>
+
+      <!-- 自然キー -->
+      <rect x="30" y="30" width="180" height="160" rx="10" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+      <text x="120" y="55" text-anchor="middle" fill="white" font-size="13" font-weight="bold">自然キー</text>
+      <text x="120" y="75" text-anchor="middle" fill="#e0e7ff" font-size="10">（ナチュラルキー）</text>
+
+      <text x="50" y="100" fill="white" font-size="10">例:</text>
+      <text x="50" y="120" fill="#e0e7ff" font-size="10">・メールアドレス</text>
+      <text x="50" y="138" fill="#e0e7ff" font-size="10">・社員番号</text>
+      <text x="50" y="156" fill="#e0e7ff" font-size="10">・ISBN</text>
+      <text x="50" y="174" fill="#e0e7ff" font-size="10">・マイナンバー</text>
+
+      <!-- VS -->
+      <text x="250" y="115" text-anchor="middle" fill="currentColor" font-size="16" font-weight="bold">VS</text>
+
+      <!-- 代理キー -->
+      <rect x="290" y="30" width="180" height="160" rx="10" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="380" y="55" text-anchor="middle" fill="white" font-size="13" font-weight="bold">代理キー</text>
+      <text x="380" y="75" text-anchor="middle" fill="#d1fae5" font-size="10">（サロゲートキー）</text>
+
+      <text x="310" y="100" fill="white" font-size="10">例:</text>
+      <text x="310" y="120" fill="#d1fae5" font-size="10">・AUTO_INCREMENT</text>
+      <text x="310" y="138" fill="#d1fae5" font-size="10">・UUID</text>
+      <text x="310" y="156" fill="#d1fae5" font-size="10">・ULID</text>
+      <text x="310" y="174" fill="#d1fae5" font-size="10">・Snowflake ID</text>
+    </svg>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">自然キー（ナチュラルキー）</div>
+      <p>ビジネス上意味のある値をキーにする</p>
+<pre><code>-- メールアドレスを主キーに
+CREATE TABLE users (
+  email VARCHAR(255) PRIMARY KEY,
+  name VARCHAR(100)
+);</code></pre>
+      <ul>
+        <li>意味が分かりやすい</li>
+        <li>JOIN結果が読みやすい</li>
+        <li>変更されると問題</li>
+      </ul>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">代理キー（サロゲートキー）</div>
+      <p>システムが自動生成する値をキーにする</p>
+<pre><code>-- 自動採番を主キーに
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(255) UNIQUE,
+  name VARCHAR(100)
+);</code></pre>
+      <ul>
+        <li>変更の影響を受けない</li>
+        <li>パフォーマンスが良い（整数）</li>
+        <li>意味がないので分かりにくい</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>実務での選択指針</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:30%;">状況</th>
+        <th style="width:30%;">推奨</th>
+        <th>理由</th>
+      </tr>
+      <tr>
+        <td>一般的なケース</td>
+        <td><strong>代理キー</strong></td>
+        <td>変更に強い、パフォーマンス良好</td>
+      </tr>
+      <tr>
+        <td>外部システム連携</td>
+        <td><strong>自然キー</strong></td>
+        <td>外部のIDをそのまま使える</td>
+      </tr>
+      <tr>
+        <td>中間テーブル</td>
+        <td><strong>複合キー</strong></td>
+        <td>両側の外部キーの組み合わせ</td>
+      </tr>
+      <tr>
+        <td>分散システム</td>
+        <td><strong>UUID/ULID</strong></td>
+        <td>衝突なしでID生成可能</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>代理キーの種類</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">種類</th>
+        <th style="width:35%;">特徴</th>
+        <th>適用場面</th>
+      </tr>
+      <tr>
+        <td><strong>AUTO_INCREMENT</strong></td>
+        <td>連番、DBが自動採番</td>
+        <td>単一DBサーバー</td>
+      </tr>
+      <tr>
+        <td><strong>UUID v4</strong></td>
+        <td>ランダム、衝突なし</td>
+        <td>分散システム</td>
+      </tr>
+      <tr>
+        <td><strong>ULID</strong></td>
+        <td>時系列ソート可能、128bit</td>
+        <td>時系列データ</td>
+      </tr>
+      <tr>
+        <td><strong>Snowflake ID</strong></td>
+        <td>64bit、時系列+マシンID</td>
+        <td>Twitter型大規模システム</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      UUIDの注意点
+    </div>
+    <p>
+      UUID v4はランダムなので、<strong>インデックス効率が悪い</strong>。<br>
+      B+木インデックスはソート済みデータを好むため、挿入時にページ分割が頻発します。
+    </p>
+    <p style="margin:0;">
+      対策：<strong>ULID</strong>や<strong>UUID v7</strong>（時系列ソート可能）を使う。
+    </p>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら確認しましょう：</p>
+    <ul>
+      <li><strong>変更可能な値を主キーに</strong>：メールアドレス、電話番号など</li>
+      <li><strong>複合主キーが3つ以上</strong>：外部キーが複雑になる</li>
+      <li><strong>大規模システムでAUTO_INCREMENT</strong>：分散対応できない</li>
+      <li><strong>UUID v4をそのまま主キー</strong>：インデックス効率を確認</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-data7-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>一般的なWebアプリケーションで推奨される主キーは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data7-1" style="display:none;">
+      A. メールアドレス（自然キー）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data7-1" style="display:none;">
+      B. AUTO_INCREMENT または UUID（代理キー）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data7-1" style="display:none;">
+      C. 名前と生年月日の複合キー
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data7-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-data7-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>UUID v4の問題点は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data7-2" style="display:none;">
+      A. ランダムなのでB+木インデックスの効率が悪い
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data7-2" style="display:none;">
+      B. 衝突する可能性が高い
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data7-2" style="display:none;">
+      C. 文字列として保存できない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data7-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('data7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="data8">
+  <h1>外部キーと参照整合性</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>外部キー（Foreign Key）の役割</li>
+      <li>参照整合性とは</li>
+      <li>ON DELETE / ON UPDATE オプション</li>
+    </ul>
+  </div>
+
+  <h2>外部キーとは</h2>
+
+  <p>
+    <strong>外部キー</strong>は、他のテーブルの主キーを参照するカラムです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：会員証番号
+    </div>
+    <p>
+      レンタルビデオ店の「貸出記録」には「会員証番号」が書かれています。<br>
+      この会員証番号は、<strong>会員名簿に存在する番号</strong>でなければなりません。
+    </p>
+    <p style="margin:0;">
+      存在しない会員に貸し出すことはできない。<br>
+      これが<strong>参照整合性</strong>です。
+    </p>
+  </div>
+
+  <h2>参照整合性</h2>
+
+  <p>
+    <strong>参照整合性</strong>とは、外部キーが常に有効な値を指していることを保証するルールです。
+  </p>
+
+  <div class="card">
+<pre><code>-- 外部キー制約の定義
+CREATE TABLE orders (
+  id INT PRIMARY KEY,
+  customer_id INT NOT NULL,
+
+  -- 外部キー制約
+  FOREIGN KEY (customer_id)
+    REFERENCES customers(id)
+);
+
+-- これにより以下が保証される：
+-- 1. 存在しないcustomer_idは挿入できない
+-- 2. 参照されているcustomerは削除できない（デフォルト）</code></pre>
+  </div>
+
+  <h2>ON DELETE / ON UPDATE オプション</h2>
+
+  <p>
+    親レコードが削除・更新されたときの動作を指定できます。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">オプション</th>
+        <th style="width:35%;">動作</th>
+        <th>使用例</th>
+      </tr>
+      <tr>
+        <td><strong>RESTRICT</strong></td>
+        <td>削除・更新を拒否（デフォルト）</td>
+        <td>安全第一の場合</td>
+      </tr>
+      <tr>
+        <td><strong>CASCADE</strong></td>
+        <td>子レコードも連動して削除・更新</td>
+        <td>注文削除→明細も削除</td>
+      </tr>
+      <tr>
+        <td><strong>SET NULL</strong></td>
+        <td>外部キーをNULLに設定</td>
+        <td>担当者退職→担当なし</td>
+      </tr>
+      <tr>
+        <td><strong>SET DEFAULT</strong></td>
+        <td>デフォルト値に設定</td>
+        <td>カテゴリ削除→「未分類」</td>
+      </tr>
+      <tr>
+        <td><strong>NO ACTION</strong></td>
+        <td>RESTRICTと同様（チェックタイミングが異なる）</td>
+        <td>トリガーと組み合わせ</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">CASCADE の使用例</div>
+<pre><code>CREATE TABLE order_items (
+  id INT PRIMARY KEY,
+  order_id INT NOT NULL,
+  product_id INT NOT NULL,
+  quantity INT NOT NULL,
+
+  FOREIGN KEY (order_id)
+    REFERENCES orders(id)
+    ON DELETE CASCADE  -- 注文削除→明細も削除
+);
+
+-- 注文を削除すると、明細も自動的に削除される
+DELETE FROM orders WHERE id = 1;</code></pre>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">CASCADE の危険な使用</div>
+<pre><code>-- ❌ 顧客削除で全注文が消える！
+CREATE TABLE orders (
+  id INT PRIMARY KEY,
+  customer_id INT,
+
+  FOREIGN KEY (customer_id)
+    REFERENCES customers(id)
+    ON DELETE CASCADE  -- 顧客削除→全注文消失
+);
+
+-- 顧客を削除すると、すべての注文履歴が消える
+-- → 会計・監査で問題になる</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      CASCADEの使用は慎重に
+    </div>
+    <ul>
+      <li><strong>親子関係が明確</strong>な場合のみ使用</li>
+      <li><strong>履歴データ</strong>にはCASCADEを使わない</li>
+      <li>大量データの連鎖削除は<strong>パフォーマンス問題</strong>を起こす</li>
+      <li>意図しない削除を防ぐため<strong>ソフトデリート</strong>も検討</li>
+    </ul>
+  </div>
+
+  <h2>外部キー制約なしの設計</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      外部キー制約を使わない場合
+    </div>
+    <p>
+      外部キー<strong>制約</strong>を使わないことがあります。
+    </p>
+    <ul>
+      <li><strong>シャーディング環境</strong>：テーブルが別DBにある</li>
+      <li><strong>高負荷システム</strong>：制約チェックのオーバーヘッド回避</li>
+      <li><strong>マイクロサービス</strong>：サービス間でDBを共有しない</li>
+    </ul>
+    <p style="margin:0;">
+      ただし、<strong>アプリケーション側で整合性を保証</strong>する必要があります。
+    </p>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を確認しましょう：</p>
+    <ul>
+      <li><strong>外部キー制約の有無</strong>：なぜ制約がないのか確認</li>
+      <li><strong>ON DELETE CASCADE</strong>：意図しない大量削除のリスク</li>
+      <li><strong>孤立レコード</strong>：参照先が削除されたデータがないか</li>
+      <li><strong>インデックス</strong>：外部キーにインデックスがあるか（JOIN高速化）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-data8-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>ON DELETE CASCADE の意味は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data8-1" style="display:none;">
+      A. 親レコード削除時に子レコードも削除
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data8-1" style="display:none;">
+      B. 親レコード削除を拒否
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data8-1" style="display:none;">
+      C. 子レコードの外部キーをNULLに設定
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data8-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-data8-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>顧客テーブルと注文テーブルの関係で、ON DELETE CASCADEを使うべき？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data8-2" style="display:none;">
+      A. はい、顧客削除で注文も削除すべき
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data8-2" style="display:none;">
+      B. いいえ、注文履歴は保持すべき（SET NULLやソフトデリート）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data8-2" style="display:none;">
+      C. 外部キー制約自体が不要
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data8-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-data8-3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 3（セキュリティ観点）
+    </div>
+    <p>外部キー制約がない場合のリスクは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data8-3" style="display:none;">
+      A. パフォーマンスが低下する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data8-3" style="display:none;">
+      B. 存在しない参照先を持つ孤立レコードが発生する可能性
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data8-3" style="display:none;">
+      C. テーブルが削除される
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data8-3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('data8')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="data9">
+  <h1>データ型の選択とパフォーマンス</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>適切なデータ型の選択基準</li>
+      <li>データ型がパフォーマンスに与える影響</li>
+      <li>よくある間違いと対策</li>
+    </ul>
+  </div>
+
+  <h2>データ型選択の重要性</h2>
+
+  <p>
+    <strong>データ型の選択</strong>は、ストレージ効率とパフォーマンスに直結します。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：収納ボックス
+    </div>
+    <p>
+      小さな物に大きな箱を使うと、スペースの無駄。<br>
+      大きな物に小さな箱を使うと、入らない。
+    </p>
+    <p style="margin:0;">
+      データ型も同じ。<strong>データに合ったサイズ</strong>を選びましょう。
+    </p>
+  </div>
+
+  <h2>整数型の選択</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">型</th>
+        <th style="width:20%;">サイズ</th>
+        <th style="width:30%;">範囲</th>
+        <th>使用例</th>
+      </tr>
+      <tr>
+        <td><strong>TINYINT</strong></td>
+        <td>1バイト</td>
+        <td>-128 〜 127</td>
+        <td>年齢、状態フラグ</td>
+      </tr>
+      <tr>
+        <td><strong>SMALLINT</strong></td>
+        <td>2バイト</td>
+        <td>-32,768 〜 32,767</td>
+        <td>年、小規模カウンター</td>
+      </tr>
+      <tr>
+        <td><strong>INT</strong></td>
+        <td>4バイト</td>
+        <td>約21億</td>
+        <td>ID、一般的な数値</td>
+      </tr>
+      <tr>
+        <td><strong>BIGINT</strong></td>
+        <td>8バイト</td>
+        <td>約922京</td>
+        <td>大規模システムのID</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">よくある間違い</div>
+<pre><code>-- ❌ 年齢にBIGINTは過剰
+CREATE TABLE users (
+  age BIGINT  -- 8バイト使用
+);
+
+-- ❌ ステータスにVARCHAR
+CREATE TABLE orders (
+  status VARCHAR(20)  -- "pending", "completed"
+);</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">適切な選択</div>
+<pre><code>-- ⭕ 年齢にTINYINT UNSIGNED（0-255）
+CREATE TABLE users (
+  age TINYINT UNSIGNED  -- 1バイト
+);
+
+-- ⭕ ステータスにTINYINT + ENUM的運用
+CREATE TABLE orders (
+  status TINYINT NOT NULL  -- 0=pending, 1=completed
+  -- またはENUM型を使用
+);</code></pre>
+    </div>
+  </div>
+
+  <h2>文字列型の選択</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">型</th>
+        <th style="width:35%;">特徴</th>
+        <th>使用例</th>
+      </tr>
+      <tr>
+        <td><strong>CHAR(n)</strong></td>
+        <td>固定長、常にnバイト使用</td>
+        <td>国コード(JP)、郵便番号</td>
+      </tr>
+      <tr>
+        <td><strong>VARCHAR(n)</strong></td>
+        <td>可変長、実データ+1-2バイト</td>
+        <td>名前、メールアドレス</td>
+      </tr>
+      <tr>
+        <td><strong>TEXT</strong></td>
+        <td>大量テキスト、インデックス制限あり</td>
+        <td>記事本文、コメント</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      VARCHAR(255)の罠
+    </div>
+    <p>
+      「とりあえずVARCHAR(255)」は避けましょう。
+    </p>
+    <ul style="margin:0;">
+      <li>メモリ確保時に最大長で計算される場合がある</li>
+      <li>インデックスサイズに影響</li>
+      <li><strong>実際のデータに合わせた長さ</strong>を設定</li>
+    </ul>
+  </div>
+
+  <h2>日付・時刻型の選択</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">型</th>
+        <th style="width:35%;">用途</th>
+        <th>注意点</th>
+      </tr>
+      <tr>
+        <td><strong>DATE</strong></td>
+        <td>日付のみ（年月日）</td>
+        <td>誕生日、有効期限</td>
+      </tr>
+      <tr>
+        <td><strong>DATETIME</strong></td>
+        <td>日時（タイムゾーンなし）</td>
+        <td>ローカル時間を保存</td>
+      </tr>
+      <tr>
+        <td><strong>TIMESTAMP</strong></td>
+        <td>日時（UTC変換あり）</td>
+        <td>2038年問題、作成/更新日時</td>
+      </tr>
+      <tr>
+        <td><strong>TIME</strong></td>
+        <td>時刻のみ</td>
+        <td>営業時間、経過時間</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      TIMESTAMPの2038年問題
+    </div>
+    <p>
+      TIMESTAMPは内部的に32bit整数（1970年からの秒数）で保存されます。<br>
+      <strong>2038年1月19日</strong>に上限に達します。
+    </p>
+    <p style="margin:0;">
+      対策：<strong>DATETIME</strong>を使うか、<strong>BIGINT</strong>でUnixミリ秒を保存。
+    </p>
+  </div>
+
+  <h2>パフォーマンスへの影響</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      データ型最適化のポイント
+    </div>
+    <ul>
+      <li><strong>小さいデータ型</strong>：キャッシュ効率向上、I/O削減</li>
+      <li><strong>固定長</strong>：検索・比較が高速</li>
+      <li><strong>数値 > 文字列</strong>：比較処理が高速</li>
+      <li><strong>NULL回避</strong>：NULLABLEはインデックス効率を下げる</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>すべてVARCHAR(255)</strong>：適切なサイズか確認</li>
+      <li><strong>金額にFLOAT/DOUBLE</strong>：誤差が発生 → DECIMAL使用</li>
+      <li><strong>ステータスにVARCHAR</strong>：TINYINT + ENUMを検討</li>
+      <li><strong>日時にVARCHAR</strong>：DATE/DATETIME/TIMESTAMP使用</li>
+      <li><strong>すべてNULLABLE</strong>：本当にNULLが必要か確認</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-data9-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>金額を保存するのに適切なデータ型は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data9-1" style="display:none;">
+      A. FLOAT
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data9-1" style="display:none;">
+      B. DECIMAL
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data9-1" style="display:none;">
+      C. VARCHAR
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data9-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-data9-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>年齢（0〜150程度）を保存するのに適切な型は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data9-2" style="display:none;">
+      A. TINYINT UNSIGNED
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data9-2" style="display:none;">
+      B. INT
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data9-2" style="display:none;">
+      C. BIGINT
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data9-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('data9')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="data10">
+  <h1>実務データモデリング演習</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>実際のビジネス要件からデータモデルを設計</li>
+      <li>設計判断のポイント</li>
+      <li>Phase 1の総まとめ</li>
+    </ul>
+  </div>
+
+  <h2>演習シナリオ：ECサイト</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      ビジネス要件
+    </div>
+    <ul>
+      <li>顧客はアカウント登録してログインできる</li>
+      <li>顧客は複数の配送先住所を登録できる</li>
+      <li>商品はカテゴリに分類される（1商品は1カテゴリ）</li>
+      <li>顧客は商品をカートに入れ、注文できる</li>
+      <li>注文は複数の商品を含むことができる</li>
+      <li>注文には配送先と支払い方法を指定する</li>
+    </ul>
+  </div>
+
+  <h2>Step 1: エンティティの抽出</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      抽出されたエンティティ
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th>エンティティ</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td><strong>顧客（Customer）</strong></td>
+        <td>サイト利用者</td>
+      </tr>
+      <tr>
+        <td><strong>住所（Address）</strong></td>
+        <td>配送先住所</td>
+      </tr>
+      <tr>
+        <td><strong>カテゴリ（Category）</strong></td>
+        <td>商品分類</td>
+      </tr>
+      <tr>
+        <td><strong>商品（Product）</strong></td>
+        <td>販売商品</td>
+      </tr>
+      <tr>
+        <td><strong>注文（Order）</strong></td>
+        <td>購入注文</td>
+      </tr>
+      <tr>
+        <td><strong>注文明細（OrderItem）</strong></td>
+        <td>注文に含まれる商品</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>Step 2: リレーションシップの定義</h2>
+
+  <div class="card">
+<pre><code>顧客 ─1:N─ 住所      （1人の顧客が複数の住所を持つ）
+顧客 ─1:N─ 注文      （1人の顧客が複数の注文を行う）
+カテゴリ ─1:N─ 商品  （1カテゴリに複数の商品）
+注文 ─1:N─ 注文明細  （1注文に複数の明細）
+商品 ─1:N─ 注文明細  （1商品が複数の明細に登場）
+注文 ─N:1─ 住所      （複数の注文が同じ住所に配送）</code></pre>
+  </div>
+
+  <h2>Step 3: 属性と主キーの設計</h2>
+
+  <div class="card">
+<pre><code>顧客 (
+  customer_id INT PRIMARY KEY AUTO_INCREMENT,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+)
+
+住所 (
+  address_id INT PRIMARY KEY AUTO_INCREMENT,
+  customer_id INT NOT NULL,  -- FK
+  postal_code CHAR(7) NOT NULL,
+  prefecture VARCHAR(10) NOT NULL,
+  city VARCHAR(50) NOT NULL,
+  address_line VARCHAR(200) NOT NULL,
+  is_default BOOLEAN DEFAULT FALSE
+)
+
+カテゴリ (
+  category_id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(50) NOT NULL,
+  parent_category_id INT  -- 自己参照FK（階層構造）
+)
+
+商品 (
+  product_id INT PRIMARY KEY AUTO_INCREMENT,
+  category_id INT NOT NULL,  -- FK
+  name VARCHAR(200) NOT NULL,
+  price DECIMAL(10, 2) NOT NULL,
+  stock INT NOT NULL DEFAULT 0,
+  is_active BOOLEAN DEFAULT TRUE
+)
+
+注文 (
+  order_id INT PRIMARY KEY AUTO_INCREMENT,
+  customer_id INT NOT NULL,  -- FK
+  shipping_address_id INT NOT NULL,  -- FK
+  status TINYINT NOT NULL DEFAULT 0,  -- 0:pending, 1:paid, ...
+  total_amount DECIMAL(12, 2) NOT NULL,
+  ordered_at DATETIME DEFAULT CURRENT_TIMESTAMP
+)
+
+注文明細 (
+  order_item_id INT PRIMARY KEY AUTO_INCREMENT,
+  order_id INT NOT NULL,  -- FK
+  product_id INT NOT NULL,  -- FK
+  quantity INT NOT NULL,
+  unit_price DECIMAL(10, 2) NOT NULL,  -- 注文時点の価格を保存
+  UNIQUE (order_id, product_id)  -- 同じ注文に同じ商品は1行
+)</code></pre>
+  </div>
+
+  <h2>設計のポイント解説</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      設計判断の理由
+    </div>
+    <ul>
+      <li><strong>unit_price を明細に保存</strong>：商品価格が変わっても注文時の価格を保持（非正規化だが正しい）</li>
+      <li><strong>status を TINYINT</strong>：ENUM的に運用（パフォーマンス優先）</li>
+      <li><strong>price に DECIMAL</strong>：金額は誤差なく計算</li>
+      <li><strong>is_default, is_active</strong>：BOOLEAN（またはTINYINT）でフラグ管理</li>
+      <li><strong>parent_category_id</strong>：自己参照でカテゴリ階層を表現</li>
+    </ul>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">🎉</span>
+      Phase 1 完了！
+    </div>
+    <p>
+      データモデリングの基礎を学びました。
+    </p>
+    <ul>
+      <li>概念・論理・物理の3つのモデルレベル</li>
+      <li>エンティティと属性の設計</li>
+      <li>リレーションシップの種類（1:1, 1:N, N:N）</li>
+      <li>ER図の読み書き</li>
+      <li>正規化と非正規化のトレードオフ</li>
+      <li>主キー・外部キーの設計戦略</li>
+      <li>データ型の選択</li>
+    </ul>
+    <p style="margin:0;">
+      次のPhaseでは、<strong>インデックス設計</strong>と<strong>クエリ最適化</strong>を学びます。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-data10-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      総合クイズ 1
+    </div>
+    <p>注文明細に unit_price（注文時点の価格）を保存する理由は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data10-1" style="display:none;">
+      A. 商品価格が変わっても、注文時の価格を正しく保持するため
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data10-1" style="display:none;">
+      B. JOINを減らしてパフォーマンスを上げるため
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data10-1" style="display:none;">
+      C. 正規化のルールで必須だから
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data10-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-data10-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      総合クイズ 2
+    </div>
+    <p>顧客と住所の関係（1人の顧客が複数住所を持つ）はどれ？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data10-2" style="display:none;">
+      A. 1:1
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data10-2" style="display:none;">
+      B. 1:N
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data10-2" style="display:none;">
+      C. N:N
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data10-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-data10-3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      総合クイズ 3
+    </div>
+    <p>この設計の問題点は？</p>
+<pre><code>CREATE TABLE orders (
+  id INT PRIMARY KEY,
+  products VARCHAR(1000)  -- "商品A,商品B,商品C"
+);</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-data10-3" style="display:none;">
+      A. 第1正規形違反（繰り返しデータをカンマ区切りで格納）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data10-3" style="display:none;">
+      B. VARCHAR(1000)が短すぎる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-data10-3" style="display:none;">
+      C. 特に問題はない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-data10-3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('data10')">
+    <span class="icon">✓</span>
+    Phase 1を完了
+  </button>
+</section>
