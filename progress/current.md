@@ -2,8 +2,8 @@
 > 目標: 実務シニア＆フルスタック
 
 ## 現在地
-- **Level**: 8 カリキュラム作成完了
-- **状態**: 教科書作成待ち
+- **Level**: 8 完了
+- **状態**: 教科書作成完了
 
 ## 教科書の確認方法
 ```powershell
@@ -23,46 +23,41 @@ cd textbook && python -m http.server 8080
 | 5 | インフラ/DevOps | 56 | ✅ 完了 |
 | 6 | 設計原則とパターン | 78 | ✅ 完了 |
 | 7 | 実践設計とAI活用 | 80 | ✅ 完了 |
-| 8 | テスト戦略・品質保証 | 80（予定） | 📋 カリキュラム完了 |
-| **合計** | - | **411セクション（予定）** | - |
+| 8 | テスト戦略・品質保証 | 80 | ✅ 完了 |
+| **合計** | - | **411セクション** | - |
 
 ## 今回完了した作業（2026-02-04）
 
-### Level 8 カリキュラム作成
+### Level 8 教科書作成完了
 
 **テーマ**: テスト戦略・品質保証
 
-| Phase | テーマ | セクションID |
-|-------|--------|-------------|
-| Phase 1 | テスト基礎・マインドセット | test1-test10 |
-| Phase 2 | 単体テスト | unit1-unit10 |
-| Phase 3 | 結合テスト・APIテスト | int1-int10 |
-| Phase 4 | E2Eテスト | e2e1-e2e10 |
-| Phase 5 | テスト設計技法 | tech1-tech10 |
-| Phase 6 | TDD/BDD | tdd1-tdd10 |
-| Phase 7 | CI/CDとテスト自動化 | ci1-ci10 |
-| Phase 8 | 品質保証・品質管理 | qa1-qa10 |
+| Phase | テーマ | セクションID | ファイル |
+|-------|--------|-------------|----------|
+| Phase 1 | テスト基礎・マインドセット | testing1-10 | phase1.html |
+| Phase 2 | 単体テスト | unit1-10 | phase2.html |
+| Phase 3 | 結合テスト・APIテスト | int1-10 | phase3.html |
+| Phase 4 | E2Eテスト | e2e1-10 | phase4.html |
+| Phase 5 | テスト設計技法 | tech1-10 | phase5.html |
+| Phase 6 | TDD/BDD | tdd1-10 | phase6.html |
+| Phase 7 | CI/CDとテスト自動化 | ci1-10 | phase7.html |
+| Phase 8 | 品質保証・品質管理 | qa1-10 | phase8.html |
 
 **作成ファイル**:
 - `curriculum/level8.md` - カリキュラム
+- `textbook/level8/phase1.html` 〜 `phase8.html` - 教科書HTML
+- `textbook/index.html` - ナビゲーション・ダッシュボード更新
+- `textbook/js/main.js` - sectionMapping・進捗計算更新
 
 **関連資格**:
 - JSTQB認定テスト技術者
 - ISTQB Foundation Level
 
-## 次回セッションでやること
+## 次のステップ
 
-### 1. Level 8 教科書作成
-8つのPhaseの教科書HTMLを作成：
-- `textbook/level8/phase1.html` 〜 `textbook/level8/phase8.html`
-- `textbook/index.html` のナビ・ダッシュボード更新
-- `textbook/js/main.js` のsectionMapping更新
-
-### 2. 教科書に含める要素
-- SVG図解: 各Phase 3個程度
-- クイズ: 各セクション最低1問
-- 実務でよくあるAIの間違い例
-- 完了ボタン: 全セクション
+1. **Level 8の学習**: 教科書を読み進める
+2. **資格取得検討**: JSTQB Foundation Level
+3. **Level 9検討**: チーム開発・プロジェクト管理
 
 ## 参照ファイル
 | ファイル | 内容 |
