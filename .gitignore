@@ -11,5 +11,7 @@ Thumbs.db
 *.tmp
 *.log
 
-# Claude Code internal state
+# Claude Code
+CLAUDE.md
+.claude/
 .log_state_*.json
