@@ -1,0 +1,1884 @@
+<!-- ============================================
+     Level 6 Phase 4: デザインパターン - 振る舞い
+     ============================================ -->
+
+<section id="behavior1">
+  <h1>Strategy パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Strategyの目的</li>
+      <li>アルゴリズムの切り替え</li>
+      <li>関数型での代替手段</li>
+    </ul>
+  </div>
+
+  <h2>Strategyとは？</h2>
+
+  <p>
+    <strong>アルゴリズムをカプセル化して交換可能にする</strong>パターンです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      カーナビの経路案内を考えてください。<br>
+      「最短距離」「高速優先」「一般道優先」<br>
+      目的地は同じでも、<strong>経路の選び方（戦略）が違う</strong>。<br>
+      戦略を差し替えるのがStrategyパターンです。
+    </p>
+  </div>
+
+  <h2>問題：条件分岐でのアルゴリズム選択</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      新しい戦略を追加するたびに修正が必要
+    </div>
+<pre><code>// ❌ OCP違反：新しい配送方法を追加するたびに修正
+class ShippingCalculator {
+  calculate(order: Order, method: string): number {
+    if (method === 'standard') {
+      return order.weight * 1.5;
+    } else if (method === 'express') {
+      return order.weight * 3.0 + 500;
+    } else if (method === 'overnight') {
+      return order.weight * 5.0 + 1000;
+    } else if (method === 'drone') {  // 追加のたびに修正
+      return order.weight * 10.0 + 2000;
+    }
+    throw new Error('Unknown method');
+  }
+}</code></pre>
+  </div>
+
+  <h2>解決：Strategy パターン</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      戦略を差し替え可能に
+    </div>
+<pre><code>// 戦略のインターフェース
+interface ShippingStrategy {
+  calculate(order: Order): number;
+}
+
+// 各戦略を個別のクラスで実装
+class StandardShipping implements ShippingStrategy {
+  calculate(order: Order): number {
+    return order.weight * 1.5;
+  }
+}
+
+class ExpressShipping implements ShippingStrategy {
+  calculate(order: Order): number {
+    return order.weight * 3.0 + 500;
+  }
+}
+
+class OvernightShipping implements ShippingStrategy {
+  calculate(order: Order): number {
+    return order.weight * 5.0 + 1000;
+  }
+}
+
+// コンテキスト：戦略を使う側
+class ShippingCalculator {
+  constructor(private strategy: ShippingStrategy) {}
+
+  setStrategy(strategy: ShippingStrategy): void {
+    this.strategy = strategy;
+  }
+
+  calculate(order: Order): number {
+    return this.strategy.calculate(order);
+  }
+}
+
+// 使い方：戦略を差し替え
+const calculator = new ShippingCalculator(new StandardShipping());
+console.log(calculator.calculate(order));  // 標準配送
+
+calculator.setStrategy(new ExpressShipping());
+console.log(calculator.calculate(order));  // 速達に変更</code></pre>
+  </div>
+
+  <h2>モダンな代替：関数で渡す</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      TypeScript/JavaScriptでは関数が簡単
+    </div>
+<pre><code>// 関数型スタイル
+type ShippingCalculator = (order: Order) => number;
+
+const standardShipping: ShippingCalculator = (order) => order.weight * 1.5;
+const expressShipping: ShippingCalculator = (order) => order.weight * 3.0 + 500;
+
+function calculateShipping(order: Order, strategy: ShippingCalculator): number {
+  return strategy(order);
+}
+
+// 使い方
+calculateShipping(order, standardShipping);
+calculateShipping(order, expressShipping);
+
+// その場でラムダ式も可能
+calculateShipping(order, (o) => o.weight * 7.0);</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-behavior1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Strategyパターンの主な目的は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior1" style="display:none;">
+      A. オブジェクトの生成を制御する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-behavior1" style="display:none;">
+      B. アルゴリズムを交換可能にする
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior1" style="display:none;">
+      C. 状態変化を通知する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-behavior1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('behavior1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 2: Observer -->
+<section id="behavior2">
+  <h1>Observer パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Observerの目的</li>
+      <li>イベント駆動の基本</li>
+      <li>密結合な通知の問題</li>
+    </ul>
+  </div>
+
+  <h2>Observerとは？</h2>
+
+  <p>
+    <strong>状態変化を複数のオブジェクトに通知する</strong>パターンです。<br>
+    「発行/購読（Pub/Sub）」とも呼ばれます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      YouTubeのチャンネル登録を考えてください。<br>
+      新しい動画が投稿されると、登録者全員に通知が届く。<br>
+      投稿者は「誰が登録しているか」を意識しない。<br>
+      <strong>変化があったら自動で通知</strong>するのがObserverです。
+    </p>
+  </div>
+
+  <h2>問題：密結合な通知</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      通知先を直接知っている
+    </div>
+<pre><code>// ❌ 密結合：通知先が増えるたびに修正
+class StockMonitor {
+  private emailService = new EmailService();
+  private smsService = new SMSService();
+  private slackService = new SlackService();
+  private lineService = new LineService();  // 追加のたびに修正
+
+  onPriceChange(stock: Stock): void {
+    this.emailService.send(`Price: ${stock.price}`);
+    this.smsService.send(`Price: ${stock.price}`);
+    this.slackService.send(`Price: ${stock.price}`);
+    this.lineService.send(`Price: ${stock.price}`);  // 追加
+  }
+}</code></pre>
+  </div>
+
+  <h2>解決：Observer パターン</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      疎結合な通知
+    </div>
+<pre><code>// オブザーバーのインターフェース
+interface Observer {
+  update(data: unknown): void;
+}
+
+// 主題（Subject）：観察される側
+class Subject {
+  private observers: Observer[] = [];
+
+  subscribe(observer: Observer): void {
+    this.observers.push(observer);
+  }
+
+  unsubscribe(observer: Observer): void {
+    const index = this.observers.indexOf(observer);
+    if (index !== -1) {
+      this.observers.splice(index, 1);
+    }
+  }
+
+  notify(data: unknown): void {
+    for (const observer of this.observers) {
+      observer.update(data);
+    }
+  }
+}
+
+// 具体的なオブザーバー
+class EmailNotifier implements Observer {
+  update(data: unknown): void {
+    console.log(`Email: ${JSON.stringify(data)}`);
+  }
+}
+
+class SlackNotifier implements Observer {
+  update(data: unknown): void {
+    console.log(`Slack: ${JSON.stringify(data)}`);
+  }
+}
+
+// 使い方
+class StockMonitor extends Subject {
+  private price = 0;
+
+  setPrice(newPrice: number): void {
+    this.price = newPrice;
+    this.notify({ stock: 'AAPL', price: newPrice });
+  }
+}
+
+const monitor = new StockMonitor();
+monitor.subscribe(new EmailNotifier());
+monitor.subscribe(new SlackNotifier());
+
+monitor.setPrice(150);  // 両方に通知される</code></pre>
+  </div>
+
+  <h2>モダンな代替：EventEmitter</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      Node.jsのEventEmitter
+    </div>
+<pre><code>import { EventEmitter } from 'events';
+
+class StockMonitor extends EventEmitter {
+  setPrice(newPrice: number): void {
+    this.emit('priceChange', { price: newPrice });
+  }
+}
+
+const monitor = new StockMonitor();
+
+// リスナーを登録
+monitor.on('priceChange', (data) => {
+  console.log(`Email: ${data.price}`);
+});
+
+monitor.on('priceChange', (data) => {
+  console.log(`Slack: ${data.price}`);
+});
+
+monitor.setPrice(150);</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-behavior2-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>Observerパターンの別名は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior2-1" style="display:none;">
+      A. Request/Response
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-behavior2-1" style="display:none;">
+      B. Publish/Subscribe（Pub/Sub）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior2-1" style="display:none;">
+      C. Master/Slave
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-behavior2-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-behavior2-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>Observerパターンの主な利点は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior2-2" style="display:none;">
+      A. 処理速度の向上
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-behavior2-2" style="display:none;">
+      B. 発行者と購読者の疎結合
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior2-2" style="display:none;">
+      C. メモリ使用量の削減
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-behavior2-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('behavior2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 3: Command -->
+<section id="behavior3">
+  <h1>Command パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Commandの目的</li>
+      <li>操作のオブジェクト化</li>
+      <li>Undo/Redo の実装</li>
+    </ul>
+  </div>
+
+  <h2>Commandとは？</h2>
+
+  <p>
+    <strong>操作（リクエスト）をオブジェクトとしてカプセル化する</strong>パターンです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      レストランの注文伝票を考えてください。<br>
+      お客さんが「パスタください」と言うと、ウェイターが伝票に書く。<br>
+      伝票が厨房に渡され、シェフが調理する。<br>
+      <strong>注文が「モノ」になっている</strong>のがCommandです。
+    </p>
+  </div>
+
+  <h2>使用場面</h2>
+
+  <ul>
+    <li><strong>Undo/Redo</strong>: 操作を履歴として保存</li>
+    <li><strong>キュー</strong>: 操作を後で実行</li>
+    <li><strong>ログ</strong>: 操作を記録して再実行可能に</li>
+    <li><strong>トランザクション</strong>: 一連の操作をまとめる</li>
+  </ul>
+
+  <h2>実装例：テキストエディタのUndo</h2>
+
+  <div class="card">
+<pre><code>// コマンドのインターフェース
+interface Command {
+  execute(): void;
+  undo(): void;
+}
+
+// 具体的なコマンド
+class InsertTextCommand implements Command {
+  private previousText: string = '';
+
+  constructor(
+    private editor: TextEditor,
+    private text: string,
+    private position: number
+  ) {}
+
+  execute(): void {
+    this.previousText = this.editor.getText();
+    this.editor.insertAt(this.position, this.text);
+  }
+
+  undo(): void {
+    this.editor.setText(this.previousText);
+  }
+}
+
+class DeleteTextCommand implements Command {
+  private deletedText: string = '';
+
+  constructor(
+    private editor: TextEditor,
+    private start: number,
+    private length: number
+  ) {}
+
+  execute(): void {
+    this.deletedText = this.editor.getText().substring(
+      this.start,
+      this.start + this.length
+    );
+    this.editor.deleteAt(this.start, this.length);
+  }
+
+  undo(): void {
+    this.editor.insertAt(this.start, this.deletedText);
+  }
+}
+
+// コマンドを管理するInvoker
+class CommandHistory {
+  private history: Command[] = [];
+  private redoStack: Command[] = [];
+
+  execute(command: Command): void {
+    command.execute();
+    this.history.push(command);
+    this.redoStack = [];  // 新しい操作でredoスタックをクリア
+  }
+
+  undo(): void {
+    const command = this.history.pop();
+    if (command) {
+      command.undo();
+      this.redoStack.push(command);
+    }
+  }
+
+  redo(): void {
+    const command = this.redoStack.pop();
+    if (command) {
+      command.execute();
+      this.history.push(command);
+    }
+  }
+}
+
+// 使い方
+const editor = new TextEditor();
+const history = new CommandHistory();
+
+history.execute(new InsertTextCommand(editor, 'Hello', 0));
+history.execute(new InsertTextCommand(editor, ' World', 5));
+console.log(editor.getText());  // "Hello World"
+
+history.undo();
+console.log(editor.getText());  // "Hello"
+
+history.redo();
+console.log(editor.getText());  // "Hello World"</code></pre>
+  </div>
+
+  <h2>モダンな代替：Redux Action</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      ReactのReduxはCommandパターン
+    </div>
+<pre><code>// Redux ActionはCommandの一種
+const addTodo = (text: string) => ({
+  type: 'ADD_TODO',
+  payload: { text }
+});
+
+const deleteTodo = (id: number) => ({
+  type: 'DELETE_TODO',
+  payload: { id }
+});
+
+// ReducerがCommandを処理
+function todoReducer(state = [], action) {
+  switch (action.type) {
+    case 'ADD_TODO':
+      return [...state, action.payload];
+    case 'DELETE_TODO':
+      return state.filter(t => t.id !== action.payload.id);
+    default:
+      return state;
+  }
+}</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-behavior3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Commandパターンが特に有効な機能は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior3" style="display:none;">
+      A. データベース接続
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-behavior3" style="display:none;">
+      B. Undo/Redo機能
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior3" style="display:none;">
+      C. ファイル読み込み
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-behavior3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('behavior3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 4: State -->
+<section id="behavior4">
+  <h1>State パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Stateの目的</li>
+      <li>状態による振る舞いの変更</li>
+      <li>巨大なswitch文の解消</li>
+    </ul>
+  </div>
+
+  <h2>Stateとは？</h2>
+
+  <p>
+    <strong>内部状態に応じて振る舞いを変える</strong>パターンです。<br>
+    状態が変わると、あたかも別のクラスになったかのように動きます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      自動販売機を考えてください。<br>
+      「お金が入っていない」「お金が入った」「商品を選択中」「商品を排出中」<br>
+      <strong>状態によってボタンの反応が変わる</strong>。<br>
+      これがStateパターンです。
+    </p>
+  </div>
+
+  <h2>問題：巨大なswitch文</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      状態が増えると複雑化
+    </div>
+<pre><code>// ❌ 巨大なswitch文で状態管理
+class Order {
+  status: 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
+
+  process(): void {
+    switch (this.status) {
+      case 'pending':
+        this.processPayment();
+        this.status = 'paid';
+        break;
+      case 'paid':
+        this.ship();
+        this.status = 'shipped';
+        break;
+      case 'shipped':
+        this.deliver();
+        this.status = 'delivered';
+        break;
+      case 'delivered':
+        throw new Error('Already delivered');
+      case 'cancelled':
+        throw new Error('Order is cancelled');
+    }
+  }
+
+  cancel(): void {
+    switch (this.status) {
+      case 'pending':
+      case 'paid':
+        this.status = 'cancelled';
+        break;
+      case 'shipped':
+      case 'delivered':
+        throw new Error('Cannot cancel');
+      // 状態が増えるたびに全メソッドを修正
+    }
+  }
+}</code></pre>
+  </div>
+
+  <h2>解決：State パターン</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      状態ごとにクラスを分離
+    </div>
+<pre><code>// 状態のインターフェース
+interface OrderState {
+  process(order: Order): void;
+  cancel(order: Order): void;
+  getStatus(): string;
+}
+
+// 各状態を個別のクラスで実装
+class PendingState implements OrderState {
+  process(order: Order): void {
+    console.log('Processing payment...');
+    order.setState(new PaidState());
+  }
+
+  cancel(order: Order): void {
+    console.log('Order cancelled');
+    order.setState(new CancelledState());
+  }
+
+  getStatus(): string { return 'pending'; }
+}
+
+class PaidState implements OrderState {
+  process(order: Order): void {
+    console.log('Shipping order...');
+    order.setState(new ShippedState());
+  }
+
+  cancel(order: Order): void {
+    console.log('Refunding and cancelling...');
+    order.setState(new CancelledState());
+  }
+
+  getStatus(): string { return 'paid'; }
+}
+
+class ShippedState implements OrderState {
+  process(order: Order): void {
+    console.log('Delivering...');
+    order.setState(new DeliveredState());
+  }
+
+  cancel(order: Order): void {
+    throw new Error('Cannot cancel shipped order');
+  }
+
+  getStatus(): string { return 'shipped'; }
+}
+
+// コンテキスト
+class Order {
+  private state: OrderState = new PendingState();
+
+  setState(state: OrderState): void {
+    this.state = state;
+  }
+
+  process(): void {
+    this.state.process(this);
+  }
+
+  cancel(): void {
+    this.state.cancel(this);
+  }
+
+  getStatus(): string {
+    return this.state.getStatus();
+  }
+}
+
+// 使い方
+const order = new Order();
+console.log(order.getStatus());  // 'pending'
+
+order.process();  // 'Processing payment...'
+console.log(order.getStatus());  // 'paid'
+
+order.process();  // 'Shipping order...'
+console.log(order.getStatus());  // 'shipped'</code></pre>
+  </div>
+
+  <h2>モダンな代替：XState</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      状態マシンライブラリ
+    </div>
+<pre><code>import { createMachine } from 'xstate';
+
+const orderMachine = createMachine({
+  id: 'order',
+  initial: 'pending',
+  states: {
+    pending: {
+      on: {
+        PROCESS: 'paid',
+        CANCEL: 'cancelled'
+      }
+    },
+    paid: {
+      on: {
+        PROCESS: 'shipped',
+        CANCEL: 'cancelled'
+      }
+    },
+    shipped: {
+      on: {
+        PROCESS: 'delivered'
+        // CANCELイベントがないので遷移できない
+      }
+    },
+    delivered: { type: 'final' },
+    cancelled: { type: 'final' }
+  }
+});</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-behavior4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Stateパターンが解決する問題は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior4" style="display:none;">
+      A. オブジェクトの生成が複雑
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-behavior4" style="display:none;">
+      B. 状態による分岐が複雑なswitch文になる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior4" style="display:none;">
+      C. 異なるインターフェースの互換性
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-behavior4')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('behavior4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 5: Template Method -->
+<section id="behavior5">
+  <h1>Template Method パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Template Methodの目的</li>
+      <li>アルゴリズムの骨格定義</li>
+      <li>コピペコードの解消</li>
+    </ul>
+  </div>
+
+  <h2>Template Methodとは？</h2>
+
+  <p>
+    <strong>アルゴリズムの骨格を定義し、詳細をサブクラスに委ねる</strong>パターンです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      料理のレシピを考えてください。<br>
+      「下ごしらえ → 調理 → 盛り付け」という流れは同じ。<br>
+      でも「何を下ごしらえするか」は料理によって違う。<br>
+      <strong>流れは固定、詳細は可変</strong>なのがTemplate Methodです。
+    </p>
+  </div>
+
+  <h2>問題：コピペコード</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      似たようなコードが散在
+    </div>
+<pre><code>// ❌ 同じ流れが重複
+class CsvReportGenerator {
+  generate(data: Data[]): string {
+    // ヘッダー出力（同じ）
+    console.log('Generating report...');
+
+    // データ変換（CSV固有）
+    const csv = data.map(d => `${d.id},${d.name}`).join('\n');
+
+    // フッター出力（同じ）
+    console.log('Report generated');
+    return csv;
+  }
+}
+
+class JsonReportGenerator {
+  generate(data: Data[]): string {
+    // ヘッダー出力（同じ）
+    console.log('Generating report...');
+
+    // データ変換（JSON固有）
+    const json = JSON.stringify(data);
+
+    // フッター出力（同じ）
+    console.log('Report generated');
+    return json;
+  }
+}</code></pre>
+  </div>
+
+  <h2>解決：Template Method パターン</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      共通の流れを基底クラスに
+    </div>
+<pre><code>// 抽象基底クラス：骨格を定義
+abstract class ReportGenerator {
+  // テンプレートメソッド：流れを固定
+  generate(data: Data[]): string {
+    this.beforeGenerate();
+    const result = this.doGenerate(data);
+    this.afterGenerate();
+    return result;
+  }
+
+  // フックメソッド：オーバーライド可能
+  protected beforeGenerate(): void {
+    console.log('Generating report...');
+  }
+
+  protected afterGenerate(): void {
+    console.log('Report generated');
+  }
+
+  // 抽象メソッド：サブクラスで実装必須
+  protected abstract doGenerate(data: Data[]): string;
+}
+
+// 具体的な実装
+class CsvReportGenerator extends ReportGenerator {
+  protected doGenerate(data: Data[]): string {
+    return data.map(d => `${d.id},${d.name}`).join('\n');
+  }
+}
+
+class JsonReportGenerator extends ReportGenerator {
+  protected doGenerate(data: Data[]): string {
+    return JSON.stringify(data);
+  }
+}
+
+class XmlReportGenerator extends ReportGenerator {
+  protected doGenerate(data: Data[]): string {
+    return data.map(d => `&lt;item id="${d.id}"&gt;${d.name}&lt;/item&gt;`).join('');
+  }
+}
+
+// 使い方
+const csvGenerator = new CsvReportGenerator();
+csvGenerator.generate(data);</code></pre>
+  </div>
+
+  <h2>モダンな代替：高階関数</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      関数型スタイル
+    </div>
+<pre><code>// 高階関数で骨格を定義
+function createReportGenerator(
+  formatter: (data: Data[]) => string
+): (data: Data[]) => string {
+  return (data) => {
+    console.log('Generating report...');
+    const result = formatter(data);
+    console.log('Report generated');
+    return result;
+  };
+}
+
+// フォーマッターを渡す
+const csvGenerator = createReportGenerator(
+  data => data.map(d => `${d.id},${d.name}`).join('\n')
+);
+
+const jsonGenerator = createReportGenerator(
+  data => JSON.stringify(data)
+);</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-behavior5">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Template Methodパターンの特徴は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior5" style="display:none;">
+      A. すべての処理をサブクラスに委ねる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-behavior5" style="display:none;">
+      B. アルゴリズムの骨格を基底クラスで定義し、詳細をサブクラスに委ねる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior5" style="display:none;">
+      C. 基底クラスでも詳細を完全に実装する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-behavior5')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('behavior5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 6: Iterator -->
+<section id="behavior6">
+  <h1>Iterator パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Iteratorの目的</li>
+      <li>コレクションの走査を抽象化</li>
+      <li>JavaScriptのIterator/Generator</li>
+    </ul>
+  </div>
+
+  <h2>Iteratorとは？</h2>
+
+  <p>
+    <strong>コレクションの内部構造を隠しながら要素を順番にアクセスする</strong>パターンです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      本棚から1冊ずつ本を取り出す係を考えてください。<br>
+      「次の本をください」と言えば、次の本が出てくる。<br>
+      本棚の構造（何段あるか、どう並んでいるか）は知らなくていい。<br>
+      <strong>取り出し方を隠蔽</strong>するのがIteratorです。
+    </p>
+  </div>
+
+  <h2>JavaScriptの組み込みIterator</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📝</span>
+      for...of の裏側
+    </div>
+<pre><code>// 配列は自動的にIterableを実装している
+const numbers = [1, 2, 3];
+
+// for...of はIteratorを使用
+for (const num of numbers) {
+  console.log(num);
+}
+
+// 明示的にIteratorを取得
+const iterator = numbers[Symbol.iterator]();
+console.log(iterator.next()); // { value: 1, done: false }
+console.log(iterator.next()); // { value: 2, done: false }
+console.log(iterator.next()); // { value: 3, done: false }
+console.log(iterator.next()); // { value: undefined, done: true }</code></pre>
+  </div>
+
+  <h2>カスタムIterator</h2>
+
+  <div class="card">
+<pre><code>// カスタムコレクション
+class Range {
+  constructor(private start: number, private end: number) {}
+
+  // Symbol.iteratorを実装すればfor...ofで使える
+  *[Symbol.iterator](): Generator&lt;number&gt; {
+    for (let i = this.start; i &lt;= this.end; i++) {
+      yield i;
+    }
+  }
+}
+
+// 使い方
+const range = new Range(1, 5);
+
+for (const num of range) {
+  console.log(num);  // 1, 2, 3, 4, 5
+}
+
+// スプレッド構文も使える
+const array = [...range];  // [1, 2, 3, 4, 5]</code></pre>
+  </div>
+
+  <h2>Generator関数</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      yieldで値を生成
+    </div>
+<pre><code>// Generator関数：function* で定義
+function* fibonacci(): Generator&lt;number&gt; {
+  let [a, b] = [0, 1];
+  while (true) {
+    yield a;
+    [a, b] = [b, a + b];
+  }
+}
+
+// 使い方：必要な分だけ取得
+const fib = fibonacci();
+console.log(fib.next().value); // 0
+console.log(fib.next().value); // 1
+console.log(fib.next().value); // 1
+console.log(fib.next().value); // 2
+console.log(fib.next().value); // 3
+
+// take関数でn個取得
+function* take&lt;T&gt;(iterable: Iterable&lt;T&gt;, n: number): Generator&lt;T&gt; {
+  let count = 0;
+  for (const item of iterable) {
+    if (count++ >= n) return;
+    yield item;
+  }
+}
+
+const first10 = [...take(fibonacci(), 10)];
+// [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-behavior6">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>JavaScriptでfor...ofを使うために必要なものは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior6" style="display:none;">
+      A. lengthプロパティ
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-behavior6" style="display:none;">
+      B. Symbol.iteratorメソッド
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior6" style="display:none;">
+      C. forEachメソッド
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-behavior6')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('behavior6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 7: Chain of Responsibility -->
+<section id="behavior7">
+  <h1>Chain of Responsibility パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Chain of Responsibilityの目的</li>
+      <li>処理の連鎖</li>
+      <li>Expressのミドルウェア</li>
+    </ul>
+  </div>
+
+  <h2>Chain of Responsibilityとは？</h2>
+
+  <p>
+    <strong>リクエストを処理できるオブジェクトを連鎖させる</strong>パターンです。<br>
+    処理できなければ次に渡す。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      会社の承認フローを考えてください。<br>
+      経費申請 → 課長が確認 → 金額が大きければ部長へ → さらに大きければ社長へ<br>
+      <strong>自分で処理できなければ上に回す</strong>のがChain of Responsibilityです。
+    </p>
+  </div>
+
+  <h2>実装例</h2>
+
+  <div class="card">
+<pre><code>// ハンドラーの抽象クラス
+abstract class ApprovalHandler {
+  protected nextHandler?: ApprovalHandler;
+
+  setNext(handler: ApprovalHandler): ApprovalHandler {
+    this.nextHandler = handler;
+    return handler;  // チェーン構築のため自身を返す
+  }
+
+  abstract handle(request: ExpenseRequest): string;
+}
+
+// 具体的なハンドラー
+class ManagerHandler extends ApprovalHandler {
+  handle(request: ExpenseRequest): string {
+    if (request.amount &lt;= 10000) {
+      return `Manager approved: ${request.amount}円`;
+    }
+    if (this.nextHandler) {
+      return this.nextHandler.handle(request);
+    }
+    return 'No one could handle the request';
+  }
+}
+
+class DirectorHandler extends ApprovalHandler {
+  handle(request: ExpenseRequest): string {
+    if (request.amount &lt;= 100000) {
+      return `Director approved: ${request.amount}円`;
+    }
+    if (this.nextHandler) {
+      return this.nextHandler.handle(request);
+    }
+    return 'No one could handle the request';
+  }
+}
+
+class PresidentHandler extends ApprovalHandler {
+  handle(request: ExpenseRequest): string {
+    return `President approved: ${request.amount}円`;
+  }
+}
+
+// チェーンを構築
+const manager = new ManagerHandler();
+const director = new DirectorHandler();
+const president = new PresidentHandler();
+
+manager.setNext(director).setNext(president);
+
+// 使い方
+console.log(manager.handle({ amount: 5000 }));    // Manager approved
+console.log(manager.handle({ amount: 50000 }));   // Director approved
+console.log(manager.handle({ amount: 500000 }));  // President approved</code></pre>
+  </div>
+
+  <h2>現代的な例：Expressミドルウェア</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      next()で次のハンドラーへ
+    </div>
+<pre><code>import express from 'express';
+const app = express();
+
+// ミドルウェア1: ロギング
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();  // 次のミドルウェアへ
+});
+
+// ミドルウェア2: 認証チェック
+app.use((req, res, next) => {
+  if (!req.headers.authorization) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  next();  // 認証OKなら次へ
+});
+
+// ミドルウェア3: レート制限
+app.use((req, res, next) => {
+  if (isRateLimited(req.ip)) {
+    return res.status(429).json({ error: 'Too many requests' });
+  }
+  next();
+});
+
+// 最終ハンドラー
+app.get('/api/data', (req, res) => {
+  res.json({ data: 'Hello!' });
+});</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-behavior7">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Chain of Responsibilityパターンの特徴は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior7" style="display:none;">
+      A. 常に最後のハンドラーが処理する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-behavior7" style="display:none;">
+      B. 処理できなければ次のハンドラーに渡す
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior7" style="display:none;">
+      C. すべてのハンドラーが必ず処理する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-behavior7')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('behavior7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 8: Mediator -->
+<section id="behavior8">
+  <h1>Mediator パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Mediatorの目的</li>
+      <li>多対多の依存の解消</li>
+      <li>オブジェクト間の調整</li>
+    </ul>
+  </div>
+
+  <h2>Mediatorとは？</h2>
+
+  <p>
+    <strong>オブジェクト間の通信を仲介者（Mediator）に集約する</strong>パターンです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      航空管制塔を考えてください。<br>
+      飛行機同士が直接通信すると混乱する。<br>
+      全機が<strong>管制塔を通じて調整</strong>することで安全に運航できる。<br>
+      これがMediatorです。
+    </p>
+  </div>
+
+  <h2>問題：多対多の依存</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      コンポーネントが互いを直接参照
+    </div>
+<pre><code>// ❌ 各コンポーネントが互いを知っている
+class Button {
+  constructor(
+    private textField: TextField,
+    private checkbox: Checkbox,
+    private dropdown: Dropdown
+  ) {}
+
+  onClick(): void {
+    this.textField.clear();
+    this.checkbox.uncheck();
+    this.dropdown.reset();
+  }
+}
+
+// コンポーネントが増えると参照が爆発
+// 5個のコンポーネントで最大 5×4 = 20 の参照</code></pre>
+  </div>
+
+  <h2>解決：Mediator パターン</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      仲介者を通じて通信
+    </div>
+<pre><code>// Mediatorインターフェース
+interface DialogMediator {
+  notify(sender: Component, event: string): void;
+}
+
+// コンポーネントの基底クラス
+abstract class Component {
+  constructor(protected mediator: DialogMediator) {}
+
+  abstract render(): void;
+}
+
+// 具体的なコンポーネント
+class Button extends Component {
+  onClick(): void {
+    this.mediator.notify(this, 'click');
+  }
+
+  render(): void { /* ... */ }
+}
+
+class TextField extends Component {
+  clear(): void {
+    console.log('TextField cleared');
+  }
+
+  render(): void { /* ... */ }
+}
+
+class Checkbox extends Component {
+  uncheck(): void {
+    console.log('Checkbox unchecked');
+  }
+
+  render(): void { /* ... */ }
+}
+
+// 具体的なMediator
+class FormDialog implements DialogMediator {
+  private button: Button;
+  private textField: TextField;
+  private checkbox: Checkbox;
+
+  constructor() {
+    this.button = new Button(this);
+    this.textField = new TextField(this);
+    this.checkbox = new Checkbox(this);
+  }
+
+  notify(sender: Component, event: string): void {
+    if (sender === this.button && event === 'click') {
+      // Mediatorがコンポーネント間の調整を行う
+      this.textField.clear();
+      this.checkbox.uncheck();
+    }
+  }
+}</code></pre>
+  </div>
+
+  <h2>現代的な例：Redux/イベントバス</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      ReduxのStoreはMediator
+    </div>
+<pre><code>// コンポーネントはStoreを通じて通信
+// 直接参照せず、dispatch/subscribeで疎結合
+
+// Action を dispatch
+store.dispatch({ type: 'RESET_FORM' });
+
+// 他のコンポーネントは変更を subscribe
+store.subscribe(() => {
+  const state = store.getState();
+  // 状態に応じてUI更新
+});</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-behavior8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Mediatorパターンの主な目的は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-behavior8" style="display:none;">
+      A. オブジェクト間の多対多の依存を解消する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior8" style="display:none;">
+      B. 処理を順番に連鎖させる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior8" style="display:none;">
+      C. 状態を保存/復元する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-behavior8')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('behavior8')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 9: Memento -->
+<section id="behavior9">
+  <h1>Memento パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Mementoの目的</li>
+      <li>状態のスナップショット</li>
+      <li>カプセル化を壊さない復元</li>
+    </ul>
+  </div>
+
+  <h2>Mementoとは？</h2>
+
+  <p>
+    <strong>オブジェクトの内部状態を保存し、後で復元する</strong>パターンです。<br>
+    カプセル化を壊さずに状態を外部化します。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      ゲームのセーブデータを考えてください。<br>
+      現在の状態（HP、位置、アイテム）を保存。<br>
+      失敗したら<strong>セーブポイントに戻れる</strong>。<br>
+      これがMementoです。
+    </p>
+  </div>
+
+  <h2>実装例</h2>
+
+  <div class="card">
+<pre><code>// Memento：状態のスナップショット
+class EditorMemento {
+  constructor(
+    private readonly content: string,
+    private readonly cursorPosition: number
+  ) {}
+
+  getContent(): string { return this.content; }
+  getCursorPosition(): number { return this.cursorPosition; }
+}
+
+// Originator：状態を持つオブジェクト
+class TextEditor {
+  private content = '';
+  private cursorPosition = 0;
+
+  type(text: string): void {
+    this.content =
+      this.content.slice(0, this.cursorPosition) +
+      text +
+      this.content.slice(this.cursorPosition);
+    this.cursorPosition += text.length;
+  }
+
+  delete(): void {
+    if (this.cursorPosition > 0) {
+      this.content =
+        this.content.slice(0, this.cursorPosition - 1) +
+        this.content.slice(this.cursorPosition);
+      this.cursorPosition--;
+    }
+  }
+
+  // スナップショットを作成
+  save(): EditorMemento {
+    return new EditorMemento(this.content, this.cursorPosition);
+  }
+
+  // スナップショットから復元
+  restore(memento: EditorMemento): void {
+    this.content = memento.getContent();
+    this.cursorPosition = memento.getCursorPosition();
+  }
+
+  getContent(): string { return this.content; }
+}
+
+// Caretaker：Mementoを管理
+class UndoManager {
+  private history: EditorMemento[] = [];
+
+  save(memento: EditorMemento): void {
+    this.history.push(memento);
+  }
+
+  undo(): EditorMemento | undefined {
+    return this.history.pop();
+  }
+}
+
+// 使い方
+const editor = new TextEditor();
+const undoManager = new UndoManager();
+
+undoManager.save(editor.save());
+editor.type('Hello');
+
+undoManager.save(editor.save());
+editor.type(' World');
+
+console.log(editor.getContent()); // "Hello World"
+
+const memento = undoManager.undo();
+if (memento) editor.restore(memento);
+console.log(editor.getContent()); // "Hello"</code></pre>
+  </div>
+
+  <h2>Commandパターンとの違い</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">Command</div>
+      <p style="margin:0;">
+        <strong>操作</strong>を記録<br>
+        「何をしたか」を保存<br>
+        操作の逆を実行してUndo
+      </p>
+    </div>
+    <div class="compare-orange">
+      <div class="compare-title">Memento</div>
+      <p style="margin:0;">
+        <strong>状態</strong>を記録<br>
+        「どんな状態だったか」を保存<br>
+        状態を丸ごと復元してUndo
+      </p>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-behavior9">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Mementoパターンの特徴は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior9" style="display:none;">
+      A. 操作をオブジェクト化して記録する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-behavior9" style="display:none;">
+      B. 状態のスナップショットを保存し、カプセル化を壊さず復元する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior9" style="display:none;">
+      C. 状態変化を複数のオブジェクトに通知する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-behavior9')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('behavior9')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 10: Visitor/Modern Patterns -->
+<section id="behavior10">
+  <h1>Visitor / モダンパターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Visitorパターン</li>
+      <li>GoFパターンの現代的な代替</li>
+      <li>パターン選択の指針</li>
+    </ul>
+  </div>
+
+  <h2>Visitorとは？</h2>
+
+  <p>
+    <strong>構造を変えずに新しい操作を追加する</strong>パターンです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      税務署の監査官を考えてください。<br>
+      会社の組織構造は変えずに、監査官が各部署を「訪問」して調査する。<br>
+      新しい調査項目が増えても、<strong>会社の構造は変わらない</strong>。<br>
+      これがVisitorです。
+    </p>
+  </div>
+
+  <h2>実装例</h2>
+
+  <div class="card">
+<pre><code>// 要素のインターフェース
+interface DocumentElement {
+  accept(visitor: DocumentVisitor): void;
+}
+
+// Visitorのインターフェース
+interface DocumentVisitor {
+  visitParagraph(p: Paragraph): void;
+  visitHeading(h: Heading): void;
+  visitImage(i: Image): void;
+}
+
+// 要素の実装
+class Paragraph implements DocumentElement {
+  constructor(public text: string) {}
+
+  accept(visitor: DocumentVisitor): void {
+    visitor.visitParagraph(this);
+  }
+}
+
+class Heading implements DocumentElement {
+  constructor(public text: string, public level: number) {}
+
+  accept(visitor: DocumentVisitor): void {
+    visitor.visitHeading(this);
+  }
+}
+
+class Image implements DocumentElement {
+  constructor(public src: string, public alt: string) {}
+
+  accept(visitor: DocumentVisitor): void {
+    visitor.visitImage(this);
+  }
+}
+
+// 具体的なVisitor：HTML出力
+class HtmlExporter implements DocumentVisitor {
+  private output = '';
+
+  visitParagraph(p: Paragraph): void {
+    this.output += `&lt;p&gt;${p.text}&lt;/p&gt;\n`;
+  }
+
+  visitHeading(h: Heading): void {
+    this.output += `&lt;h${h.level}&gt;${h.text}&lt;/h${h.level}&gt;\n`;
+  }
+
+  visitImage(i: Image): void {
+    this.output += `&lt;img src="${i.src}" alt="${i.alt}"&gt;\n`;
+  }
+
+  getOutput(): string { return this.output; }
+}
+
+// 新しいVisitor：Markdown出力（構造を変えずに追加）
+class MarkdownExporter implements DocumentVisitor {
+  private output = '';
+
+  visitParagraph(p: Paragraph): void {
+    this.output += `${p.text}\n\n`;
+  }
+
+  visitHeading(h: Heading): void {
+    this.output += `${'#'.repeat(h.level)} ${h.text}\n\n`;
+  }
+
+  visitImage(i: Image): void {
+    this.output += `![${i.alt}](${i.src})\n\n`;
+  }
+
+  getOutput(): string { return this.output; }
+}
+
+// 使い方
+const document: DocumentElement[] = [
+  new Heading('Title', 1),
+  new Paragraph('Hello World'),
+  new Image('photo.jpg', 'A photo')
+];
+
+const htmlExporter = new HtmlExporter();
+document.forEach(el => el.accept(htmlExporter));
+console.log(htmlExporter.getOutput());</code></pre>
+  </div>
+
+  <h2>GoFパターンの現代的な代替</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      2026年のベストプラクティス
+    </div>
+    <table style="width:100%; border-collapse: collapse;">
+      <tr style="background:#f0f0f0;">
+        <th style="padding:8px; text-align:left;">GoFパターン</th>
+        <th style="padding:8px; text-align:left;">現代的な代替</th>
+      </tr>
+      <tr>
+        <td style="padding:8px;">Singleton</td>
+        <td style="padding:8px;">DIコンテナ、モジュールスコープ</td>
+      </tr>
+      <tr style="background:#f9f9f9;">
+        <td style="padding:8px;">Strategy</td>
+        <td style="padding:8px;">高階関数、関数を引数で渡す</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;">Observer</td>
+        <td style="padding:8px;">EventEmitter、RxJS、Signals</td>
+      </tr>
+      <tr style="background:#f9f9f9;">
+        <td style="padding:8px;">Command</td>
+        <td style="padding:8px;">Redux Actions、イベントソーシング</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;">State</td>
+        <td style="padding:8px;">XState、useReducer</td>
+      </tr>
+      <tr style="background:#f9f9f9;">
+        <td style="padding:8px;">Template Method</td>
+        <td style="padding:8px;">高階関数、関数合成</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;">Iterator</td>
+        <td style="padding:8px;">Generator、for...of</td>
+      </tr>
+      <tr style="background:#f9f9f9;">
+        <td style="padding:8px;">Visitor</td>
+        <td style="padding:8px;">パターンマッチング、TypeScriptの判別共用体</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>パターン選択の指針</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      パターンは道具、目的ではない
+    </div>
+    <ul>
+      <li><strong>問題が先</strong>: 「このパターンを使いたい」ではなく「この問題を解決したい」</li>
+      <li><strong>シンプルが正義</strong>: 関数で済むなら関数で</li>
+      <li><strong>チームの理解</strong>: 誰も知らないパターンは負債になる</li>
+      <li><strong>言語機能を優先</strong>: 組み込みの機能があれば使う</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-behavior10-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>Visitorパターンの利点は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-behavior10-1" style="display:none;">
+      A. 構造を変えずに新しい操作を追加できる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior10-1" style="display:none;">
+      B. 状態を保存/復元できる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior10-1" style="display:none;">
+      C. オブジェクト間の通信を仲介できる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-behavior10-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-behavior10-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>デザインパターンを適用する際の正しい考え方は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior10-2" style="display:none;">
+      A. できるだけ多くのパターンを使うべき
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-behavior10-2" style="display:none;">
+      B. GoFの23パターンをすべて暗記すべき
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-behavior10-2" style="display:none;">
+      C. 問題があってから適切なパターンを選ぶ
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-behavior10-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📖</span>
+      Phase 3 & 4 まとめ
+    </div>
+    <p><strong>生成パターン</strong>: Singleton, Factory Method, Abstract Factory, Builder, Prototype</p>
+    <p><strong>構造パターン</strong>: Adapter, Decorator, Facade, Composite</p>
+    <p><strong>振る舞いパターン</strong>: Strategy, Observer, Command, State, Template Method, Iterator, Chain of Responsibility, Mediator, Memento, Visitor</p>
+    <p style="margin:0;">
+      次のPhaseでは<strong>アーキテクチャ</strong>を学びます。<br>
+      パターンを組み合わせて、システム全体をどう設計するかを見ていきます。
+    </p>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('behavior10')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>

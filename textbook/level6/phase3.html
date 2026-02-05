@@ -1,0 +1,1563 @@
+<!-- ============================================
+     Level 6 Phase 3: デザインパターン - 生成・構造
+     ============================================ -->
+
+<section id="pattern1">
+  <h1>デザインパターン概要</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>デザインパターンとは何か</li>
+      <li>GoF（Gang of Four）パターンの分類</li>
+      <li>パターンを学ぶ意義と注意点</li>
+    </ul>
+  </div>
+
+  <h2>デザインパターンとは？</h2>
+
+  <p>
+    デザインパターンは、<strong>よくある設計上の問題に対する再利用可能な解決策</strong>です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p>
+      料理のレシピのようなものです。<br>
+      「カレーを作りたい」→「カレーのレシピ」があれば、ゼロから考えなくていい。
+    </p>
+    <p style="margin:0;">
+      同様に「オブジェクトの生成を柔軟にしたい」→「Factoryパターン」を使えばいい。<br>
+      <strong>車輪の再発明を防ぐ</strong>のがパターンの役割です。
+    </p>
+  </div>
+
+  <h2>GoF（Gang of Four）とは</h2>
+
+  <p>
+    1994年に4人の著者（Gamma, Helm, Johnson, Vlissides）が出版した<br>
+    『Design Patterns』という本で<strong>23のパターン</strong>が体系化されました。
+  </p>
+
+  <p>
+    「GoF」は「4人のギャング」という意味で、この4人の著者を指します。
+  </p>
+
+  <h2>パターンの3分類</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📦</span>
+      生成パターン（5個）
+    </div>
+    <p style="margin:0;">
+      <strong>オブジェクトの作り方</strong>に関するパターン<br>
+      Singleton, Factory Method, Abstract Factory, Builder, Prototype
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏗️</span>
+      構造パターン（7個）
+    </div>
+    <p style="margin:0;">
+      <strong>クラスの組み合わせ方</strong>に関するパターン<br>
+      Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🎭</span>
+      振る舞いパターン（11個）
+    </div>
+    <p style="margin:0;">
+      <strong>オブジェクト間の連携方法</strong>に関するパターン<br>
+      Strategy, Observer, Command, State など
+    </p>
+  </div>
+
+  <h2>パターンを学ぶ意義</h2>
+
+  <ul>
+    <li><strong>共通言語</strong>: 「Factoryパターンで」と言えば伝わる</li>
+    <li><strong>設計の引き出し</strong>: 選択肢が増える</li>
+    <li><strong>既存コードの理解</strong>: フレームワークの設計が読める</li>
+  </ul>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      パターンの過剰適用に注意
+    </div>
+    <p style="margin:0;">
+      「パターンを知っている」→「とりあえず使う」は危険。<br>
+      <strong>問題があるから解決策を適用する</strong>のが正しい順序です。<br>
+      シンプルなコードを複雑にするのは本末転倒。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-pattern1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>GoFパターンの分類として正しいものは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern1" style="display:none;">
+      A. 生成・変換・振る舞い
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-pattern1" style="display:none;">
+      B. 生成・構造・振る舞い
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern1" style="display:none;">
+      C. 作成・組立・実行
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-pattern1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('pattern1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 2: Singleton -->
+<section id="pattern2">
+  <h1>Singleton パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Singletonの目的と実装</li>
+      <li>Singletonの問題点</li>
+      <li>モダンな代替手段</li>
+    </ul>
+  </div>
+
+  <h2>Singletonとは？</h2>
+
+  <p>
+    <strong>インスタンスを1つだけに制限する</strong>パターンです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      会社の「社長」は1人だけ。<br>
+      どの部署から呼んでも、同じ社長がやってくる。<br>
+      これがSingletonの考え方です。
+    </p>
+  </div>
+
+  <h2>使用場面</h2>
+
+  <ul>
+    <li>設定情報の管理（Config）</li>
+    <li>ログ出力（Logger）</li>
+    <li>データベース接続プール</li>
+  </ul>
+
+  <h2>実装例</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📝</span>
+      TypeScriptでのSingleton
+    </div>
+<pre><code>class ConfigManager {
+  private static instance: ConfigManager;
+  private settings: Map&lt;string, string&gt; = new Map();
+
+  // privateコンストラクタで外部からnewできない
+  private constructor() {}
+
+  static getInstance(): ConfigManager {
+    if (!ConfigManager.instance) {
+      ConfigManager.instance = new ConfigManager();
+    }
+    return ConfigManager.instance;
+  }
+
+  get(key: string): string | undefined {
+    return this.settings.get(key);
+  }
+
+  set(key: string, value: string): void {
+    this.settings.set(key, value);
+  }
+}
+
+// 使い方
+const config1 = ConfigManager.getInstance();
+const config2 = ConfigManager.getInstance();
+console.log(config1 === config2); // true（同じインスタンス）</code></pre>
+  </div>
+
+  <h2>Singletonの問題点</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      グローバル状態という罠
+    </div>
+    <p>
+      Singletonは<strong>隠れた依存性</strong>を生みます。
+    </p>
+<pre><code>// ❌ 依存関係が見えない
+class UserService {
+  getUser(id: string): User {
+    // ConfigManager.getInstance()がどこからでも呼べる
+    const apiUrl = ConfigManager.getInstance().get('API_URL');
+    // テストでモックしにくい！
+  }
+}</code></pre>
+    <p style="margin:0;">
+      コンストラクタを見ても依存関係が分からない。<br>
+      テストでモックを差し込むのも困難です。
+    </p>
+  </div>
+
+  <h2>モダンな代替：依存性注入（DI）</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">❌ Singleton直接呼び出し</div>
+<pre><code>class UserService {
+  getUser(id: string): User {
+    const config = ConfigManager.getInstance();
+    // 依存が隠れている
+  }
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">✓ DIで注入</div>
+<pre><code>class UserService {
+  constructor(private config: Config) {}
+  // 依存が明示的
+
+  getUser(id: string): User {
+    const apiUrl = this.config.get('API_URL');
+    // テストでモック可能
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-pattern2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Singletonパターンの最大の問題点は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern2" style="display:none;">
+      A. メモリ使用量が多い
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-pattern2" style="display:none;">
+      B. 依存関係が隠れてテストしにくい
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern2" style="display:none;">
+      C. 実装が複雑すぎる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-pattern2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('pattern2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 3: Factory Method -->
+<section id="pattern3">
+  <h1>Factory Method パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Factory Methodの目的</li>
+      <li>switch文を使わない生成</li>
+      <li>開放閉鎖の原則（OCP）との関係</li>
+    </ul>
+  </div>
+
+  <h2>Factory Methodとは？</h2>
+
+  <p>
+    <strong>オブジェクトの生成をサブクラスに委譲する</strong>パターンです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      ピザ屋のチェーン店を考えてください。<br>
+      本部は「ピザを作れ」という指示だけ出す。<br>
+      東京店は「東京風ピザ」、大阪店は「大阪風ピザ」を作る。<br>
+      <strong>作り方は各店舗に任せる</strong>のがFactory Methodです。
+    </p>
+  </div>
+
+  <h2>問題：switch文での生成</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      新しい種類を追加するたびに修正が必要
+    </div>
+<pre><code>// ❌ OCP違反：新しい通知方法を追加するたびに修正
+function createNotification(type: string): Notification {
+  switch (type) {
+    case 'email':
+      return new EmailNotification();
+    case 'sms':
+      return new SMSNotification();
+    case 'push':
+      return new PushNotification(); // 追加のたびにここを修正
+    default:
+      throw new Error('Unknown type');
+  }
+}</code></pre>
+  </div>
+
+  <h2>解決：Factory Method</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      拡張に開いた設計
+    </div>
+<pre><code>// インターフェースを定義
+interface Notification {
+  send(message: string): void;
+}
+
+interface NotificationFactory {
+  create(): Notification;
+}
+
+// 各通知タイプごとにファクトリを実装
+class EmailNotificationFactory implements NotificationFactory {
+  create(): Notification {
+    return new EmailNotification();
+  }
+}
+
+class SMSNotificationFactory implements NotificationFactory {
+  create(): Notification {
+    return new SMSNotification();
+  }
+}
+
+// 新しい通知タイプは新クラスを追加するだけ
+class SlackNotificationFactory implements NotificationFactory {
+  create(): Notification {
+    return new SlackNotification();
+  }
+}
+
+// 使う側
+function sendNotification(factory: NotificationFactory, message: string) {
+  const notification = factory.create();
+  notification.send(message);
+}</code></pre>
+  </div>
+
+  <h2>OCPとの関係</h2>
+
+  <p>
+    Factory Methodは<strong>開放閉鎖の原則（OCP）</strong>を実現します。
+  </p>
+
+  <ul>
+    <li><strong>拡張に開いている</strong>: 新しいFactoryクラスを追加するだけ</li>
+    <li><strong>修正に閉じている</strong>: 既存コードを変更しない</li>
+  </ul>
+
+  <div class="quiz" id="quiz-pattern3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Factory Methodパターンが解決する問題は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern3" style="display:none;">
+      A. メモリ使用量の削減
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern3" style="display:none;">
+      B. 処理速度の向上
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-pattern3" style="display:none;">
+      C. 新しい種類を追加する際の既存コード修正
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-pattern3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('pattern3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 4: Abstract Factory -->
+<section id="pattern4">
+  <h1>Abstract Factory パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Abstract Factoryの目的</li>
+      <li>Factory Methodとの違い</li>
+      <li>関連オブジェクト群の一貫した生成</li>
+    </ul>
+  </div>
+
+  <h2>Abstract Factoryとは？</h2>
+
+  <p>
+    <strong>関連するオブジェクト群をまとめて生成する</strong>パターンです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      家具ショップを考えてください。<br>
+      「モダンスタイル」を選ぶと、モダンな椅子・テーブル・ソファがセットで出てくる。<br>
+      「和風スタイル」を選ぶと、和風の椅子・テーブル・ソファがセットで出てくる。<br>
+      <strong>スタイルに一貫性のある家具群</strong>を生成するのがAbstract Factoryです。
+    </p>
+  </div>
+
+  <h2>使用場面</h2>
+
+  <ul>
+    <li>UIテーマ（ダークモード/ライトモード）</li>
+    <li>データベースドライバ（MySQL/PostgreSQL）</li>
+    <li>OSごとの部品（Windows/Mac）</li>
+  </ul>
+
+  <h2>実装例</h2>
+
+  <div class="card">
+<pre><code>// 製品のインターフェース
+interface Button {
+  render(): void;
+}
+
+interface TextField {
+  render(): void;
+}
+
+// 抽象ファクトリ
+interface UIFactory {
+  createButton(): Button;
+  createTextField(): TextField;
+}
+
+// ダークテーマの実装
+class DarkButton implements Button {
+  render() { console.log('Dark Button'); }
+}
+
+class DarkTextField implements TextField {
+  render() { console.log('Dark TextField'); }
+}
+
+class DarkUIFactory implements UIFactory {
+  createButton(): Button { return new DarkButton(); }
+  createTextField(): TextField { return new DarkTextField(); }
+}
+
+// ライトテーマの実装
+class LightButton implements Button {
+  render() { console.log('Light Button'); }
+}
+
+class LightTextField implements TextField {
+  render() { console.log('Light TextField'); }
+}
+
+class LightUIFactory implements UIFactory {
+  createButton(): Button { return new LightButton(); }
+  createTextField(): TextField { return new LightTextField(); }
+}
+
+// 使う側：ファクトリを差し替えるだけでテーマ変更
+function buildUI(factory: UIFactory) {
+  const button = factory.createButton();
+  const textField = factory.createTextField();
+  button.render();
+  textField.render();
+}
+
+buildUI(new DarkUIFactory());  // 全部ダークテーマ
+buildUI(new LightUIFactory()); // 全部ライトテーマ</code></pre>
+  </div>
+
+  <h2>Factory Method との違い</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">Factory Method</div>
+      <p style="margin:0;">
+        <strong>1種類</strong>のオブジェクトを生成<br>
+        サブクラスで生成方法をオーバーライド
+      </p>
+    </div>
+    <div class="compare-orange">
+      <div class="compare-title">Abstract Factory</div>
+      <p style="margin:0;">
+        <strong>複数種類</strong>の関連オブジェクトを生成<br>
+        ファクトリ全体を差し替える
+      </p>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      過度な階層化に注意
+    </div>
+    <p style="margin:0;">
+      製品が増えるとファクトリの変更が大変になります。<br>
+      「本当に関連する製品群か？」を見極めてから適用しましょう。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-pattern4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Abstract Factoryパターンの特徴は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-pattern4" style="display:none;">
+      A. 関連するオブジェクト群をまとめて生成する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern4" style="display:none;">
+      B. インスタンスを1つに制限する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern4" style="display:none;">
+      C. 複雑なオブジェクトを段階的に構築する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-pattern4')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('pattern4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 5: Builder -->
+<section id="pattern5">
+  <h1>Builder パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Builderの目的と実装</li>
+      <li>長いコンストラクタ問題の解決</li>
+      <li>メソッドチェーンによる可読性向上</li>
+    </ul>
+  </div>
+
+  <h2>Builderとは？</h2>
+
+  <p>
+    <strong>複雑なオブジェクトを段階的に構築する</strong>パターンです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      ハンバーガーの注文を考えてください。<br>
+      「パティ2枚、チーズあり、ピクルス抜き、オニオン多め」<br>
+      一度に全部言うのは大変。<br>
+      <strong>1つずつ選んでいく</strong>のがBuilderの考え方です。
+    </p>
+  </div>
+
+  <h2>問題：引数が多すぎるコンストラクタ</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      何番目が何の引数か分からない
+    </div>
+<pre><code>// ❌ 引数の順番を間違えやすい
+const request = new HttpRequest(
+  'POST',           // method
+  '/api/users',     // url
+  { 'Content-Type': 'application/json' },  // headers
+  '{"name":"test"}', // body
+  5000,             // timeout
+  3,                // retries
+  null,             // auth
+  null              // proxy
+);
+
+// 8個の引数、何がなんだか分からない！</code></pre>
+  </div>
+
+  <h2>解決：Builder パターン</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      読みやすく、間違いにくい
+    </div>
+<pre><code>class HttpRequestBuilder {
+  private method = 'GET';
+  private url = '';
+  private headers: Record&lt;string, string&gt; = {};
+  private body: string | null = null;
+  private timeout = 30000;
+  private retries = 0;
+
+  setMethod(method: string): this {
+    this.method = method;
+    return this;  // thisを返すことでチェーン可能
+  }
+
+  setUrl(url: string): this {
+    this.url = url;
+    return this;
+  }
+
+  setHeader(key: string, value: string): this {
+    this.headers[key] = value;
+    return this;
+  }
+
+  setBody(body: string): this {
+    this.body = body;
+    return this;
+  }
+
+  setTimeout(timeout: number): this {
+    this.timeout = timeout;
+    return this;
+  }
+
+  build(): HttpRequest {
+    return new HttpRequest(
+      this.method, this.url, this.headers,
+      this.body, this.timeout, this.retries
+    );
+  }
+}
+
+// 使い方：何を設定しているか一目瞭然
+const request = new HttpRequestBuilder()
+  .setMethod('POST')
+  .setUrl('/api/users')
+  .setHeader('Content-Type', 'application/json')
+  .setBody('{"name":"test"}')
+  .setTimeout(5000)
+  .build();</code></pre>
+  </div>
+
+  <h2>Builderの利点</h2>
+
+  <ul>
+    <li><strong>可読性</strong>: 何を設定しているか明確</li>
+    <li><strong>デフォルト値</strong>: 必要なものだけ設定すればOK</li>
+    <li><strong>バリデーション</strong>: build()で整合性チェック可能</li>
+    <li><strong>不変オブジェクト</strong>: 構築後は変更不可にできる</li>
+  </ul>
+
+  <div class="quiz" id="quiz-pattern5-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>Builderパターンが解決する問題は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern5-1" style="display:none;">
+      A. オブジェクトの生成を遅延させたい
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-pattern5-1" style="display:none;">
+      B. コンストラクタの引数が多すぎて分かりにくい
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern5-1" style="display:none;">
+      C. インスタンスを1つに制限したい
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-pattern5-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-pattern5-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>Builderのメソッドが<code>return this</code>を返す理由は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern5-2" style="display:none;">
+      A. メモリを節約するため
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-pattern5-2" style="display:none;">
+      B. メソッドチェーンを可能にするため
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern5-2" style="display:none;">
+      C. エラーハンドリングのため
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-pattern5-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('pattern5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 6: Prototype -->
+<section id="pattern6">
+  <h1>Prototype パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Prototypeの目的</li>
+      <li>浅いコピーと深いコピー</li>
+      <li>クローン実装の注意点</li>
+    </ul>
+  </div>
+
+  <h2>Prototypeとは？</h2>
+
+  <p>
+    <strong>既存のオブジェクトをコピーして新しいオブジェクトを作る</strong>パターンです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      書類のコピー機を考えてください。<br>
+      原本を1から作るのは大変。<br>
+      でもコピーなら一瞬で複製できる。<br>
+      <strong>原本（プロトタイプ）から複製</strong>するのがこのパターンです。
+    </p>
+  </div>
+
+  <h2>使用場面</h2>
+
+  <ul>
+    <li>初期化コストが高いオブジェクト</li>
+    <li>設定済みオブジェクトのテンプレート</li>
+    <li>実行時に型を決定する必要がある場合</li>
+  </ul>
+
+  <h2>実装例</h2>
+
+  <div class="card">
+<pre><code>interface Prototype&lt;T&gt; {
+  clone(): T;
+}
+
+class DocumentTemplate implements Prototype&lt;DocumentTemplate&gt; {
+  constructor(
+    public title: string,
+    public content: string,
+    public metadata: { author: string; tags: string[] }
+  ) {}
+
+  clone(): DocumentTemplate {
+    // 深いコピーが必要！
+    return new DocumentTemplate(
+      this.title,
+      this.content,
+      {
+        author: this.metadata.author,
+        tags: [...this.metadata.tags]  // 配列もコピー
+      }
+    );
+  }
+}
+
+// 使い方
+const template = new DocumentTemplate(
+  '議事録テンプレート',
+  '日時：\n参加者：\n議題：',
+  { author: '管理者', tags: ['会議', 'テンプレート'] }
+);
+
+const doc1 = template.clone();
+doc1.title = '2026年1月会議 議事録';
+doc1.metadata.tags.push('1月');
+
+// 元のテンプレートは変更されない
+console.log(template.title); // '議事録テンプレート'
+console.log(template.metadata.tags); // ['会議', 'テンプレート']</code></pre>
+  </div>
+
+  <h2>浅いコピー vs 深いコピー</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      浅いコピーの罠
+    </div>
+<pre><code>// ❌ 浅いコピー：参照が共有される
+const original = {
+  name: 'test',
+  items: ['a', 'b', 'c']
+};
+
+const shallowCopy = { ...original };
+shallowCopy.items.push('d');  // 元の配列も変わる！
+
+console.log(original.items); // ['a', 'b', 'c', 'd'] ← 変わってる！</code></pre>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      深いコピー：完全に独立
+    </div>
+<pre><code>// ⭕ 深いコピー
+const deepCopy = {
+  name: original.name,
+  items: [...original.items]  // 配列も新しく作る
+};
+
+deepCopy.items.push('d');
+console.log(original.items); // ['a', 'b', 'c'] ← 変わらない</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-pattern6">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Prototypeパターンでclone()を実装する際、特に注意すべきことは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern6" style="display:none;">
+      A. メソッド名を必ずcloneにする
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-pattern6" style="display:none;">
+      B. ネストしたオブジェクトも深くコピーする
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern6" style="display:none;">
+      C. Singletonと組み合わせる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-pattern6')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('pattern6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 7: Adapter -->
+<section id="pattern7">
+  <h1>Adapter パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Adapterの目的</li>
+      <li>互換性のないインターフェースの変換</li>
+      <li>レガシーシステムとの統合</li>
+    </ul>
+  </div>
+
+  <h2>Adapterとは？</h2>
+
+  <p>
+    <strong>互換性のないインターフェースを変換する</strong>パターンです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      海外旅行の電源プラグを考えてください。<br>
+      日本のプラグ（2極）はヨーロッパのコンセント（丸型）に刺さらない。<br>
+      でも<strong>変換アダプター</strong>があれば使える。<br>
+      コードを変えずに互換性を持たせるのがAdapterです。
+    </p>
+  </div>
+
+  <h2>使用場面</h2>
+
+  <ul>
+    <li>レガシーシステムとの統合</li>
+    <li>サードパーティライブラリのラップ</li>
+    <li>異なるAPIの統一</li>
+  </ul>
+
+  <h2>実装例</h2>
+
+  <div class="card">
+<pre><code>// 新システムが期待するインターフェース
+interface PaymentProcessor {
+  processPayment(amount: number, currency: string): Promise&lt;PaymentResult&gt;;
+}
+
+// レガシーシステムの既存クラス（変更できない）
+class LegacyPaymentSystem {
+  makePayment(yen: number): { success: boolean; transactionId: string } {
+    // 古い実装（円のみ対応）
+    return { success: true, transactionId: 'LEGACY-123' };
+  }
+}
+
+// Adapter：レガシーを新インターフェースに適合させる
+class LegacyPaymentAdapter implements PaymentProcessor {
+  constructor(private legacy: LegacyPaymentSystem) {}
+
+  async processPayment(amount: number, currency: string): Promise&lt;PaymentResult&gt; {
+    // 通貨変換
+    const yen = currency === 'JPY' ? amount : this.convertToYen(amount, currency);
+
+    // レガシーシステムを呼び出し
+    const result = this.legacy.makePayment(yen);
+
+    // 結果を新形式に変換
+    return {
+      success: result.success,
+      transactionId: result.transactionId,
+      processedAt: new Date()
+    };
+  }
+
+  private convertToYen(amount: number, currency: string): number {
+    // 為替変換ロジック
+    return amount * 150; // 簡略化
+  }
+}
+
+// 使う側：レガシーを意識せずに使える
+const processor: PaymentProcessor = new LegacyPaymentAdapter(
+  new LegacyPaymentSystem()
+);
+await processor.processPayment(100, 'USD');</code></pre>
+  </div>
+
+  <h2>Adapterの利点</h2>
+
+  <ul>
+    <li><strong>既存コード不変</strong>: レガシーを変更せずに統合</li>
+    <li><strong>段階的移行</strong>: 新旧システムを共存させられる</li>
+    <li><strong>テスト容易</strong>: Adapterをモックに差し替え可能</li>
+  </ul>
+
+  <div class="quiz" id="quiz-pattern7">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Adapterパターンの主な目的は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern7" style="display:none;">
+      A. オブジェクトの生成を制御する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-pattern7" style="display:none;">
+      B. 互換性のないインターフェースを変換する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern7" style="display:none;">
+      C. 機能を動的に追加する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-pattern7')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('pattern7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 8: Decorator -->
+<section id="pattern8">
+  <h1>Decorator パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Decoratorの目的</li>
+      <li>継承 vs コンポジション</li>
+      <li>機能の動的な追加</li>
+    </ul>
+  </div>
+
+  <h2>Decoratorとは？</h2>
+
+  <p>
+    <strong>オブジェクトに動的に機能を追加する</strong>パターンです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      コーヒーのトッピングを考えてください。<br>
+      ベースのコーヒーに「ミルク追加」「シロップ追加」「ホイップ追加」<br>
+      組み合わせは自由。<br>
+      <strong>ベースを変えずに機能を重ねる</strong>のがDecoratorです。
+    </p>
+  </div>
+
+  <h2>問題：継承での機能追加</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      継承の組み合わせ爆発
+    </div>
+<pre><code>// ❌ 継承で機能を追加すると...
+class Logger {}
+class TimestampLogger extends Logger {}       // タイムスタンプ付き
+class JsonLogger extends Logger {}            // JSON形式
+class EncryptedLogger extends Logger {}       // 暗号化
+
+// 組み合わせが必要になると爆発！
+class TimestampJsonLogger extends Logger {}
+class TimestampEncryptedLogger extends Logger {}
+class JsonEncryptedLogger extends Logger {}
+class TimestampJsonEncryptedLogger extends Logger {}
+// 3機能で7クラス、4機能なら15クラス...</code></pre>
+  </div>
+
+  <h2>解決：Decorator パターン</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      自由に組み合わせ可能
+    </div>
+<pre><code>// 基本インターフェース
+interface Logger {
+  log(message: string): void;
+}
+
+// 基本実装
+class BasicLogger implements Logger {
+  log(message: string): void {
+    console.log(message);
+  }
+}
+
+// Decorator基底クラス
+class LoggerDecorator implements Logger {
+  constructor(protected logger: Logger) {}
+
+  log(message: string): void {
+    this.logger.log(message);
+  }
+}
+
+// 各機能をDecoratorとして実装
+class TimestampDecorator extends LoggerDecorator {
+  log(message: string): void {
+    const timestamp = new Date().toISOString();
+    super.log(`[${timestamp}] ${message}`);
+  }
+}
+
+class JsonDecorator extends LoggerDecorator {
+  log(message: string): void {
+    super.log(JSON.stringify({ message, time: Date.now() }));
+  }
+}
+
+class UppercaseDecorator extends LoggerDecorator {
+  log(message: string): void {
+    super.log(message.toUpperCase());
+  }
+}
+
+// 使い方：自由に組み合わせ！
+const logger = new TimestampDecorator(
+  new JsonDecorator(
+    new BasicLogger()
+  )
+);
+
+logger.log('Hello');
+// [2024-01-15T10:30:00.000Z] {"message":"Hello","time":1705315800000}</code></pre>
+  </div>
+
+  <h2>Decoratorの利点</h2>
+
+  <ul>
+    <li><strong>柔軟な組み合わせ</strong>: 実行時に機能を追加/削除</li>
+    <li><strong>単一責任</strong>: 各Decoratorは1つの機能のみ</li>
+    <li><strong>開放閉鎖原則</strong>: 既存コードを変更せずに拡張</li>
+  </ul>
+
+  <div class="quiz" id="quiz-pattern8-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>Decoratorパターンが解決する問題は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-pattern8-1" style="display:none;">
+      A. 継承による組み合わせの爆発
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern8-1" style="display:none;">
+      B. オブジェクト生成のコスト
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern8-1" style="display:none;">
+      C. インターフェースの互換性
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-pattern8-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-pattern8-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>このDecoratorの組み合わせで、ログはどう出力される？</p>
+<pre><code>new UppercaseDecorator(
+  new TimestampDecorator(
+    new BasicLogger()
+  )
+).log('hello');</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-pattern8-2" style="display:none;">
+      A. [timestamp] HELLO
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern8-2" style="display:none;">
+      B. [TIMESTAMP] HELLO
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern8-2" style="display:none;">
+      C. HELLO
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-pattern8-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('pattern8')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 9: Facade -->
+<section id="pattern9">
+  <h1>Facade パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Facadeの目的</li>
+      <li>複雑なサブシステムの単純化</li>
+      <li>薄すぎるFacadeの問題</li>
+    </ul>
+  </div>
+
+  <h2>Facadeとは？</h2>
+
+  <p>
+    <strong>複雑なサブシステムに対するシンプルなインターフェースを提供する</strong>パターンです。
+  </p>
+
+  <p>
+    「Facade」は「建物の正面」という意味。<br>
+    内部の複雑さを隠して、きれいな入口を見せます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      ホテルのコンシェルジュを考えてください。<br>
+      タクシー手配、レストラン予約、チケット購入...<br>
+      お客さんは「○○したい」と言うだけ。<br>
+      <strong>複雑な手配は全部コンシェルジュがやってくれる</strong>のがFacadeです。
+    </p>
+  </div>
+
+  <h2>実装例</h2>
+
+  <div class="card">
+<pre><code>// 複雑なサブシステムたち
+class VideoDecoder {
+  decode(file: string): Buffer { /* ... */ }
+}
+
+class AudioDecoder {
+  decode(file: string): Buffer { /* ... */ }
+}
+
+class SubtitleParser {
+  parse(file: string): Subtitle[] { /* ... */ }
+}
+
+class VideoRenderer {
+  render(video: Buffer, audio: Buffer, subtitles: Subtitle[]): void { /* ... */ }
+}
+
+class Display {
+  show(frame: Frame): void { /* ... */ }
+}
+
+// ❌ Facadeなし：使う側が全部知る必要がある
+const videoDecoder = new VideoDecoder();
+const audioDecoder = new AudioDecoder();
+const subtitleParser = new SubtitleParser();
+const renderer = new VideoRenderer();
+const display = new Display();
+
+const video = videoDecoder.decode('movie.mp4');
+const audio = audioDecoder.decode('movie.mp4');
+const subtitles = subtitleParser.parse('movie.srt');
+renderer.render(video, audio, subtitles);
+// ... 複雑すぎる！
+
+// ⭕ Facade：シンプルなインターフェース
+class VideoPlayerFacade {
+  private videoDecoder = new VideoDecoder();
+  private audioDecoder = new AudioDecoder();
+  private subtitleParser = new SubtitleParser();
+  private renderer = new VideoRenderer();
+  private display = new Display();
+
+  play(videoFile: string, subtitleFile?: string): void {
+    const video = this.videoDecoder.decode(videoFile);
+    const audio = this.audioDecoder.decode(videoFile);
+    const subtitles = subtitleFile
+      ? this.subtitleParser.parse(subtitleFile)
+      : [];
+    this.renderer.render(video, audio, subtitles);
+  }
+
+  pause(): void { /* ... */ }
+  stop(): void { /* ... */ }
+}
+
+// 使う側：シンプル！
+const player = new VideoPlayerFacade();
+player.play('movie.mp4', 'movie.srt');</code></pre>
+  </div>
+
+  <h2>注意：薄すぎるFacade</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      単なるラッパーになっていないか？
+    </div>
+<pre><code>// ❌ 薄すぎるFacade：価値がない
+class UserFacade {
+  createUser(data: UserData): User {
+    return this.userService.createUser(data);  // ただの転送
+  }
+}
+
+// Facadeは「複雑さを隠す」のが目的
+// 単純なものを単純にラップしても意味がない</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-pattern9">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Facadeパターンの主な目的は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern9" style="display:none;">
+      A. 機能を動的に追加する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern9" style="display:none;">
+      B. オブジェクトをコピーする
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-pattern9" style="display:none;">
+      C. 複雑なサブシステムにシンプルなインターフェースを提供する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-pattern9')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('pattern9')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- Lesson 10: Composite -->
+<section id="pattern10">
+  <h1>Composite パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Compositeの目的</li>
+      <li>ツリー構造の表現</li>
+      <li>部分と全体を同一視する設計</li>
+    </ul>
+  </div>
+
+  <h2>Compositeとは？</h2>
+
+  <p>
+    <strong>部分と全体を同一視して扱う</strong>パターンです。<br>
+    ツリー構造を表現するのに最適です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話
+    </div>
+    <p style="margin:0;">
+      ファイルシステムを考えてください。<br>
+      「フォルダ」は「ファイル」と「フォルダ」を含む。<br>
+      フォルダの中にフォルダがあり、その中にもファイルとフォルダ...<br>
+      <strong>同じ操作（削除、コピー）がどちらにも使える</strong>のがCompositeです。
+    </p>
+  </div>
+
+  <h2>使用場面</h2>
+
+  <ul>
+    <li>ファイルシステム</li>
+    <li>メニュー構造</li>
+    <li>組織図</li>
+    <li>UIコンポーネントのツリー</li>
+  </ul>
+
+  <h2>実装例</h2>
+
+  <div class="card">
+<pre><code>// 共通インターフェース
+interface FileSystemNode {
+  name: string;
+  getSize(): number;
+  print(indent?: string): void;
+}
+
+// 葉（Leaf）：ファイル
+class File implements FileSystemNode {
+  constructor(public name: string, private size: number) {}
+
+  getSize(): number {
+    return this.size;
+  }
+
+  print(indent = ''): void {
+    console.log(`${indent}📄 ${this.name} (${this.size}KB)`);
+  }
+}
+
+// 複合体（Composite）：フォルダ
+class Folder implements FileSystemNode {
+  private children: FileSystemNode[] = [];
+
+  constructor(public name: string) {}
+
+  add(node: FileSystemNode): void {
+    this.children.push(node);
+  }
+
+  remove(node: FileSystemNode): void {
+    const index = this.children.indexOf(node);
+    if (index !== -1) {
+      this.children.splice(index, 1);
+    }
+  }
+
+  // フォルダのサイズ = 中身の合計
+  getSize(): number {
+    return this.children.reduce((sum, child) => sum + child.getSize(), 0);
+  }
+
+  print(indent = ''): void {
+    console.log(`${indent}📁 ${this.name}/`);
+    for (const child of this.children) {
+      child.print(indent + '  ');
+    }
+  }
+}
+
+// 使い方
+const root = new Folder('root');
+const docs = new Folder('documents');
+const images = new Folder('images');
+
+docs.add(new File('report.pdf', 500));
+docs.add(new File('notes.txt', 10));
+
+images.add(new File('photo1.jpg', 2000));
+images.add(new File('photo2.jpg', 1500));
+
+root.add(docs);
+root.add(images);
+root.add(new File('readme.txt', 5));
+
+root.print();
+// 📁 root/
+//   📁 documents/
+//     📄 report.pdf (500KB)
+//     📄 notes.txt (10KB)
+//   📁 images/
+//     📄 photo1.jpg (2000KB)
+//     📄 photo2.jpg (1500KB)
+//   📄 readme.txt (5KB)
+
+console.log(`Total size: ${root.getSize()}KB`);
+// Total size: 4015KB</code></pre>
+  </div>
+
+  <h2>Compositeの特徴</h2>
+
+  <ul>
+    <li><strong>再帰的構造</strong>: CompositeがCompositeを含む</li>
+    <li><strong>統一的な扱い</strong>: LeafもCompositeも同じインターフェース</li>
+    <li><strong>クライアントの単純化</strong>: 使う側は構造を意識しない</li>
+  </ul>
+
+  <div class="quiz" id="quiz-pattern10-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>Compositeパターンで表現するのに最適な構造は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern10-1" style="display:none;">
+      A. 配列
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-pattern10-1" style="display:none;">
+      B. ツリー構造
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern10-1" style="display:none;">
+      C. グラフ構造
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-pattern10-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-pattern10-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>Compositeパターンの「部分と全体を同一視」とはどういう意味？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern10-2" style="display:none;">
+      A. すべてのオブジェクトを同じクラスにする
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-pattern10-2" style="display:none;">
+      B. 葉も複合体も同じインターフェースで操作できる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-pattern10-2" style="display:none;">
+      C. 構造を平坦化する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-pattern10-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📖</span>
+      Phase 3 まとめ
+    </div>
+    <p>学んだパターン：</p>
+    <ul>
+      <li><strong>生成パターン</strong>: Singleton, Factory Method, Abstract Factory, Builder, Prototype</li>
+      <li><strong>構造パターン</strong>: Adapter, Decorator, Facade, Composite</li>
+    </ul>
+    <p style="margin:0;">
+      次のPhase 4では<strong>振る舞いパターン</strong>を学びます。
+    </p>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('pattern10')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>

@@ -1,0 +1,1724 @@
+<!-- ============================================
+     Level 6 Phase 8: DDD戦術的設計
+     ============================================ -->
+
+<section id="ddd-t1">
+  <h1>1. エンティティ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>エンティティの特徴と設計方法を理解する</p>
+  </div>
+
+  <h2>エンティティとは？</h2>
+  <p>
+    <strong>エンティティ（Entity）</strong>とは、
+    <strong>一意のIDによって識別される</strong>ドメインオブジェクトです。<br>
+    属性が変わっても、IDが同じなら同一のオブジェクトとみなします。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話</div>
+    <p>
+      人間は<strong>エンティティ</strong>です。<br>
+      名前が変わっても、住所が変わっても、髪型が変わっても、
+      「マイナンバー」が同じなら同一人物です。
+    </p>
+    <p>
+      逆に、全く同じ名前・同じ住所の人がいても、
+      マイナンバーが違えば別人です。
+    </p>
+  </div>
+
+  <h2>エンティティの特徴</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>特徴</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>同一性</strong></td>
+        <td>IDで識別される（属性ではない）</td>
+      </tr>
+      <tr>
+        <td><strong>ライフサイクル</strong></td>
+        <td>作成され、変更され、削除される</td>
+      </tr>
+      <tr>
+        <td><strong>可変性</strong></td>
+        <td>状態が時間とともに変化する</td>
+      </tr>
+      <tr>
+        <td><strong>連続性</strong></td>
+        <td>変更後も同一のオブジェクトとして追跡</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>実装例</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">IDなしのエンティティ</div>
+      <pre><code>// IDがない or 後付け
+class User {
+  name: string;
+  email: string;
+
+  // IDをどうやって管理する？
+  // 同一性の判定ができない
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">正しいエンティティ</div>
+      <pre><code>class User {
+  // IDは必須かつ不変
+  constructor(
+    public readonly id: UserId,
+    private name: UserName,
+    private email: Email
+  ) {}
+
+  // 属性は変更可能
+  changeName(newName: UserName): void {
+    this.name = newName;
+  }
+
+  changeEmail(newEmail: Email): void {
+    this.email = newEmail;
+  }
+
+  // 同一性の判定
+  equals(other: User): boolean {
+    return this.id.equals(other.id);
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>エンティティの設計原則</h2>
+
+  <ul>
+    <li><strong>IDは不変</strong>: 一度決まったIDは変更しない</li>
+    <li><strong>IDはコンストラクタで受け取る</strong>: 後から設定しない</li>
+    <li><strong>等価性はIDで判定</strong>: equalsメソッドを実装</li>
+    <li><strong>ビジネスルールを内包</strong>: setterではなくビジネスメソッド</li>
+  </ul>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> レビュー観点</div>
+    <p>
+      <strong>エンティティにIDが適切に設定されているか？</strong><br>
+      auto-increment のDB IDをそのまま使っていないか、
+      ビジネス上の同一性と技術的な同一性を混同していないか確認。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-t1">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: エンティティの同一性は何で判定する？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t1" value="a">
+        <span>すべての属性が一致しているか</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="エンティティはIDで同一性を判定します。名前やメールアドレスが変わっても、IDが同じなら同一のオブジェクトです。">
+        <input type="radio" name="q-ddd-t1" value="b">
+        <span>一意のID</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t1" value="c">
+        <span>メモリ上のアドレス</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-t1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-t1')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-t2">
+  <h1>2. 値オブジェクト</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>値オブジェクトの特徴と設計方法を理解する</p>
+  </div>
+
+  <h2>値オブジェクトとは？</h2>
+  <p>
+    <strong>値オブジェクト（Value Object）</strong>とは、
+    <strong>属性の組み合わせで識別される</strong>不変のドメインオブジェクトです。<br>
+    IDを持たず、属性がすべて同じなら等価とみなします。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話</div>
+    <p>
+      お金は<strong>値オブジェクト</strong>です。<br>
+      100円玉Aと100円玉Bは、見た目は違っても「100円」という<strong>価値は同じ</strong>。<br>
+      交換しても問題ありません。
+    </p>
+    <p>
+      逆に、人間（エンティティ）は交換できません。<br>
+      同じ名前の人でも、別人です。
+    </p>
+  </div>
+
+  <h2>エンティティ vs 値オブジェクト</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>観点</th>
+        <th>エンティティ</th>
+        <th>値オブジェクト</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>同一性</strong></td>
+        <td>IDで識別</td>
+        <td>属性で識別</td>
+      </tr>
+      <tr>
+        <td><strong>可変性</strong></td>
+        <td>変更可能</td>
+        <td><strong>不変</strong></td>
+      </tr>
+      <tr>
+        <td><strong>等価性</strong></td>
+        <td>ID一致で等価</td>
+        <td>全属性一致で等価</td>
+      </tr>
+      <tr>
+        <td><strong>例</strong></td>
+        <td>User, Order, Product</td>
+        <td>Email, Money, Address</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>実装例</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">プリミティブ型の乱用</div>
+      <pre><code>class User {
+  constructor(
+    public id: string,      // 何でも入る
+    public email: string,   // バリデーションなし
+    public age: number      // マイナスも入る
+  ) {}
+}
+
+// 不正なデータが作れてしまう
+const user = new User(
+  '',
+  'invalid-email',
+  -5
+);</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">値オブジェクトで型安全</div>
+      <pre><code>class Email {
+  private constructor(
+    public readonly value: string
+  ) {}
+
+  static create(value: string): Email {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(value)) {
+      throw new DomainError('Invalid email');
+    }
+    return new Email(value.toLowerCase());
+  }
+
+  equals(other: Email): boolean {
+    return this.value === other.value;
+  }
+}
+
+class Age {
+  private constructor(
+    public readonly value: number
+  ) {}
+
+  static create(value: number): Age {
+    if (value &lt; 0 || value > 150) {
+      throw new DomainError('Invalid age');
+    }
+    return new Age(value);
+  }
+}
+
+// 不正なデータは作れない
+// Email.create('invalid'); // エラー
+// Age.create(-5);          // エラー</code></pre>
+    </div>
+  </div>
+
+  <h2>値オブジェクトの設計原則</h2>
+
+  <ul>
+    <li><strong>不変（Immutable）</strong>: 作成後は変更しない</li>
+    <li><strong>自己検証</strong>: コンストラクタでバリデーション</li>
+    <li><strong>属性で等価判定</strong>: equalsメソッドを実装</li>
+    <li><strong>副作用なし</strong>: 変更は新しいインスタンスを返す</li>
+  </ul>
+
+  <pre><code>class Money {
+  private constructor(
+    public readonly amount: number,
+    public readonly currency: string
+  ) {}
+
+  static create(amount: number, currency: string): Money {
+    if (amount &lt; 0) throw new DomainError('Amount cannot be negative');
+    return new Money(amount, currency);
+  }
+
+  // 変更ではなく、新しいインスタンスを返す
+  add(other: Money): Money {
+    if (this.currency !== other.currency) {
+      throw new DomainError('Currency mismatch');
+    }
+    return Money.create(this.amount + other.amount, this.currency);
+  }
+}</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> レビュー観点</div>
+    <p>
+      <strong>プリミティブ型を乱用していないか？</strong><br>
+      string, number をそのまま使わず、Email, Money, UserId のような
+      値オブジェクトでラップしているか確認。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-t2-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: 値オブジェクトの最も重要な特徴は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="値オブジェクトは不変であることが最も重要です。変更が必要な場合は、新しいインスタンスを作成します。これにより予期しない副作用を防げます。">
+        <input type="radio" name="q-ddd-t2-1" value="a">
+        <span>不変（Immutable）である</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t2-1" value="b">
+        <span>一意のIDを持つ</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t2-1" value="c">
+        <span>データベースに保存される</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-t2-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-t2-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: 「メールアドレス」はエンティティと値オブジェクトのどちら？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t2-2" value="a">
+        <span>エンティティ（一意だから）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="メールアドレスは値で識別されます。同じ文字列なら同じメールアドレスです。ライフサイクルの追跡は不要で、交換可能です。">
+        <input type="radio" name="q-ddd-t2-2" value="b">
+        <span>値オブジェクト（値で識別されるから）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t2-2" value="c">
+        <span>どちらにもなりうる</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-t2-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-t2')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-t3">
+  <h1>3. 集約</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>集約の概念と設計ルールを理解する</p>
+  </div>
+
+  <h2>集約とは？</h2>
+  <p>
+    <strong>集約（Aggregate）</strong>とは、
+    <strong>一貫性を保つ必要があるオブジェクトの集まり</strong>です。<br>
+    1つのトランザクションで扱う境界を定義します。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話</div>
+    <p>
+      「注文」は<strong>集約</strong>です。<br>
+      注文には「注文明細」が含まれますが、注文明細だけを
+      独立して変更することはありません。<br>
+      常に「注文」を通じて「注文明細」を操作します。
+    </p>
+    <p>
+      注文全体で整合性を保つ必要があるからです。<br>
+      （合計金額と明細の合計が一致しているなど）
+    </p>
+  </div>
+
+  <h2>集約の構成</h2>
+
+  <!-- 集約（Aggregate）SVG図 -->
+  <svg viewBox="0 0 380 280" style="max-width: 380px; width: 100%; height: auto; display: block; margin: 1.5rem auto;" role="img" aria-label="集約の構成図">
+    <title>集約（Aggregate）- 注文の例</title>
+
+    <!-- 集約の境界（外枠） -->
+    <rect x="20" y="20" width="340" height="240" rx="10" fill="#3498db" opacity="0.1" stroke="#3498db" stroke-width="3" stroke-dasharray="8,4"/>
+    <text x="190" y="45" text-anchor="middle" fill="#3498db" font-size="14" font-weight="bold">集約（Order）</text>
+
+    <!-- 集約ルート -->
+    <rect x="50" y="60" width="280" height="80" rx="6" fill="#e74c3c" opacity="0.9"/>
+    <text x="190" y="82" text-anchor="middle" fill="white" font-size="12" font-weight="bold">集約ルート（Order）</text>
+    <text x="70" y="100" fill="white" font-size="9">• orderId: OrderId</text>
+    <text x="70" y="115" fill="white" font-size="9">• customerId: CustomerId <tspan fill="#ffcccc" font-size="8">(参照のみ)</tspan></text>
+    <text x="70" y="130" fill="white" font-size="9">• status: OrderStatus</text>
+
+    <!-- 所有関係の矢印 -->
+    <line x1="190" y1="140" x2="190" y2="170" stroke="#27ae60" stroke-width="2" marker-end="url(#arrowOwn)"/>
+    <text x="205" y="160" fill="#27ae60" font-size="9" font-weight="bold">所有</text>
+
+    <!-- 内部エンティティ -->
+    <rect x="50" y="175" width="280" height="75" rx="6" fill="#27ae60" opacity="0.9"/>
+    <text x="190" y="195" text-anchor="middle" fill="white" font-size="11" font-weight="bold">内部エンティティ（OrderItem）</text>
+    <text x="70" y="212" fill="white" font-size="9">• itemId: OrderItemId</text>
+    <text x="70" y="227" fill="white" font-size="9">• productId: ProductId <tspan fill="#ccffcc" font-size="8">(参照のみ)</tspan></text>
+    <text x="70" y="242" fill="white" font-size="9">• quantity: Quantity  • price: Money</text>
+
+    <!-- 外部からのアクセス矢印 -->
+    <line x1="0" y1="100" x2="50" y2="100" stroke="#9b59b6" stroke-width="2" marker-end="url(#arrowAccess)"/>
+    <text x="5" y="90" fill="#9b59b6" font-size="8">外部から</text>
+    <text x="5" y="115" fill="#9b59b6" font-size="7">ルート経由でのみ</text>
+
+    <!-- 矢印マーカー定義 -->
+    <defs>
+      <marker id="arrowOwn" markerWidth="10" markerHeight="10" refX="3" refY="6" orient="auto">
+        <path d="M0,0 L6,0 L3,9 z" fill="#27ae60"/>
+      </marker>
+      <marker id="arrowAccess" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L9,3 z" fill="#9b59b6"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <h2>集約の設計ルール</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ルール</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>小さく保つ</strong></td>
+        <td>1つのトランザクションで完結するサイズ</td>
+      </tr>
+      <tr>
+        <td><strong>IDで参照</strong></td>
+        <td>他の集約はIDで参照、直接参照しない</td>
+      </tr>
+      <tr>
+        <td><strong>結果整合性</strong></td>
+        <td>集約間は非同期で整合性を保つ</td>
+      </tr>
+      <tr>
+        <td><strong>外部からのアクセス</strong></td>
+        <td>集約ルートを通じてのみ</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>巨大な集約の問題</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">巨大な集約</div>
+      <pre><code>class Order {
+  constructor(
+    public id: OrderId,
+    // 顧客全体を含む（巨大）
+    public customer: Customer,
+    public items: OrderItem[],
+    // 支払い履歴全部
+    public payments: Payment[],
+    // 配送履歴全部
+    public shipments: Shipment[],
+    // レビュー全部
+    public reviews: Review[]
+  ) {}
+}
+
+// 1つの注文を取得するだけで
+// 大量のデータを読み込む</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">適切なサイズの集約</div>
+      <pre><code>class Order {
+  constructor(
+    public readonly id: OrderId,
+    // IDで参照
+    public readonly customerId: CustomerId,
+    private items: OrderItem[],
+    private status: OrderStatus
+  ) {}
+}
+
+// Payment は別の集約
+class Payment {
+  constructor(
+    public readonly id: PaymentId,
+    // IDで参照
+    public readonly orderId: OrderId,
+    private amount: Money,
+    private status: PaymentStatus
+  ) {}
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> レビュー観点</div>
+    <p>
+      <strong>集約が適切なサイズか？</strong><br>
+      1つの集約に関連オブジェクトをすべて含めていないか、
+      他の集約を直接参照（オブジェクト参照）していないか確認。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-t3">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 集約を小さく保つべき理由は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t3" value="a">
+        <span>メモリを節約するため</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="集約は1つのトランザクションで扱う境界です。大きすぎるとロック競合が発生し、パフォーマンスと並行性が低下します。">
+        <input type="radio" name="q-ddd-t3" value="b">
+        <span>トランザクションの範囲を限定し、並行性を高めるため</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t3" value="c">
+        <span>コードの行数を減らすため</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-t3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-t3')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-t4">
+  <h1>4. 集約ルート</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>集約ルートの役割と実装方法を理解する</p>
+  </div>
+
+  <h2>集約ルートとは？</h2>
+  <p>
+    <strong>集約ルート（Aggregate Root）</strong>とは、
+    集約への<strong>唯一の入口となるエンティティ</strong>です。<br>
+    外部からは集約ルートを通じてのみ、内部を操作します。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話</div>
+    <p>
+      会社で言えば、集約ルートは<strong>「受付窓口」</strong>です。<br>
+      外部の人は受付を通じて社内の人と連絡を取ります。<br>
+      直接、社員の席に行って話しかけることはしません。
+    </p>
+    <p>
+      受付が来客の対応を一元管理することで、セキュリティが保たれます。
+    </p>
+  </div>
+
+  <h2>集約ルートの責務</h2>
+
+  <ul>
+    <li><strong>一貫性の維持</strong>: 集約内の整合性ルールを守る</li>
+    <li><strong>アクセス制御</strong>: 内部エンティティへの直接アクセスを防ぐ</li>
+    <li><strong>ビジネスルール</strong>: ドメインロジックを内包する</li>
+    <li><strong>トランザクション境界</strong>: 永続化の単位となる</li>
+  </ul>
+
+  <h2>実装例</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">内部エンティティを直接操作</div>
+      <pre><code>class OrderService {
+  async updateItemQuantity(
+    orderId: string,
+    itemId: string,
+    quantity: number
+  ): Promise&lt;void&gt; {
+    const order = await this.orderRepo
+      .findById(orderId);
+
+    // 内部のOrderItemを直接変更！
+    const item = order.items
+      .find(i => i.id === itemId);
+    item.quantity = quantity;  // カプセル化違反
+
+    await this.orderRepo.save(order);
+  }
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">集約ルートを通じて操作</div>
+      <pre><code>class Order {
+  private items: OrderItem[];
+
+  // 集約ルートがメソッドを提供
+  updateItemQuantity(
+    itemId: OrderItemId,
+    quantity: Quantity
+  ): void {
+    const item = this.items
+      .find(i => i.id.equals(itemId));
+
+    if (!item) {
+      throw new DomainError('Item not found');
+    }
+
+    // ビジネスルールをチェック
+    if (quantity.value > 100) {
+      throw new DomainError('Max 100 items');
+    }
+
+    item.updateQuantity(quantity);
+    this.recalculateTotal();
+  }
+}
+
+class OrderService {
+  async updateItemQuantity(...): Promise&lt;void&gt; {
+    const order = await this.orderRepo
+      .findById(orderId);
+
+    // 集約ルートを通じて操作
+    order.updateItemQuantity(itemId, quantity);
+
+    await this.orderRepo.save(order);
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>集約ルートの設計原則</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>原則</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>内部を公開しない</strong></td>
+        <td>内部エンティティのゲッターは最小限に</td>
+      </tr>
+      <tr>
+        <td><strong>ビジネスメソッドを提供</strong></td>
+        <td>setterではなく、意味のある操作</td>
+      </tr>
+      <tr>
+        <td><strong>整合性を保証</strong></td>
+        <td>不変条件を常にチェック</td>
+      </tr>
+      <tr>
+        <td><strong>リポジトリの単位</strong></td>
+        <td>集約ルート単位で保存/取得</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> レビュー観点</div>
+    <p>
+      <strong>集約ルートを通じて操作しているか？</strong><br>
+      内部エンティティを直接取得して変更していないか、
+      <code>order.items[0].quantity = 10</code> のような操作がないか確認。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-t4">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 以下のコードの問題点は？</strong></p>
+    <pre><code>const order = await orderRepo.findById(id);
+order.items[0].price = new Money(100, 'JPY');</code></pre>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t4" value="a">
+        <span>findByIdの使い方が間違っている</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="内部エンティティ（OrderItem）を直接操作しています。集約ルート（Order）を通じたメソッドで操作すべきです。直接操作すると整合性チェックをバイパスしてしまいます。">
+        <input type="radio" name="q-ddd-t4" value="b">
+        <span>内部エンティティを直接操作している</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t4" value="c">
+        <span>特に問題はない</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-t4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-t4')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-t5">
+  <h1>5. リポジトリ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>リポジトリの役割と設計方法を理解する</p>
+  </div>
+
+  <h2>リポジトリとは？</h2>
+  <p>
+    <strong>リポジトリ（Repository）</strong>とは、
+    集約の<strong>永続化と取得を抽象化</strong>するパターンです。<br>
+    ドメイン層はデータベースの詳細を知る必要がありません。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話</div>
+    <p>
+      リポジトリは<strong>「図書館の司書」</strong>のようなものです。<br>
+      「この本が欲しい」と言えば、書庫から取ってきてくれます。<br>
+      どの棚のどの位置にあるかは、利用者は知る必要がありません。
+    </p>
+  </div>
+
+  <h2>リポジトリの設計</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">CRUDの羅列</div>
+      <pre><code>interface OrderRepository {
+  findById(id: string): Promise&lt;Order | null&gt;;
+  findAll(): Promise&lt;Order[]&gt;;
+  findByCustomerId(customerId: string): Promise&lt;Order[]&gt;;
+  findByStatus(status: string): Promise&lt;Order[]&gt;;
+  findByDateRange(start: Date, end: Date): Promise&lt;Order[]&gt;;
+  save(order: Order): Promise&lt;void&gt;;
+  update(order: Order): Promise&lt;void&gt;;
+  delete(id: string): Promise&lt;void&gt;;
+}
+
+// 汎用的すぎて、ドメインの意図が見えない</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">集約の保存と取得に集中</div>
+      <pre><code>interface OrderRepository {
+  // 基本操作
+  findById(id: OrderId): Promise&lt;Order | null&gt;;
+  save(order: Order): Promise&lt;void&gt;;
+
+  // ビジネス要件に基づくクエリ
+  findPendingOrdersForCustomer(
+    customerId: CustomerId
+  ): Promise&lt;Order[]&gt;;
+
+  findOrdersToShipToday(): Promise&lt;Order[]&gt;;
+}
+
+// 複雑な検索はCQRSのQuery側で
+interface OrderQueryService {
+  searchOrders(criteria: OrderSearchCriteria)
+    : Promise&lt;OrderSummary[]&gt;;
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>リポジトリの原則</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>原則</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>集約単位</strong></td>
+        <td>集約ルートごとに1つのリポジトリ</td>
+      </tr>
+      <tr>
+        <td><strong>インターフェース</strong></td>
+        <td>ドメイン層はインターフェースのみ知る</td>
+      </tr>
+      <tr>
+        <td><strong>コレクションの抽象化</strong></td>
+        <td>メモリ上のコレクションのように見せる</td>
+      </tr>
+      <tr>
+        <td><strong>ビジネス用語</strong></td>
+        <td>メソッド名はビジネス要件を反映</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>実装例</h2>
+
+  <pre><code>// ドメイン層: インターフェース
+interface OrderRepository {
+  findById(id: OrderId): Promise&lt;Order | null&gt;;
+  save(order: Order): Promise&lt;void&gt;;
+}
+
+// インフラ層: 実装
+class PrismaOrderRepository implements OrderRepository {
+  constructor(private prisma: PrismaClient) {}
+
+  async findById(id: OrderId): Promise&lt;Order | null&gt; {
+    const data = await this.prisma.order.findUnique({
+      where: { id: id.value },
+      include: { items: true }
+    });
+
+    if (!data) return null;
+
+    // ORMのデータをドメインオブジェクトに変換
+    return this.toDomain(data);
+  }
+
+  async save(order: Order): Promise&lt;void&gt; {
+    // ドメインオブジェクトをORMのデータに変換
+    const data = this.toRecord(order);
+    await this.prisma.order.upsert({
+      where: { id: order.id.value },
+      create: data,
+      update: data
+    });
+  }
+
+  private toDomain(data: PrismaOrder): Order { ... }
+  private toRecord(order: Order): PrismaOrderData { ... }
+}</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> レビュー観点</div>
+    <p>
+      <strong>リポジトリが集約単位になっているか？</strong><br>
+      内部エンティティ（OrderItem）用のリポジトリを作っていないか、
+      deleteメソッドが適切か（論理削除 vs 物理削除）確認。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-t5">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: リポジトリはどの単位で作成する？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t5" value="a">
+        <span>データベースのテーブルごと</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="リポジトリは集約ルートごとに1つ作成します。内部エンティティ（OrderItem）用のリポジトリは作らず、集約ルート（Order）を通じて操作します。">
+        <input type="radio" name="q-ddd-t5" value="b">
+        <span>集約ルートごと</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t5" value="c">
+        <span>エンティティごと</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-t5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-t5')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-t6">
+  <h1>6. ドメインサービス</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>ドメインサービスの役割と使いどころを理解する</p>
+  </div>
+
+  <h2>ドメインサービスとは？</h2>
+  <p>
+    <strong>ドメインサービス（Domain Service）</strong>とは、
+    <strong>特定のエンティティに属さないドメインロジック</strong>を表現するものです。<br>
+    複数の集約にまたがる操作や、概念として独立した操作を担当します。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話</div>
+    <p>
+      「送金」を考えてみましょう。<br>
+      AさんからBさんへ送金する場合、これはAさんのメソッド？Bさんのメソッド？<br>
+      どちらにも属さない<strong>「送金サービス」</strong>が必要です。
+    </p>
+  </div>
+
+  <h2>ドメインサービスが必要な場面</h2>
+
+  <ul>
+    <li><strong>複数の集約にまたがる操作</strong>: 送金、在庫引当</li>
+    <li><strong>外部システムとの連携ロジック</strong>: 価格計算API</li>
+    <li><strong>ステートレスな計算</strong>: 税金計算、割引計算</li>
+    <li><strong>ドメインルールの検証</strong>: 重複チェック</li>
+  </ul>
+
+  <h2>実装例</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">無理にエンティティに入れる</div>
+      <pre><code>class Account {
+  // 送金は自分の責務？
+  transferTo(target: Account, amount: Money): void {
+    this.balance = this.balance.subtract(amount);
+    target.balance = target.balance.add(amount);
+    // 2つの集約を同時に変更...
+    // トランザクション境界が曖昧
+  }
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">ドメインサービスで分離</div>
+      <pre><code>// ドメインサービス
+class TransferService {
+  transfer(
+    from: Account,
+    to: Account,
+    amount: Money
+  ): TransferResult {
+    // ビジネスルールのチェック
+    if (from.balance.lessThan(amount)) {
+      throw new InsufficientFundsError();
+    }
+
+    // 各集約の操作
+    from.withdraw(amount);
+    to.deposit(amount);
+
+    // ドメインイベントを返す
+    return TransferResult.success(
+      new MoneyTransferredEvent(
+        from.id, to.id, amount
+      )
+    );
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>ドメインサービス vs アプリケーションサービス</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>観点</th>
+        <th>ドメインサービス</th>
+        <th>アプリケーションサービス</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>層</strong></td>
+        <td>ドメイン層</td>
+        <td>アプリケーション層</td>
+      </tr>
+      <tr>
+        <td><strong>責務</strong></td>
+        <td>ビジネスロジック</td>
+        <td>ユースケースの調整</td>
+      </tr>
+      <tr>
+        <td><strong>依存</strong></td>
+        <td>ドメインオブジェクトのみ</td>
+        <td>リポジトリ、外部サービス</td>
+      </tr>
+      <tr>
+        <td><strong>例</strong></td>
+        <td>送金計算、価格計算</td>
+        <td>注文処理フロー</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> レビュー観点</div>
+    <p>
+      <strong>ドメインサービスが肥大化していないか？</strong><br>
+      本来エンティティに属すべきロジックまでサービスに入れていないか、
+      「〜Manager」「〜Helper」という名前になっていないか確認。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-t6">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: ドメインサービスを使うべき場面は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t6" value="a">
+        <span>すべてのビジネスロジック</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ドメインサービスは、特定のエンティティに属さないロジック（複数集約にまたがる操作など）に使います。エンティティ単体で完結するロジックはエンティティに置くべきです。">
+        <input type="radio" name="q-ddd-t6" value="b">
+        <span>特定のエンティティに属さないドメインロジック</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t6" value="c">
+        <span>データベースへのアクセス</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-t6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-t6')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-t7">
+  <h1>7. ファクトリ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>ファクトリの役割と実装パターンを理解する</p>
+  </div>
+
+  <h2>ファクトリとは？</h2>
+  <p>
+    <strong>ファクトリ（Factory）</strong>とは、
+    <strong>複雑なオブジェクトの生成をカプセル化</strong>するパターンです。<br>
+    生成ロジックが複雑な場合、コンストラクタではなくファクトリを使います。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話</div>
+    <p>
+      ファクトリは<strong>「工場」</strong>です。<br>
+      自動車を買うとき、部品を自分で組み立てますか？<br>
+      工場が部品を組み立てて、完成品を届けてくれます。
+    </p>
+    <p>
+      同様に、ファクトリが複雑な初期化を行い、
+      正しく構築されたオブジェクトを返します。
+    </p>
+  </div>
+
+  <h2>ファクトリが必要な場面</h2>
+
+  <ul>
+    <li><strong>生成ロジックが複雑</strong>: 多数の依存関係、初期化処理</li>
+    <li><strong>バリデーションが必要</strong>: 不正なオブジェクトを作らせない</li>
+    <li><strong>ID生成が必要</strong>: UUIDの生成など</li>
+    <li><strong>集約の再構築</strong>: DBから取得したデータをドメインオブジェクトに</li>
+  </ul>
+
+  <h2>実装パターン</h2>
+
+  <h3>パターン1: staticファクトリメソッド</h3>
+  <pre><code>class Order {
+  // コンストラクタはprivate
+  private constructor(
+    public readonly id: OrderId,
+    private customerId: CustomerId,
+    private items: OrderItem[],
+    private status: OrderStatus
+  ) {}
+
+  // ファクトリメソッド
+  static create(
+    customerId: CustomerId,
+    items: CreateOrderItem[]
+  ): Order {
+    // IDを生成
+    const orderId = OrderId.generate();
+
+    // アイテムを変換
+    const orderItems = items.map(item =>
+      OrderItem.create(
+        OrderItemId.generate(),
+        item.productId,
+        item.quantity,
+        item.price
+      )
+    );
+
+    // バリデーション
+    if (orderItems.length === 0) {
+      throw new DomainError('Order must have items');
+    }
+
+    return new Order(
+      orderId,
+      customerId,
+      orderItems,
+      OrderStatus.Draft
+    );
+  }
+}</code></pre>
+
+  <h3>パターン2: ファクトリクラス</h3>
+  <pre><code>class OrderFactory {
+  constructor(
+    private productRepository: ProductRepository,
+    private pricingService: PricingService
+  ) {}
+
+  async create(
+    customerId: CustomerId,
+    items: CreateOrderItem[]
+  ): Promise&lt;Order&gt; {
+    // 商品情報を取得
+    const products = await this.productRepository
+      .findByIds(items.map(i => i.productId));
+
+    // 価格を計算
+    const pricedItems = await Promise.all(
+      items.map(async item => {
+        const product = products.find(
+          p => p.id.equals(item.productId)
+        );
+        const price = await this.pricingService
+          .calculate(product, item.quantity);
+        return { ...item, price };
+      })
+    );
+
+    return Order.create(customerId, pricedItems);
+  }
+}</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> レビュー観点</div>
+    <p>
+      <strong>コンストラクタが肥大化していないか？</strong><br>
+      10個以上の引数や複雑な初期化ロジックがコンストラクタにある場合、
+      ファクトリへの分離を検討すべき。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-t7">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: ファクトリを使うべき場面は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t7" value="a">
+        <span>すべてのオブジェクト生成</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ファクトリは生成ロジックが複雑な場合に使います。単純なオブジェクトはコンストラクタやstaticメソッドで十分です。">
+        <input type="radio" name="q-ddd-t7" value="b">
+        <span>生成ロジックが複雑な場合</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t7" value="c">
+        <span>データベースに保存する場合</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-t7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-t7')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-t8">
+  <h1>8. ドメインイベント</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>ドメインイベントの役割と実装方法を理解する</p>
+  </div>
+
+  <h2>ドメインイベントとは？</h2>
+  <p>
+    <strong>ドメインイベント（Domain Event）</strong>とは、
+    ドメインで<strong>何か重要なことが起きた</strong>ことを表すオブジェクトです。<br>
+    「〜された」という過去形で表現します。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話</div>
+    <p>
+      ドメインイベントは<strong>「ニュース速報」</strong>のようなものです。<br>
+      「注文が確定されました」というニュースが流れると、
+      関係者（在庫、決済、配送）がそれぞれ対応します。
+    </p>
+    <p>
+      誰かが直接指示するのではなく、ニュースを見て各自が動きます。
+    </p>
+  </div>
+
+  <h2>ドメインイベントの例</h2>
+
+  <ul>
+    <li><code>OrderPlacedEvent</code> - 注文が確定された</li>
+    <li><code>PaymentCompletedEvent</code> - 支払いが完了した</li>
+    <li><code>InventoryReservedEvent</code> - 在庫が引き当てられた</li>
+    <li><code>UserRegisteredEvent</code> - ユーザーが登録された</li>
+  </ul>
+
+  <h2>直接呼び出し vs イベント駆動</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">直接呼び出しの連鎖</div>
+      <pre><code>class OrderService {
+  async confirmOrder(orderId: OrderId) {
+    const order = await this.orderRepo.findById(orderId);
+    order.confirm();
+    await this.orderRepo.save(order);
+
+    // 直接呼び出しの連鎖（密結合）
+    await this.inventoryService.reserve(order.items);
+    await this.paymentService.capture(order.payment);
+    await this.emailService.sendConfirmation(order);
+    await this.analyticsService.track('order_confirmed');
+    // 依存が増えるたびに修正が必要
+  }
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">イベント駆動で疎結合</div>
+      <pre><code>class Order {
+  private domainEvents: DomainEvent[] = [];
+
+  confirm(): void {
+    if (this.items.length === 0) {
+      throw new DomainError('Cannot confirm');
+    }
+    this.status = OrderStatus.Confirmed;
+
+    // イベントを発行
+    this.domainEvents.push(
+      new OrderConfirmedEvent(
+        this.id,
+        this.customerId,
+        this.items
+      )
+    );
+  }
+
+  pullDomainEvents(): DomainEvent[] {
+    const events = [...this.domainEvents];
+    this.domainEvents = [];
+    return events;
+  }
+}
+
+// 各サービスは独立してイベントを購読
+class InventoryEventHandler {
+  @OnEvent('OrderConfirmed')
+  async handle(event: OrderConfirmedEvent) {
+    await this.inventoryService.reserve(event.items);
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>ドメインイベントの構造</h2>
+
+  <pre><code>// ドメインイベントの基底クラス
+abstract class DomainEvent {
+  readonly occurredOn: Date;
+  readonly eventId: string;
+
+  constructor() {
+    this.occurredOn = new Date();
+    this.eventId = uuid();
+  }
+}
+
+// 具体的なイベント
+class OrderConfirmedEvent extends DomainEvent {
+  constructor(
+    public readonly orderId: OrderId,
+    public readonly customerId: CustomerId,
+    public readonly items: ReadonlyArray&lt;OrderItem&gt;,
+    public readonly totalAmount: Money
+  ) {
+    super();
+  }
+}</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> レビュー観点</div>
+    <p>
+      <strong>直接呼び出しの連鎖になっていないか？</strong><br>
+      1つのサービスメソッドから多数の他サービスを呼んでいる場合、
+      イベント駆動への変更を検討すべき。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-t8-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: ドメインイベントの命名で適切なのは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t8-1" value="a">
+        <span>ConfirmOrderEvent（命令形）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ドメインイベントは「何かが起きた」ことを表すため、過去形で命名します。「確定する」ではなく「確定された」です。">
+        <input type="radio" name="q-ddd-t8-1" value="b">
+        <span>OrderConfirmedEvent（過去形）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t8-1" value="c">
+        <span>OrderEvent（汎用）</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-t8-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-t8-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: ドメインイベントを使うメリットは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="イベント駆動にすることで、発行側と購読側が独立します。新しい処理を追加する際も、発行側のコードを変更する必要がありません。">
+        <input type="radio" name="q-ddd-t8-2" value="a">
+        <span>サービス間の結合度を下げられる</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t8-2" value="b">
+        <span>データベースが不要になる</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t8-2" value="c">
+        <span>処理速度が必ず向上する</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-t8-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-t8')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-t9">
+  <h1>9. 仕様パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>仕様パターンで複雑な条件をカプセル化する方法を理解する</p>
+  </div>
+
+  <h2>仕様パターンとは？</h2>
+  <p>
+    <strong>仕様パターン（Specification Pattern）</strong>とは、
+    <strong>ビジネスルール（条件判定）をオブジェクトとしてカプセル化</strong>するパターンです。<br>
+    複雑な条件を再利用可能で組み合わせ可能にします。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話</div>
+    <p>
+      仕様は<strong>「チェックリスト」</strong>のようなものです。<br>
+      「プレミアム会員の条件」というチェックリストがあれば、
+      誰でも同じ基準で判定できます。
+    </p>
+    <p>
+      チェックリストを組み合わせることもできます。<br>
+      「プレミアム会員」かつ「30日以内に購入」など。
+    </p>
+  </div>
+
+  <h2>問題: if文の羅列</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">if文の羅列</div>
+      <pre><code>class OrderService {
+  canShipFree(order: Order, customer: Customer): boolean {
+    // 条件が散らばる
+    if (order.total.greaterThan(Money.of(5000, 'JPY'))) {
+      return true;
+    }
+    if (customer.isPremium) {
+      return true;
+    }
+    if (customer.orderCount > 10) {
+      return true;
+    }
+    if (order.hasPromotionCode('FREESHIP')) {
+      return true;
+    }
+    return false;
+  }
+
+  // 別の場所で同じ条件を再実装...
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">仕様パターン</div>
+      <pre><code>// 仕様の基底
+interface Specification&lt;T&gt; {
+  isSatisfiedBy(candidate: T): boolean;
+  and(other: Specification&lt;T&gt;): Specification&lt;T&gt;;
+  or(other: Specification&lt;T&gt;): Specification&lt;T&gt;;
+}
+
+// 各条件を仕様として定義（同じ型に対する仕様）
+class HighValueOrderSpec implements Specification&lt;Order&gt; {
+  isSatisfiedBy(order: Order): boolean {
+    return order.total.greaterThan(Money.of(5000, 'JPY'));
+  }
+}
+
+class BulkOrderSpec implements Specification&lt;Order&gt; {
+  constructor(private minQuantity: number) {}
+  isSatisfiedBy(order: Order): boolean {
+    return order.itemCount >= this.minQuantity;
+  }
+}
+
+class PromotionCodeSpec implements Specification&lt;Order&gt; {
+  constructor(private code: string) {}
+  isSatisfiedBy(order: Order): boolean {
+    return order.promotionCode === this.code;
+  }
+}
+
+// 組み合わせて使用（同じ型の仕様のみ結合可能）
+const freeShippingSpec = new HighValueOrderSpec()
+  .or(new BulkOrderSpec(10))           // 10個以上の注文
+  .or(new PromotionCodeSpec('FREESHIP'));
+
+// 判定
+if (freeShippingSpec.isSatisfiedBy(order)) {
+  order.applyFreeShipping();
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>仕様パターンの実装</h2>
+
+  <pre><code>// 基底クラス
+abstract class CompositeSpecification&lt;T&gt; implements Specification&lt;T&gt; {
+  abstract isSatisfiedBy(candidate: T): boolean;
+
+  and(other: Specification&lt;T&gt;): Specification&lt;T&gt; {
+    return new AndSpecification(this, other);
+  }
+
+  or(other: Specification&lt;T&gt;): Specification&lt;T&gt; {
+    return new OrSpecification(this, other);
+  }
+
+  not(): Specification&lt;T&gt; {
+    return new NotSpecification(this);
+  }
+}
+
+// AND仕様
+class AndSpecification&lt;T&gt; extends CompositeSpecification&lt;T&gt; {
+  constructor(
+    private left: Specification&lt;T&gt;,
+    private right: Specification&lt;T&gt;
+  ) { super(); }
+
+  isSatisfiedBy(candidate: T): boolean {
+    return this.left.isSatisfiedBy(candidate)
+        && this.right.isSatisfiedBy(candidate);
+  }
+}
+
+// 使用例
+const eligibleForDiscount = new PremiumCustomerSpec()
+  .and(new RecentPurchaseSpec(30))  // 30日以内に購入
+  .and(new MinPurchaseAmountSpec(10000));
+
+if (eligibleForDiscount.isSatisfiedBy(customer)) {
+  applyDiscount(order);
+}</code></pre>
+
+  <h2>仕様パターンの利点</h2>
+
+  <ul>
+    <li><strong>再利用性</strong>: 同じ条件を複数箇所で使える</li>
+    <li><strong>組み合わせ</strong>: and/or/notで柔軟に組み合わせ</li>
+    <li><strong>テスト容易性</strong>: 各仕様を独立してテスト</li>
+    <li><strong>命名</strong>: ビジネスルールに名前がつく</li>
+  </ul>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> レビュー観点</div>
+    <p>
+      <strong>複雑な条件判定がif文の羅列になっていないか？</strong><br>
+      同じ条件が複数箇所で重複している場合、仕様パターンでの
+      カプセル化を検討すべき。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-t9">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 仕様パターンの主なメリットは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t9" value="a">
+        <span>データベースのクエリを高速化する</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="仕様パターンはビジネスルールをオブジェクトとしてカプセル化し、再利用可能にします。and/or/notで組み合わせることもできます。">
+        <input type="radio" name="q-ddd-t9" value="b">
+        <span>ビジネスルールを再利用可能で組み合わせ可能にする</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t9" value="c">
+        <span>UIの表示を制御する</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-t9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-t9')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-t10">
+  <h1>10. 戦術的設計のまとめ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>戦術的設計の全体像を理解し、TypeScriptでの実装パターンを把握する</p>
+  </div>
+
+  <h2>戦術的設計の全体像</h2>
+
+  <pre><code>【ドメインモデルの構成要素】
+
+┌─────────────────────────────────────────────────────┐
+│                     集約                             │
+│  ┌─────────────────────────────────────────────┐   │
+│  │ 集約ルート（エンティティ）                    │   │
+│  │  - ID で識別                                 │   │
+│  │  - ビジネスルールを内包                      │   │
+│  │  - 外部からの唯一の入口                      │   │
+│  └─────────────────────────────────────────────┘   │
+│           │                                         │
+│           │ 所有                                    │
+│           v                                         │
+│  ┌─────────────────────────────────────────────┐   │
+│  │ 内部エンティティ / 値オブジェクト             │   │
+│  │  - エンティティ: ID で識別、可変             │   │
+│  │  - 値オブジェクト: 属性で識別、不変          │   │
+│  └─────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────┘
+
+      ↑ 永続化            ↑ 生成
+┌─────────────┐    ┌─────────────┐
+│ リポジトリ   │    │ ファクトリ   │
+└─────────────┘    └─────────────┘
+
+┌─────────────────────────────────────────────────────┐
+│ ドメインサービス / ドメインイベント / 仕様            │
+│  - 複数集約にまたがるロジック                        │
+│  - 状態変化の通知                                    │
+│  - 複雑な条件のカプセル化                            │
+└─────────────────────────────────────────────────────┘</code></pre>
+
+  <h2>TypeScriptでの実装パターン</h2>
+
+  <pre><code>// === 値オブジェクト ===
+class Email {
+  private constructor(public readonly value: string) {}
+  static create(value: string): Email {
+    if (!/.+@.+\..+/.test(value)) throw new Error('Invalid email');
+    return new Email(value.toLowerCase());
+  }
+  equals(other: Email): boolean { return this.value === other.value; }
+}
+
+// === エンティティ ===
+class User {
+  constructor(
+    public readonly id: UserId,
+    private email: Email,
+    private name: UserName
+  ) {}
+
+  changeEmail(newEmail: Email): void {
+    // ビジネスルール
+    this.email = newEmail;
+  }
+
+  equals(other: User): boolean { return this.id.equals(other.id); }
+}
+
+// === 集約ルート ===
+class Order {
+  private domainEvents: DomainEvent[] = [];
+
+  private constructor(
+    public readonly id: OrderId,
+    public readonly customerId: CustomerId,
+    private items: OrderItem[],
+    private status: OrderStatus
+  ) {}
+
+  static create(customerId: CustomerId, items: CreateOrderItem[]): Order {
+    // ファクトリメソッド
+  }
+
+  addItem(item: OrderItem): void {
+    // 集約ルートを通じて操作
+    if (this.status !== OrderStatus.Draft) {
+      throw new DomainError('Cannot modify confirmed order');
+    }
+    this.items.push(item);
+  }
+
+  confirm(): void {
+    this.status = OrderStatus.Confirmed;
+    this.domainEvents.push(new OrderConfirmedEvent(this.id));
+  }
+
+  pullDomainEvents(): DomainEvent[] {
+    const events = [...this.domainEvents];
+    this.domainEvents = [];
+    return events;
+  }
+}
+
+// === リポジトリ（インターフェース）===
+interface OrderRepository {
+  findById(id: OrderId): Promise&lt;Order | null&gt;;
+  save(order: Order): Promise&lt;void&gt;;
+}</code></pre>
+
+  <h2>戦術的設計チェックリスト</h2>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> レビュー観点</div>
+    <ul style="margin-bottom:0;">
+      <li>値オブジェクトで型安全性を確保しているか？</li>
+      <li>集約が適切なサイズか（巨大になっていないか）？</li>
+      <li>集約ルートを通じてのみ操作しているか？</li>
+      <li>リポジトリが集約単位になっているか？</li>
+      <li>ドメインイベントで疎結合になっているか？</li>
+      <li>プリミティブ型を乱用していないか？</li>
+    </ul>
+  </div>
+
+  <h2>よくある失敗パターン</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>失敗</th>
+        <th>問題</th>
+        <th>対策</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>プリミティブ執着</td>
+        <td>string, numberをそのまま使う</td>
+        <td>値オブジェクトでラップ</td>
+      </tr>
+      <tr>
+        <td>巨大な集約</td>
+        <td>関連エンティティをすべて含む</td>
+        <td>IDで参照、結果整合性</td>
+      </tr>
+      <tr>
+        <td>貧血ドメインモデル</td>
+        <td>ロジックがサービスに流出</td>
+        <td>エンティティにロジックを持たせる</td>
+      </tr>
+      <tr>
+        <td>直接呼び出しの連鎖</td>
+        <td>サービス間の密結合</td>
+        <td>ドメインイベントで疎結合に</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quiz" id="quiz-ddd-t10-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: 「貧血ドメインモデル」とは何？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t10-1" value="a">
+        <span>フィールドが少ないモデル</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="貧血ドメインモデルとは、エンティティがデータの入れ物に過ぎず、ロジックがすべてサービスに流出している状態です。エンティティは振る舞い（ビジネスルール）も持つべきです。">
+        <input type="radio" name="q-ddd-t10-1" value="b">
+        <span>ロジックがなくデータだけのモデル</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t10-1" value="c">
+        <span>パフォーマンスが悪いモデル</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-t10-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-t10-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: 戦術的設計で最も重要なことは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t10-2" value="a">
+        <span>すべてのパターンを使うこと</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-t10-2" value="b">
+        <span>コード行数を減らすこと</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="戦術的設計の本質は、ビジネスルールをコードで正確に表現することです。パターンは手段であり、ドメインの知識をコードに反映することが目的です。">
+        <input type="radio" name="q-ddd-t10-2" value="c">
+        <span>ビジネスルールをコードで正確に表現すること</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-t10-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-t10')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>

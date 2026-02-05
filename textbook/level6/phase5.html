@@ -1,0 +1,1246 @@
+<!-- ============================================
+     Level 6 Phase 5: アーキテクチャ基礎
+     ============================================ -->
+
+<section id="arch1">
+  <h1>1. アーキテクチャとは？</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>ソフトウェアアーキテクチャの目的と重要性を説明できる</p>
+  </div>
+
+  <h2>アーキテクチャを一言で</h2>
+  <p>
+    <strong>ソフトウェアアーキテクチャ</strong>とは、
+    システムの<strong>大きな構造と設計判断</strong>のことです。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">*</span> たとえ話</div>
+    <p>
+      家を建てるとき、<strong>間取り</strong>を決めますよね。<br>
+      「リビングは1階、寝室は2階」「キッチンとダイニングは近くに」<br>
+      これが<strong>建築のアーキテクチャ</strong>です。
+    </p>
+    <p>
+      ソフトウェアも同じです。<br>
+      「どの機能をどこに配置するか」「どのように通信するか」<br>
+      これが<strong>ソフトウェアアーキテクチャ</strong>です。
+    </p>
+  </div>
+
+  <h2>なぜアーキテクチャが重要？</h2>
+  <p>
+    アーキテクチャの選択は、<strong>後から変更が難しい</strong>決定です。<br>
+    家の間取りを後から変えるのが大変なのと同じです。
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>品質特性</th>
+        <th>アーキテクチャの影響</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>保守性</strong></td>
+        <td>変更のしやすさ、新機能追加のコスト</td>
+      </tr>
+      <tr>
+        <td><strong>スケーラビリティ</strong></td>
+        <td>負荷増加への対応能力</td>
+      </tr>
+      <tr>
+        <td><strong>パフォーマンス</strong></td>
+        <td>応答速度、スループット</td>
+      </tr>
+      <tr>
+        <td><strong>信頼性</strong></td>
+        <td>障害への耐性、回復力</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>トレードオフの考え方</h2>
+  <p>
+    完璧なアーキテクチャは存在しません。<br>
+    <strong>何を優先し、何を妥協するか</strong>を判断するのがアーキテクチャ設計です。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">*</span> シニアの視点</div>
+    <p>
+      「なぜこのアーキテクチャを選んだのか」を説明できないのは危険信号です。<br>
+      流行りだから、他社がやっているから、ではなく、
+      <strong>自分たちの状況に合った理由</strong>が必要です。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-arch1">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: ソフトウェアアーキテクチャが重要な理由は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch1" value="a">
+        <span>コードを書く量が減るから</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="アーキテクチャは基盤となる設計判断です。後から変更するには多大なコストがかかるため、最初の選択が重要です。">
+        <input type="radio" name="q-arch1" value="b">
+        <span>後から変更が難しい設計判断だから</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch1" value="c">
+        <span>ドキュメントを書くためだから</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-arch1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('arch1')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="arch2">
+  <h1>2. レイヤードアーキテクチャ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>レイヤードアーキテクチャの構造と各層の役割を説明できる</p>
+  </div>
+
+  <h2>レイヤードアーキテクチャとは？</h2>
+  <p>
+    <strong>レイヤードアーキテクチャ</strong>（層状アーキテクチャ）は、
+    最も伝統的で広く使われている構造です。<br>
+    システムを<strong>水平な層（レイヤー）</strong>に分割します。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">*</span> たとえ話</div>
+    <p>
+      <strong>会社の組織</strong>に例えると分かりやすいです。<br>
+      社長 → 部長 → 課長 → 一般社員<br>
+      指示は上から下へ流れ、報告は下から上へ流れます。
+    </p>
+  </div>
+
+  <h2>典型的な3層/N層構造</h2>
+
+  <pre><code>┌─────────────────────────────────────┐
+│      プレゼンテーション層            │  ← UI、API
+│      (Presentation Layer)           │
+├─────────────────────────────────────┤
+│      ビジネスロジック層              │  ← ビジネスルール
+│      (Business Logic Layer)         │
+├─────────────────────────────────────┤
+│      データアクセス層                │  ← DB操作
+│      (Data Access Layer)            │
+├─────────────────────────────────────┤
+│      データベース                    │  ← データ保存
+│      (Database)                     │
+└─────────────────────────────────────┘
+
+依存の方向: 上 → 下（上位層は下位層に依存）</code></pre>
+
+  <h2>各層の責務</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>層</th>
+        <th>責務</th>
+        <th>例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>プレゼンテーション</strong></td>
+        <td>ユーザーとのやり取り</td>
+        <td>Controller, View, API</td>
+      </tr>
+      <tr>
+        <td><strong>ビジネスロジック</strong></td>
+        <td>業務ルールの実装</td>
+        <td>Service, UseCase</td>
+      </tr>
+      <tr>
+        <td><strong>データアクセス</strong></td>
+        <td>データの永続化</td>
+        <td>Repository, DAO</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>コード例</h2>
+
+  <pre><code>// プレゼンテーション層（Controller）
+class UserController {
+  constructor(private userService: UserService) {}
+
+  async createUser(req: Request, res: Response) {
+    const user = await this.userService.create(req.body);
+    res.status(201).json(user);
+  }
+}
+
+// ビジネスロジック層（Service）
+class UserService {
+  constructor(private userRepository: UserRepository) {}
+
+  async create(data: CreateUserDto): Promise&lt;User&gt; {
+    // ビジネスルールのチェック
+    if (await this.userRepository.existsByEmail(data.email)) {
+      throw new Error('Email already exists');
+    }
+    return this.userRepository.save(data);
+  }
+}
+
+// データアクセス層（Repository）
+class UserRepository {
+  async save(data: CreateUserDto): Promise&lt;User&gt; {
+    return await db.user.create({ data });
+  }
+}</code></pre>
+
+  <div class="quiz" id="quiz-arch2">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: レイヤードアーキテクチャで、依存の方向は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch2" value="a">
+        <span>下位層 → 上位層（DB → Controller）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="レイヤードアーキテクチャでは、上位層が下位層に依存します。ControllerはServiceを、ServiceはRepositoryを参照します。">
+        <input type="radio" name="q-arch2" value="b">
+        <span>上位層 → 下位層（Controller → DB）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch2" value="c">
+        <span>すべての層が相互に依存</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-arch2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('arch2')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="arch3">
+  <h1>3. レイヤードの問題点</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>レイヤードアーキテクチャの限界と問題点を指摘できる</p>
+  </div>
+
+  <h2>問題1: DB駆動設計になりがち</h2>
+  <p>
+    レイヤードアーキテクチャでは、<strong>ドメイン（ビジネスロジック）がDBに依存</strong>してしまいがちです。
+  </p>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">問題: ドメインがORMに依存</div>
+      <pre><code>// domain/User.ts
+import { Entity, Column } from 'typeorm';
+
+@Entity()  // ORMのデコレータ！
+export class User {
+  @Column()
+  email: string;
+}</code></pre>
+      <p>ドメインがインフラ（ORM）を知っている</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">理想: ドメインは純粋</div>
+      <pre><code>// domain/User.ts
+export class User {
+  constructor(
+    public readonly id: UserId,
+    private email: Email
+  ) {}
+}
+// ORMの知識は一切なし</code></pre>
+      <p>ドメインはビジネスロジックのみ</p>
+    </div>
+  </div>
+
+  <h2>問題2: テストが困難</h2>
+  <p>
+    下位層（DB）に依存しているため、上位層のテストでDBが必要になります。
+  </p>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">問題: DBなしでテストできない</div>
+      <pre><code>// Serviceのテストで本物のDBが必要
+const service = new UserService(
+  new UserRepository(db)  // 実際のDB接続
+);</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">理想: モックで置き換え可能</div>
+      <pre><code>// インターフェースに依存
+const service = new UserService(
+  mockUserRepository  // モックを注入
+);</code></pre>
+    </div>
+  </div>
+
+  <h2>問題3: 変更の波及</h2>
+  <p>
+    DBスキーマの変更が上位層まで波及してしまいます。
+  </p>
+
+  <pre><code>// DBカラム名を変更すると...
+// 1. Repository を修正
+// 2. Service を修正
+// 3. Controller を修正
+// 4. レスポンスを修正
+// → 全層に影響！</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">*</span> レビュー観点</div>
+    <ul style="margin-bottom:0;">
+      <li>ドメイン層にORMのimportがないか</li>
+      <li>Entityに @Column や @Entity があったら要注意</li>
+      <li>ビジネスロジックがDBの都合で書かれていないか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-arch3">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 次のコードの問題点は？</strong></p>
+    <pre><code>// domain/User.ts
+import { PrismaClient } from '@prisma/client';
+
+export class User {
+  async save(): Promise&lt;void&gt; {
+    const prisma = new PrismaClient();
+    await prisma.user.create({ data: this });
+  }
+}</code></pre>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch3" value="a">
+        <span>Prismaは非推奨のライブラリ</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ドメイン層がPrisma（インフラ層）に直接依存しています。これではDBを変更するときにドメインも修正が必要になり、テストも困難になります。">
+        <input type="radio" name="q-arch3" value="b">
+        <span>ドメインがインフラ（Prisma）に依存している</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch3" value="c">
+        <span>asyncを使っているのが問題</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-arch3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('arch3')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="arch4">
+  <h1>4. モノリス</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>モノリスアーキテクチャの特徴と適用場面を説明できる</p>
+  </div>
+
+  <h2>モノリスとは？</h2>
+  <p>
+    <strong>モノリス</strong>（Monolith）は、すべての機能が
+    <strong>1つのアプリケーション</strong>として動作するアーキテクチャです。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">*</span> たとえ話</div>
+    <p>
+      モノリスは<strong>1棟のビル</strong>のようなものです。<br>
+      すべての部署が同じビルにあり、エレベーターで移動できます。<br>
+      管理はシンプルですが、ビル全体を建て替えないと大きな変更ができません。
+    </p>
+  </div>
+
+  <h2>モノリスの構造</h2>
+
+  <!-- モノリスアーキテクチャ SVG図 -->
+  <svg viewBox="0 0 360 200" style="max-width: 360px; width: 100%; height: auto; display: block; margin: 1.5rem auto;" role="img" aria-label="モノリスアーキテクチャの構造図">
+    <title>モノリスアーキテクチャ - 1つのアプリケーション、1つのDB</title>
+    <!-- 外枠（アプリケーション全体） -->
+    <rect x="20" y="20" width="320" height="130" rx="8" fill="#3498db" opacity="0.15" stroke="#3498db" stroke-width="2"/>
+    <text x="180" y="45" text-anchor="middle" fill="#2c3e50" font-size="12" font-weight="bold">モノリスアプリケーション</text>
+
+    <!-- 各機能モジュール -->
+    <rect x="40" y="55" width="90" height="50" rx="5" fill="#e74c3c" opacity="0.85"/>
+    <text x="85" y="77" text-anchor="middle" fill="white" font-size="11" font-weight="bold">ユーザー</text>
+    <text x="85" y="93" text-anchor="middle" fill="white" font-size="10">機能</text>
+
+    <rect x="135" y="55" width="90" height="50" rx="5" fill="#27ae60" opacity="0.85"/>
+    <text x="180" y="77" text-anchor="middle" fill="white" font-size="11" font-weight="bold">注文</text>
+    <text x="180" y="93" text-anchor="middle" fill="white" font-size="10">機能</text>
+
+    <rect x="230" y="55" width="90" height="50" rx="5" fill="#9b59b6" opacity="0.85"/>
+    <text x="275" y="77" text-anchor="middle" fill="white" font-size="11" font-weight="bold">在庫</text>
+    <text x="275" y="93" text-anchor="middle" fill="white" font-size="10">機能</text>
+
+    <!-- 共有データベース -->
+    <rect x="70" y="115" width="220" height="25" rx="4" fill="#f39c12"/>
+    <text x="180" y="132" text-anchor="middle" fill="white" font-size="11" font-weight="bold">共有データベース</text>
+
+    <!-- 説明テキスト -->
+    <text x="180" y="175" text-anchor="middle" fill="#666" font-size="10">1つのプロセスで動作、1つのDBを共有</text>
+    <text x="180" y="190" text-anchor="middle" fill="#999" font-size="9">🏢 1棟のビルに全部署</text>
+  </svg>
+
+  <h2>モノリスの利点と欠点</h2>
+
+  <div class="compare-container">
+    <div class="compare-good">
+      <div class="compare-title">利点</div>
+      <ul>
+        <li>開発がシンプル</li>
+        <li>デプロイが容易（1つのアプリ）</li>
+        <li>デバッグが容易（1プロセス）</li>
+        <li>トランザクション管理が容易</li>
+        <li>初期コストが低い</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">欠点</div>
+      <ul>
+        <li>コードベースが肥大化</li>
+        <li>スケーリングは全体単位</li>
+        <li>1つの障害で全体停止</li>
+        <li>技術選択の自由度が低い</li>
+        <li>デプロイに時間がかかる</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>モノリスが適している場面</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>状況</th>
+        <th>理由</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>チーム規模が小さい（1-10人）</td>
+        <td>複雑な分散システムの運用コストが見合わない</td>
+      </tr>
+      <tr>
+        <td>MVP/スタートアップ</td>
+        <td>素早くリリースして検証することが優先</td>
+      </tr>
+      <tr>
+        <td>ドメインが明確でない</td>
+        <td>最初から分割すると間違える可能性が高い</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">*</span> 2026年のトレンド</div>
+    <p>
+      Amazon Prime Videoが「マイクロサービスからモノリスに戻した」事例が話題になりました。<br>
+      <strong>「マイクロサービス = 正解」ではない</strong>という認識が広まっています。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-arch4">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: モノリスが適しているのはどんな場面？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch4" value="a">
+        <span>100人以上の大規模チーム</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="小規模チームでは、分散システムの運用コストが利益を上回ることが多いです。シンプルなモノリスで素早く開発・検証することが重要です。">
+        <input type="radio" name="q-arch4" value="b">
+        <span>小規模チーム、MVP、スタートアップ</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch4" value="c">
+        <span>すでにマイクロサービスで運用中のシステム</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-arch4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('arch4')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="arch5">
+  <h1>5. モジュラーモノリス</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>モジュラーモノリスの構造と利点を説明できる</p>
+  </div>
+
+  <h2>モジュラーモノリスとは？</h2>
+  <p>
+    <strong>モジュラーモノリス</strong>は、モノリスの<strong>内部を明確なモジュールに分割</strong>したアーキテクチャです。<br>
+    デプロイは1つのアプリ、でも内部は整理されています。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">*</span> たとえ話</div>
+    <p>
+      <strong>オフィスフロアの区画分け</strong>に例えられます。<br>
+      同じビルの中ですが、「営業部」「開発部」「人事部」は壁で仕切られています。<br>
+      必要なときだけ受付を通じてやり取りします。
+    </p>
+  </div>
+
+  <h2>モジュラーモノリスの構造</h2>
+
+  <!-- モジュラーモノリス SVG図 -->
+  <svg viewBox="0 0 380 260" style="max-width: 380px; width: 100%; height: auto; display: block; margin: 1.5rem auto;" role="img" aria-label="モジュラーモノリスの構造図">
+    <title>モジュラーモノリス - 1つのアプリ内で明確にモジュール分割</title>
+    <!-- 外枠（アプリケーション全体） -->
+    <rect x="10" y="10" width="360" height="200" rx="8" fill="#3498db" opacity="0.1" stroke="#3498db" stroke-width="2"/>
+    <text x="190" y="30" text-anchor="middle" fill="#2c3e50" font-size="11" font-weight="bold">モジュラーモノリス</text>
+
+    <!-- User Module -->
+    <rect x="25" y="45" width="100" height="115" rx="5" fill="#e74c3c" opacity="0.15" stroke="#e74c3c" stroke-width="1.5"/>
+    <text x="75" y="60" text-anchor="middle" fill="#e74c3c" font-size="10" font-weight="bold">User Module</text>
+    <rect x="35" y="70" width="80" height="80" rx="3" fill="#e74c3c" opacity="0.8"/>
+    <text x="75" y="88" text-anchor="middle" fill="white" font-size="9">API</text>
+    <text x="75" y="103" text-anchor="middle" fill="white" font-size="9">Service</text>
+    <text x="75" y="118" text-anchor="middle" fill="white" font-size="9">Entity</text>
+    <text x="75" y="133" text-anchor="middle" fill="white" font-size="9">Repo</text>
+
+    <!-- Order Module -->
+    <rect x="140" y="45" width="100" height="115" rx="5" fill="#27ae60" opacity="0.15" stroke="#27ae60" stroke-width="1.5"/>
+    <text x="190" y="60" text-anchor="middle" fill="#27ae60" font-size="10" font-weight="bold">Order Module</text>
+    <rect x="150" y="70" width="80" height="80" rx="3" fill="#27ae60" opacity="0.8"/>
+    <text x="190" y="88" text-anchor="middle" fill="white" font-size="9">API</text>
+    <text x="190" y="103" text-anchor="middle" fill="white" font-size="9">Service</text>
+    <text x="190" y="118" text-anchor="middle" fill="white" font-size="9">Entity</text>
+    <text x="190" y="133" text-anchor="middle" fill="white" font-size="9">Repo</text>
+
+    <!-- Inventory Module -->
+    <rect x="255" y="45" width="100" height="115" rx="5" fill="#9b59b6" opacity="0.15" stroke="#9b59b6" stroke-width="1.5"/>
+    <text x="305" y="60" text-anchor="middle" fill="#9b59b6" font-size="10" font-weight="bold">Inventory</text>
+    <rect x="265" y="70" width="80" height="80" rx="3" fill="#9b59b6" opacity="0.8"/>
+    <text x="305" y="88" text-anchor="middle" fill="white" font-size="9">API</text>
+    <text x="305" y="103" text-anchor="middle" fill="white" font-size="9">Service</text>
+    <text x="305" y="118" text-anchor="middle" fill="white" font-size="9">Entity</text>
+    <text x="305" y="133" text-anchor="middle" fill="white" font-size="9">Repo</text>
+
+    <!-- モジュール間通信の矢印（公開API経由） -->
+    <line x1="115" y1="100" x2="150" y2="100" stroke="#f39c12" stroke-width="2" stroke-dasharray="4,2"/>
+    <line x1="230" y1="100" x2="265" y2="100" stroke="#f39c12" stroke-width="2" stroke-dasharray="4,2"/>
+    <text x="190" y="175" text-anchor="middle" fill="#f39c12" font-size="8" font-weight="bold">↔ 公開API経由でのみ通信 ↔</text>
+
+    <!-- 共有DB or 分離DB -->
+    <rect x="60" y="185" width="260" height="20" rx="3" fill="#f39c12"/>
+    <text x="190" y="199" text-anchor="middle" fill="white" font-size="10" font-weight="bold">共有DB or 分離DB</text>
+
+    <!-- 説明テキスト -->
+    <text x="190" y="230" text-anchor="middle" fill="#666" font-size="9">🏢 同じビル、壁で仕切られた部署</text>
+    <text x="190" y="245" text-anchor="middle" fill="#999" font-size="8">将来のマイクロサービス化への準備ができている</text>
+  </svg>
+
+  <!-- 参考用ASCII図（非表示）
+  <pre><code>┌──────────────────────────────────────────────────┐
+（ASCIIアート省略）-->
+
+  <h2>モジュール間の境界</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">NG: 直接参照（密結合）</div>
+      <pre><code>// order/OrderService.ts
+import { UserRepository }
+  from '../user/UserRepository';
+
+// 他モジュールの内部に直接依存</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">OK: 公開APIのみ参照</div>
+      <pre><code>// user/index.ts（公開API）
+export interface UserModule {
+  findById(id: string): UserDTO;
+}
+
+// order/OrderService.ts
+import { UserModule } from '../user';
+// 公開インターフェースのみ依存</code></pre>
+    </div>
+  </div>
+
+  <h2>モジュラーモノリスの利点</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>利点</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>デプロイの単純さ</td>
+        <td>モノリスと同様、1つのアプリとしてデプロイ</td>
+      </tr>
+      <tr>
+        <td>境界の明確化</td>
+        <td>モジュール間の依存が整理され、理解しやすい</td>
+      </tr>
+      <tr>
+        <td>将来の分割が容易</td>
+        <td>必要に応じてマイクロサービスに移行しやすい</td>
+      </tr>
+      <tr>
+        <td>チーム分割が可能</td>
+        <td>各モジュールを別チームが担当できる</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">*</span> レビュー観点</div>
+    <p>
+      モジュール間で<strong>直接importしていないか</strong>確認。<br>
+      <code>import { UserRepository } from '../user/repositories'</code>はNG。<br>
+      公開APIのみを使うべきです。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-arch5">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: モジュラーモノリスで重要なルールは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch5" value="a">
+        <span>各モジュールを別プロセスで動かす</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="モジュール間は公開インターフェースのみを通じてやり取りします。内部の実装を直接参照すると、モジュールの独立性が失われます。">
+        <input type="radio" name="q-arch5" value="b">
+        <span>モジュール間は公開APIのみで通信する</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch5" value="c">
+        <span>すべてのモジュールで同じDBテーブルを使う</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-arch5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('arch5')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="arch6">
+  <h1>6. マイクロサービス</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>マイクロサービスの特徴と複雑さを説明できる</p>
+  </div>
+
+  <h2>マイクロサービスとは？</h2>
+  <p>
+    <strong>マイクロサービス</strong>は、システムを<strong>独立してデプロイ可能な小さなサービス</strong>に分割するアーキテクチャです。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">*</span> たとえ話</div>
+    <p>
+      <strong>専門店が集まった商店街</strong>に例えられます。<br>
+      「パン屋」「肉屋」「八百屋」がそれぞれ独立した店舗として運営。<br>
+      1つの店が休みでも他の店は営業できます。
+    </p>
+  </div>
+
+  <h2>マイクロサービスの構造</h2>
+
+  <!-- マイクロサービス SVG図 -->
+  <svg viewBox="0 0 400 240" style="max-width: 400px; width: 100%; height: auto; display: block; margin: 1.5rem auto;" role="img" aria-label="マイクロサービスの構造図">
+    <title>マイクロサービス - 独立したサービスがネットワーク経由で通信</title>
+
+    <!-- User Service -->
+    <rect x="20" y="20" width="110" height="130" rx="6" fill="#e74c3c" opacity="0.15" stroke="#e74c3c" stroke-width="2"/>
+    <text x="75" y="38" text-anchor="middle" fill="#e74c3c" font-size="10" font-weight="bold">User Service</text>
+    <rect x="30" y="48" width="90" height="90" rx="4" fill="#e74c3c" opacity="0.85"/>
+    <text x="75" y="70" text-anchor="middle" fill="white" font-size="10">API</text>
+    <text x="75" y="90" text-anchor="middle" fill="white" font-size="10">Service</text>
+    <rect x="40" y="102" width="70" height="28" rx="3" fill="#c0392b"/>
+    <text x="75" y="120" text-anchor="middle" fill="white" font-size="9">専用DB</text>
+
+    <!-- Order Service -->
+    <rect x="145" y="20" width="110" height="130" rx="6" fill="#27ae60" opacity="0.15" stroke="#27ae60" stroke-width="2"/>
+    <text x="200" y="38" text-anchor="middle" fill="#27ae60" font-size="10" font-weight="bold">Order Service</text>
+    <rect x="155" y="48" width="90" height="90" rx="4" fill="#27ae60" opacity="0.85"/>
+    <text x="200" y="70" text-anchor="middle" fill="white" font-size="10">API</text>
+    <text x="200" y="90" text-anchor="middle" fill="white" font-size="10">Service</text>
+    <rect x="165" y="102" width="70" height="28" rx="3" fill="#1e8449"/>
+    <text x="200" y="120" text-anchor="middle" fill="white" font-size="9">専用DB</text>
+
+    <!-- Inventory Service -->
+    <rect x="270" y="20" width="110" height="130" rx="6" fill="#9b59b6" opacity="0.15" stroke="#9b59b6" stroke-width="2"/>
+    <text x="325" y="38" text-anchor="middle" fill="#9b59b6" font-size="10" font-weight="bold">Inventory</text>
+    <rect x="280" y="48" width="90" height="90" rx="4" fill="#9b59b6" opacity="0.85"/>
+    <text x="325" y="70" text-anchor="middle" fill="white" font-size="10">API</text>
+    <text x="325" y="90" text-anchor="middle" fill="white" font-size="10">Service</text>
+    <rect x="290" y="102" width="70" height="28" rx="3" fill="#7d3c98"/>
+    <text x="325" y="120" text-anchor="middle" fill="white" font-size="9">専用DB</text>
+
+    <!-- ネットワーク通信線 -->
+    <line x1="75" y1="150" x2="75" y2="175" stroke="#3498db" stroke-width="2"/>
+    <line x1="200" y1="150" x2="200" y2="175" stroke="#3498db" stroke-width="2"/>
+    <line x1="325" y1="150" x2="325" y2="175" stroke="#3498db" stroke-width="2"/>
+
+    <!-- ネットワークバー -->
+    <rect x="40" y="175" width="320" height="25" rx="4" fill="#3498db" opacity="0.9"/>
+    <text x="200" y="192" text-anchor="middle" fill="white" font-size="10" font-weight="bold">ネットワーク通信（HTTP/gRPC/イベント）</text>
+
+    <!-- 説明テキスト -->
+    <text x="200" y="220" text-anchor="middle" fill="#666" font-size="9">🏪 独立した専門店の商店街</text>
+    <text x="200" y="235" text-anchor="middle" fill="#999" font-size="8">各サービスが独立してデプロイ・スケーリング可能</text>
+  </svg>
+
+  <h2>マイクロサービスの特徴</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>特徴</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>独立デプロイ</strong></td>
+        <td>各サービスを個別にデプロイできる</td>
+      </tr>
+      <tr>
+        <td><strong>技術選択の自由</strong></td>
+        <td>サービスごとに異なる言語/DBを使える</td>
+      </tr>
+      <tr>
+        <td><strong>部分的スケーリング</strong></td>
+        <td>負荷の高いサービスだけ増やせる</td>
+      </tr>
+      <tr>
+        <td><strong>障害の隔離</strong></td>
+        <td>1つのサービスの障害が全体に波及しにくい</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>マイクロサービスの複雑さ</h2>
+
+  <div class="card card-danger">
+    <div class="card-title"><span class="icon">*</span> 分散システムの課題</div>
+    <ul style="margin-bottom:0;">
+      <li><strong>ネットワーク障害</strong>: サービス間通信が失敗する可能性</li>
+      <li><strong>データ整合性</strong>: 分散トランザクションの難しさ</li>
+      <li><strong>デバッグの困難さ</strong>: リクエストが複数サービスを跨ぐ</li>
+      <li><strong>運用コスト</strong>: 監視、ログ収集、デプロイの複雑化</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-arch6-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: マイクロサービスの最大の利点は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch6-1" value="a">
+        <span>開発コストが安くなる</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="各サービスが独立しているため、変更の影響範囲が限定され、個別にデプロイできます。大規模チームでの並行開発に適しています。">
+        <input type="radio" name="q-arch6-1" value="b">
+        <span>独立したデプロイと技術選択の自由</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch6-1" value="c">
+        <span>デバッグが容易になる</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-arch6-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-arch6-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: マイクロサービスで新たに発生する課題は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch6-2" value="a">
+        <span>コードが読みにくくなる</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch6-2" value="b">
+        <span>テストが書けなくなる</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="サービス間はネットワーク通信になるため、ネットワーク障害やデータ整合性の問題が発生します。分散システム特有の複雑さが加わります。">
+        <input type="radio" name="q-arch6-2" value="c">
+        <span>分散システム特有の複雑さ（ネットワーク障害、データ整合性）</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-arch6-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('arch6')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="arch7">
+  <h1>7. サービス境界の決め方</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>適切なサービス分割の基準を説明できる</p>
+  </div>
+
+  <h2>サービス境界とは？</h2>
+  <p>
+    マイクロサービスで最も重要な設計判断は、<strong>「どこでサービスを分けるか」</strong>です。<br>
+    間違った分割は、後で大きな問題を引き起こします。
+  </p>
+
+  <h2>アンチパターン: 技術的分割</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">NG: 技術レイヤーで分割</div>
+      <pre><code>services/
+  api-gateway/       # 全API
+  business-logic/    # 全ビジネスロジック
+  database-service/  # 全DB操作</code></pre>
+      <p>すべてのサービスが密結合になる</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">OK: ビジネス機能で分割</div>
+      <pre><code>services/
+  user-service/      # ユーザー管理
+  order-service/     # 注文管理
+  inventory-service/ # 在庫管理
+  payment-service/   # 決済</code></pre>
+      <p>各サービスが独立して動作可能</p>
+    </div>
+  </div>
+
+  <h2>分割の基準</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>基準</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ビジネスドメイン</strong></td>
+        <td>業務の境界に沿って分割（DDDの境界づけられたコンテキスト）</td>
+      </tr>
+      <tr>
+        <td><strong>チーム構成</strong></td>
+        <td>1チーム = 1サービス（コンウェイの法則）</td>
+      </tr>
+      <tr>
+        <td><strong>変更の頻度</strong></td>
+        <td>よく一緒に変更される機能は同じサービスに</td>
+      </tr>
+      <tr>
+        <td><strong>スケーリング要件</strong></td>
+        <td>異なるスケール要件を持つ機能は分離</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>コンウェイの法則</h2>
+  <blockquote>
+    「システムを設計する組織は、その組織のコミュニケーション構造をコピーした構造を持つ設計を生み出す」
+  </blockquote>
+  <p>
+    つまり、<strong>チーム構成がアーキテクチャに影響する</strong>ということです。<br>
+    3チームあれば、自然と3つのサービスになりがちです。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">*</span> レビュー観点</div>
+    <ul style="margin-bottom:0;">
+      <li>サービス分割が「技術レイヤー」ではなく「ビジネス機能」になっているか</li>
+      <li>1つのビジネス機能が複数サービスに分散していないか</li>
+      <li>過度に細かく分割されていないか（ナノサービス問題）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-arch7">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: サービス分割の基準として適切なのは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch7" value="a">
+        <span>技術レイヤー（API層、DB層など）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ビジネスドメインに沿って分割することで、各サービスが独立して開発・デプロイできます。技術レイヤーで分けると、すべてのサービスが密結合になります。">
+        <input type="radio" name="q-arch7" value="b">
+        <span>ビジネスドメイン（ユーザー管理、注文管理など）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch7" value="c">
+        <span>ファイル数が同じになるように</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-arch7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('arch7')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="arch8">
+  <h1>8. 通信パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>同期/非同期通信の違いと使い分けを説明できる</p>
+  </div>
+
+  <h2>通信パターンの種類</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>パターン</th>
+        <th>特徴</th>
+        <th>用途</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>同期（HTTP/gRPC）</strong></td>
+        <td>呼び出し元が応答を待つ</td>
+        <td>即座に結果が必要な場合</td>
+      </tr>
+      <tr>
+        <td><strong>非同期（メッセージキュー）</strong></td>
+        <td>呼び出し元は待たない</td>
+        <td>時間のかかる処理、疎結合</td>
+      </tr>
+      <tr>
+        <td><strong>イベント駆動</strong></td>
+        <td>イベントを発行、購読者が処理</td>
+        <td>複数サービスへの通知</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>同期通信の問題</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">問題: 同期呼び出しの連鎖</div>
+      <pre><code>// 1サービスが遅いと全体が遅くなる
+async createOrder(data) {
+  await userService.getUser();     // 100ms
+  await inventoryService.check();  // 200ms
+  await paymentService.process();  // 500ms
+  // 合計: 800ms + ネットワーク遅延
+}</code></pre>
+      <p>1つでも障害があると全体が止まる</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">解決: イベント駆動</div>
+      <pre><code>// 即座に応答し、後続処理は非同期
+async createOrder(data) {
+  const order = Order.create(data);
+  await orderRepo.save(order);
+
+  // イベントを発行して終了
+  await eventBus.publish(
+    new OrderCreatedEvent(order)
+  );
+  return order;  // 即座に応答
+}</code></pre>
+      <p>各サービスは独立して処理</p>
+    </div>
+  </div>
+
+  <h2>イベント駆動アーキテクチャ</h2>
+
+  <pre><code>┌──────────────┐     OrderCreated     ┌──────────────┐
+│ Order Service│────────────────────► │ Message Queue│
+└──────────────┘                      └───────┬──────┘
+                                              │
+            ┌─────────────────────────────────┼─────────────┐
+            │                                 │             │
+            ▼                                 ▼             ▼
+   ┌──────────────┐              ┌──────────────┐  ┌──────────────┐
+   │   Inventory  │              │   Payment    │  │ Notification │
+   │   Service    │              │   Service    │  │   Service    │
+   └──────────────┘              └──────────────┘  └──────────────┘
+   在庫を予約                     決済を処理        メール送信</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">*</span> レビュー観点</div>
+    <ul style="margin-bottom:0;">
+      <li>同期呼び出しが連鎖していないか</li>
+      <li>タイムアウト、リトライが設定されているか</li>
+      <li>サーキットブレーカーが実装されているか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-arch8">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: サービス間通信でイベント駆動を使う利点は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch8" value="a">
+        <span>コードが少なくなる</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="イベント駆動では、呼び出し元はイベントを発行するだけで、受け手を知らなくて済みます。サービス間の結合度が下がり、1つの障害が全体に波及しにくくなります。">
+        <input type="radio" name="q-arch8" value="b">
+        <span>疎結合になり、障害の影響範囲が限定される</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch8" value="c">
+        <span>すべての処理が即座に完了する</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-arch8')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('arch8')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="arch9">
+  <h1>9. データ管理</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>マイクロサービスでのデータ管理パターンを説明できる</p>
+  </div>
+
+  <h2>データベースの所有権</h2>
+  <p>
+    マイクロサービスでは、<strong>各サービスが自分のDBを持つ</strong>のが原則です。<br>
+    共有DBは避けるべきです。
+  </p>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">NG: 共有データベース</div>
+      <pre><code>User Service ──┐
+               │
+Order Service ─┼──► 共有DB
+               │
+Inventory ─────┘</code></pre>
+      <p>スキーマ変更が全サービスに影響</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">OK: サービスごとのDB</div>
+      <pre><code>User Service ──► User DB
+Order Service ──► Order DB
+Inventory ──► Inventory DB</code></pre>
+      <p>各サービスが独立して進化可能</p>
+    </div>
+  </div>
+
+  <h2>分散トランザクションの問題</h2>
+  <p>
+    複数サービスにまたがるトランザクションは、<strong>従来のACIDトランザクションが使えません</strong>。
+  </p>
+
+  <pre><code>// 問題: 注文作成で複数サービスを更新
+// 1. 在庫を減らす（Inventory Service）
+// 2. 注文を保存（Order Service）
+// 3. 決済を実行（Payment Service）
+
+// もし決済が失敗したら、在庫はどうする？
+// → 分散トランザクションの問題</code></pre>
+
+  <h2>Sagaパターン</h2>
+  <p>
+    <strong>Saga</strong>は、長いトランザクションを<strong>小さなローカルトランザクションの連鎖</strong>として実装するパターンです。
+  </p>
+
+  <pre><code>// Sagaの流れ
+1. 在庫予約 → 成功
+2. 注文作成 → 成功
+3. 決済実行 → 失敗!
+
+// 補償トランザクション（ロールバック相当）
+3'. 注文キャンセル
+2'. 在庫予約解除</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">*</span> レビュー観点</div>
+    <ul style="margin-bottom:0;">
+      <li>複数サービスにまたがる処理で整合性が考慮されているか</li>
+      <li>失敗時の補償処理が実装されているか</li>
+      <li>結果整合性（Eventual Consistency）を許容できる設計か</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-arch9">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: マイクロサービスでのデータ管理の原則は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch9" value="a">
+        <span>全サービスで1つのデータベースを共有する</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="各サービスが自分のデータベースを所有することで、スキーマ変更の影響を局所化し、独立したデプロイが可能になります。">
+        <input type="radio" name="q-arch9" value="b">
+        <span>各サービスが自分のデータベースを所有する</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch9" value="c">
+        <span>データベースは使わずメモリだけで管理する</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-arch9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('arch9')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="arch10">
+  <h1>10. アーキテクチャ選択</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>状況に応じたアーキテクチャを選択できる</p>
+  </div>
+
+  <h2>選択の基準</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>状況</th>
+        <th>推奨アーキテクチャ</th>
+        <th>理由</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>チーム1-10人、MVP</td>
+        <td><strong>モノリス</strong></td>
+        <td>シンプルさ、スピード優先</td>
+      </tr>
+      <tr>
+        <td>チーム10-50人、成長フェーズ</td>
+        <td><strong>モジュラーモノリス</strong></td>
+        <td>境界を明確にしつつ運用コスト抑制</td>
+      </tr>
+      <tr>
+        <td>チーム50人以上、大規模</td>
+        <td><strong>マイクロサービス</strong></td>
+        <td>独立デプロイ、チーム自律性</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>よくある間違い</h2>
+
+  <div class="card card-danger">
+    <div class="card-title"><span class="icon">*</span> オーバーエンジニアリング</div>
+    <p>
+      「将来のため」にマイクロサービスを選ぶのは危険です。<br>
+      まだ必要のない複雑さを抱え込み、開発速度が落ちます。
+    </p>
+    <p>
+      <strong>YAGNI（You Aren't Gonna Need It）</strong>の原則。<br>
+      今必要なものだけを作り、将来必要になったら拡張しましょう。
+    </p>
+  </div>
+
+  <h2>進化的アーキテクチャ</h2>
+  <p>
+    最初から完璧なアーキテクチャを選ぶ必要はありません。<br>
+    <strong>モノリス → モジュラーモノリス → マイクロサービス</strong>と
+    段階的に進化させることができます。
+  </p>
+
+  <pre><code>Phase 1: モノリス（MVP、検証）
+    ↓ ユーザー増加、チーム拡大
+Phase 2: モジュラーモノリス（境界明確化）
+    ↓ 特定機能のスケール要件
+Phase 3: 一部をマイクロサービスに切り出し
+    ↓ 必要に応じて段階的に分割</code></pre>
+
+  <div class="quiz" id="quiz-arch10-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: 5人のスタートアップがMVPを作る場合、推奨されるアーキテクチャは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="小規模チームでMVPを作る場合、シンプルなモノリスが最適です。マイクロサービスの運用コストは、このフェーズでは見合いません。">
+        <input type="radio" name="q-arch10-1" value="a">
+        <span>モノリス</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch10-1" value="b">
+        <span>マイクロサービス</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch10-1" value="c">
+        <span>サーバーレス</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-arch10-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-arch10-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: 「将来マイクロサービスにするかもしれないから、最初からマイクロサービスで作る」という判断は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch10-2" value="a">
+        <span>正しい（将来を見据えた良い判断）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="YAGNIの原則に反します。今必要ない複雑さを抱え込むと、開発速度が落ち、本当に重要な検証ができなくなります。">
+        <input type="radio" name="q-arch10-2" value="b">
+        <span>オーバーエンジニアリング（YAGNI違反）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-arch10-2" value="c">
+        <span>技術力のアピールになる</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-arch10-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('arch10')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>

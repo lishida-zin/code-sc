@@ -1,0 +1,1244 @@
+<!-- ============================================
+     Level 6 Phase 6: クリーン/ヘキサゴナルアーキテクチャ
+     ============================================ -->
+
+<section id="clean1">
+  <h1>1. なぜアーキテクチャが必要か</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>クリーンアーキテクチャの目的と価値を説明できる</p>
+  </div>
+
+  <h2>アーキテクチャの目的</h2>
+  <p>
+    クリーンアーキテクチャやヘキサゴナルアーキテクチャの目的は、
+    <strong>ビジネスロジックを技術的な詳細から守る</strong>ことです。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">*</span> たとえ話</div>
+    <p>
+      <strong>家の設計</strong>で考えてみましょう。<br>
+      「リビングで家族がくつろぐ」という<strong>目的（ビジネスロジック）</strong>は、
+      電気配線やエアコンの機種（技術的詳細）とは関係ありません。<br>
+      エアコンを買い替えても、リビングの使い方は変わりませんよね。
+    </p>
+  </div>
+
+  <h2>技術に依存しないビジネスロジック</h2>
+  <p>
+    DBをPostgreSQLからMongoDBに変えても、<br>
+    WebフレームワークをExpressからFastifyに変えても、<br>
+    <strong>ビジネスロジックは変更不要</strong>であるべきです。
+  </p>
+
+  <h2>変更容易性とテスト容易性</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>目標</th>
+        <th>実現方法</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>変更容易性</strong></td>
+        <td>技術的詳細の変更がビジネスロジックに影響しない</td>
+      </tr>
+      <tr>
+        <td><strong>テスト容易性</strong></td>
+        <td>DB/APIなしでビジネスロジックをテストできる</td>
+      </tr>
+      <tr>
+        <td><strong>理解容易性</strong></td>
+        <td>ビジネスルールがコードから明確に読み取れる</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quiz" id="quiz-clean1">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: クリーンアーキテクチャの主な目的は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean1" value="a">
+        <span>コードの行数を減らす</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ビジネスロジックを技術的詳細（DB、フレームワーク）から分離することで、変更に強く、テストしやすいシステムを作れます。">
+        <input type="radio" name="q-clean1" value="b">
+        <span>ビジネスロジックを技術的詳細から守る</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean1" value="c">
+        <span>最新のフレームワークを使う</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-clean1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('clean1')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="clean2">
+  <h1>2. クリーンアーキテクチャ概要</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>クリーンアーキテクチャの同心円構造と依存ルールを説明できる</p>
+  </div>
+
+  <h2>クリーンアーキテクチャとは？</h2>
+  <p>
+    Robert C. Martin（Uncle Bob）が提唱したアーキテクチャパターンです。<br>
+    <strong>同心円</strong>の形で表現され、中心ほど重要（ビジネスルール）、外側ほど詳細（技術）です。
+  </p>
+
+  <h2>同心円の構造</h2>
+
+  <!-- クリーンアーキテクチャ同心円SVG -->
+  <div class="card card-info" style="padding: 1rem;">
+    <svg viewBox="0 0 400 400" style="width:100%;max-width:400px;display:block;margin:0 auto;" role="img" aria-label="クリーンアーキテクチャの同心円図">
+      <title>クリーンアーキテクチャの同心円図</title>
+      <defs>
+        <marker id="arrow-dep" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#6366f1"/>
+        </marker>
+      </defs>
+      <!-- 最外層: Frameworks & Drivers -->
+      <circle cx="200" cy="200" r="180" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+      <text x="200" y="35" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="bold">Frameworks & Drivers</text>
+      <text x="200" y="50" text-anchor="middle" fill="#991b1b" font-size="9">DB, Web, UI, External APIs</text>
+
+      <!-- 第2層: Interface Adapters -->
+      <circle cx="200" cy="200" r="135" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+      <text x="200" y="85" text-anchor="middle" fill="#d97706" font-size="11" font-weight="bold">Interface Adapters</text>
+      <text x="200" y="100" text-anchor="middle" fill="#92400e" font-size="9">Controllers, Presenters, Gateways</text>
+
+      <!-- 第3層: Application Business Rules -->
+      <circle cx="200" cy="200" r="90" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+      <text x="200" y="130" text-anchor="middle" fill="#047857" font-size="11" font-weight="bold">Application</text>
+      <text x="200" y="145" text-anchor="middle" fill="#065f46" font-size="9">Use Cases</text>
+
+      <!-- 最内層: Entities -->
+      <circle cx="200" cy="200" r="50" fill="#dbeafe" stroke="#3b82f6" stroke-width="3"/>
+      <text x="200" y="195" text-anchor="middle" fill="#1d4ed8" font-size="12" font-weight="bold">Entities</text>
+      <text x="200" y="210" text-anchor="middle" fill="#1e40af" font-size="9">ドメイン</text>
+
+      <!-- 依存方向の矢印（外側→内側） -->
+      <line x1="320" y1="320" x2="260" y2="260" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-dep)"/>
+      <text x="330" y="340" fill="#6366f1" font-size="10" font-weight="bold">依存の方向</text>
+      <text x="330" y="355" fill="#4f46e5" font-size="9">外側 → 内側</text>
+    </svg>
+    <p style="text-align:center;margin:0.5rem 0 0;font-size:0.85rem;color:var(--text-muted);">
+      内側ほど重要（ビジネス）、外側ほど詳細（技術）
+    </p>
+  </div>
+
+  <h2>依存ルール（The Dependency Rule）</h2>
+  <p>
+    <strong>最も重要なルール</strong>: <br>
+    「ソースコードの依存性は、内側に向かってのみ向けることができる」
+  </p>
+
+  <div class="compare-container">
+    <div class="compare-good">
+      <div class="compare-title">OK: 外側が内側に依存</div>
+      <pre><code>// Controller → UseCase（OK）
+class UserController {
+  constructor(
+    private createUser: CreateUserUseCase
+  ) {}
+}</code></pre>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">NG: 内側が外側に依存</div>
+      <pre><code>// Entity → ORM（NG！）
+import { Entity } from 'typeorm';
+
+@Entity()
+class User { ... }</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">*</span> レビュー観点</div>
+    <p>
+      <strong>依存の方向</strong>を常にチェック。<br>
+      内側の層（Entity, UseCase）から外側の層（DB, Framework）への
+      importがあったら要注意です。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-clean2">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: クリーンアーキテクチャの依存ルールは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean2" value="a">
+        <span>内側 → 外側（Entity → Controller）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="依存は常に外側から内側に向かいます。これにより、ビジネスロジック（内側）は技術的詳細（外側）の変更に影響されません。">
+        <input type="radio" name="q-clean2" value="b">
+        <span>外側 → 内側（Controller → Entity）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean2" value="c">
+        <span>双方向に依存可能</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-clean2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('clean2')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="clean3">
+  <h1>3. ドメイン層</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>ドメイン層の責務と実装方法を説明できる</p>
+  </div>
+
+  <h2>ドメイン層とは？</h2>
+  <p>
+    ドメイン層（Enterprise Business Rules / Entities）は、
+    <strong>ビジネスの本質的なルール</strong>を表現する最も重要な層です。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">*</span> たとえ話</div>
+    <p>
+      ECサイトの「注文」で考えましょう。<br>
+      「在庫がない商品は注文できない」「合計金額は商品価格の合計」<br>
+      これらは<strong>ビジネスルール</strong>であり、<br>
+      DBがPostgreSQLでもMongoDBでも変わりません。
+    </p>
+  </div>
+
+  <h2>ドメイン層の特徴</h2>
+
+  <ul>
+    <li><strong>フレームワーク非依存</strong>: ORMのデコレータなし</li>
+    <li><strong>純粋なビジネスロジック</strong>: DBや外部APIを知らない</li>
+    <li><strong>テスト容易</strong>: モックなしでテスト可能</li>
+  </ul>
+
+  <h2>コード例</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">NG: フレームワークに依存</div>
+      <pre><code>// domain/User.ts
+import { Entity, Column } from 'typeorm';
+
+@Entity()
+export class User {
+  @Column()
+  email: string;
+
+  // ORMに依存している！
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">OK: 純粋なドメインモデル</div>
+      <pre><code>// domain/User.ts
+export class User {
+  constructor(
+    public readonly id: UserId,
+    private email: Email,
+    private name: UserName
+  ) {}
+
+  changeName(newName: UserName): void {
+    if (newName.isEmpty()) {
+      throw new DomainError('Name empty');
+    }
+    this.name = newName;
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>値オブジェクト</h2>
+  <p>
+    ドメイン層では、プリミティブ型の代わりに<strong>値オブジェクト</strong>を使います。
+  </p>
+
+  <pre><code>// 値オブジェクト: Email
+class Email {
+  private constructor(
+    public readonly value: string
+  ) {}
+
+  static create(value: string): Email {
+    if (!value.includes('@')) {
+      throw new DomainError('Invalid email');
+    }
+    return new Email(value.toLowerCase());
+  }
+
+  equals(other: Email): boolean {
+    return this.value === other.value;
+  }
+}</code></pre>
+
+  <div class="quiz" id="quiz-clean3">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: ドメイン層に含めるべきでないものは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean3" value="a">
+        <span>ビジネスルール（在庫チェック等）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean3" value="b">
+        <span>値オブジェクト（Email, Money等）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ドメイン層は純粋なビジネスロジックのみを含みます。ORMやフレームワークへの依存は、外側のインフラ層に置くべきです。">
+        <input type="radio" name="q-clean3" value="c">
+        <span>ORMのデコレータやフレームワーク依存</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-clean3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('clean3')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="clean4">
+  <h1>4. ユースケース層</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>ユースケース層の責務とドメイン層との違いを説明できる</p>
+  </div>
+
+  <h2>ユースケース層とは？</h2>
+  <p>
+    ユースケース層（Application Business Rules）は、
+    <strong>アプリケーション固有のビジネスルール</strong>を実装する層です。<br>
+    「ユーザーがシステムで何をするか」を表現します。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">*</span> ドメイン層との違い</div>
+    <table>
+      <thead>
+        <tr>
+          <th>層</th>
+          <th>責務</th>
+          <th>例</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ドメイン層</strong></td>
+          <td>ビジネスの本質的ルール</td>
+          <td>「在庫がない商品は注文できない」</td>
+        </tr>
+        <tr>
+          <td><strong>ユースケース層</strong></td>
+          <td>アプリケーションの操作フロー</td>
+          <td>「注文作成→在庫確認→メール送信」</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>ユースケースの実装</h2>
+
+  <pre><code>// application/CreateUserUseCase.ts
+interface CreateUserInput {
+  email: string;
+  name: string;
+}
+
+interface CreateUserOutput {
+  userId: string;
+}
+
+class CreateUserUseCase {
+  constructor(
+    private userRepository: UserRepository,  // 出力ポート
+    private emailSender: EmailSender          // 出力ポート
+  ) {}
+
+  async execute(input: CreateUserInput): Promise&lt;CreateUserOutput&gt; {
+    // 1. ドメインオブジェクトを生成
+    const user = User.create(
+      UserId.generate(),
+      Email.create(input.email),
+      UserName.create(input.name)
+    );
+
+    // 2. ポートを通じて永続化
+    await this.userRepository.save(user);
+
+    // 3. ポートを通じてメール送信
+    await this.emailSender.sendWelcome(user.email);
+
+    return { userId: user.id.value };
+  }
+}</code></pre>
+
+  <h2>ユースケース層のルール</h2>
+
+  <ul>
+    <li>ドメインオブジェクトを使ってビジネスフローを実装</li>
+    <li><strong>インフラの詳細を知らない</strong>（インターフェース経由）</li>
+    <li>入力/出力はDTOで、ドメインオブジェクトを直接返さない</li>
+  </ul>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">NG: インフラに直接依存</div>
+      <pre><code>class CreateUserUseCase {
+  async execute(input) {
+    // Prismaに直接依存！
+    const prisma = new PrismaClient();
+    await prisma.user.create({...});
+
+    // SMTPの詳細を知っている！
+    const transport = nodemailer
+      .createTransport({...});
+  }
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">OK: ポート経由</div>
+      <pre><code>class CreateUserUseCase {
+  constructor(
+    private userRepo: UserRepository,
+    private emailSender: EmailSender
+  ) {}
+
+  async execute(input) {
+    // インターフェース経由
+    await this.userRepo.save(user);
+    await this.emailSender.send(email);
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-clean4">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: ユースケース層がDB（Prisma等）に直接依存しているのは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean4" value="a">
+        <span>正しい（パフォーマンスのため）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ユースケース層は抽象（インターフェース）に依存すべきです。具体的なDB実装への依存は、テストを困難にし、技術変更の影響を受けます。">
+        <input type="radio" name="q-clean4" value="b">
+        <span>違反（抽象に依存すべき）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean4" value="c">
+        <span>どちらでも良い</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-clean4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('clean4')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="clean5">
+  <h1>5. インターフェース層</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>インターフェース層（アダプター層）の責務を説明できる</p>
+  </div>
+
+  <h2>インターフェース層とは？</h2>
+  <p>
+    インターフェース層（Interface Adapters）は、
+    <strong>外部と内部を橋渡し</strong>する層です。<br>
+    Controller、Presenter、Gatewayなどが含まれます。
+  </p>
+
+  <h2>Controllerの責務</h2>
+  <p>
+    Controllerは<strong>入力の変換とユースケースの呼び出し</strong>のみを担当します。<br>
+    ビジネスロジックを含めてはいけません。
+  </p>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">NG: ビジネスロジックが混入</div>
+      <pre><code>class UserController {
+  async createUser(req, res) {
+    // バリデーション（OK）
+    if (!req.body.email) {
+      return res.status(400).json({});
+    }
+
+    // ビジネスロジックがここに！
+    if (await db.user.findByEmail(
+      req.body.email)) {
+      return res.status(409).json({});
+    }
+
+    // 直接DBアクセス！
+    const user = await db.user.create({
+      data: req.body
+    });
+
+    res.status(201).json(user);
+  }
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">OK: 変換と呼び出しのみ</div>
+      <pre><code>class UserController {
+  constructor(
+    private createUser: CreateUserUseCase
+  ) {}
+
+  async create(req, res) {
+    // 入力バリデーション
+    const result = CreateUserSchema
+      .safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({});
+    }
+
+    // ユースケースを呼び出すだけ
+    const output = await this.createUser
+      .execute(result.data);
+
+    res.status(201).json(output);
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>インターフェース層の役割</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>コンポーネント</th>
+        <th>責務</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Controller</strong></td>
+        <td>HTTPリクエストをUseCaseの入力に変換</td>
+      </tr>
+      <tr>
+        <td><strong>Presenter</strong></td>
+        <td>UseCaseの出力をHTTPレスポンスに変換</td>
+      </tr>
+      <tr>
+        <td><strong>Gateway</strong></td>
+        <td>外部APIとの通信をドメインに変換</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quiz" id="quiz-clean5">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: Controllerに含めるべきでないものは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean5" value="a">
+        <span>リクエストのバリデーション</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="「メールが既に存在するか」はビジネスルールです。ControllerではなくUseCaseで判断すべきです。Controllerは入力の形式チェックと呼び出しのみ。">
+        <input type="radio" name="q-clean5" value="b">
+        <span>「メールが既に存在するか」のチェック</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean5" value="c">
+        <span>レスポンスのステータスコード設定</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-clean5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('clean5')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="clean6">
+  <h1>6. インフラ層</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>インフラ層の責務と実装方法を説明できる</p>
+  </div>
+
+  <h2>インフラ層とは？</h2>
+  <p>
+    インフラ層（Frameworks & Drivers）は、
+    <strong>技術的な詳細</strong>を実装する最も外側の層です。<br>
+    DB、外部API、フレームワークなどが含まれます。
+  </p>
+
+  <h2>インフラ層に含まれるもの</h2>
+
+  <ul>
+    <li><strong>データベース</strong>: ORM、クエリ実装</li>
+    <li><strong>外部API</strong>: HTTP通信、SDKラッパー</li>
+    <li><strong>Webフレームワーク</strong>: Express, Fastify等</li>
+    <li><strong>メッセージキュー</strong>: RabbitMQ, SQS等</li>
+  </ul>
+
+  <h2>リポジトリの実装</h2>
+
+  <pre><code>// application/ports/UserRepository.ts（インターフェース）
+interface UserRepository {
+  save(user: User): Promise&lt;void&gt;;
+  findById(id: UserId): Promise&lt;User | null&gt;;
+}
+
+// infrastructure/PrismaUserRepository.ts（実装）
+class PrismaUserRepository implements UserRepository {
+  constructor(private prisma: PrismaClient) {}
+
+  async save(user: User): Promise&lt;void&gt; {
+    await this.prisma.user.upsert({
+      where: { id: user.id.value },
+      create: this.toRecord(user),
+      update: this.toRecord(user)
+    });
+  }
+
+  async findById(id: UserId): Promise&lt;User | null&gt; {
+    const record = await this.prisma.user.findUnique({
+      where: { id: id.value }
+    });
+    return record ? this.toDomain(record) : null;
+  }
+
+  // ドメインとDBレコードの変換
+  private toRecord(user: User): UserRecord { ... }
+  private toDomain(record: UserRecord): User { ... }
+}</code></pre>
+
+  <h2>ディレクトリ構造</h2>
+
+  <pre><code>src/
+├── domain/              # ドメイン層
+│   ├── User.ts
+│   ├── UserId.ts
+│   └── Email.ts
+├── application/         # ユースケース層
+│   ├── CreateUserUseCase.ts
+│   └── ports/           # インターフェース定義
+│       ├── UserRepository.ts
+│       └── EmailSender.ts
+├── infrastructure/      # インフラ層
+│   ├── PrismaUserRepository.ts
+│   ├── NodemailerEmailSender.ts
+│   └── db/
+│       └── schema.prisma
+└── presentation/        # インターフェース層
+    ├── UserController.ts
+    └── routes.ts</code></pre>
+
+  <div class="quiz" id="quiz-clean6">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: インフラ層の実装（PrismaUserRepository）が依存するのは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean6" value="a">
+        <span>Controller</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="インフラ層は、内側の層（application層）で定義されたインターフェースを実装します。依存方向は外→内です。">
+        <input type="radio" name="q-clean6" value="b">
+        <span>application層のUserRepository（インターフェース）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean6" value="c">
+        <span>何にも依存しない</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-clean6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('clean6')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="clean7">
+  <h1>7. ヘキサゴナル概要</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>ヘキサゴナルアーキテクチャ（Ports & Adapters）の概念を説明できる</p>
+  </div>
+
+  <h2>ヘキサゴナルアーキテクチャとは？</h2>
+  <p>
+    Alistair Cockburnが提唱した<strong>Ports & Adapters</strong>パターンです。<br>
+    六角形（ヘキサゴン）で図示されることから、この名前がついています。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">*</span> たとえ話</div>
+    <p>
+      <strong>電源コンセント</strong>で考えてみましょう。<br>
+      日本のコンセント（ポート）に、海外の家電（アダプター）を繋ぐには
+      変換プラグ（アダプター）が必要ですよね。<br>
+      アプリケーションも同じです。<strong>ポート</strong>と<strong>アダプター</strong>で外部と繋がります。
+    </p>
+  </div>
+
+  <h2>ヘキサゴナルの構造</h2>
+
+  <!-- ヘキサゴナルアーキテクチャ SVG図 -->
+  <svg viewBox="0 0 400 350" style="max-width: 400px; width: 100%; height: auto; display: block; margin: 1.5rem auto;" role="img" aria-label="ヘキサゴナルアーキテクチャの構造図">
+    <title>ヘキサゴナルアーキテクチャ（Ports & Adapters）</title>
+    <defs>
+      <linearGradient id="hexGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#4a90d9;stop-opacity:0.9" />
+        <stop offset="100%" style="stop-color:#2d5a87;stop-opacity:0.9" />
+      </linearGradient>
+    </defs>
+
+    <!-- Primary Adapters（上部・駆動側） -->
+    <rect x="100" y="10" width="200" height="40" rx="5" fill="#e74c3c" opacity="0.85"/>
+    <text x="200" y="28" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Primary Adapters（駆動側）</text>
+    <text x="200" y="42" text-anchor="middle" fill="white" font-size="9">Controllers, CLI, Tests</text>
+
+    <!-- 矢印（上から六角形へ） -->
+    <line x1="200" y1="50" x2="200" y2="70" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+    <!-- 六角形（メイン） -->
+    <polygon points="200,75 320,125 320,225 200,275 80,225 80,125" fill="url(#hexGradient)" stroke="#2c3e50" stroke-width="3"/>
+
+    <!-- Input Ports層 -->
+    <rect x="110" y="95" width="180" height="35" rx="3" fill="#f39c12" opacity="0.9"/>
+    <text x="200" y="110" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Input Ports</text>
+    <text x="200" y="122" text-anchor="middle" fill="white" font-size="8">(Use Case Interfaces)</text>
+
+    <!-- Application層（中心） -->
+    <rect x="120" y="140" width="160" height="45" rx="3" fill="#27ae60" opacity="0.95"/>
+    <text x="200" y="160" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Application</text>
+    <text x="200" y="175" text-anchor="middle" fill="white" font-size="9">(Domain Logic)</text>
+
+    <!-- Output Ports層 -->
+    <rect x="110" y="195" width="180" height="35" rx="3" fill="#f39c12" opacity="0.9"/>
+    <text x="200" y="210" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Output Ports</text>
+    <text x="200" y="222" text-anchor="middle" fill="white" font-size="8">(Repository Interfaces)</text>
+
+    <!-- 矢印（六角形から下へ） -->
+    <line x1="200" y1="275" x2="200" y2="295" stroke="#666" stroke-width="2"/>
+
+    <!-- Secondary Adapters（下部・被駆動側） -->
+    <rect x="70" y="300" width="260" height="40" rx="5" fill="#9b59b6" opacity="0.85"/>
+    <text x="200" y="318" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Secondary Adapters（被駆動側）</text>
+    <text x="200" y="332" text-anchor="middle" fill="white" font-size="9">DB, External APIs, Message Queue</text>
+
+    <!-- 左右のアダプター接続（装飾） -->
+    <line x1="30" y1="175" x2="80" y2="175" stroke="#e74c3c" stroke-width="2" stroke-dasharray="5,3"/>
+    <line x1="320" y1="175" x2="370" y2="175" stroke="#9b59b6" stroke-width="2" stroke-dasharray="5,3"/>
+    <text x="15" y="165" fill="#e74c3c" font-size="8" transform="rotate(-90, 15, 175)">Driving</text>
+    <text x="385" y="165" fill="#9b59b6" font-size="8" transform="rotate(90, 385, 175)">Driven</text>
+
+    <!-- 凡例 -->
+    <rect x="10" y="270" width="12" height="12" fill="#e74c3c" rx="2"/>
+    <text x="26" y="280" fill="#333" font-size="9">駆動側アダプター</text>
+    <rect x="10" y="287" width="12" height="12" fill="#9b59b6" rx="2"/>
+    <text x="26" y="297" fill="#333" font-size="9">被駆動側アダプター</text>
+  </svg>
+
+  <h2>クリーンアーキテクチャとの関係</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ヘキサゴナル</th>
+        <th>クリーンアーキテクチャ</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Application</td>
+        <td>Domain + Use Cases</td>
+      </tr>
+      <tr>
+        <td>Input Ports</td>
+        <td>Use Case Interfaces</td>
+      </tr>
+      <tr>
+        <td>Output Ports</td>
+        <td>Gateway Interfaces</td>
+      </tr>
+      <tr>
+        <td>Adapters</td>
+        <td>Interface Adapters + Infrastructure</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    本質は同じで、<strong>ビジネスロジックを中心に据え、技術的詳細を外側に押し出す</strong>考え方です。
+  </p>
+
+  <div class="quiz" id="quiz-clean7">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: ヘキサゴナルアーキテクチャの別名は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean7" value="a">
+        <span>MVC（Model-View-Controller）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ヘキサゴナルアーキテクチャはPorts & Adaptersパターンとも呼ばれます。ポートとアダプターで外部との接続を抽象化します。">
+        <input type="radio" name="q-clean7" value="b">
+        <span>Ports & Adapters</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean7" value="c">
+        <span>Microservices</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-clean7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('clean7')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="clean8">
+  <h1>8. ポート（Port）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>入力ポートと出力ポートの役割を説明できる</p>
+  </div>
+
+  <h2>ポートとは？</h2>
+  <p>
+    <strong>ポート</strong>は、アプリケーションと外部世界の<strong>境界を定義するインターフェース</strong>です。<br>
+    「何ができるか」を定義し、「どうやるか」は定義しません。
+  </p>
+
+  <h2>入力ポート（Input Port / Driving Port）</h2>
+  <p>
+    外部からアプリケーションを<strong>駆動する</strong>ためのインターフェースです。<br>
+    ユースケースのインターフェースとも言えます。
+  </p>
+
+  <pre><code>// ports/input/CreateUserUseCase.ts（入力ポート）
+interface CreateUserUseCase {
+  execute(input: CreateUserInput): Promise&lt;CreateUserOutput&gt;;
+}
+
+interface CreateUserInput {
+  email: string;
+  name: string;
+}
+
+interface CreateUserOutput {
+  userId: string;
+}</code></pre>
+
+  <h2>出力ポート（Output Port / Driven Port）</h2>
+  <p>
+    アプリケーションが外部リソースを<strong>利用する</strong>ためのインターフェースです。<br>
+    リポジトリや外部サービスのインターフェースです。
+  </p>
+
+  <pre><code>// ports/output/UserRepository.ts（出力ポート）
+interface UserRepository {
+  save(user: User): Promise&lt;void&gt;;
+  findById(id: UserId): Promise&lt;User | null&gt;;
+  findByEmail(email: Email): Promise&lt;User | null&gt;;
+}
+
+// ports/output/EmailSender.ts（出力ポート）
+interface EmailSender {
+  sendWelcome(to: Email): Promise&lt;void&gt;;
+  sendPasswordReset(to: Email, token: string): Promise&lt;void&gt;;
+}</code></pre>
+
+  <h2>ポートの利点</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>利点</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>テスト容易性</strong></td>
+        <td>モックを差し替えてテストできる</td>
+      </tr>
+      <tr>
+        <td><strong>交換可能性</strong></td>
+        <td>実装を変更してもアプリは影響なし</td>
+      </tr>
+      <tr>
+        <td><strong>ドキュメント効果</strong></td>
+        <td>システムの境界が明確になる</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quiz" id="quiz-clean8">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: UserRepository（インターフェース）は何ポート？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean8" value="a">
+        <span>入力ポート（アプリを駆動する）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="UserRepositoryはアプリケーションがDBを利用するためのインターフェースです。アプリケーションから見て「外に出ていく」ので出力ポートです。">
+        <input type="radio" name="q-clean8" value="b">
+        <span>出力ポート（外部リソースを利用）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean8" value="c">
+        <span>ポートではない</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-clean8')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('clean8')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="clean9">
+  <h1>9. アダプター（Adapter）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>Primary AdapterとSecondary Adapterの違いを説明できる</p>
+  </div>
+
+  <h2>アダプターとは？</h2>
+  <p>
+    <strong>アダプター</strong>は、ポートの<strong>具体的な実装</strong>です。<br>
+    外部の技術とアプリケーションを繋ぎます。
+  </p>
+
+  <h2>Primary Adapter（駆動側アダプター）</h2>
+  <p>
+    外部からアプリケーションを<strong>呼び出す</strong>側の実装です。
+  </p>
+
+  <pre><code>// adapters/primary/ExpressUserController.ts
+class ExpressUserController {
+  constructor(
+    private createUserUseCase: CreateUserUseCase  // 入力ポート
+  ) {}
+
+  // HTTPリクエストを入力ポートの形式に変換
+  async create(req: Request, res: Response) {
+    const input: CreateUserInput = {
+      email: req.body.email,
+      name: req.body.name
+    };
+
+    const output = await this.createUserUseCase.execute(input);
+    res.status(201).json(output);
+  }
+}</code></pre>
+
+  <h2>Secondary Adapter（被駆動側アダプター）</h2>
+  <p>
+    アプリケーションから<strong>呼び出される</strong>側の実装です。
+  </p>
+
+  <pre><code>// adapters/secondary/PrismaUserRepository.ts
+class PrismaUserRepository implements UserRepository {  // 出力ポートを実装
+  constructor(private prisma: PrismaClient) {}
+
+  async save(user: User): Promise&lt;void&gt; {
+    // ドメインオブジェクトをDBの形式に変換
+    await this.prisma.user.create({
+      data: {
+        id: user.id.value,
+        email: user.email.value,
+        name: user.name.value
+      }
+    });
+  }
+}
+
+// adapters/secondary/NodemailerEmailSender.ts
+class NodemailerEmailSender implements EmailSender {  // 出力ポートを実装
+  async sendWelcome(to: Email): Promise&lt;void&gt; {
+    // nodemailerの詳細はここに閉じ込める
+    await this.transporter.sendMail({
+      to: to.value,
+      subject: 'Welcome!',
+      text: '...'
+    });
+  }
+}</code></pre>
+
+  <h2>アダプターの種類</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>種類</th>
+        <th>方向</th>
+        <th>例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Primary</strong></td>
+        <td>外部 → アプリ</td>
+        <td>Controller, CLI, テスト</td>
+      </tr>
+      <tr>
+        <td><strong>Secondary</strong></td>
+        <td>アプリ → 外部</td>
+        <td>Repository, API Client, EmailSender</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">*</span> レビュー観点</div>
+    <p>
+      アダプターに<strong>ビジネスロジックが含まれていないか</strong>確認。<br>
+      アダプターは「変換」のみを担当し、判断はアプリケーション層で行うべきです。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-clean9">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: Controllerはどちらのアダプター？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="ControllerはHTTPリクエスト（外部）をUseCaseの入力に変換し、アプリケーションを駆動します。よってPrimary（駆動側）アダプターです。">
+        <input type="radio" name="q-clean9" value="a">
+        <span>Primary Adapter（駆動側）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean9" value="b">
+        <span>Secondary Adapter（被駆動側）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean9" value="c">
+        <span>アダプターではない</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-clean9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('clean9')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
+
+<section id="clean10">
+  <h1>10. 実践的な適用</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">*</span> このページのゴール</div>
+    <p>クリーン/ヘキサゴナルアーキテクチャの実践的な適用とトレードオフを説明できる</p>
+  </div>
+
+  <h2>実践的なディレクトリ構造</h2>
+
+  <pre><code>src/
+├── domain/                 # ドメイン層（最も内側）
+│   ├── user/
+│   │   ├── User.ts         # エンティティ
+│   │   ├── UserId.ts       # 値オブジェクト
+│   │   └── Email.ts        # 値オブジェクト
+│   └── order/
+│       ├── Order.ts
+│       └── OrderItem.ts
+│
+├── application/            # アプリケーション層
+│   ├── user/
+│   │   ├── CreateUserUseCase.ts
+│   │   └── GetUserUseCase.ts
+│   └── ports/              # ポート定義
+│       ├── input/
+│       │   └── ICreateUserUseCase.ts
+│       └── output/
+│           ├── IUserRepository.ts
+│           └── IEmailSender.ts
+│
+├── adapters/               # アダプター層
+│   ├── primary/            # 駆動側
+│   │   ├── http/
+│   │   │   └── UserController.ts
+│   │   └── cli/
+│   │       └── CreateUserCommand.ts
+│   └── secondary/          # 被駆動側
+│       ├── persistence/
+│       │   └── PrismaUserRepository.ts
+│       └── email/
+│           └── NodemailerEmailSender.ts
+│
+└── main/                   # 起動・DI設定
+    ├── app.ts
+    └── container.ts        # DIコンテナ設定</code></pre>
+
+  <h2>トレードオフ</h2>
+
+  <div class="compare-container">
+    <div class="compare-good">
+      <div class="compare-title">利点</div>
+      <ul>
+        <li>ビジネスロジックが明確</li>
+        <li>テストが容易</li>
+        <li>技術変更の影響が限定的</li>
+        <li>チームでの分業がしやすい</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">コスト</div>
+      <ul>
+        <li>ファイル数、コード量が増える</li>
+        <li>学習コストがある</li>
+        <li>小規模プロジェクトでは過剰</li>
+        <li>間接層が多く、追跡が複雑</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>いつ採用すべき？</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>状況</th>
+        <th>推奨</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>長期運用が見込まれる</td>
+        <td>採用を検討</td>
+      </tr>
+      <tr>
+        <td>複雑なビジネスロジック</td>
+        <td>採用を検討</td>
+      </tr>
+      <tr>
+        <td>MVP、プロトタイプ</td>
+        <td>シンプルな構成で十分</td>
+      </tr>
+      <tr>
+        <td>CRUD中心のアプリ</td>
+        <td>オーバーキルの可能性</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">*</span> 過剰な抽象化に注意</div>
+    <p>
+      すべてのプロジェクトにクリーンアーキテクチャが必要なわけではありません。<br>
+      <strong>「なぜこの構造が必要か」</strong>を説明できないなら、シンプルな構成を選びましょう。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-clean10-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: クリーンアーキテクチャを採用すべきでない場面は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean10-1" value="a">
+        <span>長期運用が見込まれるシステム</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="MVP/プロトタイプでは、素早く検証することが優先です。複雑なアーキテクチャは開発速度を落とし、不要な複雑さを持ち込みます。">
+        <input type="radio" name="q-clean10-1" value="b">
+        <span>MVP/プロトタイプ</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean10-1" value="c">
+        <span>複雑なビジネスロジックを持つシステム</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-clean10-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-clean10-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: 次のコードの問題点は？</strong></p>
+    <pre><code>// domain/User.ts
+import { PrismaClient } from '@prisma/client';
+import express from 'express';
+
+export class User {
+  async save() {
+    const prisma = new PrismaClient();
+    await prisma.user.create({...});
+  }
+}</code></pre>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean10-2" value="a">
+        <span>asyncを使っている</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ドメイン層がPrisma（インフラ）とexpress（フレームワーク）に依存しています。ドメインは純粋なビジネスロジックのみを含むべきです。">
+        <input type="radio" name="q-clean10-2" value="b">
+        <span>ドメイン層がインフラ/フレームワークに依存している</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean10-2" value="c">
+        <span>クラスを使っている</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-clean10-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-clean10-3">
+    <h3>理解度チェック 3</h3>
+    <p><strong>Q: クリーンアーキテクチャとヘキサゴナルアーキテクチャの共通点は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean10-3" value="a">
+        <span>マイクロサービスを必須とする</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="どちらもビジネスロジックを中心に据え、技術的詳細を外側に押し出すという同じ思想に基づいています。">
+        <input type="radio" name="q-clean10-3" value="b">
+        <span>ビジネスロジックを中心に、技術的詳細を外側に</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean10-3" value="c">
+        <span>特定のプログラミング言語を必要とする</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-clean10-3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('clean10')">
+    <span class="icon">*</span> このページを完了
+  </button>
+</section>
