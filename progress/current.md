@@ -21,47 +21,49 @@ cd textbook && python -m http.server 8080
 | 3 | React/TypeScript | 32 | ✅ 完了 |
 | 4 | Node.js/API/DB | 44 | ✅ 完了 |
 | 5 | インフラ/DevOps | 56 | ✅ 完了 |
-| 6 | 設計原則とパターン | 78 | ⚠️ 教科書未作成 |
+| 6 | 設計原則とパターン | 78 | ✅ 完了 |
 | 7 | 実践設計とAI活用 | 80 | ✅ 完了 |
 | 8 | テスト戦略・品質保証 | 80 | ✅ 完了 |
 | **合計** | - | **426セクション** | - |
 
-## 今回完了した作業（2026-02-04）
+## 今回完了した作業（2026-02-05）
 
-### Level 8 教科書作成完了
+### Level 6 教科書作成完了
 
-**テーマ**: テスト戦略・品質保証
+**テーマ**: 設計原則とパターン
 
 | Phase | テーマ | セクションID | ファイル |
 |-------|--------|-------------|----------|
-| Phase 1 | テスト基礎・マインドセット | testing1-10 | phase1.html |
-| Phase 2 | 単体テスト | unit1-10 | phase2.html |
-| Phase 3 | 結合テスト・APIテスト | int1-10 | phase3.html |
-| Phase 4 | E2Eテスト | e2e1-10 | phase4.html |
-| Phase 5 | テスト設計技法 | tech1-10 | phase5.html |
-| Phase 6 | TDD/BDD | tdd1-10 | phase6.html |
-| Phase 7 | CI/CDとテスト自動化 | ci1-10 | phase7.html |
-| Phase 8 | 品質保証・品質管理 | qa1-10 | phase8.html |
+| Phase 1 | OOP原則とデザインパターン | oop1-10 | phase1.html |
+| Phase 2 | アーキテクチャパターン | arch1-10 | phase2.html |
+| Phase 3 | ドメイン駆動設計（DDD） | ddd1-10 | phase3.html |
+| Phase 4 | データ設計 | data1-10 | phase4.html |
+| Phase 5 | クラウドアーキテクチャ | cloud1-10 | phase5.html |
+| Phase 6 | 要件定義・非機能要件 | req1-10 | phase6.html |
+| Phase 7 | AI活用設計 | ai1-8 | phase7.html |
+| Phase 8 | 総合演習 | ex1-10 | phase8.html |
 
 **作成ファイル**:
-- `curriculum/level8.md` - カリキュラム
-- `textbook/level8/phase1.html` 〜 `phase8.html` - 教科書HTML
-- `textbook/index.html` - ナビゲーション・ダッシュボード更新
-- `textbook/js/main.js` - sectionMapping・進捗計算更新
+- `curriculum/level6.md` - カリキュラム
+- `textbook/level6/phase1.html` 〜 `phase8.html` - 教科書HTML
+
+### Level 9 カリキュラム作成
+
+- `curriculum/level9.md` - カリキュラム作成済み（教科書は未作成）
 
 **関連資格**:
-- JSTQB認定テスト技術者
-- ISTQB Foundation Level
+- 応用情報技術者
+- システムアーキテクト
 
 ## 未対応事項
 
-- **Level 6 教科書未作成**: ナビゲーション・sectionMapping は登録済みだが、`textbook/level6/` ディレクトリおよび phase1-8.html が存在しない。`curriculum/level6.md` も未作成。
+- **Level 9 教科書未作成**: `curriculum/level9.md` は作成済みだが、`textbook/level9/` ディレクトリおよび教科書HTMLが存在しない。
 
 ## 次のステップ
 
-1. **Level 6 教科書作成**: curriculum + textbook の両方を作成（78セクション）
-2. **Level 8の学習**: 教科書を読み進める
-3. **資格取得検討**: JSTQB Foundation Level
+1. **Level 9 教科書作成**: textbook を作成（カリキュラムは作成済み）
+2. **各Levelの学習**: 教科書を読み進める
+3. **資格取得検討**: 応用情報技術者、JSTQB Foundation Level
 
 ## 参照ファイル
 | ファイル | 内容 |
@@ -69,4 +71,3 @@ cd textbook && python -m http.server 8080
 | `curriculum/overview.md` | 全体ロードマップ |
 | `curriculum/level8.md` | Level 8 カリキュラム |
 | `textbook/index.html` | 教科書メイン |
-| `CLAUDE.md` | プロジェクトルール |
