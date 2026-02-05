@@ -18,13 +18,13 @@ cd textbook && python -m http.server 8080
 | 0 | AI時代のエンジニア | 8 | ✅ 完了 |
 | 1 | HTML/CSS | 18 | ✅ 完了 |
 | 2 | JavaScript | 30 | ✅ 完了 |
-| 3 | React/TypeScript | 24 | ✅ 完了 |
+| 3 | React/TypeScript | 32 | ✅ 完了 |
 | 4 | Node.js/API/DB | 44 | ✅ 完了 |
 | 5 | インフラ/DevOps | 56 | ✅ 完了 |
-| 6 | 設計原則とパターン | 78 | ✅ 完了 |
+| 6 | 設計原則とパターン | 78 | ⚠️ 教科書未作成 |
 | 7 | 実践設計とAI活用 | 80 | ✅ 完了 |
 | 8 | テスト戦略・品質保証 | 80 | ✅ 完了 |
-| **合計** | - | **418セクション** | - |
+| **合計** | - | **426セクション** | - |
 
 ## 今回完了した作業（2026-02-04）
 
@@ -53,11 +53,15 @@ cd textbook && python -m http.server 8080
 - JSTQB認定テスト技術者
 - ISTQB Foundation Level
 
+## 未対応事項
+
+- **Level 6 教科書未作成**: ナビゲーション・sectionMapping は登録済みだが、`textbook/level6/` ディレクトリおよび phase1-8.html が存在しない。`curriculum/level6.md` も未作成。
+
 ## 次のステップ
 
-1. **Level 8の学習**: 教科書を読み進める
-2. **資格取得検討**: JSTQB Foundation Level
-3. **Level 9検討**: チーム開発・プロジェクト管理
+1. **Level 6 教科書作成**: curriculum + textbook の両方を作成（78セクション）
+2. **Level 8の学習**: 教科書を読み進める
+3. **資格取得検討**: JSTQB Foundation Level
 
 ## 参照ファイル
 | ファイル | 内容 |
