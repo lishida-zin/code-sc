@@ -849,14 +849,23 @@ function completeSection(sectionId) {
   if (link) link.classList.add('completed');
 
   // ボタンを無効化
-  const btn = document.querySelector(`#${sectionId} .complete-btn`);
+  const btn = document.querySelector(`#${CSS.escape(sectionId)} .complete-btn`);
   if (btn) {
     btn.classList.add('completed');
+    btn.disabled = true;
     btn.innerHTML = '<span class="icon">✓</span> 完了済み';
   }
 
   // 「次のページへ」ボタンを表示
   showNextPageButton(sectionId);
+
+  // 次のページボタンが見えるようにスクロール
+  const nextWrapper = document.querySelector(`#${CSS.escape(sectionId)} .next-page-wrapper`);
+  if (nextWrapper) {
+    requestAnimationFrame(() => {
+      nextWrapper.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  }
 
   // 進捗更新
   updateProgress();
@@ -889,9 +898,10 @@ function applyCompletedStates() {
     const link = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
     if (link) link.classList.add('completed');
 
-    const btn = document.querySelector(`#${sectionId} .complete-btn`);
+    const btn = document.querySelector(`#${CSS.escape(sectionId)} .complete-btn`);
     if (btn) {
       btn.classList.add('completed');
+      btn.disabled = true;
       btn.innerHTML = '<span class="icon">✓</span> 完了済み';
     }
 
