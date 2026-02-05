@@ -953,6 +953,48 @@ function updateProgress() {
   const level8Count = completed.filter(s => level8Sections.includes(s)).length;
   const level8Progress = document.getElementById('level8-progress');
   if (level8Progress) level8Progress.value = level8Count;
+
+  // 次のステップ表示を更新
+  updateNextStep();
+}
+
+// ============================================
+// 次のステップ表示更新
+// ============================================
+function updateNextStep() {
+  const completed = JSON.parse(localStorage.getItem('completedSections') || '[]');
+  const nextStepText = document.getElementById('next-step-text');
+  const nextStepCard = document.getElementById('next-step-card');
+  if (!nextStepText || !nextStepCard) return;
+
+  // ナビリンクをDOM順に取得（=学習順序）
+  const navLinks = document.querySelectorAll('.nav-link[data-section]');
+  let nextSection = null;
+  let nextLabel = '';
+
+  for (const link of navLinks) {
+    const sectionId = link.dataset.section;
+    if (sectionId === 'dashboard') continue;
+    if (!completed.includes(sectionId)) {
+      nextSection = sectionId;
+      nextLabel = link.textContent.trim();
+      break;
+    }
+  }
+
+  if (nextSection) {
+    nextStepCard.className = 'card card-warning';
+    nextStepCard.querySelector('.card-title').innerHTML =
+      '<span class="icon">👉</span> 次のステップ';
+    nextStepText.innerHTML =
+      '左のメニューから「<strong>' + nextLabel + '</strong>」を開いてください。';
+  } else {
+    nextStepCard.className = 'card card-info';
+    nextStepCard.querySelector('.card-title').innerHTML =
+      '<span class="icon">🎉</span> おめでとうございます！';
+    nextStepText.innerHTML =
+      'すべてのセクションを完了しました！復習したい箇所があれば、メニューから自由に選んでください。';
+  }
 }
 
 // 初期化
