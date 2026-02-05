@@ -491,6 +491,212 @@
       <div class="card card-success" style="margin-top:40px;">
         <div class="card-title">
           <span class="icon">🎉</span>
+          Level 1 完了まであと少し！
+        </div>
+        <p style="margin:0;">
+          次のセクションでアクセシビリティ実践を学びましょう。
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================
+         実践 5: アクセシビリティ実践（WCAG）
+         ============================================ -->
+    <section id="prac5">
+      <h1>19. アクセシビリティ実践（WCAG）</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>WCAGとは</li>
+          <li>4原則（POUR）</li>
+          <li>チェックリスト実践</li>
+        </ul>
+      </div>
+
+      <h2>WCAGとは</h2>
+
+      <p>
+        <strong>WCAG</strong>（Web Content Accessibility Guidelines）は、<strong>ウェブコンテンツアクセシビリティガイドライン</strong>のことです。
+      </p>
+
+      <p>
+        すべての人がWebを使えるようにするための<strong>国際標準</strong>です。
+      </p>
+
+      <h2>WCAG 2.1のレベル</h2>
+
+      <table>
+        <tr>
+          <th>レベル</th>
+          <th>意味</th>
+          <th>説明</th>
+        </tr>
+        <tr>
+          <td><strong>A</strong></td>
+          <td>最低限</td>
+          <td>これを満たさないと多くの人が使えない</td>
+        </tr>
+        <tr>
+          <td><strong>AA</strong></td>
+          <td>標準目標</td>
+          <td>多くの組織が目指すレベル</td>
+        </tr>
+        <tr>
+          <td><strong>AAA</strong></td>
+          <td>最高</td>
+          <td>すべてのコンテンツで達成するのは困難</td>
+        </tr>
+      </table>
+
+      <h2>4つの原則（POUR）</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          POURで覚えよう
+        </div>
+        <ol>
+          <li><strong>Perceivable（知覚可能）</strong>：情報が認識できること
+            <ul>
+              <li>画像に代替テキスト（alt）を付ける</li>
+              <li>動画に字幕を付ける</li>
+            </ul>
+          </li>
+          <li><strong>Operable（操作可能）</strong>：操作できること
+            <ul>
+              <li>キーボードだけで操作できる</li>
+              <li>十分な操作時間を確保する</li>
+            </ul>
+          </li>
+          <li><strong>Understandable（理解可能）</strong>：理解できること
+            <ul>
+              <li>読みやすいテキスト</li>
+              <li>予測可能な動作</li>
+            </ul>
+          </li>
+          <li><strong>Robust（堅牢）</strong>：技術的に確実であること
+            <ul>
+              <li>様々なブラウザや支援技術で動作する</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+
+      <h2>実践チェックリスト</h2>
+
+      <table>
+        <tr>
+          <th>チェック項目</th>
+          <th>確認内容</th>
+        </tr>
+        <tr>
+          <td>画像にalt属性</td>
+          <td>すべての<code>&lt;img&gt;</code>にalt属性があるか</td>
+        </tr>
+        <tr>
+          <td>フォームにlabel</td>
+          <td>入力欄に対応する<code>&lt;label&gt;</code>があるか</td>
+        </tr>
+        <tr>
+          <td>色だけに依存しない</td>
+          <td>コントラスト比4.5:1以上を確保しているか</td>
+        </tr>
+        <tr>
+          <td>キーボード操作可能</td>
+          <td>Tabキーですべての操作要素に到達できるか</td>
+        </tr>
+        <tr>
+          <td>focus表示を消さない</td>
+          <td>フォーカスリングが見えるか</td>
+        </tr>
+      </table>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-label">
+            <span class="icon">❌</span> アクセシブルでないフォーム
+          </div>
+          <pre><code>&lt;input type="text" placeholder="名前"&gt;
+&lt;input type="email" placeholder="メール"&gt;
+&lt;div onclick="submit()"&gt;送信&lt;/div&gt;</code></pre>
+          <p>labelなし、div偽ボタン</p>
+        </div>
+        <div class="compare-good">
+          <div class="compare-label">
+            <span class="icon">⭕</span> アクセシブルなフォーム
+          </div>
+          <pre><code>&lt;label for="name"&gt;名前&lt;/label&gt;
+&lt;input type="text" id="name"&gt;
+
+&lt;label for="email"&gt;メール&lt;/label&gt;
+&lt;input type="email" id="email"&gt;
+
+&lt;button type="submit"&gt;送信&lt;/button&gt;</code></pre>
+          <p>label付き、本物のbutton</p>
+        </div>
+      </div>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          :focus { outline: none; } は絶対にやめよう
+        </div>
+        <p style="margin:0;">
+          フォーカスリング（要素が選択されたときの枠線）を消すと、<strong>キーボードで操作する人が今どこにいるかわからなくなります</strong>。
+        </p>
+        <p style="margin:0;">
+          見た目が気になる場合は、消すのではなく<strong>カスタムのフォーカススタイルに置き換え</strong>ましょう。
+        </p>
+      </div>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li><strong>WCAG</strong>はWebアクセシビリティの国際標準</li>
+          <li><strong>POUR</strong>（知覚可能・操作可能・理解可能・堅牢）が4つの原則</li>
+          <li><strong>alt属性、label、コントラスト、キーボード操作、focus</strong>をチェック</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-prac5">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>WCAGの4原則「POUR」に含まれないものは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac5" style="display:none;">
+          A. Perceivable（知覚可能）
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-prac5" style="display:none;">
+          B. Operable（操作可能）
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-prac5" style="display:none;">
+          C. Portable（移植可能）
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-prac5')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('prac5')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+
+      <div class="card card-success" style="margin-top:40px;">
+        <div class="card-title">
+          <span class="icon">🎉</span>
           Level 1 完了！
         </div>
         <p style="margin:0;">

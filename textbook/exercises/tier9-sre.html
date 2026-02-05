@@ -1,0 +1,806 @@
+<!-- ============================================
+     コーディング演習 Tier 9: SRE/チーム開発
+     15問 (ex-t9-1 〜 ex-t9-15)
+     ============================================ -->
+
+<section id="ex-t9-1">
+  <h1>問題 1: スプリントプランニングの見積もり</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>あなたのチーム（5名）は2週間スプリントで開発しています。過去3スプリントのベロシティは 42pt、38pt、44pt でした。プロダクトオーナーが優先順位付けしたバックログは以下の通りです。</p>
+  </div>
+
+  <h2>プロダクトバックログ（優先順位順）</h2>
+<pre><code>ストーリー A: ユーザー登録フロー改善     - 13pt
+ストーリー B: 決済API統合              - 8pt
+ストーリー C: 通知システム実装           - 5pt
+ストーリー D: 管理画面ダッシュボード      - 13pt
+ストーリー E: CSVエクスポート機能        - 3pt
+ストーリー F: パフォーマンス改善          - 8pt
+ストーリー G: 多言語対応（Phase 1）      - 5pt
+
+合計: 55pt</code></pre>
+
+  <div class="quiz" id="quiz-ex-t9-1">
+    <div class="quiz-question"><strong>問題：</strong>次のスプリントで取り組むスプリントバックログとして最も適切なのはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-1" value="a">
+        A. A〜G全て（55pt）。チームの成長を見込んで挑戦的な目標を立てるべき
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="平均ベロシティは (42+38+44)/3 = 約41pt です。スプリントプランニングでは過去のベロシティを参考にキャパシティを見積もります。A(13)+B(8)+C(5)+D(13) = 39pt は平均ベロシティ41ptに近く、優先順位順に取れる最大セットです。ここにE(3pt)を追加すると42ptとなり平均を超えてしまいます。バッファを持たせつつ現実的な量を選ぶのがスクラムのベストプラクティスです。全バックログを詰め込むのは無理な計画であり、逆に少なすぎると改善機会を逃します。">
+        <input type="radio" name="quiz-ex-t9-1" value="b">
+        B. A + B + C + D（39pt）。平均ベロシティ41ptに近く、優先順位順に取れる最大セット
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-1" value="c">
+        C. A + B のみ（21pt）。余裕を持たせてバッファを確保する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-1" value="d">
+        D. A + B + C + D + E + F（50pt）。過去最高ベロシティ44ptを超えるが、モチベーションのために多めに取る
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t9-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t9-1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t9-2">
+  <h1>問題 2: Git ブランチ戦略の選択</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>あなたはテックリードとして新プロジェクトのGitブランチ戦略を決定する必要があります。プロジェクトの状況は以下の通りです。</p>
+  </div>
+
+<pre><code>チーム構成: エンジニア12名（3チーム × 4名）
+プロダクト: BtoB SaaS（Webアプリ）
+デプロイ頻度: 週2〜3回の定期デプロイを目標
+環境: ステージング環境 + 本番環境
+CI/CD: GitHub Actions でテスト・ビルド自動化済み
+リリース管理: QAチームによるリリース前テストが必要
+顧客対応: 緊急Hotfixが月1〜2回発生</code></pre>
+
+  <div class="quiz" id="quiz-ex-t9-2">
+    <div class="quiz-question"><strong>問題：</strong>このプロジェクトに最も適したブランチ戦略はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-2" value="a">
+        A. Trunk-based Development（全員がmainに直接push、フィーチャーフラグで管理）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-2" value="b">
+        B. GitHub Flow（mainからfeatureブランチを切り、PRマージで即デプロイ）
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="このプロジェクトは12名の中規模チーム、週2-3回の定期デプロイ、QAによるリリース前テスト、月1-2回のHotfix対応が必要です。Git Flowはdevelop/release/hotfixブランチが分離されているため、QAテストフェーズの管理とHotfix対応を両立できます。Trunk-basedは小チーム・高頻度デプロイ向きで12名には合いません。GitHub FlowはリリースブランチがないためステージングでのQAフェーズ管理が難しくなります。環境ブランチ戦略は環境とブランチの結合が強すぎて複数チームの並行開発に支障が出ます。">
+        <input type="radio" name="quiz-ex-t9-2" value="c">
+        C. Git Flow（main/develop/feature/release/hotfixの5種ブランチ）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-2" value="d">
+        D. 環境ブランチ戦略（main=本番、staging=ステージング、develop=開発の3つを常時維持）
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t9-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t9-2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t9-3">
+  <h1>問題 3: コードレビューのフィードバック改善</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ジュニアエンジニアのAさんがPRを出しました。シニアエンジニアのBさんが以下のレビューコメントを残しています。Aさんはこのレビューを受けてモチベーションが下がっているようです。</p>
+  </div>
+
+<pre><code>Bさんのレビューコメント:
+
+1. 「なんでこんな書き方するの？普通はこう書くでしょ」
+2. 「この設計はありえない。やり直し」
+3. 「前にも同じミス指摘したよね？学習してる？」
+4. 「パフォーマンス意識ある？O(n²)とか論外」
+5. 「変数名のセンスがない」</code></pre>
+
+  <div class="quiz" id="quiz-ex-t9-3">
+    <div class="quiz-question"><strong>問題：</strong>チームリーダーとして、Bさんのレビュースタイルをどのように改善すべきですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-3" value="a">
+        A. 厳しい指摘はコード品質を保つために必要。Aさんに「レビューは成長のため」と説明する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-3" value="b">
+        B. レビューコメントを禁止し、代わりにペアプログラミングだけにする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-3" value="c">
+        C. レビューは自動ツール（lint等）に全て任せ、人によるレビューを廃止する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="効果的なコードレビューは「コードに対するフィードバック」であり「人格への攻撃」ではありません。改善例: (1)「なんでこんな書き方」→「ここは〇〇パターンを使うと可読性が上がります。参考: [URL]」と具体的な代替案とリソースを提示、(2)「ありえない」→「この部分、〇〇の観点で懸念があります。こういうアプローチはどうでしょう？」と理由と提案をセットに、(3)「前にも言った」→繰り返し発生する問題はlintルール化やドキュメント化で仕組みで解決、(4)「論外」→「ここはデータ量がN件想定なのでO(n²)だとボトルネックになりそうです」と影響を具体的に。Googleのレビューガイドラインでも推奨されているアプローチです。">
+        <input type="radio" name="quiz-ex-t9-3" value="d">
+        D. 人格でなくコードに対してコメントし、具体的な改善案・理由・参考リソースをセットで提示するスタイルに変える
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t9-3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t9-3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t9-4">
+  <h1>問題 4: カンバンWIP制限の効果</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>あなたのチーム（6名）はカンバンで開発を進めています。最近、以下の問題が頻発しています。</p>
+  </div>
+
+<pre><code>現在のカンバンボード状況:
+┌──────────┬──────────┬──────────┬──────────┐
+│ TODO (12)│ 開発中(9)│ レビュー(7)│ Done (5) │
+│          │          │          │          │
+│ 機能A    │ 機能D ★ │ 機能H    │ 機能M    │
+│ 機能B    │ 機能E ★ │ 機能I    │ 機能N    │
+│ 機能C    │ 機能F    │ 機能J    │ 機能O    │
+│ ...9more │ 機能G    │ 機能K    │ 機能P    │
+│          │ ...5more │ ...3more │ 機能Q    │
+└──────────┴──────────┴──────────┴──────────┘
+★ = 3日以上滞留  WIP制限: なし
+
+問題:
+- タスクの完了が遅い（リードタイム平均14日）
+- コンテキストスイッチが多くメンバー疲弊
+- レビュー待ちが長くコンフリクト頻発</code></pre>
+
+  <div class="quiz" id="quiz-ex-t9-4">
+    <div class="quiz-question"><strong>問題：</strong>この状況を改善するために最も効果的な対策はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="WIP（Work In Progress）制限はカンバンの核心的プラクティスです。6名のチームで開発中9件・レビュー7件は明らかに多すぎます。リトルの法則（リードタイム = WIP / スループット）により、WIPを減らせばリードタイムは短縮されます。推奨WIP制限の目安は「チーム人数 × 1〜1.5」程度で、開発中=6〜8件、レビュー=3〜4件が適切です。WIP制限を設けることで (1) 1タスクへの集中度が上がり品質向上、(2) レビュー待ちが減りコンフリクト低減、(3) ボトルネック（レビュー列）が可視化され改善アクションが取りやすくなります。">
+        <input type="radio" name="quiz-ex-t9-4" value="a">
+        A. WIP制限を設ける（開発中=6件、レビュー=3件）。溢れたら上流の新規着手を止めて滞留タスクの解消を優先する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-4" value="b">
+        B. エンジニアを2名追加採用してキャパシティを増やす
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-4" value="c">
+        C. カンバンをやめてスクラムに移行し、スプリントで区切る
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-4" value="d">
+        D. レビュー列を廃止し、セルフマージを許可してボトルネックを解消する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t9-4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t9-4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t9-5">
+  <h1>問題 5: インシデント対応 - 障害発生時の初動</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>金曜日の17:30、ECサイトの本番環境で以下のアラートが発生しました。あなたはオンコール担当です。</p>
+  </div>
+
+<pre><code>[CRITICAL] 17:30 - API レスポンスタイム p99 &gt; 10秒（通常200ms）
+[CRITICAL] 17:31 - エラーレート 45%（通常 0.1%）
+[WARNING]  17:31 - CPU使用率 92%（通常 30%）
+[INFO]     17:32 - 直近デプロイ: 16:45 に決済モジュールv2.3をリリース
+[CRITICAL] 17:33 - Slackにユーザーから「購入できない」報告多数
+
+影響範囲:
+- 決済処理の全リクエストがタイムアウト
+- 商品閲覧は正常
+- 推定影響ユーザー: 約3,000人/時間</code></pre>
+
+  <div class="quiz" id="quiz-ex-t9-5">
+    <div class="quiz-question"><strong>問題：</strong>オンコール担当として最初に取るべき行動の優先順位はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="インシデント対応の最優先事項は「影響の軽減（Mitigation）」です。Google SRE Bookでは、根本原因の特定よりもサービス復旧を優先すべきとされています。正しい初動手順は: (1) インシデント宣言とコミュニケーション開始（チームへ通知、ステータスページ更新）、(2) 直近のデプロイ（16:45のv2.3）をロールバック（最も疑わしい変更を元に戻す最速の復旧策）、(3) 復旧確認後に根本原因を調査。ログ分析やコードレビューを先にすると復旧が遅れ、影響ユーザーが増え続けます。金曜夕方という時間帯も考慮すると、迅速なロールバックが最善です。">
+        <input type="radio" name="quiz-ex-t9-5" value="a">
+        A. インシデント宣言 → 直近デプロイ（v2.3）のロールバック → 復旧確認 → 根本原因調査
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-5" value="b">
+        B. 決済モジュールv2.3のコードをレビューし、バグを見つけてHotfixをデプロイする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-5" value="c">
+        C. まずログを詳細に分析し、根本原因を特定してから修正する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-5" value="d">
+        D. CPUが高いのでまずサーバーをスケールアウトし、処理能力を増強する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t9-5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t9-5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t9-6">
+  <h1>問題 6: SLO/SLI 設計</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>あなたはECサイトのSRE担当として、決済サービスのSLO（Service Level Objective）を新規に策定することになりました。ステークホルダーとの議論で以下の情報が得られています。</p>
+  </div>
+
+<pre><code>決済サービスの概要:
+- 月間トランザクション数: 約100万件
+- ピーク時間帯: 12:00-13:00, 20:00-22:00
+- 決済処理の平均レスポンスタイム: 800ms
+- 過去6ヶ月の月間稼働率: 99.85% 〜 99.98%
+- ビジネス影響: 決済停止 = 直接的な売上損失
+
+プロダクトマネージャーからの要件:
+「ユーザーが決済ボタンを押してから結果が返るまで
+ 遅くても3秒以内にしてほしい。
+ 決済エラーは月に1000件以下に抑えたい」</code></pre>
+
+  <div class="quiz" id="quiz-ex-t9-6">
+    <div class="quiz-question"><strong>問題：</strong>このサービスのSLI（Service Level Indicator）として最も適切な指標セットはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-6" value="a">
+        A. CPU使用率 &lt; 70%、メモリ使用率 &lt; 80%、ディスクI/O &lt; 100MB/s
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="SLIはユーザー体験を直接測定する指標であるべきです。Google SRE Bookでは、SLIとして「可用性」「レイテンシ」「品質」の3軸を推奨しています。(1) 可用性: 成功リクエスト比率はユーザーが実際に決済できたかを直接測定します。(2) レイテンシ: p99で3秒以下はPMの要件「遅くても3秒以内」に対応し、中央値ではなくロングテールを捕捉します。(3) エラーレート: 月間エラー件数を比率に変換することで、トランザクション数の変動に影響されない指標になります。一方、CPU/メモリはインフラ指標でありユーザー体験と直接連動しません。稼働率のみでは「遅いけど動いている」状態を検知できません。">
+        <input type="radio" name="quiz-ex-t9-6" value="b">
+        B. 可用性（成功リクエスト比率 &gt; 99.9%）、レイテンシ（p99 &lt; 3秒）、エラーレート（決済エラー率 &lt; 0.1%）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-6" value="c">
+        C. 月間稼働率 99.99%（Four Nines）のみ
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-6" value="d">
+        D. 1日あたりのデプロイ回数、平均復旧時間（MTTR）、変更失敗率
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t9-6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t9-6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t9-7">
+  <h1>問題 7: ポストモーテムの書き方</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>先週発生した本番障害のポストモーテムを書くことになりました。障害の概要は以下の通りです。</p>
+  </div>
+
+<pre><code>障害概要:
+- 発生日時: 2026-01-28 14:00〜14:45（45分間）
+- 影響: 全ユーザーがログイン不能
+- 原因: 認証サービスのDBマイグレーションスクリプトが
+        本番のusersテーブルにロックをかけ、
+        全認証クエリがタイムアウト
+- 実行者: エンジニアCさん（入社3ヶ月）
+- 復旧: マイグレーションをキャンセルし、
+        DBコネクションプールを再起動</code></pre>
+
+  <h2>ポストモーテム草案（Cさんの上司が作成）</h2>
+<pre><code>## ポストモーテム: 2026-01-28 認証障害
+
+### 原因
+Cさんがマイグレーションの影響を十分に確認せずに
+本番実行したことが原因。
+
+### 再発防止策
+1. Cさんに本番操作の権限を剥奪
+2. Cさんにマイグレーション研修を受けさせる
+3. 今後は経験者のみが本番マイグレーションを実行する</code></pre>
+
+  <div class="quiz" id="quiz-ex-t9-7">
+    <div class="quiz-question"><strong>問題：</strong>このポストモーテム草案の問題点として最も正確な指摘はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-7" value="a">
+        A. 障害の影響範囲の記載が不十分なだけで、他は問題ない
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="このポストモーテムはBlameful（個人を責める）文化の典型例です。GoogleやEtsyなどが実践するBlamelessポストモーテムでは、(1) 個人名での原因特定を避け、システム・プロセスの問題にフォーカスする、(2) 「なぜそのアクションが合理的に見えたか」を分析する、(3) 再発防止策は個人への処罰ではなく仕組みの改善で対応する。改善例: 原因=「マイグレーションの本番実行前にテーブルロックの影響を検証するプロセスが存在しなかった」、対策=「本番マイグレーションの自動影響分析ツール導入」「ステージング環境での同等データ量での事前検証を必須化」「マイグレーション実行のランブック作成」。個人を責めると、次回から障害を隠す文化が生まれます。">
+        <input type="radio" name="quiz-ex-t9-7" value="b">
+        B. Blameful（個人攻撃的）であり、Blameless文化に反する。原因を個人でなくプロセス・システムの欠陥として分析し、再発防止も仕組みで解決すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-7" value="c">
+        C. 再発防止策が3つでは少ない。最低10個は列挙すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-7" value="d">
+        D. タイムラインが記載されていないことだけが問題
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t9-7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t9-7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t9-8">
+  <h1>問題 8: エラーバジェット消費時の判断</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>あなたのチームはSLOベースの運用を導入しています。今月のエラーバジェットの状況は以下の通りです。月の残りは10日あります。</p>
+  </div>
+
+<pre><code>決済サービスの SLO: 月間可用性 99.9%
+
+月間リクエスト数: 1,000,000
+許容エラー数（エラーバジェット）: 1,000件/月
+今月の消費状況（20日経過時点）:
+
+  エラーバジェット消費: 920件 / 1,000件（92%消費）
+  残りバジェット: 80件
+  残り日数: 10日
+
+直近の消費ペース: 1日あたり約20件
+→ このペースだと残り10日で200件消費見込み
+→ エラーバジェット超過確実
+
+プロダクトチームの要望:
+「来週リリース予定の大型機能（決済フロー刷新）を
+ 予定通りデプロイしたい。3ヶ月かけた機能で、
+ マーケティングも準備済み」</code></pre>
+
+  <div class="quiz" id="quiz-ex-t9-8">
+    <div class="quiz-question"><strong>問題：</strong>SREとしてどの判断が最も適切ですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-8" value="a">
+        A. ビジネス判断を優先し、エラーバジェットは無視して予定通りリリースする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-8" value="b">
+        B. SLOは絶対なので、来月までリリースを全面凍結する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="エラーバジェットの目的は「信頼性とイノベーション速度のバランス」を取ることです。バジェット超過が見込まれる場合、Google SREの推奨アプローチは: (1) まず現在のエラー発生源を特定・修正してバーンレートを下げる（日20件→日5件以下に）、(2) 大型リリースのリスクを評価し、段階的ロールアウト（カナリアリリース）で影響を最小化する計画を立てる、(3) プロダクトチームとリスクを共有し、ロールバック基準を事前合意する。SLOを無視するのもSLOに固執して全凍結するのも極端です。SLO目標の安易な緩和はユーザー体験の低下を容認することになり本末転倒です。">
+        <input type="radio" name="quiz-ex-t9-8" value="c">
+        C. 現在のエラー源を特定・修正してバーンレートを下げつつ、大型リリースはカナリアリリースで段階的に展開する計画を立てる
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-8" value="d">
+        D. SLOの目標値を99.9%から99.5%に緩和してバジェットを増やす
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t9-8')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t9-8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t9-9">
+  <h1>問題 9: 1on1ミーティングの進め方</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>あなたはエンジニアリングマネージャーとして、メンバー5名と隔週で1on1を実施しています。メンバーのDさんとの1on1で以下のような状況が続いています。</p>
+  </div>
+
+<pre><code>Dさんとの1on1の現状:
+- 毎回「特に話すことはないです」で始まる
+- マネージャーが進捗確認する場になっている
+- 30分の枠のうち10分で終わることが多い
+- Dさんは普段から寡黙だが、最近チーム内で
+  技術的な意見の対立があった模様
+- 同僚からは「Dさんが不満を持っているようだ」
+  と聞いている
+
+過去3回の1on1のマネージャーの質問:
+1回目:「今週のタスクの進捗はどう？」
+2回目:「あのバグの修正は終わった？」
+3回目:「来週の予定を教えて」</code></pre>
+
+  <div class="quiz" id="quiz-ex-t9-9">
+    <div class="quiz-question"><strong>問題：</strong>この1on1を改善するために最も効果的なアプローチはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-9" value="a">
+        A. 1on1の頻度を月1回に減らし、話すことがある時だけ実施する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-9" value="b">
+        B. 「同僚から不満があると聞いた」と直接切り出し、問題を明確にする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-9" value="c">
+        C. 1on1をランチミーティングに変えて、カジュアルな雰囲気にすれば自然と話してくれる
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="効果的な1on1の鉄則は「メンバーのための時間」にすることです。進捗確認はスタンドアップやチケット管理で行うべきで、1on1では (1) オープンな質問でメンバーの考えや感情を引き出す（「最近の仕事で一番楽しいことは？」「チームで改善したいことは？」）、(2) キャリアや成長の話題を定期的に入れる、(3) メンバーにアジェンダ設定を委ねる（事前にメンバーが話題を用意する仕組み）。第三者からの情報を直接ぶつけるのは信頼を損ないます。まずは安全な話題から関係性を構築し、自然に本音が出る環境を作ることが重要です。">
+        <input type="radio" name="quiz-ex-t9-9" value="d">
+        D. 進捗確認をやめ、オープンな質問（キャリア・チーム改善・困りごと等）中心に切り替え、アジェンダ設定をDさんに委ねる
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t9-9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t9-9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t9-10">
+  <h1>問題 10: ADR（Architecture Decision Record）作成</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>チームでメッセージキューの導入を検討しています。候補はAmazon SQS、RabbitMQ、Apache Kafkaの3つ。議論の結果Amazon SQSを採用することになりました。ADRを書く必要があります。</p>
+  </div>
+
+  <h2>ADR草案A（チームメンバーが作成）</h2>
+<pre><code>## ADR-005: メッセージキューの選定
+
+### 決定
+Amazon SQS を採用する。
+
+### 理由
+- チームリーダーが推薦した
+- AWSを既に使っているから</code></pre>
+
+  <h2>ADR草案B（別のチームメンバーが作成）</h2>
+<pre><code>## ADR-005: メッセージキューの選定
+
+### ステータス: Accepted
+### 日付: 2026-01-30
+### 決定者: バックエンドチーム（合議）
+
+### コンテキスト
+注文処理の非同期化が必要。現在は同期処理で
+ピーク時にタイムアウトが発生（月5〜10件）。
+メッセージ量: 日平均5万件、ピーク時10万件/時。
+順序保証: 不要。メッセージサイズ: 1KB未満。
+
+### 検討した選択肢
+1. Amazon SQS - マネージドサービス、運用コスト低
+2. RabbitMQ - 柔軟なルーティング、自前運用必要
+3. Apache Kafka - 高スループット、学習コスト高
+
+### 決定
+Amazon SQS を採用する。
+
+### 根拠
+- 運用負荷: マネージドで運用不要（チームにMQ運用経験なし）
+- スケール: 日5万件は SQS の処理能力内で余裕
+- コスト: 月額推定$50以下（RabbitMQサーバー費$200〜と比較）
+- 既存環境: AWS上で稼働中、IAMポリシーで権限管理可能
+
+### トレードオフ
+- SQSはFIFO保証のスループットに上限（300TPS）あり
+  → 現時点では問題ないが、日100万件超で要再検討
+- ベンダーロックインのリスク
+  → メッセージ層を抽象化したインターフェース設計で緩和
+
+### 影響
+- 注文サービスにSQS連携モジュールを追加（2スプリント）
+- 監視: SQSキュー深度のCloudWatchアラート設定が必要</code></pre>
+
+  <div class="quiz" id="quiz-ex-t9-10">
+    <div class="quiz-question"><strong>問題：</strong>2つのADR草案について正しい評価はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-10" value="a">
+        A. 草案Aの方が簡潔で良い。ADRは短いほど読まれやすい
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-10" value="b">
+        B. どちらも不十分。ADRにはコード例とシーケンス図が必須
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ADR（Architecture Decision Record）の目的は「なぜその判断をしたか」を将来の自分たちのために残すことです。草案Aは「誰が推薦した」「既に使っている」では、将来条件が変わった時に判断を再評価できません。草案Bは (1) コンテキスト（なぜ必要か、制約条件は何か）、(2) 検討した選択肢（何を比較したか）、(3) 決定と根拠（定量的な比較）、(4) トレードオフ（この決定の弱点と緩和策）、(5) 影響（次に何をすべきか）が明確で、Michael Nygardが提唱したADRフォーマットに沿っています。特にトレードオフの記載は、将来の再評価トリガー（日100万件超）を示しており非常に有用です。">
+        <input type="radio" name="quiz-ex-t9-10" value="c">
+        C. 草案Bが適切。コンテキスト・選択肢・根拠・トレードオフが明確で、将来の意思決定の再評価に役立つ
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-10" value="d">
+        D. 草案Bは詳しすぎる。トレードオフの記載は不要
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t9-10')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t9-10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t9-11">
+  <h1>問題 11: リスク管理 - プロジェクトリスクの優先順位</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>3ヶ月後にリリース予定の新規プロジェクトで、以下のリスクが洗い出されました。リソースが限られているため、対策の優先順位を決める必要があります。</p>
+  </div>
+
+<pre><code>リスク一覧（チームで洗い出し済み）:
+
+リスクA: 外部決済API（Stripe）の仕様変更
+  発生確率: 低（10%）  影響度: 高（決済機能全停止）
+
+リスクB: メインDBのディスク容量不足
+  発生確率: 高（80%）  影響度: 低（一時的な書込失敗）
+
+リスクC: 主要メンバー1名の退職
+  発生確率: 中（40%）  影響度: 高（属人化した領域が停滞）
+
+リスクD: パフォーマンス要件未達
+  発生確率: 高（70%）  影響度: 高（リリース延期）
+
+リスクE: セキュリティ監査での指摘
+  発生確率: 中（50%）  影響度: 中（修正対応で1-2週間遅延）</code></pre>
+
+  <div class="quiz" id="quiz-ex-t9-11">
+    <div class="quiz-question"><strong>問題：</strong>確率 x 影響度マトリクスに基づく対策優先順位として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-11" value="a">
+        A. A &gt; C &gt; D &gt; E &gt; B（影響度が高いものを最優先）
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="リスクの優先順位は「発生確率 x 影響度」のリスクスコアで判断します。定性的に評価すると: D(高x高=最高)、C(中x高=高)、E(中x中=中)、B(高x低=中)、A(低x高=中低)。リスクDは確率70%かつ影響がリリース延期と最も深刻で、最優先で対策すべきです。リスクCは属人化解消（ドキュメント化・ペアプロ）で緩和可能。リスクBは発生確率は高いが影響が軽微で、監視と自動アラートで十分。リスクAは発生確率が低いため、Stripe APIのバージョン固定とアダプタパターンで備えれば十分です。影響度だけで判断すると低確率の項目に過剰投資してしまいます。">
+        <input type="radio" name="quiz-ex-t9-11" value="b">
+        B. D &gt; C &gt; E &gt; B &gt; A（確率x影響度のリスクスコア順）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-11" value="c">
+        C. B &gt; D &gt; E &gt; C &gt; A（発生確率が高いものを最優先）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-11" value="d">
+        D. 全リスクに同時に対策を打つべき。優先順位付けは不要
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t9-11')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t9-11')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t9-12">
+  <h1>問題 12: アラート設計 - 適切なアラートルール</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>あなたのチームは本番環境のアラートに疲弊しています。以下が現在のアラート状況です。</p>
+  </div>
+
+<pre><code>過去1週間のアラート統計:
+  総アラート数: 247件
+  対応が必要だったアラート: 12件（4.9%）
+  残り235件は無視された（アラート疲れ）
+
+現在のアラートルール例:
+1. CPU使用率 &gt; 60% で即時アラート（Slack通知 + PagerDuty）
+2. メモリ使用率 &gt; 50% でアラート
+3. 5xxエラーが1件でも発生したらアラート
+4. レスポンスタイム &gt; 500ms（平均）でアラート
+5. ディスク使用率 &gt; 70% でアラート
+6. 全てのアラートが同じチャンネル・同じ緊急度で通知
+
+SLO: 可用性 99.9%、レスポンスタイム p99 &lt; 2秒</code></pre>
+
+  <div class="quiz" id="quiz-ex-t9-12">
+    <div class="quiz-question"><strong>問題：</strong>このアラート設計を改善するために最も効果的なアプローチはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="現在のアラートの95%がノイズという状況は典型的なアラート設計の失敗です。Google SRE Bookの原則に基づく改善: (1) SLOベースのアラート: CPU/メモリなどのインフラ指標ではなく、エラーバジェットのバーンレートでアラートする（例: 直近1時間のエラーレートがSLO違反ペースを超えたら通知）。(2) 重要度の階層化: P1(PagerDuty即時)=SLO違反確実な状況、P2(Slack通知)=注意が必要な状態、P3(ダッシュボード表示のみ)=参考情報。(3) 症状ベース: CPU60%という原因ではなく、ユーザー影響という症状でアラートする。5xxが1件でもアラートするのは過敏すぎ、ディスク70%も即時対応不要です。">
+        <input type="radio" name="quiz-ex-t9-12" value="a">
+        A. SLOベースのアラート（エラーバジェットのバーンレート監視）に切り替え、重要度を階層化し、症状ベースでアラートする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-12" value="b">
+        B. 全てのしきい値を2倍に引き上げて、アラート数を減らす
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-12" value="c">
+        C. アラートの通知先をメールに変更し、即時性を下げて疲弊を防ぐ
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-12" value="d">
+        D. オンコール担当を増やして、1人あたりのアラート対応数を減らす
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t9-12')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t9-12')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t9-13">
+  <h1>問題 13: 見積もり手法の選択</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>あなたのチームは3つの異なる状況で見積もりを求められています。それぞれに最適な手法を選ぶ必要があります。</p>
+  </div>
+
+<pre><code>状況1: スプリントプランニング
+  - 10個のユーザーストーリーの見積もり
+  - チーム5名で実施
+  - 各ストーリーの要件は明確
+  - 所要時間: 1時間以内で完了させたい
+
+状況2: 新規プロジェクトのロードマップ策定
+  - 50個以上のバックログアイテム
+  - 要件は大まかにしか決まっていない
+  - 経営陣に四半期単位のスケジュール感を提示
+  - 所要時間: 半日ワークショップ
+
+状況3: 大規模リプレイス案件の予算確保
+  - 既存システムの全面刷新
+  - 不確実性が非常に高い
+  - 予算承認のために概算が必要
+  - ±50%程度の精度で十分</code></pre>
+
+  <div class="quiz" id="quiz-ex-t9-13">
+    <div class="quiz-question"><strong>問題：</strong>各状況に最も適した見積もり手法の組み合わせはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-13" value="a">
+        A. 状況1: Tシャツサイジング、状況2: プランニングポーカー、状況3: 3点見積もり
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-13" value="b">
+        B. 全て工数ベース（人日）の積み上げ見積もりで統一する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-13" value="c">
+        C. 状況1: 3点見積もり、状況2: 工数積み上げ、状況3: Tシャツサイジング
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="見積もり手法は目的と精度要件に応じて使い分けるべきです。状況1のプランニングポーカーは、要件が明確なストーリーを少人数で相対見積もりする際に最適で、議論を通じて認識のズレを検出できます。状況2のTシャツサイジング（S/M/L/XL）は、多数のアイテムを大まかに分類するのに効率的で、ロードマップの粗い粒度に適しています。状況3の類推見積もり+バッファは、過去の類似プロジェクト実績をベースに概算を出す手法で、不確実性が高い段階では最も現実的です。工数の積み上げは不確実性が高い段階では精度が出ず、かつ膨大な時間がかかります。">
+        <input type="radio" name="quiz-ex-t9-13" value="d">
+        D. 状況1: プランニングポーカー、状況2: Tシャツサイジング、状況3: 類推見積もり（過去の類似案件ベース）+バッファ
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t9-13')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t9-13')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t9-14">
+  <h1>問題 14: 心理的安全性の構築</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>あなたが率いる8名のチームで、以下のような状況が観察されています。Google のProject Aristotleの知見を参考に改善策を考えてください。</p>
+  </div>
+
+<pre><code>観察された状況:
+1. ミーティングで発言するのはいつも同じ2-3名
+2. 新しいアイデアを提案すると「前にも試して失敗した」と
+   すぐに却下される
+3. バグを作り込んだメンバーが責められるのを恐れて
+   報告が遅れることがある
+4. 技術的に分からないことがあっても質問しづらい雰囲気
+5. レトロスペクティブで改善案が出ても、
+   次のスプリントで実行されたことがない
+
+直近の匿名アンケート結果:
+「チーム内で安心してリスクを取れるか？」
+  はい: 25%  いいえ: 75%</code></pre>
+
+  <div class="quiz" id="quiz-ex-t9-14">
+    <div class="quiz-question"><strong>問題：</strong>この状況を改善するために最も効果的なアプローチはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-14" value="a">
+        A. 発言しないメンバーに順番に指名して発言させるルールを作る
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="心理的安全性は「一つの施策」では構築できず、リーダー自身の行動変革から始める必要があります。(1) リーダーが「自分も分からない」「自分も失敗した」と脆弱性を見せることで、失敗を認めることが安全だと示す。(2) 失敗を責めずに「何を学んだか」にフォーカスする仕組み（Blamelessポストモーテム）を導入。(3) レトロスペクティブの改善案を必ず1つは次スプリントのバックログに入れ、「意見を出しても無駄ではない」ことを実証する。(4) 新アイデアが出たら「面白い、もう少し詳しく聞かせて」と好奇心で受け止める文化を作る。指名制は圧力になり逆効果、飲み会は仕事の場の安全性とは別です。">
+        <input type="radio" name="quiz-ex-t9-14" value="b">
+        B. リーダー自身が弱さを見せて失敗を共有し、失敗を学びに変える仕組みを作り、レトロの改善案を確実に実行する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-14" value="c">
+        C. チームビルディングのための飲み会を定期開催する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-14" value="d">
+        D. 発言の少ないメンバーを別チームに異動させ、積極的なメンバーで構成し直す
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t9-14')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t9-14')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t9-15">
+  <h1>問題 15: 総合 - SREプラクティスの導入戦略</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>あなたは従来の運用チーム（Ops）とは別にSREチーム（3名）を立ち上げることになりました。現在の組織状況は以下の通りです。段階的な導入計画を策定してください。</p>
+  </div>
+
+<pre><code>現在の状況:
+- 開発チーム: 20名（4チーム）、運用チーム: 5名
+- デプロイ: 月1回の手動リリース（リリース作業に丸1日）
+- 監視: サーバーのCPU/メモリのみ（Zabbix）
+- インシデント対応: 運用チームが全て担当、属人化
+- SLO/SLI: 未定義（「動いていればOK」の文化）
+- オンコール: 運用チーム2名が交代で24/365対応
+- テスト: 手動テストのみ、CI/CDなし
+- ドキュメント: 古くて信頼できない手順書が散在
+
+経営層の期待:
+「半年以内にデプロイ頻度を週1回にし、
+ 障害対応時間を半減させてほしい」</code></pre>
+
+  <div class="quiz" id="quiz-ex-t9-15">
+    <div class="quiz-question"><strong>問題：</strong>SREプラクティス導入の最初の3ヶ月で優先すべき施策の組み合わせとして最も適切なのはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="SREプラクティスの導入は「一度に全部」ではなく段階的に行うべきです。最初の3ヶ月は基盤整備に集中します。(1) CI/CDパイプライン構築: 手動デプロイを自動化することがデプロイ頻度向上の前提条件。テストの自動化も含め、安全にデプロイできる仕組みを作る。(2) 主要サービス（1-2個）のSLI計測開始: 全サービスではなく、最も重要なサービスから始める。まず「現状を数値で把握する」ことが重要。(3) インシデント対応のランブック整備: 属人化している対応手順を文書化し、オンコールの負荷を分散可能にする。Kubernetes移行やカオスエンジニアリングは基盤が整った後の話です。全サービスのSLO定義を先にやろうとすると、計測基盤がないため机上の空論になります。">
+        <input type="radio" name="quiz-ex-t9-15" value="a">
+        A. CI/CDパイプライン構築 + 主要サービスのSLI計測開始 + インシデント対応のランブック整備
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-15" value="b">
+        B. 全サービスをKubernetesに移行し、最新のクラウドネイティブアーキテクチャを導入する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-15" value="c">
+        C. まず全サービスのSLO/SLIを厳密に定義し、エラーバジェットポリシーを策定する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t9-15" value="d">
+        D. カオスエンジニアリングを導入し、本番環境で意図的に障害を発生させて耐障害性を検証する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t9-15')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t9-15')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

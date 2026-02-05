@@ -1083,3 +1083,139 @@
     <span class="icon">✓</span> このページを完了
   </button>
 </section>
+
+<section id="ex-t1-16">
+  <h1>問題 16: 壊れたCSS Flexboxレイアウト修正</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🔧</span> コード修正</div>
+    <p>同僚から「ナビゲーションバーの項目が横並びにならず、中央寄せもできない」とSlackで相談がありました。CSSを確認したところ、Flexboxの設定にいくつかの問題がありそうです。</p>
+  </div>
+
+  <h2>以下のコードにバグがあります</h2>
+  <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    .navbar {
+      background-color: #333;
+      padding: 10px;
+      /* 横並びにしたいが display 指定を忘れている */
+    }
+    .navbar ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      justify-content: centre;  /* 綴りが間違っている */
+      align-items: center;
+    }
+    .navbar li {
+      margin: 0 15px;
+    }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;nav class="navbar"&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="/"&gt;ホーム&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="/about"&gt;概要&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="/contact"&gt;問合せ&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/nav&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t1-16">
+    <div class="quiz-question"><strong>問題：</strong>このコードの修正方法として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-16" value="a">
+        .navbar ul に display: inline-block を追加し、justify-content: centre はそのままにする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-16" value="b">
+        .navbar に display: flex を追加するだけで、justify-content の綴りはブラウザが自動補正する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-16" value="c">
+        .navbar ul に display: grid を追加し、justify-content: centre を place-items: center に変更する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="問題は2つあります。(1) .navbar ul に display: flex が指定されていないため、justify-content や align-items が効きません。Flexboxプロパティはフレックスコンテナ（display: flex を持つ要素）にしか効かないため、まず display: flex の追加が必須です。(2) justify-content: centre は英語の綴りミスです。CSSでは米語表記の center が正しく、centre（英語表記）はCSSの有効な値ではないため無視されます。両方を修正して初めて横並び＋中央寄せが実現します。">
+        <input type="radio" name="quiz-ex-t1-16" value="d">
+        .navbar ul に display: flex を追加し、justify-content: centre を justify-content: center に修正する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t1-16')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t1-16')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t1-17">
+  <h1>問題 17: HTMLフォームのアクセシビリティ修正</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🔧</span> コード修正</div>
+    <p>QAチームから「スクリーンリーダーでお問い合わせフォームをテストしたところ、入力欄とラベルが紐づいていない。また電話番号欄に文字が入力できてしまう」というバグ報告が上がりました。</p>
+  </div>
+
+  <h2>以下のコードにバグがあります</h2>
+  <pre><code>&lt;form action="/contact" method="post"&gt;
+  &lt;div class="form-group"&gt;
+    &lt;label&gt;お名前&lt;/label&gt;
+    &lt;input type="text" id="name" name="name" required&gt;
+  &lt;/div&gt;
+
+  &lt;div class="form-group"&gt;
+    &lt;label for="mail"&gt;メールアドレス&lt;/label&gt;
+    &lt;input type="text" id="email" name="email" required&gt;
+  &lt;/div&gt;
+
+  &lt;div class="form-group"&gt;
+    &lt;label for="phone"&gt;電話番号&lt;/label&gt;
+    &lt;input type="text" id="phone" name="phone"&gt;
+  &lt;/div&gt;
+
+  &lt;div class="form-group"&gt;
+    &lt;label for="message"&gt;お問い合わせ内容&lt;/label&gt;
+    &lt;textarea id="message" name="message" required&gt;&lt;/textarea&gt;
+  &lt;/div&gt;
+
+  &lt;button type="submit"&gt;送信する&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t1-17">
+    <div class="quiz-question"><strong>問題：</strong>このコードの修正方法として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-17" value="a">
+        label要素をすべて削除し、代わりに各inputにplaceholder属性でラベルテキストを設定する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="問題は3つあります。(1) 「お名前」のlabelにfor属性がなく、inputのidと紐づいていません。for=&quot;name&quot;を追加する必要があります。(2) 「メールアドレス」のlabelのfor=&quot;mail&quot;とinputのid=&quot;email&quot;が一致していません。for属性とid属性が一致しないとラベルクリックでフォーカスが移動せず、スクリーンリーダーも紐づけを認識できません。for=&quot;email&quot;に修正します。(3) 電話番号のinputがtype=&quot;text&quot;になっていますが、type=&quot;tel&quot;にすることでモバイルでは数字キーボードが表示され、バリデーションの意図も明確になります。これら3点の修正でアクセシビリティと入力体験が大幅に改善されます。">
+        <input type="radio" name="quiz-ex-t1-17" value="b">
+        「お名前」のlabelにfor="name"を追加、「メールアドレス」のfor="mail"をfor="email"に修正、電話番号のtype="text"をtype="tel"に変更する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-17" value="c">
+        メールアドレスのfor="mail"をfor="email"に修正するだけで、他はブラウザが自動的に紐づける
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-17" value="d">
+        全inputにaria-label属性を追加し、label要素のfor属性は不要にする
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t1-17')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t1-17')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

@@ -2274,6 +2274,529 @@ for (const order of orders) {
 
   <button class="complete-btn" onclick="completeSection('db10')">
     <span class="icon">✓</span>
-    Phase 3を完了
+    このページを完了
+  </button>
+</section>
+
+<!-- db11: 複合JOIN (3テーブル以上) -->
+<section id="db11">
+  <h1>複合JOIN（3テーブル以上）</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>3テーブル以上のJOIN</li>
+      <li>JOIN順序とパフォーマンス</li>
+      <li>実践的なクエリ設計</li>
+    </ul>
+  </div>
+
+  <h2>なぜ複数テーブルのJOINが必要か</h2>
+
+  <p>
+    実務では、2テーブルだけでなく<strong>3テーブル以上</strong>をJOINすることが頻繁にあります。
+    例えば「ユーザーの注文履歴と商品情報」を一度に取得したい場合、users・orders・productsの3テーブルが必要です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：レストランの注文
+    </div>
+    <p style="margin:0;">
+      レストランで「誰が（顧客台帳）」「何を注文して（注文伝票）」「その料理の情報（メニュー表）」を
+      まとめて確認するイメージです。<br>
+      3つの資料を<strong>突き合わせて</strong>初めて全体像が見えます。
+    </p>
+  </div>
+
+  <h2>3テーブルJOINの基本構造</h2>
+
+  <p>
+    ECサイトを例に、<strong>users → orders → products</strong> の関係を見てみましょう。
+  </p>
+
+<pre><code class="language-sql">-- テーブル構造
+-- users:    id, name, email
+-- orders:   id, user_id, product_id, quantity, ordered_at
+-- products: id, name, price, category
+
+-- 3テーブルJOIN: ユーザーの注文履歴と商品情報を取得
+SELECT
+  u.name AS user_name,
+  p.name AS product_name,
+  p.price,
+  o.quantity,
+  (p.price * o.quantity) AS total,
+  o.ordered_at
+FROM users u
+INNER JOIN orders o ON u.id = o.user_id
+INNER JOIN products p ON o.product_id = p.id
+ORDER BY o.ordered_at DESC;</code></pre>
+
+  <h2>INNER JOIN と LEFT JOIN の使い分け</h2>
+
+  <p>
+    JOINの種類によって<strong>結果が大きく変わります</strong>。
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">⭕ INNER JOIN</div>
+      <p style="margin:0;">
+        <strong>両方のテーブルに一致するデータのみ</strong>取得。<br>
+        「注文したことがあるユーザーだけ」を取得したい場合に使用。
+      </p>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">🔄 LEFT JOIN</div>
+      <p style="margin:0;">
+        <strong>左のテーブルは全行残る</strong>。一致しない場合はNULL。<br>
+        「注文していないユーザーも含めて」取得したい場合に使用。
+      </p>
+    </div>
+  </div>
+
+<pre><code class="language-sql">-- LEFT JOIN: 注文していないユーザーも含めて取得
+SELECT
+  u.name AS user_name,
+  p.name AS product_name,
+  o.quantity
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id
+LEFT JOIN products p ON o.product_id = p.id;
+-- 注文がないユーザーは product_name, quantity が NULL</code></pre>
+
+  <h2>パフォーマンス考慮</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      JOINの順序とインデックス
+    </div>
+    <ul style="margin:0;">
+      <li><strong>JOINの順序</strong>: 結果セットが小さくなるテーブルから順にJOINすると効率的</li>
+      <li><strong>インデックス</strong>: JOIN条件に使うカラム（外部キー）にはインデックスを作成</li>
+      <li><strong>SELECT *を避ける</strong>: 必要なカラムだけを指定して転送量を削減</li>
+      <li><strong>EXPLAINで確認</strong>: 実行計画を見て意図通りにインデックスが使われているか確認</li>
+    </ul>
+  </div>
+
+<pre><code class="language-sql">-- JOINで使う外部キーにインデックスを作成
+CREATE INDEX idx_orders_user_id ON orders(user_id);
+CREATE INDEX idx_orders_product_id ON orders(product_id);
+
+-- 実行計画を確認
+EXPLAIN ANALYZE
+SELECT u.name, p.name, o.quantity
+FROM users u
+INNER JOIN orders o ON u.id = o.user_id
+INNER JOIN products p ON o.product_id = p.id
+WHERE u.id = 1;</code></pre>
+
+  <h2>実務例：ECサイトの注文詳細画面</h2>
+
+<pre><code class="language-sql">-- 特定ユーザーの注文履歴（カテゴリ別の小計付き）
+SELECT
+  u.name AS user_name,
+  p.category,
+  COUNT(*) AS order_count,
+  SUM(p.price * o.quantity) AS category_total
+FROM users u
+INNER JOIN orders o ON u.id = o.user_id
+INNER JOIN products p ON o.product_id = p.id
+WHERE u.id = 1
+GROUP BY u.name, p.category
+ORDER BY category_total DESC;</code></pre>
+
+  <div class="quiz" id="quiz-db11">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>3テーブルJOINで「注文していないユーザーも含めたい」場合、どのJOINを使うべきか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db11" style="display:none;">
+      A. すべてINNER JOINを使う
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db11" style="display:none;">
+      B. usersからのJOINにLEFT JOINを使う
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db11" style="display:none;">
+      C. RIGHT JOINを使う
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db11')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('db11')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- db12: ウィンドウ関数 -->
+<section id="db12">
+  <h1>ウィンドウ関数</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ROW_NUMBER: 連番を振る</li>
+      <li>RANK / DENSE_RANK: 順位付け</li>
+      <li>LEAD / LAG: 前後の行を参照</li>
+    </ul>
+  </div>
+
+  <h2>ウィンドウ関数とは</h2>
+
+  <p>
+    通常の集約関数（SUM, COUNTなど）は行をまとめて<strong>1行に集約</strong>します。
+    一方、ウィンドウ関数は<strong>各行の情報を保持したまま</strong>計算結果を付加します。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：マラソンの順位
+    </div>
+    <p style="margin:0;">
+      マラソンの結果発表をイメージしてください。<br>
+      <strong>集約</strong>: 「参加者は100人、平均タイムは4時間」→ 全体を1つにまとめる<br>
+      <strong>ウィンドウ関数</strong>: 「田中さん: 3時間30分（<strong>12位</strong>）、山田さん: 3時間45分（<strong>25位</strong>）」→ 各走者の情報を保持しつつ順位を付ける
+    </p>
+  </div>
+
+  <h2>OVER句の基本構文</h2>
+
+<pre><code class="language-sql">-- ウィンドウ関数の基本構文
+関数名() OVER (
+  PARTITION BY グループ分けするカラム  -- 省略可
+  ORDER BY 並び順のカラム              -- 省略可
+)
+
+-- PARTITION BY: グループごとに計算をリセット
+-- ORDER BY: ウィンドウ内の並び順を指定</code></pre>
+
+  <h2>ROW_NUMBER: 連番を振る</h2>
+
+  <p>
+    結果セットの各行に<strong>一意の連番</strong>を振ります。同じ値でも異なる番号が付きます。
+  </p>
+
+<pre><code class="language-sql">-- 部署ごとに給料が高い順で連番を振る
+SELECT
+  name,
+  department,
+  salary,
+  ROW_NUMBER() OVER (
+    PARTITION BY department
+    ORDER BY salary DESC
+  ) AS row_num
+FROM employees;
+
+-- 結果例:
+-- name     | department | salary  | row_num
+-- 田中     | 営業       | 600000  | 1
+-- 山田     | 営業       | 500000  | 2
+-- 佐藤     | 開発       | 700000  | 1
+-- 鈴木     | 開発       | 650000  | 2</code></pre>
+
+  <h2>RANK / DENSE_RANK: 同率順位の扱い</h2>
+
+  <p>
+    <strong>RANK</strong>は同率の場合に番号を飛ばし、<strong>DENSE_RANK</strong>は飛ばしません。
+  </p>
+
+<pre><code class="language-sql">-- 売上ランキング（同率順位あり）
+SELECT
+  name,
+  sales,
+  RANK()       OVER (ORDER BY sales DESC) AS rank_num,
+  DENSE_RANK() OVER (ORDER BY sales DESC) AS dense_rank_num
+FROM salespeople;
+
+-- 結果例:
+-- name   | sales  | rank_num | dense_rank_num
+-- 田中   | 100    | 1        | 1
+-- 山田   | 100    | 1        | 1
+-- 佐藤   | 80     | 3        | 2   ← RANKは3、DENSE_RANKは2
+-- 鈴木   | 70     | 4        | 3</code></pre>
+
+  <h2>LEAD / LAG: 前後の行を参照</h2>
+
+  <p>
+    <strong>LAG</strong>は前の行、<strong>LEAD</strong>は次の行の値を取得します。
+    前月比や増減の計算に便利です。
+  </p>
+
+<pre><code class="language-sql">-- 月次売上の前月比を計算
+SELECT
+  month,
+  revenue,
+  LAG(revenue, 1) OVER (ORDER BY month) AS prev_month,
+  revenue - LAG(revenue, 1) OVER (ORDER BY month) AS diff,
+  ROUND(
+    (revenue - LAG(revenue, 1) OVER (ORDER BY month))::numeric
+    / LAG(revenue, 1) OVER (ORDER BY month) * 100, 1
+  ) AS growth_rate
+FROM monthly_sales;
+
+-- 結果例:
+-- month   | revenue | prev_month | diff    | growth_rate
+-- 2024-01 | 100000  | NULL       | NULL    | NULL
+-- 2024-02 | 120000  | 100000     | 20000   | 20.0
+-- 2024-03 | 108000  | 120000     | -12000  | -10.0</code></pre>
+
+  <h2>実務例：売上ランキングと前月比</h2>
+
+<pre><code class="language-sql">-- 部署別の売上ランキング + 前月比
+SELECT
+  department,
+  month,
+  revenue,
+  RANK() OVER (
+    PARTITION BY month
+    ORDER BY revenue DESC
+  ) AS monthly_rank,
+  LAG(revenue, 1) OVER (
+    PARTITION BY department
+    ORDER BY month
+  ) AS prev_month_revenue
+FROM department_sales
+ORDER BY month, monthly_rank;</code></pre>
+
+  <div class="quiz" id="quiz-db12">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>売上が 100, 100, 80 の3人に RANK() を適用した場合、3人目の順位は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db12" style="display:none;">
+      A. 2位
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db12" style="display:none;">
+      B. 3位
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db12" style="display:none;">
+      C. 1位
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db12')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('db12')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- db13: N+1問題の検出と対策 -->
+<section id="db13">
+  <h1>N+1問題の検出と対策</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>N+1問題とは</li>
+      <li>検出方法（EXPLAIN ANALYZE）</li>
+      <li>対策パターン（Eager Loading / Batch Loading）</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔥</span>
+      N+1問題はパフォーマンスを10倍〜100倍悪化させる
+    </div>
+    <p style="margin:0;">
+      N+1問題は最もよくあるパフォーマンス問題の一つです。<br>
+      データが10件なら11回、100件なら101回、1000件なら1001回のクエリが発行されます。<br>
+      <strong>データ量に比例してクエリ数が増える</strong>ため、本番環境で致命的な遅延を引き起こします。
+    </p>
+  </div>
+
+  <h2>N+1問題とは</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：買い物
+    </div>
+    <p style="margin:0;">
+      <strong>N+1問題</strong>: スーパーに行って「牛乳」を買って帰り、また「パン」を買いに行き、また「卵」を買いに行く...<br>
+      <strong>正しい方法</strong>: 買い物リストを作って<strong>1回で全部持ってくる</strong><br><br>
+      何度も往復するのは時間の無駄。データベースも同じです。
+    </p>
+  </div>
+
+  <h2>問題の図解</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">❌ N+1問題（1 + N クエリ）</div>
+<pre><code>1回目: SELECT * FROM users       -- ユーザー一覧取得
+2回目: SELECT * FROM orders WHERE user_id = 1  -- ユーザー1の注文
+3回目: SELECT * FROM orders WHERE user_id = 2  -- ユーザー2の注文
+4回目: SELECT * FROM orders WHERE user_id = 3  -- ユーザー3の注文
+...
+N+1回目: SELECT * FROM orders WHERE user_id = N
+
+→ ユーザーがN人いれば N+1 回のクエリ！</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">⭕ 解決後（2クエリ）</div>
+<pre><code>1回目: SELECT * FROM users
+2回目: SELECT * FROM orders WHERE user_id IN (1, 2, 3, ..., N)
+
+→ 常に2回のクエリで完了！</code></pre>
+    </div>
+  </div>
+
+  <h2>対策1: Eager Loading（JOINで一括取得）</h2>
+
+  <p>
+    JOINを使って<strong>1回のクエリ</strong>で関連データもまとめて取得します。
+  </p>
+
+<pre><code class="language-sql">-- 1回のクエリでユーザーと注文を取得
+SELECT u.name, o.id AS order_id, o.total
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id;</code></pre>
+
+<pre><code class="language-typescript">// Prisma: includeでEager Loading
+const users = await prisma.user.findMany({
+  include: {
+    orders: true  // JOINして注文も一緒に取得
+  }
+});
+// → 1〜2クエリで完了</code></pre>
+
+  <h2>対策2: Batch Loading（IN句でまとめて取得）</h2>
+
+  <p>
+    一覧を取得した後、<strong>IN句</strong>で関連データをまとめて取得します。
+  </p>
+
+<pre><code class="language-typescript">// Step 1: ユーザー一覧を取得（1クエリ）
+const users = await prisma.user.findMany();
+
+// Step 2: 全ユーザーのIDをまとめてIN句で取得（1クエリ）
+const userIds = users.map(u =&gt; u.id);
+const orders = await prisma.order.findMany({
+  where: { userId: { in: userIds } }
+});
+
+// Step 3: メモリ上でマッピング
+const ordersByUserId = new Map();
+for (const order of orders) {
+  if (!ordersByUserId.has(order.userId)) {
+    ordersByUserId.set(order.userId, []);
+  }
+  ordersByUserId.get(order.userId).push(order);
+}</code></pre>
+
+  <h2>EXPLAIN ANALYZEの基本</h2>
+
+  <p>
+    クエリの実行計画を確認して、パフォーマンス問題を検出します。
+  </p>
+
+<pre><code class="language-sql">-- EXPLAIN ANALYZEでクエリの実行計画を確認
+EXPLAIN ANALYZE
+SELECT * FROM orders WHERE user_id = 1;
+
+-- 見るべきポイント:
+-- 1. Seq Scan（全件走査）→ インデックスが使われていない
+-- 2. Nested Loop → N+1の兆候の可能性
+-- 3. actual time → 実際の実行時間
+-- 4. rows → 処理された行数</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      EXPLAIN ANALYZEの読み方のコツ
+    </div>
+    <ul style="margin:0;">
+      <li><strong>Seq Scan</strong>: テーブル全件走査。大きなテーブルでは要注意</li>
+      <li><strong>Index Scan</strong>: インデックスを使った効率的な検索</li>
+      <li><strong>actual time</strong>: 最初の行...最後の行 の実行時間（ms）</li>
+      <li><strong>rows</strong>: 推定行数 vs 実際の行数が大きく異なる場合は統計情報の更新が必要</li>
+    </ul>
+  </div>
+
+  <h2>N+1問題のコードと修正版</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">❌ N+1問題のあるコード</div>
+<pre><code class="language-typescript">// 悪い例: ループ内でクエリを発行
+async function getUserOrders() {
+  const users = await prisma.user.findMany();
+
+  for (const user of users) {
+    // ユーザーごとに1回クエリ → N回！
+    const orders = await prisma.order.findMany({
+      where: { userId: user.id }
+    });
+    user.orders = orders;
+  }
+  return users;
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">⭕ 修正版: Eager Loading</div>
+<pre><code class="language-typescript">// 良い例: includeで一括取得
+async function getUserOrders() {
+  const users = await prisma.user.findMany({
+    include: {
+      orders: true
+    }
+  });
+  return users;
+  // → 内部的に2クエリで完了
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-db13">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ユーザー50人の注文データを取得する際、N+1問題が発生すると合計何回のクエリが実行される？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db13" style="display:none;">
+      A. 50回
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db13" style="display:none;">
+      B. 51回
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db13" style="display:none;">
+      C. 2回
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db13')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('db13')">
+    <span class="icon">✓</span>
+    このページを完了
   </button>
 </section>

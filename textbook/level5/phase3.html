@@ -1976,3 +1976,449 @@ aws budgets create-budget \
     <span class="icon">✓</span> このページを完了
   </button>
 </section>
+
+<!-- ============================================
+     aws11: マルチクラウド戦略
+     ============================================ -->
+
+<section id="aws11">
+  <h1>11. マルチクラウド戦略</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📚</span> このページで学ぶこと</div>
+    <ul>
+      <li>マルチクラウドとは何か</li>
+      <li>メリットとデメリットの比較</li>
+      <li>現実的な導入パターン</li>
+    </ul>
+  </div>
+
+  <h2>クラウド利用の3パターン</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>パターン</th>
+        <th>説明</th>
+        <th>例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>シングルクラウド</strong></td>
+        <td>1つのクラウドに全てを集約</td>
+        <td>全てAWSで構築</td>
+      </tr>
+      <tr>
+        <td><strong>マルチクラウド</strong></td>
+        <td>複数のクラウドを併用</td>
+        <td>AWSとGCPを用途別に使い分け</td>
+      </tr>
+      <tr>
+        <td><strong>ハイブリッドクラウド</strong></td>
+        <td>クラウドとオンプレミスを併用</td>
+        <td>機密データはオンプレ、それ以外はクラウド</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>マルチクラウドのメリット</h2>
+  <ul>
+    <li><strong>ベンダーロックイン回避</strong> — 1社への過度な依存を避けられる</li>
+    <li><strong>ベストオブブリード</strong> — 各クラウドの得意分野を活用できる</li>
+    <li><strong>障害耐性</strong> — 1つのクラウドが大規模障害を起こしても継続可能</li>
+    <li><strong>交渉力</strong> — 複数ベンダーとの契約で価格交渉がしやすい</li>
+  </ul>
+
+  <h2>マルチクラウドのデメリット</h2>
+  <ul>
+    <li><strong>運用の複雑性</strong> — 複数のコンソール、API、課金体系を管理する必要がある</li>
+    <li><strong>スキルの分散</strong> — チームが複数クラウドに習熟する必要がある</li>
+    <li><strong>コスト増</strong> — クラウド間のデータ転送費用、重複するツール費用</li>
+    <li><strong>整合性の維持</strong> — セキュリティポリシーやガバナンスの統一が困難</li>
+  </ul>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> よくある誤解</div>
+    <p>
+      <strong>マルチクラウドは銀の弾丸ではありません。</strong><br>
+      「とりあえずマルチクラウド」にすると、メリットよりも運用コスト増のデメリットが上回ることがほとんどです。<br>
+      明確な理由（規制要件、特定サービスの活用など）がない限り、まずはシングルクラウドに集中すべきです。
+    </p>
+  </div>
+
+  <h2>現実的なパターン</h2>
+  <p>
+    多くの企業が採用するのは「<strong>主クラウド + 特定用途で別クラウド</strong>」というパターンです。<br>
+    全てをマルチクラウドにするのではなく、各クラウドの得意領域を活用します。
+  </p>
+
+  <h2>主要クラウドの得意領域</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>領域</th>
+        <th>AWS</th>
+        <th>GCP</th>
+        <th>Azure</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>汎用インフラ</strong></td>
+        <td>◎ 最も豊富なサービス</td>
+        <td>○</td>
+        <td>○</td>
+      </tr>
+      <tr>
+        <td><strong>データ分析/ML</strong></td>
+        <td>○</td>
+        <td>◎ BigQuery, Vertex AI</td>
+        <td>○</td>
+      </tr>
+      <tr>
+        <td><strong>エンタープライズ連携</strong></td>
+        <td>○</td>
+        <td>△</td>
+        <td>◎ Microsoft製品統合</td>
+      </tr>
+      <tr>
+        <td><strong>コンテナ/K8s</strong></td>
+        <td>○ EKS</td>
+        <td>◎ GKE（K8s生みの親）</td>
+        <td>○ AKS</td>
+      </tr>
+      <tr>
+        <td><strong>サーバーレス</strong></td>
+        <td>◎ Lambda（先駆者）</td>
+        <td>○ Cloud Functions</td>
+        <td>○ Azure Functions</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quiz" id="quiz-aws11">
+    <div class="quiz-title"><span class="icon">❓</span> 確認クイズ</div>
+    <p><strong>Q: スタートアップが最初にクラウド戦略を選ぶ場合、最も適切なアプローチは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws11" value="a">
+        <span>最初からAWS/GCP/Azureの3つを併用する</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="リソースが限られるスタートアップでは、まず1つのクラウドに集中してスキルと運用体制を構築すべきです。マルチクラウドは運用の複雑性が増すため、明確な理由がない限り推奨されません。">
+        <input type="radio" name="q-aws11" value="b">
+        <span>まず1つのクラウドに集中し、必要に応じて拡張する</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws11" value="c">
+        <span>クラウドは使わずオンプレミスで構築する</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-aws11')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('aws11')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ============================================
+     aws12: クラウドセキュリティとゼロトラスト
+     ============================================ -->
+
+<section id="aws12">
+  <h1>12. クラウドセキュリティとゼロトラスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📚</span> このページで学ぶこと</div>
+    <ul>
+      <li>責任共有モデルの理解</li>
+      <li>ゼロトラストの3原則</li>
+      <li>IAM設計のベストプラクティス</li>
+    </ul>
+  </div>
+
+  <h2>責任共有モデル</h2>
+  <p>
+    クラウドのセキュリティは、<strong>クラウドプロバイダーと利用者の双方が責任を持つ</strong>「責任共有モデル」で成り立っています。<br>
+    サービスの種類（IaaS/PaaS/SaaS）によって責任の範囲が変わります。
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>責任範囲</th>
+        <th>IaaS（EC2等）</th>
+        <th>PaaS（RDS等）</th>
+        <th>SaaS（S3等）</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>アプリケーション</strong></td>
+        <td>利用者</td>
+        <td>利用者</td>
+        <td>プロバイダー</td>
+      </tr>
+      <tr>
+        <td><strong>データ</strong></td>
+        <td>利用者</td>
+        <td>利用者</td>
+        <td>利用者</td>
+      </tr>
+      <tr>
+        <td><strong>OS/ミドルウェア</strong></td>
+        <td>利用者</td>
+        <td>プロバイダー</td>
+        <td>プロバイダー</td>
+      </tr>
+      <tr>
+        <td><strong>ネットワーク</strong></td>
+        <td>利用者 + プロバイダー</td>
+        <td>プロバイダー</td>
+        <td>プロバイダー</td>
+      </tr>
+      <tr>
+        <td><strong>物理インフラ</strong></td>
+        <td>プロバイダー</td>
+        <td>プロバイダー</td>
+        <td>プロバイダー</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>ゼロトラストの3原則</h2>
+  <p>
+    従来の「境界型セキュリティ」（社内ネットワーク=安全）に代わり、
+    <strong>ゼロトラスト</strong>は「<strong>何も信頼しない</strong>」を前提としたセキュリティモデルです。
+  </p>
+
+  <ol>
+    <li><strong>常に検証する（Verify Explicitly）</strong> — 全てのアクセスを認証・認可する。ネットワークの場所で信頼しない</li>
+    <li><strong>最小権限の原則（Least Privilege）</strong> — 必要最低限の権限のみ付与する。過剰な権限は攻撃の起点になる</li>
+    <li><strong>侵害を前提とする（Assume Breach）</strong> — 侵入されることを前提に、被害を最小化する設計をする</li>
+  </ol>
+
+  <h2>IAM設計のベストプラクティス</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">広すぎる権限（危険）</div>
+      <pre><code>{
+  "Effect": "Allow",
+  "Action": "*",
+  "Resource": "*"
+}</code></pre>
+      <p>全リソースに全操作を許可。<br>これは<strong>絶対にやってはいけない</strong>設定。</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">最小権限（推奨）</div>
+      <pre><code>{
+  "Effect": "Allow",
+  "Action": [
+    "s3:GetObject",
+    "s3:PutObject"
+  ],
+  "Resource":
+    "arn:aws:s3:::my-bucket/*"
+}</code></pre>
+      <p>特定バケットへのRead/Writeのみ許可。<br>必要な操作だけに絞る。</p>
+    </div>
+  </div>
+
+  <h2>IAM設計の原則</h2>
+  <ul>
+    <li><strong>最小権限の原則</strong> — 業務に必要な権限のみ付与する</li>
+    <li><strong>ロールベースアクセス</strong> — 個人ではなくロール（役割）に権限を割り当てる</li>
+    <li><strong>MFA（多要素認証）</strong> — 特に管理者アカウントには必須</li>
+    <li><strong>定期的な棚卸し</strong> — 使われていない権限やアカウントを定期的に削除</li>
+  </ul>
+
+  <div class="card card-danger">
+    <div class="card-title"><span class="icon">❌</span> 絶対にやってはいけないこと</div>
+    <p>
+      <strong>ルート（root）アカウントを日常業務で使用しない。</strong><br>
+      ルートアカウントは全権限を持つため、漏洩時の影響が甚大です。<br>
+      日常業務にはIAMユーザー/ロールを使い、ルートアカウントはMFAで保護して金庫にしまいましょう。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-aws12">
+    <div class="quiz-title"><span class="icon">❓</span> 確認クイズ</div>
+    <p><strong>Q: ゼロトラストセキュリティの考え方として正しいものは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws12" value="a">
+        <span>社内ネットワークからのアクセスは信頼する</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws12" value="b">
+        <span>一度認証されたら以降はチェック不要</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ゼロトラストは『何も信頼しない』が基本です。ネットワークの場所に関わらず全てのアクセスを検証し、最小権限を付与し、侵害されることを前提に設計します。">
+        <input type="radio" name="q-aws12" value="c">
+        <span>ネットワークの場所に関係なく、全てのアクセスを常に検証する</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-aws12')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('aws12')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ============================================
+     aws13: クラウドコスト最適化（FinOps）
+     ============================================ -->
+
+<section id="aws13">
+  <h1>13. クラウドコスト最適化（FinOps）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📚</span> このページで学ぶこと</div>
+    <ul>
+      <li>FinOps（Financial Operations）とは</li>
+      <li>クラウドコストの3要素</li>
+      <li>具体的なコスト最適化手法</li>
+    </ul>
+  </div>
+
+  <h2>FinOpsとは？</h2>
+  <p>
+    <strong>FinOps</strong>（Financial Operations）とは、<strong>クラウドコストの継続的な最適化</strong>を行うプラクティスです。<br>
+    クラウドは「使った分だけ課金」が基本ですが、管理しないと簡単にコストが膨らみます。<br>
+    FinOpsはエンジニアリング、ファイナンス、ビジネスのチームが協力してコストを最適化する取り組みです。
+  </p>
+
+  <h2>クラウドコストの3要素</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>要素</th>
+        <th>内容</th>
+        <th>代表的なサービス</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>コンピュート</strong></td>
+        <td>サーバー（仮想マシン）の実行時間</td>
+        <td>EC2, Lambda, ECS/Fargate</td>
+      </tr>
+      <tr>
+        <td><strong>ストレージ</strong></td>
+        <td>データの保存量</td>
+        <td>S3, EBS, RDS</td>
+      </tr>
+      <tr>
+        <td><strong>ネットワーク</strong></td>
+        <td>データ転送量（特にアウトバウンド）</td>
+        <td>CloudFront, VPC, データ転送料</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>コスト最適化手法</h2>
+
+  <ol>
+    <li>
+      <strong>リザーブドインスタンス / Savings Plans</strong><br>
+      1年〜3年の利用コミットメントで、オンデマンドより最大72%割引。<br>
+      安定した利用が見込めるワークロードに最適。
+    </li>
+    <li>
+      <strong>スポットインスタンス</strong><br>
+      AWSの余剰容量を最大90%割引で利用。中断される可能性があるため、<br>
+      バッチ処理やCI/CDなど中断に耐えられるワークロード向け。
+    </li>
+    <li>
+      <strong>右サイジング（Right Sizing）</strong><br>
+      実際の使用量に合わせてインスタンスサイズを最適化。<br>
+      CPU利用率が常に10%のインスタンスは、小さいサイズに変更すべき。
+    </li>
+    <li>
+      <strong>タグ付けとコスト配分</strong><br>
+      リソースにタグ（プロジェクト名、環境名、チーム名など）を付与し、<br>
+      どこでコストが発生しているかを可視化する。
+    </li>
+  </ol>
+
+  <h2>コスト削減効果の目安</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>手法</th>
+        <th>削減率の目安</th>
+        <th>適用条件</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>リザーブド/Savings Plans</strong></td>
+        <td>30〜72%</td>
+        <td>安定利用が見込める場合</td>
+      </tr>
+      <tr>
+        <td><strong>スポットインスタンス</strong></td>
+        <td>60〜90%</td>
+        <td>中断耐性のあるワークロード</td>
+      </tr>
+      <tr>
+        <td><strong>右サイジング</strong></td>
+        <td>20〜50%</td>
+        <td>過剰プロビジョニングの是正</td>
+      </tr>
+      <tr>
+        <td><strong>不要リソース削除</strong></td>
+        <td>10〜30%</td>
+        <td>使われていないEBS, スナップショット等</td>
+      </tr>
+      <tr>
+        <td><strong>開発環境の停止</strong></td>
+        <td>60〜70%</td>
+        <td>夜間・週末の自動停止</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> コスト最適化の落とし穴</div>
+    <p>
+      <strong>オーバーエンジニアリングも無駄なコストです。</strong><br>
+      「将来必要になるかも」と過剰なリソースを確保したり、
+      使われない機能のためにインフラを構築するのは避けましょう。<br>
+      YAGNI（You Ain't Gonna Need It）の原則を忘れずに。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-aws13">
+    <div class="quiz-title"><span class="icon">❓</span> 確認クイズ</div>
+    <p><strong>Q: CI/CDのビルド処理（中断されても再実行可能）に最適なコスト削減手法は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws13" value="a">
+        <span>リザーブドインスタンスを3年契約する</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="CI/CDのビルド処理は中断されても再実行できるため、スポットインスタンスが最適です。最大90%の割引を受けられ、中断された場合は自動的に再スケジュールすれば問題ありません。">
+        <input type="radio" name="q-aws13" value="b">
+        <span>スポットインスタンスを活用する</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-aws13" value="c">
+        <span>常に最大スペックのインスタンスを使う</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-aws13')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('aws13')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

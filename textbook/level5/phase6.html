@@ -1738,3 +1738,467 @@ receivers:
     <span class="icon">✓</span> このページを完了
   </button>
 </section>
+
+<!-- ============================================
+     obs9: インシデント対応フロー
+     ============================================ -->
+
+<section id="obs9">
+  <h1>9. インシデント対応フロー</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📚</span> このページで学ぶこと</div>
+    <ul>
+      <li>インシデントの定義と分類</li>
+      <li>対応フローの各ステップ</li>
+      <li>エスカレーションの判断基準</li>
+    </ul>
+  </div>
+
+  <h2>インシデントとは？</h2>
+  <p>
+    <strong>インシデント</strong>とは、サービスの<strong>品質低下や停止</strong>を引き起こす予期しない事象です。<br>
+    バグ、インフラ障害、セキュリティ侵害、設定ミスなど、原因はさまざまですが、
+    共通しているのは<strong>ユーザーに影響が出ている（または出る可能性がある）</strong>ことです。
+  </p>
+
+  <h2>重要度分類（Severity）</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>レベル</th>
+        <th>状況</th>
+        <th>例</th>
+        <th>対応開始目標</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>SEV1</strong></td>
+        <td>全面停止・重大データ損失</td>
+        <td>本番DBが応答しない</td>
+        <td>即時（15分以内）</td>
+      </tr>
+      <tr>
+        <td><strong>SEV2</strong></td>
+        <td>主要機能の障害</td>
+        <td>決済処理が失敗する</td>
+        <td>1時間以内</td>
+      </tr>
+      <tr>
+        <td><strong>SEV3</strong></td>
+        <td>一部機能に影響、回避策あり</td>
+        <td>検索が遅いが動作する</td>
+        <td>4時間以内</td>
+      </tr>
+      <tr>
+        <td><strong>SEV4</strong></td>
+        <td>軽微な問題</td>
+        <td>UIの表示崩れ</td>
+        <td>次営業日</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>インシデント対応フロー</h2>
+
+  <p>インシデントが発生したら、以下の7ステップで対応します。</p>
+
+  <ol>
+    <li><strong>検知</strong> — アラート通知またはユーザー報告でインシデントを認識する</li>
+    <li><strong>トリアージ</strong> — 影響範囲を確認し、重要度（SEV1〜4）を判定する</li>
+    <li><strong>エスカレーション</strong> — 重要度に応じて必要な担当者・チームを召集する</li>
+    <li><strong>緩和措置</strong> — ロールバック、フェイルオーバー、回避策などで影響を最小化する</li>
+    <li><strong>根本原因調査</strong> — ログ・メトリクス・トレースを分析して原因を特定する</li>
+    <li><strong>修正・デプロイ</strong> — 恒久的な修正を作成し、本番環境に適用する</li>
+    <li><strong>ポストモーテム</strong> — 振り返りを実施し、再発防止策を策定する</li>
+  </ol>
+
+  <!-- SVG図解: インシデント対応フロー -->
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📊</span> インシデント対応フロー図</div>
+    <svg viewBox="0 0 600 300" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="インシデント対応フローの7ステップを示す図">
+      <!-- ステップ1: 検知 -->
+      <rect x="10" y="20" width="70" height="40" rx="5" fill="#3498db"/>
+      <text x="45" y="44" font-size="11" fill="white" text-anchor="middle" font-weight="bold">検知</text>
+
+      <line x1="80" y1="40" x2="95" y2="40" stroke="#666" stroke-width="2" marker-end="url(#arrowhead-obs9)"/>
+
+      <!-- ステップ2: トリアージ -->
+      <rect x="95" y="20" width="80" height="40" rx="5" fill="#2ecc71"/>
+      <text x="135" y="44" font-size="11" fill="white" text-anchor="middle" font-weight="bold">トリアージ</text>
+
+      <line x1="175" y1="40" x2="190" y2="40" stroke="#666" stroke-width="2" marker-end="url(#arrowhead-obs9)"/>
+
+      <!-- ステップ3: エスカレーション -->
+      <rect x="190" y="20" width="100" height="40" rx="5" fill="#e67e22"/>
+      <text x="240" y="44" font-size="10" fill="white" text-anchor="middle" font-weight="bold">エスカレーション</text>
+
+      <line x1="290" y1="40" x2="305" y2="40" stroke="#666" stroke-width="2" marker-end="url(#arrowhead-obs9)"/>
+
+      <!-- ステップ4: 緩和措置 -->
+      <rect x="305" y="20" width="80" height="40" rx="5" fill="#e74c3c"/>
+      <text x="345" y="44" font-size="11" fill="white" text-anchor="middle" font-weight="bold">緩和措置</text>
+
+      <line x1="385" y1="40" x2="400" y2="40" stroke="#666" stroke-width="2" marker-end="url(#arrowhead-obs9)"/>
+
+      <!-- ステップ5: 根本原因調査 -->
+      <rect x="400" y="20" width="90" height="40" rx="5" fill="#9b59b6"/>
+      <text x="445" y="44" font-size="10" fill="white" text-anchor="middle" font-weight="bold">根本原因調査</text>
+
+      <line x1="490" y1="40" x2="505" y2="40" stroke="#666" stroke-width="2" marker-end="url(#arrowhead-obs9)"/>
+
+      <!-- ステップ6: 修正・デプロイ -->
+      <rect x="505" y="20" width="85" height="40" rx="5" fill="#1abc9c"/>
+      <text x="547" y="38" font-size="10" fill="white" text-anchor="middle" font-weight="bold">修正・</text>
+      <text x="547" y="52" font-size="10" fill="white" text-anchor="middle" font-weight="bold">デプロイ</text>
+
+      <!-- 下段: ポストモーテム -->
+      <line x1="547" y1="60" x2="547" y2="90" stroke="#666" stroke-width="2" marker-end="url(#arrowhead-obs9)"/>
+
+      <rect x="460" y="90" width="130" height="40" rx="5" fill="#34495e"/>
+      <text x="525" y="114" font-size="11" fill="white" text-anchor="middle" font-weight="bold">ポストモーテム</text>
+
+      <!-- 矢印マーカー定義 -->
+      <defs>
+        <marker id="arrowhead-obs9" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#666"/>
+        </marker>
+      </defs>
+
+      <!-- 注釈 -->
+      <text x="10" y="120" font-size="11" fill="currentColor">※ SEV1/SEV2 では緩和措置を最優先。</text>
+      <text x="10" y="140" font-size="11" fill="currentColor">　 根本原因の調査は影響緩和の後。</text>
+
+      <!-- 下部: コミュニケーション -->
+      <rect x="10" y="170" width="580" height="110" rx="8" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1"/>
+      <text x="300" y="195" font-size="13" fill="currentColor" text-anchor="middle" font-weight="bold">コミュニケーションは全ステップで継続</text>
+      <text x="30" y="220" font-size="11" fill="currentColor">- Slackの #incident チャンネルでリアルタイム共有</text>
+      <text x="30" y="240" font-size="11" fill="currentColor">- ステータスページでユーザーへ状況報告</text>
+      <text x="30" y="260" font-size="11" fill="currentColor">- 経営層への定期エスカレーション（SEV1の場合30分ごと）</text>
+    </svg>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> 最も大切なこと</div>
+    <p>
+      <strong>パニックしない。手順に従う。</strong><br>
+      インシデント対応で最も危険なのは、焦って場当たり的な対応をすることです。<br>
+      手順書（ランブック）があるなら、必ずそれに従いましょう。
+    </p>
+  </div>
+
+  <h2>コミュニケーションテンプレート</h2>
+  <p>インシデント発生時に素早く状況を共有するためのテンプレートです。</p>
+
+  <pre><code>【インシデント報告】
+■ 重要度: SEV2
+■ 影響: 決済処理が断続的に失敗（影響ユーザー約500名）
+■ 検知時刻: 2026-02-06 14:30 JST
+■ 現在の状況: 調査中 / 緩和措置を実施中
+■ 担当: @yamada（インシデントコマンダー）
+■ 次回更新: 15:00 JST</code></pre>
+
+  <div class="quiz" id="quiz-obs9">
+    <div class="quiz-title"><span class="icon">❓</span> 確認クイズ</div>
+    <p><strong>Q: インシデント対応でSEV1が発生した場合、最も優先すべきアクションは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs9" value="a">
+        <span>根本原因を徹底的に調査してから対応する</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="SEV1では影響を最小化する緩和措置（ロールバック、フェイルオーバー等）を最優先します。根本原因の調査は影響を緩和してから行います。『まず止血、原因究明はその後』が鉄則です。">
+        <input type="radio" name="q-obs9" value="b">
+        <span>ロールバックや回避策で影響を最小化する（緩和措置）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs9" value="c">
+        <span>ポストモーテムの準備を始める</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs9')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ============================================
+     obs10: オンコール運用設計
+     ============================================ -->
+
+<section id="obs10">
+  <h1>10. オンコール運用設計</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📚</span> このページで学ぶこと</div>
+    <ul>
+      <li>オンコールとは何か</li>
+      <li>ローテーション設計の考え方</li>
+      <li>バーンアウト（燃え尽き）防止策</li>
+    </ul>
+  </div>
+
+  <h2>オンコールとは？</h2>
+  <p>
+    <strong>オンコール</strong>とは、<strong>営業時間外（夜間・週末・祝日）に発生した障害に対応する当番</strong>のことです。<br>
+    サービスを24時間365日稼働させるためには、誰かが常に対応できる状態を維持する必要があります。
+  </p>
+
+  <h2>ローテーション設計</h2>
+  <p>オンコールは1人に集中させず、チーム内で<strong>ローテーション</strong>を組みます。</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>設計要素</th>
+        <th>推奨</th>
+        <th>理由</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ローテーション周期</strong></td>
+        <td>週次 or 隔週</td>
+        <td>短すぎると引き継ぎコスト増、長すぎると負担増</td>
+      </tr>
+      <tr>
+        <td><strong>プライマリ/セカンダリ</strong></td>
+        <td>2名体制</td>
+        <td>プライマリが応答できない場合のバックアップ</td>
+      </tr>
+      <tr>
+        <td><strong>引き継ぎ</strong></td>
+        <td>平日の日中に実施</td>
+        <td>金曜夜に引き継ぎ＝週末の問題を新任に押し付ける</td>
+      </tr>
+      <tr>
+        <td><strong>チーム人数</strong></td>
+        <td>最低5名以上</td>
+        <td>少なすぎるとローテーション間隔が短くなり疲弊</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>アラート品質の重要性</h2>
+  <p>
+    オンコールの品質は<strong>アラートの品質に直結</strong>します。<br>
+    深夜3時に叩き起こされたアラートが「対応不要のノイズ」だったら、どう感じるでしょうか？
+  </p>
+
+  <ul>
+    <li><strong>Actionable（対応可能）</strong>なアラートのみ通知する — 「見て終わり」のアラートは排除</li>
+    <li><strong>ランブック（対応手順書）</strong>を整備する — アラートを見た人が迷わず対応できるように</li>
+    <li><strong>アラートの定期見直し</strong> — ノイズが増えていないか、閾値が適切かをチェック</li>
+  </ul>
+
+  <div class="card card-danger">
+    <div class="card-title"><span class="icon">❌</span> 燃え尽きの兆候</div>
+    <p>以下の状態が続いている場合、<strong>オンコール運用に問題があります</strong>。</p>
+    <ul style="margin-bottom:0;">
+      <li>月に5回以上、深夜に呼び出される</li>
+      <li>アラートの大半が「対応不要」で終わる</li>
+      <li>特定の人だけがオンコールを担当している</li>
+      <li>チームメンバーがオンコールを理由に退職を検討している</li>
+    </ul>
+  </div>
+
+  <h2>健全なオンコール運用の指標</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>指標</th>
+        <th>目標値</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ページ数/シフト</strong></td>
+        <td>2回以下</td>
+        <td>Google SRE Book推奨: 四半期に1-2回以下</td>
+      </tr>
+      <tr>
+        <td><strong>ノイズ率</strong></td>
+        <td>10%以下</td>
+        <td>対応不要アラートの割合</td>
+      </tr>
+      <tr>
+        <td><strong>MTTA（平均応答時間）</strong></td>
+        <td>15分以内</td>
+        <td>アラートから最初の応答までの時間</td>
+      </tr>
+      <tr>
+        <td><strong>オンコール手当</strong></td>
+        <td>あり</td>
+        <td>当番に対する適切な報酬</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quiz" id="quiz-obs10">
+    <div class="quiz-title"><span class="icon">❓</span> 確認クイズ</div>
+    <p><strong>Q: 健全なオンコール運用において、最も重要な改善策は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs10" value="a">
+        <span>オンコール担当者を増やしてローテーションを回す</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ノイズの多いアラートは担当者を疲弊させ、本当に重要なアラートの見逃しにつながります。Actionable（対応可能）なアラートだけを通知するようにアラート品質を改善することが最優先です。">
+        <input type="radio" name="q-obs10" value="b">
+        <span>アラート品質を改善し、対応不要なノイズを排除する</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs10" value="c">
+        <span>オンコール手当を増額してモチベーションを上げる</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs10')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ============================================
+     obs11: ブレームレス・ポストモーテム
+     ============================================ -->
+
+<section id="obs11">
+  <h1>11. ブレームレス・ポストモーテム</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📚</span> このページで学ぶこと</div>
+    <ul>
+      <li>ポストモーテムとは何か</li>
+      <li>ブレームレス（非難しない）文化の重要性</li>
+      <li>ポストモーテムテンプレートと5 Whys分析</li>
+    </ul>
+  </div>
+
+  <h2>ポストモーテムとは？</h2>
+  <p>
+    <strong>ポストモーテム</strong>（Post-mortem）とは、<strong>インシデント後に行う振り返り</strong>のことです。<br>
+    「何が起きたか」「なぜ起きたか」「どうすれば再発を防げるか」を記録し、チーム全体で学びを共有します。
+  </p>
+
+  <h2>ブレームレス文化</h2>
+  <p>
+    <strong>ブレームレス（Blameless）</strong>とは、<strong>個人を非難しない</strong>という原則です。<br>
+    人はミスをするものです。重要なのは「なぜシステムがそのミスを防げなかったか」を考えることです。
+  </p>
+
+  <div class="card card-success">
+    <div class="card-title"><span class="icon">✓</span> ポストモーテムの基本姿勢</div>
+    <p>
+      <strong>「誰が悪いか」ではなく「何が悪かったか」</strong><br>
+      個人を責めても再発は防げません。仕組み・プロセス・ツールの改善にフォーカスしましょう。
+    </p>
+  </div>
+
+  <h2>ポストモーテムテンプレート</h2>
+
+  <p>以下の項目を含めてドキュメントを作成します。</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>項目</th>
+        <th>内容</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>タイトル</strong></td>
+        <td>インシデントの概要を一文で</td>
+      </tr>
+      <tr>
+        <td><strong>日時</strong></td>
+        <td>発生〜解決の期間、影響時間</td>
+      </tr>
+      <tr>
+        <td><strong>影響範囲</strong></td>
+        <td>影響を受けたユーザー数、機能、収益への影響</td>
+      </tr>
+      <tr>
+        <td><strong>タイムライン</strong></td>
+        <td>時系列で何が起きたかを記録</td>
+      </tr>
+      <tr>
+        <td><strong>根本原因</strong></td>
+        <td>5 Whys分析で深掘り</td>
+      </tr>
+      <tr>
+        <td><strong>教訓</strong></td>
+        <td>うまくいったこと / 改善が必要なこと</td>
+      </tr>
+      <tr>
+        <td><strong>アクションアイテム</strong></td>
+        <td>担当者・期限付きの具体的な改善策</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>5 Whys分析の例</h2>
+  <p>「デプロイ後にサービスが停止した」インシデントを5 Whysで分析してみましょう。</p>
+
+  <pre><code>■ 事象: デプロイ後にサービスが停止した
+
+Why 1: なぜサービスが停止した？
+→ 新しいコードがDBに過負荷をかけた
+
+Why 2: なぜ過負荷になった？
+→ N+1クエリが含まれていた
+
+Why 3: なぜN+1クエリがリリースされた？
+→ コードレビューで見落とされた
+
+Why 4: なぜコードレビューで見つからなかった？
+→ パフォーマンステストが自動化されていなかった
+
+Why 5: なぜ自動テストがなかった？
+→ パフォーマンステストの導入が優先度低とされていた
+
+■ 根本原因: パフォーマンステストがCI/CDに組み込まれていない
+■ アクション: CI/CDにスロークエリ検出を追加する（担当: @suzuki, 期限: 2週間以内）</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚠️</span> 重要な注意点</div>
+    <p>
+      <strong>アクションアイテムのない振り返りは無意味です。</strong><br>
+      ポストモーテムの価値は「次に同じことが起きたときに、より早く検知・対応できるようになること」にあります。<br>
+      具体的なアクション（担当者・期限付き）を必ず設定し、トラッキングしましょう。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-obs11">
+    <div class="quiz-title"><span class="icon">❓</span> 確認クイズ</div>
+    <p><strong>Q: ブレームレス・ポストモーテムにおいて、正しいアプローチは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs11" value="a">
+        <span>ミスした担当者に始末書を書かせる</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-obs11" value="b">
+        <span>問題を起こしたチームの評価を下げる</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ブレームレスの原則は『個人を責めず、仕組みを改善する』ことです。人がミスをしても防げるガードレール（自動テスト、コードレビュー、デプロイ安全策）を整備することが再発防止につながります。">
+        <input type="radio" name="q-obs11" value="c">
+        <span>仕組み・プロセスの改善策をアクションアイテムとして設定する</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs11')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs11')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

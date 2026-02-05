@@ -927,3 +927,275 @@ describe('データ取得', () => {
     <span class="icon">✓</span> このページを完了
   </button>
 </section>
+
+<section id="qa11">
+  <h1>OWASPセキュリティテスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>SAST/DAST/IASTの違い</li>
+      <li>セキュリティテストの自動化</li>
+      <li>脆弱性スキャンのCI/CD統合</li>
+    </ul>
+  </div>
+
+  <h2>セキュリティテストの3つのアプローチ</h2>
+
+  <h3>SAST（静的アプリケーションセキュリティテスト）</h3>
+  <p>
+    <strong>ソースコードを解析</strong>して、脆弱性を検出する手法です。<br>
+    コードを実行せずに問題を発見できるため、<strong>開発の早い段階</strong>で利用できます。
+  </p>
+  <ul>
+    <li><strong>Semgrep</strong>：カスタムルール記述が容易</li>
+    <li><strong>SonarQube</strong>：コード品質+セキュリティ</li>
+  </ul>
+
+  <h3>DAST（動的アプリケーションセキュリティテスト）</h3>
+  <p>
+    <strong>実行中のアプリケーション</strong>に対してスキャンを行い、脆弱性を検出します。<br>
+    実際の攻撃者の視点でテストできます。
+  </p>
+  <ul>
+    <li><strong>OWASP ZAP</strong>：オープンソースのWebアプリスキャナ</li>
+    <li><strong>Burp Suite</strong>：プロ向けの包括的スキャナ</li>
+  </ul>
+
+  <h3>IAST（対話型アプリケーションセキュリティテスト）</h3>
+  <p>
+    アプリケーション内に<strong>エージェントを組み込み</strong>、
+    実行時にリアルタイムで脆弱性を検出します。<br>
+    SASTとDASTの長所を組み合わせたアプローチです。
+  </p>
+
+  <h2>比較</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th></th>
+        <th>SAST</th>
+        <th>DAST</th>
+        <th>IAST</th>
+      </tr>
+      <tr>
+        <td><strong>タイミング</strong></td>
+        <td>コード記述時</td>
+        <td>実行時（ステージング）</td>
+        <td>実行時（テスト中）</td>
+      </tr>
+      <tr>
+        <td><strong>検出対象</strong></td>
+        <td>SQLi、XSS、ハードコード秘密鍵</td>
+        <td>設定ミス、認証不備、インジェクション</td>
+        <td>両方の脆弱性</td>
+      </tr>
+      <tr>
+        <td><strong>CI統合</strong></td>
+        <td>容易（ビルド時）</td>
+        <td>やや手間（環境必要）</td>
+        <td>中程度</td>
+      </tr>
+      <tr>
+        <td><strong>誤検知</strong></td>
+        <td>多め</td>
+        <td>少なめ</td>
+        <td>少なめ</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>CI/CDへの組み込み例</h2>
+
+  <pre><code># GitHub Actions でのセキュリティテスト
+name: Security Scan
+on: [push, pull_request]
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 依存パッケージの脆弱性チェック
+      - name: npm audit
+        run: npm audit --audit-level=high
+
+      # SASTスキャン（Semgrep）
+      - name: SAST Scan
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: p/owasp-top-ten
+
+      # DASTスキャン（OWASP ZAP）
+      - name: DAST Scan
+        uses: zaproxy/action-baseline@v0.9.0
+        with:
+          target: 'https://staging.example.com'</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      セキュリティテストは品質テストの一部
+    </div>
+    <p>
+      セキュリティテストを「特別なもの」として扱わないでください。<br>
+      <strong>通常のCI/CDパイプラインに組み込み</strong>、
+      機能テストと同じように毎回実行するのが理想です。<br>
+      「あとでやる」セキュリティテストは、たいてい実施されません。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-qa11">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ソースコードを実行せずに脆弱性を検出するテスト手法は？</p>
+    <label class="quiz-option" data-correct="true" data-explanation="SAST（静的アプリケーションセキュリティテスト）は、ソースコードを解析して脆弱性を検出します。コードの実行は不要です。">
+      <input type="radio" name="q-qa11" style="display:none;">
+      <span>SAST（静的解析）</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa11" style="display:none;">
+      <span>DAST（動的解析）</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa11" style="display:none;">
+      <span>IAST（対話型解析）</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa11')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('qa11')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="qa12">
+  <h1>AI生成コードのテスト戦略</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>AI生成コードの特性と落とし穴</li>
+      <li>効果的なテストアプローチ</li>
+      <li>AI生成コードの信頼性確保</li>
+    </ul>
+  </div>
+
+  <h2>AI生成コードの特徴</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      AI生成コードの落とし穴
+    </div>
+    <ul>
+      <li><strong>一見正しく見える</strong>が、エッジケースを見落としがち</li>
+      <li><strong>最新のAPI</strong>を知らない場合がある（学習データの時点差）</li>
+      <li><strong>セキュリティ考慮</strong>が不十分なことがある（入力検証の省略など）</li>
+      <li><strong>ハルシネーション</strong>：存在しないAPIやライブラリを使うコードを生成</li>
+    </ul>
+  </div>
+
+  <h2>テストアプローチ</h2>
+
+  <h3>1. プロパティベーステスト</h3>
+  <p>
+    入出力の<strong>性質（プロパティ）</strong>を検証するテストです。<br>
+    特定の入力ではなく、<strong>あらゆる入力で成り立つべき性質</strong>を定義します。
+  </p>
+  <pre><code>// プロパティベーステストの例（fast-check）
+import fc from 'fast-check';
+
+// AI生成のソート関数をテスト
+test('sort always returns same length', () =&gt; {
+  fc.assert(
+    fc.property(fc.array(fc.integer()), (arr) =&gt; {
+      const sorted = aiGeneratedSort(arr);
+      return sorted.length === arr.length;
+    })
+  );
+});
+
+test('sort result is always ordered', () =&gt; {
+  fc.assert(
+    fc.property(fc.array(fc.integer()), (arr) =&gt; {
+      const sorted = aiGeneratedSort(arr);
+      for (let i = 1; i &lt; sorted.length; i++) {
+        if (sorted[i] &lt; sorted[i - 1]) return false;
+      }
+      return true;
+    })
+  );
+});</code></pre>
+
+  <h3>2. ミューテーションテスト</h3>
+  <p>
+    テストコード自体の品質を検証する手法です。<br>
+    ソースコードに<strong>意図的にバグを入れ（ミュータント）</strong>、
+    テストがそのバグを<strong>検出できるか</strong>確認します。
+  </p>
+
+  <h3>3. コードレビュー + テスト生成</h3>
+  <p>
+    AIが生成したコードを人間がレビューし、<br>
+    さらに<strong>AIにテストも生成させ、そのテストも人間がレビュー</strong>する。<br>
+    二重チェックで信頼性を高めます。
+  </p>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      AIが生成したテストも検証が必要
+    </div>
+    <p>
+      AIにテストを書かせると、<strong>テスト自体にバグがある</strong>場合があります。<br>
+      「テストが通った = 正しい」と盲信しないでください。<br>
+      特に、<strong>常にパスするテスト</strong>（何もアサートしていない等）に注意が必要です。
+    </p>
+  </div>
+
+  <h2>実践ワークフロー</h2>
+  <ol>
+    <li><strong>生成</strong>：AIにコードを生成させる</li>
+    <li><strong>レビュー</strong>：エッジケース、セキュリティ、API正当性を確認</li>
+    <li><strong>テスト追加</strong>：プロパティベーステスト等で網羅性を高める</li>
+    <li><strong>修正</strong>：発見した問題を修正し、テストを再実行</li>
+  </ol>
+
+  <div class="quiz" id="quiz-qa12">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>AI生成コードのテストで最も重要なのは？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa12" style="display:none;">
+      <span>AIが生成したテストをそのまま使う</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="AI生成コードもテストも人間がレビューし、プロパティベーステスト等で検証することが重要です。AIの出力を盲信しないことが品質確保の鍵です。">
+      <input type="radio" name="q-qa12" style="display:none;">
+      <span>人間によるレビューと追加テストで検証する</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-qa12" style="display:none;">
+      <span>テストカバレッジ100%を目指す</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa12')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('qa12')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

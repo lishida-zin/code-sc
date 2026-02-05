@@ -1,0 +1,1941 @@
+<!-- ============================================
+     Level 9 Phase 5: インシデント管理/SRE
+     sre1-sre10
+     ============================================ -->
+
+<!-- sre1: SREとは -->
+<section id="sre1">
+  <h1>SREとは</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Site Reliability Engineeringの基本概念</li>
+      <li>SREとDevOpsの違いと共通点</li>
+      <li>SREエンジニアの役割と責任範囲</li>
+    </ul>
+  </div>
+
+  <h2>Site Reliability Engineeringとは</h2>
+
+  <p>
+    <strong>SRE（Site Reliability Engineering）</strong>は、Googleが2003年頃に提唱した考え方で、「ソフトウェアエンジニアリングのアプローチでインフラ運用の課題を解決する」という哲学です。
+    従来の「運用チーム」が手作業で対応していた仕事を、ソフトウェアで自動化し、スケーラブルに運用する方法論です。
+  </p>
+
+  <p>
+    SREの生みの親であるBen Treynorは「SREとは、ソフトウェアエンジニアに運用の仕事を任せたときに生まれるもの」と定義しています。
+    つまり、運用の問題をコードで解決するエンジニアがSREです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：工場の生産管理
+    </div>
+    <p>
+      工場で製品の品質を保つために、昔は熟練工が目視で検査していました。<br>
+      SREは「検査を自動化する装置を設計・導入するエンジニア」のようなものです。<br>
+      手作業の検査ではなく、<strong>仕組みで品質を保証する</strong>のがSREの本質です。
+    </p>
+  </div>
+
+  <h2>SREの主な原則</h2>
+
+  <table>
+    <tr>
+      <th>原則</th>
+      <th>内容</th>
+    </tr>
+    <tr>
+      <td><strong>自動化の推進</strong></td>
+      <td>手作業（Toil）を減らし、エンジニアリングに時間を使う</td>
+    </tr>
+    <tr>
+      <td><strong>SLOベースの運用</strong></td>
+      <td>サービスレベル目標を定め、データ駆動で判断する</td>
+    </tr>
+    <tr>
+      <td><strong>エラーバジェット</strong></td>
+      <td>100%の信頼性を目指さず、許容できる障害量を管理する</td>
+    </tr>
+    <tr>
+      <td><strong>Toilの削減</strong></td>
+      <td>繰り返しの手作業は50%以下に抑える</td>
+    </tr>
+    <tr>
+      <td><strong>ブレームレス文化</strong></td>
+      <td>障害の原因を「人」ではなく「仕組み」に求める</td>
+    </tr>
+  </table>
+
+  <h2>SREとDevOpsの違い</h2>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">SRE</div>
+      <ul>
+        <li>Googleが発祥の具体的な実践方法</li>
+        <li>SLI/SLO/エラーバジェットなど明確な指標</li>
+        <li>ソフトウェアエンジニアが運用を担当</li>
+        <li>「class SRE implements DevOps」</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">DevOps</div>
+      <ul>
+        <li>開発と運用の壁を壊すための文化・思想</li>
+        <li>具体的な指標の定義は含まれない</li>
+        <li>開発者と運用者の協力を重視</li>
+        <li>より広い概念で組織文化に焦点</li>
+      </ul>
+    </div>
+  </div>
+
+  <p>
+    よく使われる表現に「<strong>class SRE implements DevOps</strong>」があります。
+    DevOpsという「インターフェース（考え方）」を、SREが「具体的なクラス（実装）」として実現するという意味です。
+  </p>
+
+  <h2>Toil（トイル）とは</h2>
+
+  <p>
+    SREにとって最大の敵は<strong>Toil（トイル）</strong>です。
+    Toilとは「手作業で、繰り返しで、自動化可能で、戦略的価値がなく、サービスの成長に比例して増える作業」のことです。
+  </p>
+
+  <table>
+    <tr>
+      <th>Toilの例</th>
+      <th>自動化後</th>
+    </tr>
+    <tr>
+      <td>手動でのサーバー再起動</td>
+      <td>自動回復スクリプト</td>
+    </tr>
+    <tr>
+      <td>手動でのデプロイ作業</td>
+      <td>CI/CDパイプライン</td>
+    </tr>
+    <tr>
+      <td>アラートへの手動対応</td>
+      <td>自動修復ランブック</td>
+    </tr>
+    <tr>
+      <td>容量の手動調整</td>
+      <td>オートスケーリング</td>
+    </tr>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      Toilが50%を超えたら危険信号
+    </div>
+    <p>
+      GoogleのSREでは、エンジニアの作業時間の<strong>50%以上がToilになってはいけない</strong>というルールがあります。<br>
+      Toilが増えすぎると、改善のためのエンジニアリング時間がなくなり、悪循環に陥ります。
+    </p>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      SREアンチパターン
+    </div>
+    <ul>
+      <li>SREチームを「運用チームの名前を変えただけ」にする</li>
+      <li>SLO/SLIを設定せずに「雰囲気」で運用する</li>
+      <li>自動化をせずに手動オペレーションを続ける</li>
+      <li>開発チームが信頼性に無関心で、SREに丸投げする</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-sre1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>SREとDevOpsの関係を最も正しく表現しているのはどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre1" style="display:none;">
+      SREとDevOpsは全く異なる概念で、互いに関係がない
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sre1" style="display:none;">
+      SREはDevOpsの思想を具体的に実装したものである
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre1" style="display:none;">
+      DevOpsはSREの一部であり、SREのほうが広い概念である
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sre1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sre1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- sre2: SLI/SLO/SLA -->
+<section id="sre2">
+  <h1>SLI/SLO/SLA</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>SLI・SLO・SLAの違いと関係性</li>
+      <li>適切なSLI/SLOの設計方法</li>
+      <li>「9」の数（ナイン）の意味と現実的な目標設定</li>
+    </ul>
+  </div>
+
+  <h2>SLI・SLO・SLAとは</h2>
+
+  <p>
+    SREにおける信頼性管理の基本は、<strong>測る → 目標を決める → 約束する</strong>の3段階です。
+    これがSLI・SLO・SLAに対応します。
+  </p>
+
+  <table>
+    <tr>
+      <th>用語</th>
+      <th>正式名称</th>
+      <th>意味</th>
+      <th>例</th>
+    </tr>
+    <tr>
+      <td><strong>SLI</strong></td>
+      <td>Service Level Indicator</td>
+      <td>サービスの品質を測る指標</td>
+      <td>リクエスト成功率、レイテンシ</td>
+    </tr>
+    <tr>
+      <td><strong>SLO</strong></td>
+      <td>Service Level Objective</td>
+      <td>SLIに対する目標値</td>
+      <td>成功率 99.9%、P99 200ms以下</td>
+    </tr>
+    <tr>
+      <td><strong>SLA</strong></td>
+      <td>Service Level Agreement</td>
+      <td>顧客との契約（違反時にペナルティ）</td>
+      <td>稼働率99.9%を下回ったら返金</td>
+    </tr>
+  </table>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：宅配サービス
+    </div>
+    <p>
+      <strong>SLI</strong> = 「翌日に届いた荷物の割合」（実測データ）<br>
+      <strong>SLO</strong> = 「翌日配達率95%を目指す」（社内目標）<br>
+      <strong>SLA</strong> = 「翌日届かなかったら送料無料」（顧客との約束）<br>
+      SLOはSLAよりも厳しく設定し、SLAに違反する前に対処するのがポイントです。
+    </p>
+  </div>
+
+  <h2>代表的なSLI</h2>
+
+  <table>
+    <tr>
+      <th>SLIの種類</th>
+      <th>測定内容</th>
+      <th>計算式</th>
+    </tr>
+    <tr>
+      <td><strong>可用性（Availability）</strong></td>
+      <td>サービスが利用可能な割合</td>
+      <td>成功リクエスト数 / 全リクエスト数</td>
+    </tr>
+    <tr>
+      <td><strong>レイテンシ（Latency）</strong></td>
+      <td>レスポンスの速さ</td>
+      <td>P50, P95, P99の応答時間</td>
+    </tr>
+    <tr>
+      <td><strong>スループット（Throughput）</strong></td>
+      <td>処理能力</td>
+      <td>単位時間あたりの処理数</td>
+    </tr>
+    <tr>
+      <td><strong>エラー率（Error Rate）</strong></td>
+      <td>エラーの発生割合</td>
+      <td>エラー数 / 全リクエスト数</td>
+    </tr>
+  </table>
+
+  <h2>「ナインの数」を理解する</h2>
+
+  <p>
+    信頼性は「9がいくつ並ぶか」で表現します。
+    9が1つ増えるごとに、許容されるダウンタイムが<strong>10分の1</strong>になります。
+  </p>
+
+  <table>
+    <tr>
+      <th>可用性</th>
+      <th>ナイン数</th>
+      <th>年間ダウンタイム</th>
+      <th>月間ダウンタイム</th>
+    </tr>
+    <tr>
+      <td>99%</td>
+      <td>2ナイン</td>
+      <td>3.65日</td>
+      <td>7.3時間</td>
+    </tr>
+    <tr>
+      <td>99.9%</td>
+      <td>3ナイン</td>
+      <td>8.76時間</td>
+      <td>43.8分</td>
+    </tr>
+    <tr>
+      <td>99.99%</td>
+      <td>4ナイン</td>
+      <td>52.6分</td>
+      <td>4.38分</td>
+    </tr>
+    <tr>
+      <td>99.999%</td>
+      <td>5ナイン</td>
+      <td>5.26分</td>
+      <td>26.3秒</td>
+    </tr>
+  </table>
+
+  <h2>SLO設計テンプレート</h2>
+
+  <pre><code># SLO定義テンプレート
+
+サービス名: ユーザー認証API
+SLOウィンドウ: 30日間ローリング
+
+## SLI/SLO定義
+
+### 可用性
+- SLI: 成功レスポンス(2xx, 3xx) / 全リクエスト
+- SLO: 99.9%（月間ダウンタイム上限: 約43分）
+- 測定方法: ロードバランサーのアクセスログ
+
+### レイテンシ
+- SLI: レスポンスタイム
+- SLO: P50 ≤ 100ms, P99 ≤ 500ms
+- 測定方法: APMツール（Datadog/New Relic）
+
+### エラー率
+- SLI: 5xxレスポンス / 全リクエスト
+- SLO: 0.1%以下
+- 測定方法: アプリケーションログ
+
+## アクション
+- SLO違反時: 新機能開発を停止し信頼性改善に注力
+- エラーバジェット消費75%: 警告アラート発火
+- エラーバジェット消費100%: フリーズ期間開始</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      SLO設定のよくある失敗
+    </div>
+    <ul>
+      <li>「とりあえず99.99%」と根拠なく高い目標を設定する</li>
+      <li>SLIの測定ポイントがユーザー視点ではなくサーバー内部になっている</li>
+      <li>SLOを設定したが、誰も見ていない・判断に使っていない</li>
+      <li>SLAとSLOを同じ値にして、バッファがない</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      100%の信頼性を目指してはいけない
+    </div>
+    <p>
+      100%の信頼性は不可能であり、目指すべきでもありません。<br>
+      100%を目指すと、リリース速度が極端に遅くなり、<strong>ユーザーにとっての価値（新機能）が届かなくなります</strong>。<br>
+      「十分な信頼性」を定義して、残りのリスクを許容するのがSREの考え方です。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-sre2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>SLI・SLO・SLAの関係について正しいのはどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre2" style="display:none;">
+      SLAはSLOよりも厳しい値を設定するべきである
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre2" style="display:none;">
+      SLIは目標値であり、SLOは実測値である
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sre2" style="display:none;">
+      SLOはSLAより厳しく設定し、SLA違反前に対処する余裕を持たせる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sre2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sre2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- sre3: エラーバジェット -->
+<section id="sre3">
+  <h1>エラーバジェット</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>エラーバジェットの概念と計算方法</li>
+      <li>イノベーション（新機能開発）と信頼性のバランス</li>
+      <li>エラーバジェットポリシーの運用方法</li>
+    </ul>
+  </div>
+
+  <h2>エラーバジェットとは</h2>
+
+  <p>
+    <strong>エラーバジェット</strong>とは、「SLOを満たしながら許容できる障害の量」のことです。
+    例えば、SLOが99.9%なら、残りの0.1%が「使っていいエラーの予算」です。
+  </p>
+
+  <p>
+    この仕組みのおかげで、開発チームとSREチームの間で<strong>「どれだけリスクを取っていいか」を定量的に議論</strong>できるようになります。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：家計の予算管理
+    </div>
+    <p>
+      月収30万円のうち、生活費（信頼性維持）に25万円必要だとすると、残り5万円が「自由に使えるお金（エラーバジェット）」です。<br>
+      この5万円で旅行（新機能リリース）に使える。でも使い過ぎたら来月は節約（リリース凍結）する必要があります。<br>
+      <strong>予算が残っているときは積極的にチャレンジし、使い切ったら守りに入る</strong>のがエラーバジェットの発想です。
+    </p>
+  </div>
+
+  <h2>エラーバジェットの計算</h2>
+
+  <pre><code># エラーバジェットの計算例
+
+SLO: 99.9%（可用性）
+測定期間: 30日間
+
+## 計算
+許容エラー率 = 100% - 99.9% = 0.1%
+
+月間リクエスト数: 1,000,000
+エラーバジェット = 1,000,000 × 0.001 = 1,000リクエスト
+
+## つまり
+- 月に1,000リクエストまでエラーを出して良い
+- 月間ダウンタイム換算: 約43分まで許容
+
+## 現在の消費状況
+今月のエラー数: 400リクエスト
+消費率: 400 / 1,000 = 40%
+残りバジェット: 600リクエスト（60%）</code></pre>
+
+  <h2>エラーバジェットポリシー</h2>
+
+  <table>
+    <tr>
+      <th>バジェット残量</th>
+      <th>状態</th>
+      <th>アクション</th>
+    </tr>
+    <tr>
+      <td>75%以上</td>
+      <td>余裕あり</td>
+      <td>積極的にリリース、新機能開発を推進</td>
+    </tr>
+    <tr>
+      <td>50〜75%</td>
+      <td>注意</td>
+      <td>リリース頻度を維持しつつ、慎重に判断</td>
+    </tr>
+    <tr>
+      <td>25〜50%</td>
+      <td>警告</td>
+      <td>リスクの高いリリースを延期、信頼性改善を優先</td>
+    </tr>
+    <tr>
+      <td>25%未満</td>
+      <td>危険</td>
+      <td>新機能リリースを凍結、信頼性改善に全力</td>
+    </tr>
+    <tr>
+      <td>0%（枯渇）</td>
+      <td>フリーズ</td>
+      <td>バグ修正とインフラ改善のみ許可</td>
+    </tr>
+  </table>
+
+  <h2>エラーバジェットが生む対話</h2>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">バジェットが余っている時</div>
+      <ul>
+        <li>開発チーム「リスクある機能だけどリリースしたい」</li>
+        <li>SRE「バジェット残ってるからGO。ただしロールバック手順は用意してね」</li>
+        <li>結果: イノベーションが加速する</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">バジェットが枯渇している時</div>
+      <ul>
+        <li>開発チーム「この機能を今週リリースしたい」</li>
+        <li>SRE「バジェット使い切ったので、まず信頼性を改善しよう」</li>
+        <li>結果: 感情論ではなくデータで判断できる</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      エラーバジェットの落とし穴
+    </div>
+    <ul>
+      <li>バジェットが常に余っている → SLOが緩すぎる可能性がある</li>
+      <li>バジェットが常にゼロ → SLOが厳しすぎるか、根本的な品質問題がある</li>
+      <li>バジェット消費の原因分析をしない → 同じ問題が繰り返される</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      エラーバジェットのアンチパターン
+    </div>
+    <ul>
+      <li>エラーバジェットを無視して、とにかくリリースを強行する</li>
+      <li>バジェットが枯渇しても誰も責任を持たない</li>
+      <li>SLOを意図的に下げて、バジェットを水増しする</li>
+      <li>エラーバジェットを「罰則の仕組み」として使い、チームを萎縮させる</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-sre3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>エラーバジェットが枯渇（0%）した場合、最も適切な対応はどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre3" style="display:none;">
+      SLOの値を下げて、バジェットに余裕を持たせる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre3" style="display:none;">
+      バジェットは無視して、計画通りリリースを続ける
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sre3" style="display:none;">
+      新機能リリースを凍結し、信頼性改善に集中する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sre3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sre3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- sre4: 障害対応フロー -->
+<section id="sre4">
+  <h1>障害対応フロー</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>障害対応の4フェーズ：検知→トリアージ→対応→復旧</li>
+      <li>各フェーズで行うべきアクションと判断基準</li>
+      <li>復旧優先（Mitigation First）の原則</li>
+    </ul>
+  </div>
+
+  <h2>障害対応の全体像</h2>
+
+  <p>
+    障害が発生した時、パニックにならず冷静に対応するために、<strong>あらかじめ決められたフロー</strong>に従うことが重要です。
+    SREでは「検知 → トリアージ → 対応 → 復旧」の4段階で障害対応を行います。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：消防署の出動
+    </div>
+    <p>
+      火災報知器が鳴る（<strong>検知</strong>）→ 火災の規模を確認（<strong>トリアージ</strong>）→ 消火活動（<strong>対応</strong>）→ 鎮火確認と安全確保（<strong>復旧</strong>）<br>
+      消防士は「まず火を消す」ことに集中します。出火原因の調査は鎮火後です。<br>
+      同じように、<strong>障害対応中は「まず復旧」が最優先</strong>です。原因調査は後で行います。
+    </p>
+  </div>
+
+  <h2>Phase 1: 検知（Detection）</h2>
+
+  <table>
+    <tr>
+      <th>検知方法</th>
+      <th>内容</th>
+      <th>特徴</th>
+    </tr>
+    <tr>
+      <td><strong>監視アラート</strong></td>
+      <td>モニタリングツールが異常を検出</td>
+      <td>最速・自動的</td>
+    </tr>
+    <tr>
+      <td><strong>ユーザー報告</strong></td>
+      <td>ユーザーからの問い合わせやSNS投稿</td>
+      <td>検知が遅い・影響大</td>
+    </tr>
+    <tr>
+      <td><strong>内部発見</strong></td>
+      <td>開発者やQAが偶然発見</td>
+      <td>不定期・属人的</td>
+    </tr>
+  </table>
+
+  <h2>Phase 2: トリアージ（Triage）</h2>
+
+  <p>
+    検知した障害の<strong>影響範囲と緊急度</strong>を判断し、対応の優先度を決定します。
+  </p>
+
+  <pre><code># トリアージチェックリスト
+
+□ 影響を受けているユーザー数は？
+  - 全ユーザー / 特定地域 / 特定機能のユーザー
+
+□ ビジネスへの影響は？
+  - 売上に直結 / 代替手段あり / 影響軽微
+
+□ 拡大の可能性は？
+  - 時間とともに悪化 / 一定 / 収束傾向
+
+□ 既知の問題か？
+  - 過去のインシデントと類似 / 新しいタイプの障害
+
+□ 対応可能なメンバーは？
+  - 即座に対応可能 / エスカレーション必要</code></pre>
+
+  <h2>Phase 3: 対応（Mitigation）</h2>
+
+  <p>
+    <strong>最重要原則：まず復旧（Mitigation First）</strong><br>
+    原因調査より先に、ユーザーへの影響を止めることを最優先にします。
+  </p>
+
+  <table>
+    <tr>
+      <th>対応手段</th>
+      <th>内容</th>
+      <th>時間目安</th>
+    </tr>
+    <tr>
+      <td><strong>ロールバック</strong></td>
+      <td>直前の安定版に戻す</td>
+      <td>数分</td>
+    </tr>
+    <tr>
+      <td><strong>フィーチャーフラグOFF</strong></td>
+      <td>問題のある機能を無効化</td>
+      <td>即座</td>
+    </tr>
+    <tr>
+      <td><strong>スケールアウト</strong></td>
+      <td>サーバー台数を増やす</td>
+      <td>数分〜</td>
+    </tr>
+    <tr>
+      <td><strong>トラフィック制御</strong></td>
+      <td>レートリミットや一部遮断</td>
+      <td>即座</td>
+    </tr>
+    <tr>
+      <td><strong>ホットフィックス</strong></td>
+      <td>最小限のコード修正をデプロイ</td>
+      <td>数十分〜</td>
+    </tr>
+  </table>
+
+  <h2>Phase 4: 復旧（Recovery）</h2>
+
+  <pre><code># 復旧確認チェックリスト
+
+□ サービスの正常稼働を確認
+  - エラー率が通常レベルに戻った
+  - レイテンシが正常範囲内
+  - ユーザーからの報告が止まった
+
+□ 再発防止の暫定措置
+  - 一時的な制限事項の記録
+  - 監視強化（閾値の一時的な引き下げ）
+
+□ コミュニケーション
+  - ステータスページの更新
+  - 関係者への報告
+  - ユーザーへの復旧告知
+
+□ Post-mortem準備
+  - タイムラインの記録
+  - ログ・メトリクスの保全
+  - Post-mortem会議のスケジュール設定</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      障害対応中にやりがちなミス
+    </div>
+    <ul>
+      <li>原因調査に時間を使いすぎて、復旧が遅れる</li>
+      <li>対応状況を共有せず、各自がバラバラに動く</li>
+      <li>「もう少しで原因が分かる」と楽観視して判断が遅れる</li>
+      <li>エスカレーションを躊躇して、一人で抱え込む</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      絶対にやってはいけないこと
+    </div>
+    <ul>
+      <li>障害中に原因と無関係な変更（新機能デプロイ等）を行う</li>
+      <li>ログを消す・証拠を隠す</li>
+      <li>障害を報告せずに隠蔽しようとする</li>
+      <li>「犯人探し」をして個人を責める</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-sre4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>障害対応中に最も優先すべきことはどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre4" style="display:none;">
+      原因を特定して根本的な修正を行う
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sre4" style="display:none;">
+      まずユーザーへの影響を止め、サービスを復旧する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre4" style="display:none;">
+      責任者を特定して報告書を作成する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sre4')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sre4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- sre5: インシデント指揮 -->
+<section id="sre5">
+  <h1>インシデント指揮</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>インシデントコマンダーの役割と責任</li>
+      <li>War Room（対応チーム）の構成と運営</li>
+      <li>効果的なインシデント対応のための役割分担</li>
+    </ul>
+  </div>
+
+  <h2>なぜインシデント指揮が必要か</h2>
+
+  <p>
+    大規模な障害が発生すると、多くのエンジニアが関与します。
+    指揮系統がないと「全員が原因調査をしていて、誰もユーザー対応をしていない」といった混乱が起きます。
+    <strong>インシデント指揮（Incident Command System）</strong>は、この混乱を防ぐための仕組みです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：災害対策本部
+    </div>
+    <p>
+      大きな地震が起きた時、自衛隊・消防・警察がバラバラに動いたら大混乱です。<br>
+      災害対策本部が設置され、<strong>本部長が全体を指揮し、各部隊に役割を割り振る</strong>ことで効率的な救助が可能になります。<br>
+      ITインシデントでも同じ。<strong>インシデントコマンダーが全体を指揮</strong>します。
+    </p>
+  </div>
+
+  <h2>インシデント対応の主要ロール</h2>
+
+  <table>
+    <tr>
+      <th>ロール</th>
+      <th>役割</th>
+      <th>主な責任</th>
+    </tr>
+    <tr>
+      <td><strong>インシデントコマンダー（IC）</strong></td>
+      <td>全体指揮</td>
+      <td>意思決定、リソース配分、エスカレーション判断</td>
+    </tr>
+    <tr>
+      <td><strong>コミュニケーションリード</strong></td>
+      <td>社内外への情報発信</td>
+      <td>ステータスページ更新、経営層への報告、顧客対応</td>
+    </tr>
+    <tr>
+      <td><strong>オペレーションリード</strong></td>
+      <td>技術的な対応の指揮</td>
+      <td>障害調査の指示、復旧作業の実行と監督</td>
+    </tr>
+    <tr>
+      <td><strong>スクライブ（記録係）</strong></td>
+      <td>タイムラインの記録</td>
+      <td>発言・判断・アクションを時系列で記録</td>
+    </tr>
+    <tr>
+      <td><strong>サブジェクトマターエキスパート（SME）</strong></td>
+      <td>専門知識の提供</td>
+      <td>該当システムの技術的知見を提供</td>
+    </tr>
+  </table>
+
+  <h2>インシデントコマンダーの心得</h2>
+
+  <pre><code># インシデントコマンダー行動指針
+
+## やるべきこと
+- 全体の状況を把握し続ける（鳥の目）
+- 定期的に状況を要約して共有する（5〜10分ごと）
+- 判断に迷ったらエスカレーションする
+- 各担当者に明確なタスクを割り振る
+- 「次の報告は○分後」とタイムボックスを設定する
+
+## やってはいけないこと
+- 自分で手を動かして調査・修復する（指揮に専念）
+- 一人で判断を抱え込む
+- 声の大きい人の意見に流される
+- 犯人探しを始める</code></pre>
+
+  <h2>War Roomの運営</h2>
+
+  <p>
+    <strong>War Room</strong>とは、重大インシデント発生時に関係者が集まる場所（物理的な会議室またはオンライン通話）です。
+  </p>
+
+  <table>
+    <tr>
+      <th>項目</th>
+      <th>内容</th>
+    </tr>
+    <tr>
+      <td><strong>参加者</strong></td>
+      <td>IC、各リード、必要なSME（必要最小限のメンバー）</td>
+    </tr>
+    <tr>
+      <td><strong>コミュニケーション</strong></td>
+      <td>専用のSlackチャンネルまたはビデオ通話</td>
+    </tr>
+    <tr>
+      <td><strong>更新頻度</strong></td>
+      <td>重大インシデントは15分ごとにステータス更新</td>
+    </tr>
+    <tr>
+      <td><strong>終了条件</strong></td>
+      <td>ICが「インシデント終了」を宣言するまで継続</td>
+    </tr>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      インシデント指揮の失敗パターン
+    </div>
+    <ul>
+      <li>インシデントコマンダーが自ら技術調査を始めてしまい、指揮がおろそかになる</li>
+      <li>全員がWar Roomに集まり、実際に手を動かす人がいなくなる</li>
+      <li>情報共有が口頭のみで、後から何が起きたか分からなくなる</li>
+      <li>エスカレーション基準が曖昧で、判断が遅れる</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      指揮系統のアンチパターン
+    </div>
+    <ul>
+      <li>「一番声が大きい人」がなし崩し的にICになる</li>
+      <li>経営層がWar Roomに入って技術的な指示を出す</li>
+      <li>誰がICか分からない状態で対応が始まる</li>
+      <li>ICが交代なしで何時間も対応を続ける</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-sre5">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>インシデントコマンダー（IC）の最も重要な役割はどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre5" style="display:none;">
+      障害の根本原因を自ら調査して特定する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre5" style="display:none;">
+      ユーザーへの謝罪文を作成する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sre5" style="display:none;">
+      全体を指揮し、各担当者に役割を割り振り、判断を行う
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sre5')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sre5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- sre6: Post-mortem -->
+<section id="sre6">
+  <h1>Post-mortem</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ブレームレス（非難しない）ポストモーテムの重要性</li>
+      <li>根本原因分析（RCA）と5 Whysの手法</li>
+      <li>効果的なポストモーテムドキュメントの書き方</li>
+    </ul>
+  </div>
+
+  <h2>Post-mortemとは</h2>
+
+  <p>
+    <strong>Post-mortem（ポストモーテム）</strong>とは、インシデント発生後に行う振り返りのことです。
+    「なぜ起きたのか」「どうすれば防げたか」「何を学んだか」を整理し、<strong>同じ障害を二度と起こさない</strong>ための仕組みです。
+  </p>
+
+  <p>
+    最も重要なのは<strong>ブレームレス（Blameless）</strong>であること。
+    「誰が悪いか」ではなく「仕組みのどこに問題があったか」にフォーカスします。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：航空事故調査
+    </div>
+    <p>
+      航空業界では事故が起きると、パイロットを処罰するのではなく、<strong>なぜ事故が起きたかを徹底的に調査</strong>します。<br>
+      「パイロットがボタンを押し間違えた」で終わらず、「なぜ押し間違えやすいデザインだったのか」「訓練は十分だったか」「疲労管理は適切だったか」まで掘り下げます。<br>
+      この文化があるからこそ、航空業界は極めて高い安全性を実現しています。
+    </p>
+  </div>
+
+  <h2>ブレームレス文化の本質</h2>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">ブレームレスな対応</div>
+      <ul>
+        <li>「なぜこの変更がレビューで見逃されたのか？」</li>
+        <li>「テストカバレッジが不足していた部分はどこか？」</li>
+        <li>「アラートが遅れた原因は監視設定のどこにあるか？」</li>
+        <li>「同様の事故を仕組みで防ぐには何が必要か？」</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">ブレームフルな対応（NG）</div>
+      <ul>
+        <li>「誰がこのコードを書いた？」</li>
+        <li>「なぜ確認しなかったのか？」</li>
+        <li>「もっと注意すべきだった」</li>
+        <li>「二度とこんなミスをしないように」</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>5 Whys（なぜなぜ分析）</h2>
+
+  <p>
+    根本原因を掘り下げるために、<strong>「なぜ？」を5回繰り返す</strong>手法です。
+    表面的な原因ではなく、構造的・仕組みの問題にたどり着くことが目的です。
+  </p>
+
+  <pre><code># 5 Whys 分析例：本番DBのデータが消えた
+
+Why 1: なぜデータが消えた？
+→ 開発者がDELETE文を本番DBで実行した
+
+Why 2: なぜ本番DBで実行できた？
+→ 開発者が本番DBの接続情報を持っていた
+
+Why 3: なぜ開発者が本番の接続情報を持っていた？
+→ アクセス権限の分離ができていなかった
+
+Why 4: なぜ権限分離ができていなかった？
+→ 環境分離のポリシーが未整備だった
+
+Why 5: なぜポリシーが未整備だった？
+→ 初期開発のまま運用が成長し、ガバナンスが追いつかなかった
+
+## 根本原因
+環境分離とアクセス制御のポリシーが未整備
+
+## 対策
+1. 本番DB接続をBastion経由の承認制に変更
+2. 開発・ステージング・本番の接続情報を完全分離
+3. 破壊的SQLの実行にダブルチェック機構を導入</code></pre>
+
+  <h2>Post-mortemドキュメントテンプレート</h2>
+
+  <pre><code># Post-mortem: [インシデントタイトル]
+日時: 2024-XX-XX
+重要度: Sev1 / Sev2 / Sev3
+影響: ユーザーXX万人、約XX分間
+
+## サマリー
+1〜2文でインシデントの概要を記述
+
+## 影響範囲
+- 影響を受けたサービス/ユーザー
+- ビジネスへの影響（売上損失等）
+
+## タイムライン
+| 時刻 | イベント |
+|------|----------|
+| 14:00 | デプロイ実行 |
+| 14:05 | エラーレート上昇のアラート発火 |
+| 14:10 | インシデント宣言、IC任命 |
+| 14:25 | ロールバック実行 |
+| 14:30 | サービス復旧確認 |
+
+## 根本原因
+何が原因で障害が発生したか
+
+## 5 Whys
+（上記の形式で記述）
+
+## 対策（Action Items）
+| 優先度 | 対策 | 担当 | 期限 |
+|--------|------|------|------|
+| P0 | 即座に対応 | @xxx | 今週中 |
+| P1 | 次スプリント | @yyy | 2週間以内 |
+| P2 | バックログ | @zzz | 1ヶ月以内 |
+
+## 学び
+チームとして何を学んだか</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      Post-mortemの形骸化
+    </div>
+    <ul>
+      <li>Post-mortemを書くが、Action Itemsが実行されない</li>
+      <li>「次から気をつける」という精神論だけの対策になる</li>
+      <li>過去のPost-mortemが検索できず、同じ失敗を繰り返す</li>
+      <li>Post-mortem会議がただの報告会になり、議論がない</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      Post-mortemでやってはいけないこと
+    </div>
+    <ul>
+      <li>特定の個人を名指しで非難する</li>
+      <li>「ヒューマンエラー」を根本原因にする（その先を掘り下げていない証拠）</li>
+      <li>対策を「注意する」「気をつける」にする（仕組みで防げていない）</li>
+      <li>Post-mortemを上司への報告書として使い、学びの場にしない</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-sre6">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ブレームレスPost-mortemの根本原因として最も適切なのはどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre6" style="display:none;">
+      エンジニアAが確認を怠ったため
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre6" style="display:none;">
+      ヒューマンエラーにより誤操作が発生した
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sre6" style="display:none;">
+      本番環境へのアクセス制御と変更プロセスの仕組みが不十分だった
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sre6')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sre6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- sre7: On-call運用 -->
+<section id="sre7">
+  <h1>On-call運用</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>On-callローテーションの設計と運用</li>
+      <li>エスカレーションパスの設計方法</li>
+      <li>On-callエンジニアの燃え尽き防止策</li>
+    </ul>
+  </div>
+
+  <h2>On-callとは</h2>
+
+  <p>
+    <strong>On-call</strong>とは、サービスに障害が発生した際に、勤務時間外でも対応できるエンジニアを常に確保する仕組みです。
+    24時間365日稼働するサービスでは不可欠な体制です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：病院の当直医
+    </div>
+    <p>
+      病院では夜間でも患者を受け入れるために、当直医がいます。<br>
+      当直医は全ての病気を治すのではなく、<strong>緊急対応（応急処置）</strong>を行い、翌日の専門医に引き継ぎます。<br>
+      同様に、On-callエンジニアは<strong>サービスの復旧（応急処置）</strong>を行い、根本対応は翌営業日のチームに引き継ぎます。
+    </p>
+  </div>
+
+  <h2>ローテーション設計</h2>
+
+  <table>
+    <tr>
+      <th>項目</th>
+      <th>推奨値</th>
+      <th>理由</th>
+    </tr>
+    <tr>
+      <td><strong>シフト期間</strong></td>
+      <td>1週間交代</td>
+      <td>2週間以上は燃え尽きリスクが高い</td>
+    </tr>
+    <tr>
+      <td><strong>最小チーム人数</strong></td>
+      <td>最低6人</td>
+      <td>6人で6週に1回の担当。これ以下は過負荷</td>
+    </tr>
+    <tr>
+      <td><strong>プライマリ/セカンダリ</strong></td>
+      <td>2名体制</td>
+      <td>プライマリが対応不能時のバックアップ</td>
+    </tr>
+    <tr>
+      <td><strong>応答時間SLO</strong></td>
+      <td>5〜15分</td>
+      <td>アラート受信からアクション開始まで</td>
+    </tr>
+    <tr>
+      <td><strong>引き継ぎ</strong></td>
+      <td>週明けの朝</td>
+      <td>対面/オンラインで未解決事項を共有</td>
+    </tr>
+  </table>
+
+  <h2>エスカレーションパス</h2>
+
+  <pre><code># エスカレーションパス例
+
+Level 1: On-callプライマリ（5分以内に応答）
+  ↓ 対応不能 or 15分経過
+Level 2: On-callセカンダリ（5分以内に応答）
+  ↓ 対応不能 or 重大インシデント判定
+Level 3: チームリード/テックリード（判断・追加リソース投入）
+  ↓ Sev1判定
+Level 4: エンジニアリングマネージャー（組織横断の対応）
+  ↓ ビジネスクリティカル
+Level 5: VP/CTO（経営判断が必要な場合）
+
+## エスカレーション基準
+- Sev1: 全ユーザー影響 → 即座にLevel 3以上
+- Sev2: 一部ユーザー影響 → 30分で解決しない場合Level 3
+- Sev3: 軽微な影響 → 翌営業日対応でもOK</code></pre>
+
+  <h2>燃え尽き防止策</h2>
+
+  <table>
+    <tr>
+      <th>対策</th>
+      <th>内容</th>
+    </tr>
+    <tr>
+      <td><strong>代休の保証</strong></td>
+      <td>深夜対応があった場合は翌日休暇を取得可能</td>
+    </tr>
+    <tr>
+      <td><strong>On-call手当</strong></td>
+      <td>On-call担当期間中の追加手当を支給</td>
+    </tr>
+    <tr>
+      <td><strong>ノイズアラートの削減</strong></td>
+      <td>対応不要なアラートを継続的に減らす</td>
+    </tr>
+    <tr>
+      <td><strong>ランブック整備</strong></td>
+      <td>対応手順を文書化し、誰でも対応可能にする</td>
+    </tr>
+    <tr>
+      <td><strong>振り返り</strong></td>
+      <td>On-call中のアラート数・深夜対応数をトラッキング</td>
+    </tr>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      On-callの危険信号
+    </div>
+    <ul>
+      <li>On-call中に毎晩アラートで起こされる → アラート設計を見直す</li>
+      <li>対応不要な（ノイジーな）アラートが多すぎる → アラート疲れの原因</li>
+      <li>特定の人だけがOn-callを担当している → チーム全体で分担する</li>
+      <li>ランブックがなく、属人的な知識が必要 → 手順書を整備する</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      On-callアンチパターン
+    </div>
+    <ul>
+      <li>On-callを「新人の修行」として押し付ける</li>
+      <li>深夜対応後も通常勤務を強要する</li>
+      <li>アラート疲れを「根性論」で乗り越えさせる</li>
+      <li>On-callの負荷を測定・可視化しない</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-sre7">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>On-callの燃え尽き防止として最も効果的なのはどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre7" style="display:none;">
+      On-call手当を増やして、モチベーションを維持する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sre7" style="display:none;">
+      ノイズアラートを削減し、対応不要な深夜呼び出しを減らす
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre7" style="display:none;">
+      経験豊富なエンジニアだけにOn-callを任せる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sre7')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sre7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- sre8: 障害レベル分類 -->
+<section id="sre8">
+  <h1>障害レベル分類</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Severity（重要度）レベルの定義と分類基準</li>
+      <li>各レベルに応じた対応SLAとエスカレーション基準</li>
+      <li>正確なSeverity判定のためのフレームワーク</li>
+    </ul>
+  </div>
+
+  <h2>なぜ障害レベル分類が必要か</h2>
+
+  <p>
+    全ての障害に同じ対応をしていては、リソースが足りません。
+    <strong>影響度に応じて対応のレベルを変える</strong>ことで、効率的かつ適切な障害対応が可能になります。
+    「障害レベル＝どれだけ真剣に対応するか」の基準です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：病院のトリアージ
+    </div>
+    <p>
+      救急外来では、患者の重症度によって優先順位をつけます。<br>
+      心臓が止まっている人（Sev1）と、指を切った人（Sev4）では対応が全く違います。<br>
+      ITシステムも同じ。<strong>全面ダウンとUI崩れでは、対応の緊急度が全く異なります</strong>。
+    </p>
+  </div>
+
+  <h2>Severityレベル定義</h2>
+
+  <table>
+    <tr>
+      <th>レベル</th>
+      <th>名称</th>
+      <th>定義</th>
+      <th>例</th>
+    </tr>
+    <tr>
+      <td><strong>Sev1</strong></td>
+      <td>Critical</td>
+      <td>サービス全体のダウン、データ損失</td>
+      <td>全ユーザーがログインできない、決済不能</td>
+    </tr>
+    <tr>
+      <td><strong>Sev2</strong></td>
+      <td>Major</td>
+      <td>主要機能の障害、多数ユーザーに影響</td>
+      <td>検索機能が動かない、特定地域でアクセス不能</td>
+    </tr>
+    <tr>
+      <td><strong>Sev3</strong></td>
+      <td>Minor</td>
+      <td>一部機能の障害、限定的な影響</td>
+      <td>レポート出力が遅い、画像が表示されない</td>
+    </tr>
+    <tr>
+      <td><strong>Sev4</strong></td>
+      <td>Low</td>
+      <td>軽微な問題、ユーザー影響なし</td>
+      <td>管理画面のUI崩れ、ログの警告メッセージ</td>
+    </tr>
+  </table>
+
+  <h2>各レベルの対応SLA</h2>
+
+  <table>
+    <tr>
+      <th>レベル</th>
+      <th>初動開始</th>
+      <th>ステータス更新</th>
+      <th>目標復旧時間</th>
+      <th>Post-mortem</th>
+    </tr>
+    <tr>
+      <td><strong>Sev1</strong></td>
+      <td>5分以内</td>
+      <td>15分ごと</td>
+      <td>1時間以内</td>
+      <td>必須（48時間以内）</td>
+    </tr>
+    <tr>
+      <td><strong>Sev2</strong></td>
+      <td>15分以内</td>
+      <td>30分ごと</td>
+      <td>4時間以内</td>
+      <td>必須（1週間以内）</td>
+    </tr>
+    <tr>
+      <td><strong>Sev3</strong></td>
+      <td>1時間以内</td>
+      <td>1日ごと</td>
+      <td>翌営業日</td>
+      <td>推奨</td>
+    </tr>
+    <tr>
+      <td><strong>Sev4</strong></td>
+      <td>翌営業日</td>
+      <td>完了時</td>
+      <td>次スプリント</td>
+      <td>不要</td>
+    </tr>
+  </table>
+
+  <h2>Severity判定フレームワーク</h2>
+
+  <pre><code># Severity判定フローチャート
+
+1. ユーザーへの影響は？
+   ├── 全ユーザー影響 → Sev1候補
+   ├── 多数ユーザー影響 → Sev2候補
+   ├── 一部ユーザー影響 → Sev3候補
+   └── ユーザー影響なし → Sev4候補
+
+2. ビジネスへの影響は？
+   ├── 売上/収益に直結 → 1レベル上げる
+   ├── ブランド/信頼に影響 → 1レベル上げる
+   └── 影響軽微 → そのまま
+
+3. データへの影響は？
+   ├── データ損失あり → Sev1
+   ├── データ不整合あり → 最低Sev2
+   └── データ影響なし → そのまま
+
+4. 代替手段は？
+   ├── なし → 1レベル上げる
+   └── あり → そのまま
+
+最終判定: 上記を総合してSeverityを決定
+迷ったら1つ上のレベルを選択する</code></pre>
+
+  <h2>エスカレーション基準</h2>
+
+  <table>
+    <tr>
+      <th>レベル</th>
+      <th>通知先</th>
+      <th>エスカレーション条件</th>
+    </tr>
+    <tr>
+      <td><strong>Sev1</strong></td>
+      <td>On-call全員、マネージャー、VP</td>
+      <td>発生と同時に全レベルにエスカレーション</td>
+    </tr>
+    <tr>
+      <td><strong>Sev2</strong></td>
+      <td>On-call、チームリード</td>
+      <td>30分で解決しない場合マネージャーへ</td>
+    </tr>
+    <tr>
+      <td><strong>Sev3</strong></td>
+      <td>On-call</td>
+      <td>翌営業日までに解決しない場合チームリードへ</td>
+    </tr>
+    <tr>
+      <td><strong>Sev4</strong></td>
+      <td>チームチャンネル</td>
+      <td>通常のバグとして処理</td>
+    </tr>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      Severity判定の注意点
+    </div>
+    <ul>
+      <li>迷ったら高いレベルを選ぶ（過小評価は過大評価より危険）</li>
+      <li>対応中にSeverityが変わることがある（状況に応じて再判定する）</li>
+      <li>「いつも全部Sev1」にしない（オオカミ少年になる）</li>
+      <li>Sev1判定を恐れて低く見積もらない</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      障害レベル分類のアンチパターン
+    </div>
+    <ul>
+      <li>Severityの定義が曖昧で、判定者によってバラバラになる</li>
+      <li>政治的な理由でSeverityを操作する（Sev1を避けたい等）</li>
+      <li>Sev1なのにエスカレーションせず、一人で対応しようとする</li>
+      <li>Severity定義を作ったが、誰も知らない・覚えていない</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-sre8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>障害のSeverity判定で迷った場合、最も適切な行動はどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre8" style="display:none;">
+      影響が確定するまで待ってから判定する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sre8" style="display:none;">
+      迷ったら1つ上のレベルを選択し、後から必要に応じて下げる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre8" style="display:none;">
+      低めに判定して、悪化したらレベルを上げる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sre8')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sre8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- sre9: DR/BCP -->
+<section id="sre9">
+  <h1>DR/BCP</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>災害復旧計画（DR）と事業継続計画（BCP）の違い</li>
+      <li>RPO（目標復旧時点）とRTO（目標復旧時間）の設計</li>
+      <li>DR/BCPの策定と訓練の実践方法</li>
+    </ul>
+  </div>
+
+  <h2>DR/BCPとは</h2>
+
+  <p>
+    <strong>DR（Disaster Recovery：災害復旧）</strong>は、災害時にITシステムを復旧するための計画です。
+    <strong>BCP（Business Continuity Plan：事業継続計画）</strong>は、災害時にも事業を継続するための包括的な計画です。
+    DRはBCPの一部であり、IT面に特化しています。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：家の防災計画
+    </div>
+    <p>
+      <strong>DR</strong> = 「家が地震で壊れた時に、どこに避難してどう生活を再建するか」<br>
+      <strong>BCP</strong> = 「地震で家が壊れても、仕事を続けて収入を維持する計画」<br>
+      <strong>RPO</strong> = 「家族のアルバムをどこまで遡って保存しているか（バックアップの頻度）」<br>
+      <strong>RTO</strong> = 「避難してから通常の生活に戻るまでの目標時間」
+    </p>
+  </div>
+
+  <h2>RPOとRTO</h2>
+
+  <table>
+    <tr>
+      <th>指標</th>
+      <th>正式名称</th>
+      <th>意味</th>
+      <th>例</th>
+    </tr>
+    <tr>
+      <td><strong>RPO</strong></td>
+      <td>Recovery Point Objective</td>
+      <td>「どの時点まで」のデータを復旧するか</td>
+      <td>RPO=1時間 → 最大1時間分のデータ損失を許容</td>
+    </tr>
+    <tr>
+      <td><strong>RTO</strong></td>
+      <td>Recovery Time Objective</td>
+      <td>「どのくらいの時間で」復旧するか</td>
+      <td>RTO=4時間 → 4時間以内にサービス復旧</td>
+    </tr>
+  </table>
+
+  <h2>DRの戦略パターン</h2>
+
+  <table>
+    <tr>
+      <th>戦略</th>
+      <th>RTO</th>
+      <th>コスト</th>
+      <th>説明</th>
+    </tr>
+    <tr>
+      <td><strong>バックアップ&リストア</strong></td>
+      <td>数時間〜数日</td>
+      <td>低</td>
+      <td>バックアップからデータを復元する</td>
+    </tr>
+    <tr>
+      <td><strong>パイロットライト</strong></td>
+      <td>数十分〜数時間</td>
+      <td>中低</td>
+      <td>最小構成のシステムを常時稼働</td>
+    </tr>
+    <tr>
+      <td><strong>ウォームスタンバイ</strong></td>
+      <td>数分〜数十分</td>
+      <td>中高</td>
+      <td>縮小版のシステムを別リージョンで稼働</td>
+    </tr>
+    <tr>
+      <td><strong>マルチサイトアクティブ</strong></td>
+      <td>ほぼゼロ</td>
+      <td>高</td>
+      <td>複数リージョンで同時に稼働（Active-Active）</td>
+    </tr>
+  </table>
+
+  <h2>DR/BCP計画テンプレート</h2>
+
+  <pre><code># DR/BCP計画書
+
+## 1. 基本情報
+対象システム: ユーザー向けWebアプリケーション
+RPO: 1時間
+RTO: 4時間
+DR戦略: ウォームスタンバイ
+
+## 2. 前提条件
+- プライマリ: ap-northeast-1（東京）
+- セカンダリ: ap-northeast-3（大阪）
+- データベース: クロスリージョンレプリカ設定済み
+
+## 3. 発動条件
+- プライマリリージョン全体の障害
+- データセンター火災/自然災害
+- 長時間（2時間以上）の復旧見込みなし
+
+## 4. 復旧手順
+Step 1: DR発動の判断（CTO承認）
+Step 2: DNSフェイルオーバー実行
+Step 3: セカンダリリージョンのスケールアップ
+Step 4: データ整合性の確認
+Step 5: サービス復旧確認
+
+## 5. 連絡体制
+- 一次連絡: インシデントコマンダー → SREチーム
+- 二次連絡: SREチーム → 開発チーム・CS
+- 三次連絡: 経営層 → 広報・顧客
+
+## 6. 訓練計画
+- 机上訓練: 四半期に1回
+- 実地訓練: 半年に1回（実際にフェイルオーバー実行）</code></pre>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">効果的なDR/BCP</div>
+      <ul>
+        <li>定期的にDR訓練を実施し、手順を検証済み</li>
+        <li>RPO/RTOが実際に達成可能な値に設定されている</li>
+        <li>バックアップからの復旧を定期的にテスト済み</li>
+        <li>DR計画が最新の状態に保たれている</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">形骸化したDR/BCP</div>
+      <ul>
+        <li>計画書を作ったが、一度も訓練していない</li>
+        <li>RPO/RTOが根拠なく設定され、達成不可能</li>
+        <li>バックアップは取っているが、復元テストをしていない</li>
+        <li>2年前に作った計画書がそのまま放置されている</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      バックアップの落とし穴
+    </div>
+    <ul>
+      <li>バックアップを取っていたが、復元できなかった（復元テスト未実施）</li>
+      <li>バックアップの暗号化キーが失われた</li>
+      <li>バックアップ先が本番と同じリージョンにあり、同時に被災した</li>
+      <li>バックアップの頻度が不十分で、RPOを満たせなかった</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      DR/BCPのアンチパターン
+    </div>
+    <ul>
+      <li>「うちには災害なんて来ない」と計画を立てない</li>
+      <li>計画は立てたが訓練をしない（いざという時に動けない）</li>
+      <li>DR環境のメンテナンスを怠り、本番との差異が広がる</li>
+      <li>RPO/RTOを「ゼロ」に設定し、コストが青天井になる</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-sre9">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>RPO（Recovery Point Objective）が1時間とは、どういう意味ですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre9" style="display:none;">
+      災害発生から1時間以内にサービスを復旧する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sre9" style="display:none;">
+      最大1時間分のデータ損失を許容する（1時間前の状態まで復旧）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre9" style="display:none;">
+      1時間ごとにDR訓練を実施する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sre9')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sre9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- sre10: カオスエンジニアリング -->
+<section id="sre10">
+  <h1>カオスエンジニアリング</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>カオスエンジニアリングの概念と目的</li>
+      <li>Chaos Monkey・Game Dayなどの実践手法</li>
+      <li>安全に障害注入テストを行うための原則</li>
+    </ul>
+  </div>
+
+  <h2>カオスエンジニアリングとは</h2>
+
+  <p>
+    <strong>カオスエンジニアリング</strong>とは、<strong>本番環境で意図的に障害を起こし、システムの耐障害性を検証する</strong>手法です。
+    Netflixが2010年にChaos Monkeyを開発したことで広く知られるようになりました。
+  </p>
+
+  <p>
+    「障害は必ず起きる」という前提に立ち、<strong>予期せぬ障害が起きる前に、計画的に障害を起こして弱点を見つける</strong>というアプローチです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：避難訓練
+    </div>
+    <p>
+      学校で行う避難訓練は「実際に地震が起きたとき、パニックにならずに避難できるか」を確認するためのものです。<br>
+      カオスエンジニアリングも同じ。<strong>「実際に障害が起きたとき、システムは正しく動くか」を事前に確認</strong>します。<br>
+      避難訓練で「非常口が開かない」と分かれば、本番前に修理できます。
+    </p>
+  </div>
+
+  <h2>カオスエンジニアリングの原則</h2>
+
+  <table>
+    <tr>
+      <th>原則</th>
+      <th>内容</th>
+    </tr>
+    <tr>
+      <td><strong>仮説を立てる</strong></td>
+      <td>「サーバー1台が落ちても、ユーザーには影響しないはず」等</td>
+    </tr>
+    <tr>
+      <td><strong>本番環境で実験する</strong></td>
+      <td>ステージング環境だけでは本当の耐障害性は分からない</td>
+    </tr>
+    <tr>
+      <td><strong>影響範囲を限定する</strong></td>
+      <td>いきなり全体に影響する実験はしない（ブラストラディウスを制御）</td>
+    </tr>
+    <tr>
+      <td><strong>自動化する</strong></td>
+      <td>定期的に実行し、継続的に耐障害性を検証する</td>
+    </tr>
+    <tr>
+      <td><strong>すぐに止められるようにする</strong></td>
+      <td>実験が予想外の結果を生んだら即座に中断</td>
+    </tr>
+  </table>
+
+  <h2>代表的なカオスエンジニアリングツール</h2>
+
+  <table>
+    <tr>
+      <th>ツール/手法</th>
+      <th>開発元</th>
+      <th>内容</th>
+    </tr>
+    <tr>
+      <td><strong>Chaos Monkey</strong></td>
+      <td>Netflix</td>
+      <td>ランダムにサーバーインスタンスを停止</td>
+    </tr>
+    <tr>
+      <td><strong>Chaos Kong</strong></td>
+      <td>Netflix</td>
+      <td>リージョン全体を無効化</td>
+    </tr>
+    <tr>
+      <td><strong>Litmus</strong></td>
+      <td>CNCF</td>
+      <td>Kubernetes環境向けのカオス実験フレームワーク</td>
+    </tr>
+    <tr>
+      <td><strong>Gremlin</strong></td>
+      <td>Gremlin Inc.</td>
+      <td>商用カオスエンジニアリングプラットフォーム</td>
+    </tr>
+    <tr>
+      <td><strong>AWS Fault Injection Simulator</strong></td>
+      <td>AWS</td>
+      <td>AWS環境での障害注入サービス</td>
+    </tr>
+  </table>
+
+  <h2>Game Day（障害訓練）</h2>
+
+  <p>
+    <strong>Game Day</strong>は、チーム全体で障害シナリオを実行し、対応力を検証する訓練です。
+    避難訓練のIT版であり、定期的に実施することが重要です。
+  </p>
+
+  <pre><code># Game Day 実施テンプレート
+
+## 基本情報
+実施日: 2024-XX-XX
+参加者: SREチーム、バックエンドチーム
+シナリオ: データベースのプライマリがダウンした場合
+
+## 準備
+1. 仮説を立てる
+   - 「フェイルオーバーが自動で完了し、30秒以内に復旧するはず」
+2. ロールバック手順を確認
+   - 実験が失敗した場合の復旧手順を用意
+3. 影響範囲を限定
+   - カナリア環境のみで実施 or トラフィックの5%で実施
+4. 監視体制を強化
+   - 追加のダッシュボード、リアルタイム監視の準備
+
+## 実施
+1. 障害注入の実行
+2. システムの挙動を観察
+3. 仮説との差異を記録
+4. 問題があれば即座に中止
+
+## 振り返り
+- 仮説は正しかったか？
+- 予想外の挙動はあったか？
+- 改善すべき点は何か？
+- 次回のGame Dayテーマは？</code></pre>
+
+  <h2>段階的な導入ステップ</h2>
+
+  <table>
+    <tr>
+      <th>段階</th>
+      <th>内容</th>
+      <th>リスク</th>
+    </tr>
+    <tr>
+      <td><strong>Level 1</strong></td>
+      <td>開発環境で障害注入テスト</td>
+      <td>リスクなし</td>
+    </tr>
+    <tr>
+      <td><strong>Level 2</strong></td>
+      <td>ステージング環境でGame Day</td>
+      <td>低リスク</td>
+    </tr>
+    <tr>
+      <td><strong>Level 3</strong></td>
+      <td>本番の一部トラフィックで実験</td>
+      <td>中リスク（制御下）</td>
+    </tr>
+    <tr>
+      <td><strong>Level 4</strong></td>
+      <td>本番で自動的にChaos実験を実行</td>
+      <td>中〜高リスク（成熟したチーム向け）</td>
+    </tr>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      カオスエンジニアリングの前提条件
+    </div>
+    <ul>
+      <li>十分な監視・可観測性が整っていること（何が起きたか把握できる）</li>
+      <li>障害を即座に止められる仕組みがあること（キルスイッチ）</li>
+      <li>チームがインシデント対応に慣れていること（基本ができていないのに応用は危険）</li>
+      <li>経営層やステークホルダーの理解と承認があること</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      カオスエンジニアリングのアンチパターン
+    </div>
+    <ul>
+      <li>監視体制が不十分なのに本番で障害注入する</li>
+      <li>仮説なしに「とりあえずサーバーを落としてみる」</li>
+      <li>影響範囲を制御せず、全ユーザーに影響を与える</li>
+      <li>Game Dayの結果を放置し、発見した弱点を修正しない</li>
+      <li>「カオスエンジニアリングやってます」とアピールするが、実態は雑な障害テスト</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-sre10">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>カオスエンジニアリングを安全に実施するために最も重要なのはどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre10" style="display:none;">
+      できるだけ大規模な障害を注入して、本当の耐障害性を確認する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-sre10" style="display:none;">
+      本番環境でのみ実施し、ステージングでは意味がない
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-sre10" style="display:none;">
+      仮説を立て、影響範囲を限定し、即座に止められる状態で実験する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-sre10')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('sre10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

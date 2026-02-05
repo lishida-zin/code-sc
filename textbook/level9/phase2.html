@@ -1,0 +1,1697 @@
+<!-- ============================================
+     Level 9 Phase 2: Git運用とコードレビュー
+     gitrev1-gitrev10
+     ============================================ -->
+
+<section id="gitrev1">
+  <h1>ブランチ戦略</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Git Flow / GitHub Flow / Trunk-based Development の違い</li>
+      <li>プロジェクト規模に応じたブランチ戦略の選び方</li>
+      <li>各戦略のメリット・デメリット</li>
+    </ul>
+  </div>
+
+  <h2>なぜブランチ戦略が必要か</h2>
+
+  <p>
+    チーム開発では、複数人が同時にコードを変更します。
+    <strong>ブランチ戦略</strong>は「誰が・いつ・どこで変更を加え・どうやって統合するか」のルールを定めることで、混乱を防ぎます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：交通ルール
+    </div>
+    <p>
+      ブランチ戦略は道路の交通ルールに似ています。ルールがなければ車（開発者）は好き勝手に走り、衝突（コンフリクト）が頻発します。
+      交通ルール（ブランチ戦略）を決めることで、全員が安全に目的地（リリース）に到達できます。
+    </p>
+  </div>
+
+  <h2>Git Flow</h2>
+
+  <p>
+    <strong>Git Flow</strong>は、Vincent Driessen が提唱した古典的なブランチモデルです。
+    <code>main</code>、<code>develop</code>、<code>feature</code>、<code>release</code>、<code>hotfix</code> の5種類のブランチを使います。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>ブランチ</th>
+        <th>役割</th>
+        <th>寿命</th>
+      </tr>
+      <tr>
+        <td><code>main</code></td>
+        <td>本番リリース済みコード</td>
+        <td>永続</td>
+      </tr>
+      <tr>
+        <td><code>develop</code></td>
+        <td>次回リリースの開発統合</td>
+        <td>永続</td>
+      </tr>
+      <tr>
+        <td><code>feature/*</code></td>
+        <td>個別機能の開発</td>
+        <td>一時的</td>
+      </tr>
+      <tr>
+        <td><code>release/*</code></td>
+        <td>リリース準備（QA・バグ修正）</td>
+        <td>一時的</td>
+      </tr>
+      <tr>
+        <td><code>hotfix/*</code></td>
+        <td>本番の緊急修正</td>
+        <td>一時的</td>
+      </tr>
+    </table>
+  </div>
+
+<pre><code># Git Flow の基本操作
+git checkout develop
+git checkout -b feature/user-auth
+
+# 開発完了後
+git checkout develop
+git merge --no-ff feature/user-auth
+git branch -d feature/user-auth
+
+# リリース準備
+git checkout -b release/1.2.0 develop
+# QA・修正後
+git checkout main
+git merge --no-ff release/1.2.0
+git tag -a v1.2.0 -m "Release 1.2.0"
+git checkout develop
+git merge --no-ff release/1.2.0</code></pre>
+
+  <h2>GitHub Flow</h2>
+
+  <p>
+    <strong>GitHub Flow</strong>はシンプルさを重視した戦略です。
+    <code>main</code> ブランチと短命な <code>feature</code> ブランチだけで運用します。
+  </p>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      GitHub Flow のルール
+    </div>
+    <ol>
+      <li><code>main</code> は常にデプロイ可能な状態を保つ</li>
+      <li>作業は <code>main</code> から分岐したブランチで行う</li>
+      <li>こまめにプッシュしてPRを作成する</li>
+      <li>レビュー・承認後に <code>main</code> へマージ</li>
+      <li>マージ後すぐにデプロイ</li>
+    </ol>
+  </div>
+
+<pre><code># GitHub Flow の基本操作
+git checkout main
+git pull origin main
+git checkout -b feature/add-search
+
+# 開発＆プッシュ
+git add .
+git commit -m "feat: 検索機能を追加"
+git push -u origin feature/add-search
+
+# GitHub上でPR作成 → レビュー → マージ → デプロイ</code></pre>
+
+  <h2>Trunk-based Development</h2>
+
+  <p>
+    <strong>Trunk-based Development</strong>は、全員が <code>main</code>（trunk）に直接・または極めて短命なブランチで統合する戦略です。
+    CI/CDが成熟したチームで採用されます。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>特徴</th>
+        <th>Git Flow</th>
+        <th>GitHub Flow</th>
+        <th>Trunk-based</th>
+      </tr>
+      <tr>
+        <td>ブランチ数</td>
+        <td>多い（5種類）</td>
+        <td>少ない（2種類）</td>
+        <td>最小（1〜2種類）</td>
+      </tr>
+      <tr>
+        <td>マージ頻度</td>
+        <td>低い</td>
+        <td>中程度</td>
+        <td>高い（1日複数回）</td>
+      </tr>
+      <tr>
+        <td>リリースサイクル</td>
+        <td>計画的リリース</td>
+        <td>継続的デプロイ</td>
+        <td>継続的デプロイ</td>
+      </tr>
+      <tr>
+        <td>向いている規模</td>
+        <td>大規模・計画的</td>
+        <td>中小規模・Web</td>
+        <td>CI/CD成熟チーム</td>
+      </tr>
+      <tr>
+        <td>学習コスト</td>
+        <td>高い</td>
+        <td>低い</td>
+        <td>中程度</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      アンチパターン：戦略なしの開発
+    </div>
+    <p>
+      ブランチ戦略を決めずに開発を始めると、長寿命ブランチが乱立し、マージが困難になります。
+      プロジェクト開始時に必ずチームで合意しましょう。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-gitrev1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>GitHub Flow の特徴として正しいものはどれ？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev1" style="display:none;">
+      <span>develop ブランチとrelease ブランチを使い分ける</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="GitHub Flow は main ブランチと短命な feature ブランチだけのシンプルな戦略で、マージ後すぐにデプロイします。">
+      <input type="radio" name="q-gitrev1" style="display:none;">
+      <span>main ブランチと短命な feature ブランチだけで運用する</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev1" style="display:none;">
+      <span>全員が main に直接コミットする</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('gitrev1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="gitrev2">
+  <h1>PR運用</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>適切なPRサイズの考え方</li>
+      <li>PRテンプレートの活用方法</li>
+      <li>レビュアー選定の基準</li>
+    </ul>
+  </div>
+
+  <h2>PRサイズの重要性</h2>
+
+  <p>
+    PRのサイズはレビューの質に直結します。
+    <strong>小さなPR</strong>はレビューしやすく、バグの発見率が高くなります。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：引っ越しの荷物
+    </div>
+    <p>
+      巨大なPRは、引っ越し時にすべてを1つの段ボールに詰め込むようなもの。重すぎて運べず、中身の確認も困難です。
+      適切なサイズに分けることで、効率的に運び・確認できます。
+    </p>
+  </div>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>PRサイズ</th>
+        <th>変更行数目安</th>
+        <th>レビュー品質</th>
+        <th>マージまでの時間</th>
+      </tr>
+      <tr>
+        <td>XS</td>
+        <td>〜50行</td>
+        <td>非常に高い</td>
+        <td>数時間</td>
+      </tr>
+      <tr>
+        <td>S</td>
+        <td>50〜200行</td>
+        <td>高い</td>
+        <td>半日〜1日</td>
+      </tr>
+      <tr>
+        <td>M</td>
+        <td>200〜400行</td>
+        <td>中程度</td>
+        <td>1〜2日</td>
+      </tr>
+      <tr>
+        <td>L</td>
+        <td>400行〜</td>
+        <td>低下しがち</td>
+        <td>数日以上</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      巨大PRのリスク
+    </div>
+    <ul>
+      <li>レビュアーが疲弊し「LGTM」で通してしまう</li>
+      <li>バグの見落としが増える</li>
+      <li>コンフリクトの発生確率が上がる</li>
+      <li>ロールバックが困難になる</li>
+    </ul>
+  </div>
+
+  <h2>PRテンプレート</h2>
+
+  <p>
+    <strong>PRテンプレート</strong>を用意すると、記載漏れを防ぎ、レビュアーが素早く背景を理解できます。
+  </p>
+
+<pre><code># .github/pull_request_template.md
+
+## 概要
+&lt;!-- この PR で何を変更したか --&gt;
+
+## 変更理由
+&lt;!-- なぜこの変更が必要か（関連Issue: #xxx） --&gt;
+
+## 変更内容
+- [ ] 変更点1
+- [ ] 変更点2
+
+## テスト
+- [ ] 単体テスト追加/更新
+- [ ] 手動テスト実施
+
+## スクリーンショット
+&lt;!-- UI変更がある場合 --&gt;
+
+## レビュー観点
+&lt;!-- 特に見てほしいポイント --&gt;</code></pre>
+
+  <h2>レビュアー選定</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>選定基準</th>
+        <th>理由</th>
+      </tr>
+      <tr>
+        <td>該当コードの知識がある人</td>
+        <td>設計意図や過去の経緯を踏まえたレビューが可能</td>
+      </tr>
+      <tr>
+        <td>該当コードに詳しくない人</td>
+        <td>可読性の観点からレビューでき、知識共有にもなる</td>
+      </tr>
+      <tr>
+        <td>CODEOWNERS の活用</td>
+        <td>自動的に適切なレビュアーをアサインできる</td>
+      </tr>
+    </table>
+  </div>
+
+<pre><code># .github/CODEOWNERS
+# フロントエンドチーム
+/src/components/  @frontend-team
+/src/pages/       @frontend-team
+
+# バックエンドチーム
+/src/api/         @backend-team
+/src/services/    @backend-team
+
+# インフラ
+/infra/           @platform-team
+/.github/         @platform-team</code></pre>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">良いPR運用</div>
+<pre><code># PRタイトルが明確
+feat: ユーザー検索APIを追加
+
+# 小さな単位で分割
+1. feat: 検索用DBインデックス追加
+2. feat: 検索APIエンドポイント実装
+3. feat: 検索UIコンポーネント作成</code></pre>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">悪いPR運用</div>
+<pre><code># 曖昧なタイトル
+fix: いろいろ修正
+
+# 巨大な1つのPR
+feat: 検索機能（API + UI + DB + テスト）
+# → 2000行の変更...</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-gitrev2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>PR運用のベストプラクティスとして最も適切なものはどれ？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev2" style="display:none;">
+      <span>1つのPRにできるだけ多くの変更をまとめて効率化する</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev2" style="display:none;">
+      <span>レビュアーは常に同じ人に固定する</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="PRは小さく分割し、テンプレートで背景を明記し、適切なレビュアーを選定することが品質向上につながります。">
+      <input type="radio" name="q-gitrev2" style="display:none;">
+      <span>PRを小さく保ち、テンプレートで背景を明記する</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('gitrev2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="gitrev3">
+  <h1>コードレビューの目的</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>コードレビューが品質向上に果たす役割</li>
+      <li>知識共有・チーム力向上への貢献</li>
+      <li>設計改善のきっかけとしてのレビュー</li>
+    </ul>
+  </div>
+
+  <h2>コードレビューとは何か</h2>
+
+  <p>
+    <strong>コードレビュー</strong>は、他の開発者が書いたコードを確認し、問題点の指摘や改善提案を行うプロセスです。
+    単なるバグ探しではなく、チーム全体の成長に直結する重要な活動です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：原稿の校正
+    </div>
+    <p>
+      コードレビューは本の校正に似ています。著者（開発者）は自分の文章（コード）の誤りに気づきにくいものです。
+      第三者の目（レビュアー）が入ることで、誤字脱字（バグ）だけでなく、文章の分かりやすさ（可読性）や論理の一貫性（設計）も改善されます。
+    </p>
+  </div>
+
+  <h2>目的1：品質向上</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>品質の側面</th>
+        <th>レビューで検出できること</th>
+      </tr>
+      <tr>
+        <td>正確性</td>
+        <td>ロジックの誤り、エッジケースの見落とし</td>
+      </tr>
+      <tr>
+        <td>安全性</td>
+        <td>セキュリティ脆弱性、権限チェック漏れ</td>
+      </tr>
+      <tr>
+        <td>効率性</td>
+        <td>N+1クエリ、不要なループ</td>
+      </tr>
+      <tr>
+        <td>可読性</td>
+        <td>命名の不統一、複雑すぎるロジック</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>目的2：知識共有</h2>
+
+  <p>
+    レビューを通じて、チームメンバーは担当外の領域のコードに触れる機会を得ます。
+    これにより<strong>バス係数</strong>（特定の人が抜けた時のリスク）が改善されます。
+  </p>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      知識共有の効果
+    </div>
+    <ul>
+      <li>特定の人に依存しない体制が構築される</li>
+      <li>チーム全体のスキルレベルが底上げされる</li>
+      <li>新メンバーのオンボーディングが加速する</li>
+      <li>コーディングスタイルがチーム内で統一される</li>
+    </ul>
+  </div>
+
+  <h2>目的3：設計改善</h2>
+
+  <p>
+    実装前のレビュー（設計レビュー）だけでなく、コードレビューの段階でも設計の問題を発見できます。
+    「この責務は別クラスに分けるべきでは？」「この処理はもっとシンプルにできるのでは？」といった視点がコード品質を高めます。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      アンチパターン：形骸化したレビュー
+    </div>
+    <ul>
+      <li>中身を見ずに「LGTM」を出す</li>
+      <li>スタイルの指摘ばかりで本質的な問題を見ない</li>
+      <li>「忙しいから」とレビューを後回しにし続ける</li>
+      <li>レビューを「承認のための儀式」として扱う</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-gitrev3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>コードレビューの目的として適切でないものはどれ？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev3" style="display:none;">
+      <span>チームメンバーへの知識共有</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="コードレビューは改善のためのプロセスであり、ミスを責めるためのものではありません。心理的安全性を保つことが重要です。">
+      <input type="radio" name="q-gitrev3" style="display:none;">
+      <span>ミスをした開発者を指摘し反省を促すこと</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev3" style="display:none;">
+      <span>設計の改善点を見つけること</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('gitrev3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="gitrev4">
+  <h1>レビュー観点の体系化</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>セキュリティ観点でのレビューポイント</li>
+      <li>パフォーマンス観点でのレビューポイント</li>
+      <li>保守性・可読性の観点でのレビューポイント</li>
+    </ul>
+  </div>
+
+  <h2>なぜ観点を体系化するか</h2>
+
+  <p>
+    レビューの観点を明確にしないと、レビュアーの経験や気分に依存した場当たり的なレビューになります。
+    <strong>チェックリスト化</strong>することで、品質のばらつきを減らせます。
+  </p>
+
+  <h2>セキュリティ観点</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      見逃しやすいセキュリティ問題
+    </div>
+    <ul>
+      <li>SQLインジェクション：ユーザー入力を直接クエリに埋め込んでいないか</li>
+      <li>XSS：ユーザー入力を無害化せずにHTMLに出力していないか</li>
+      <li>認証・認可：適切な権限チェックがあるか</li>
+      <li>機密情報：APIキーやパスワードがハードコードされていないか</li>
+      <li>依存関係：脆弱性のあるライブラリを使っていないか</li>
+    </ul>
+  </div>
+
+<pre><code>// セキュリティ：SQLインジェクションの例
+
+// ❌ 危険：文字列結合でクエリを組み立て
+const query = `SELECT * FROM users WHERE name = '${userInput}'`;
+
+// ✅ 安全：パラメータ化クエリを使用
+const query = 'SELECT * FROM users WHERE name = $1';
+const result = await db.query(query, [userInput]);</code></pre>
+
+  <h2>パフォーマンス観点</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>観点</th>
+        <th>チェック内容</th>
+      </tr>
+      <tr>
+        <td>N+1クエリ</td>
+        <td>ループ内でDBクエリを発行していないか</td>
+      </tr>
+      <tr>
+        <td>不要な再レンダリング</td>
+        <td>React等でメモ化が必要な箇所はないか</td>
+      </tr>
+      <tr>
+        <td>大量データ処理</td>
+        <td>ページネーションやストリーミングを使っているか</td>
+      </tr>
+      <tr>
+        <td>キャッシュ</td>
+        <td>頻繁にアクセスされるデータをキャッシュしているか</td>
+      </tr>
+      <tr>
+        <td>インデックス</td>
+        <td>検索条件のカラムにインデックスがあるか</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>保守性・可読性観点</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>観点</th>
+        <th>チェック内容</th>
+      </tr>
+      <tr>
+        <td>命名</td>
+        <td>変数名・関数名が意図を正確に表しているか</td>
+      </tr>
+      <tr>
+        <td>関数サイズ</td>
+        <td>1つの関数が大きすぎないか（目安：30行以内）</td>
+      </tr>
+      <tr>
+        <td>単一責任</td>
+        <td>クラスや関数が1つのことだけを担当しているか</td>
+      </tr>
+      <tr>
+        <td>コメント</td>
+        <td>「なぜ」を説明するコメントがあるか</td>
+      </tr>
+      <tr>
+        <td>テスト</td>
+        <td>変更に対応するテストが追加・更新されているか</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">体系的なレビュー</div>
+<pre><code>レビューチェックリスト:
+☐ セキュリティ: 入力検証あり
+☐ パフォーマンス: N+1なし
+☐ 可読性: 命名が適切
+☐ テスト: カバレッジ維持
+☐ エラー処理: 例外を適切に処理</code></pre>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">場当たり的なレビュー</div>
+<pre><code>「なんとなくコードを眺めて...」
+「見た感じ問題なさそう...」
+「スタイルが気になるな...」
+→ 重大な問題を見逃すリスク大</code></pre>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-gitrev4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>レビュー観点の体系化について正しいものはどれ？</p>
+    <label class="quiz-option" data-correct="true" data-explanation="チェックリストを用意することで、レビュアーによる品質のばらつきを減らし、重要な観点を漏れなく確認できます。">
+      <input type="radio" name="q-gitrev4" style="display:none;">
+      <span>チェックリストを用意し、セキュリティ・パフォーマンス・保守性などを網羅的に確認する</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev4" style="display:none;">
+      <span>経験豊富なレビュアーなら直感でレビューすれば十分</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev4" style="display:none;">
+      <span>コードスタイルの統一が最も重要なレビュー観点である</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('gitrev4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="gitrev5">
+  <h1>建設的なフィードバック</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>指摘を伝える際のコミュニケーション技法</li>
+      <li>具体性のあるフィードバックの書き方</li>
+      <li>代替案を添えた提案型レビューの実践</li>
+    </ul>
+  </div>
+
+  <h2>建設的なフィードバックとは</h2>
+
+  <p>
+    レビューは<strong>人ではなくコードに対して</strong>行うものです。
+    建設的なフィードバックとは、問題を指摘するだけでなく、なぜ問題なのかを説明し、改善の方向性を示すことです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：料理のアドバイス
+    </div>
+    <p>
+      「まずい」と言われても何を直せばいいか分かりません。
+      「塩が少し足りないので、小さじ1/2追加するとバランスが良くなるかも」と言われれば、具体的に改善できます。
+      コードレビューも同様に、「何が」「なぜ」問題で「どうすれば」良くなるかを伝えましょう。
+    </p>
+  </div>
+
+  <h2>指摘のレベル分け</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>プレフィックス</th>
+        <th>意味</th>
+        <th>対応</th>
+      </tr>
+      <tr>
+        <td><code>[must]</code></td>
+        <td>修正必須（バグ・セキュリティ問題）</td>
+        <td>マージ前に対応が必要</td>
+      </tr>
+      <tr>
+        <td><code>[should]</code></td>
+        <td>強く推奨する改善</td>
+        <td>理由があればスキップ可</td>
+      </tr>
+      <tr>
+        <td><code>[nit]</code></td>
+        <td>細かい指摘（スタイル等）</td>
+        <td>対応は任意</td>
+      </tr>
+      <tr>
+        <td><code>[question]</code></td>
+        <td>理解のための質問</td>
+        <td>回答のみでOK</td>
+      </tr>
+      <tr>
+        <td><code>[praise]</code></td>
+        <td>良い実装への称賛</td>
+        <td>対応不要</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>具体的なフィードバックの書き方</h2>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">建設的なフィードバック</div>
+<pre><code>[must] この箇所でSQLインジェクションの
+リスクがあります。ユーザー入力を直接
+クエリに埋め込んでいるため、
+パラメータ化クエリを使用しましょう:
+
+const result = await db.query(
+  'SELECT * FROM users WHERE id = $1',
+  [userId]
+);
+
+[nit] 変数名 `d` だと意味が分かり
+にくいので `deliveryDate` はどうで
+しょう？
+
+[praise] このエラーハンドリングの
+パターン、とても分かりやすいです！</code></pre>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">非建設的なフィードバック</div>
+<pre><code>「ここ間違ってます」
+→ 何が間違いかわからない
+
+「こんなコード書かないでください」
+→ 人格否定に近い
+
+「なんでこうしたの？」
+→ 詰問調で萎縮させる
+
+「LGTM」（中身を見ていない）
+→ レビューの意味がない</code></pre>
+    </div>
+  </div>
+
+  <h2>レビューを受ける側の心構え</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      レビューを受けるときのポイント
+    </div>
+    <ul>
+      <li>指摘はコードに対するもので、自分への攻撃ではない</li>
+      <li>なぜそう書いたかの理由を説明する</li>
+      <li>「確かにそうですね」と素直に受け入れる柔軟さを持つ</li>
+      <li>不明点は「もう少し詳しく教えてください」と聞く</li>
+    </ul>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      避けるべきレビューの伝え方
+    </div>
+    <ul>
+      <li>「普通はこうする」「常識でしょ」など相手を見下す表現</li>
+      <li>疑問形での間接的な否定（「これで本当に動くの？」）</li>
+      <li>代替案なしの否定だけの指摘</li>
+      <li>大量の nit 指摘で本質的な問題を埋もれさせること</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-gitrev5">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>建設的なレビューコメントとして最も適切なものはどれ？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev5" style="display:none;">
+      <span>「ここ間違ってます。直してください。」</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev5" style="display:none;">
+      <span>「なんでこんな書き方したんですか？」</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="問題の指摘だけでなく、理由と代替案を添えることで、レビューされる側が具体的に改善アクションを取れます。">
+      <input type="radio" name="q-gitrev5" style="display:none;">
+      <span>「[should] この部分はメモリ効率の面で、配列の代わりにSetを使うと改善できそうです」</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('gitrev5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="gitrev6">
+  <h1>マージ戦略</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Merge / Squash / Rebase の違いと動作</li>
+      <li>各マージ戦略のメリット・デメリット</li>
+      <li>プロジェクトに応じた使い分け方</li>
+    </ul>
+  </div>
+
+  <h2>3つのマージ戦略</h2>
+
+  <p>
+    PRをマージする際、Git/GitHub では主に3つの方法を選べます。
+    それぞれ<strong>履歴の残り方</strong>が異なります。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：日記の書き方
+    </div>
+    <p>
+      <strong>Merge</strong>は日記に「今日○○ブランチの内容を取り込んだ」と記録を残す方法。
+      <strong>Squash</strong>は細かい下書きをまとめて清書する方法。
+      <strong>Rebase</strong>は最初からこの順番で書いていたかのように並べ直す方法です。
+    </p>
+  </div>
+
+  <h2>Merge Commit（--no-ff）</h2>
+
+<pre><code># マージコミットを作成
+git checkout main
+git merge --no-ff feature/user-auth
+
+# 履歴イメージ：
+#   *   Merge branch 'feature/user-auth'  ← マージコミット
+#   |\
+#   | * feat: バリデーション追加
+#   | * feat: ログイン画面実装
+#   |/
+#   * 前のコミット</code></pre>
+
+  <h2>Squash Merge</h2>
+
+<pre><code># 全コミットを1つにまとめてマージ
+git checkout main
+git merge --squash feature/user-auth
+git commit -m "feat: ユーザー認証機能を追加"
+
+# 履歴イメージ：
+#   * feat: ユーザー認証機能を追加  ← 1つにまとまる
+#   * 前のコミット</code></pre>
+
+  <h2>Rebase Merge</h2>
+
+<pre><code># ブランチのコミットをmainの先頭に付け替え
+git checkout feature/user-auth
+git rebase main
+git checkout main
+git merge feature/user-auth
+
+# 履歴イメージ：
+#   * feat: バリデーション追加     ← 直線的な履歴
+#   * feat: ログイン画面実装
+#   * 前のコミット</code></pre>
+
+  <h2>比較表</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>特徴</th>
+        <th>Merge</th>
+        <th>Squash</th>
+        <th>Rebase</th>
+      </tr>
+      <tr>
+        <td>履歴の詳細度</td>
+        <td>全コミット保持</td>
+        <td>1コミットに集約</td>
+        <td>全コミット保持</td>
+      </tr>
+      <tr>
+        <td>履歴の形</td>
+        <td>分岐あり</td>
+        <td>直線的</td>
+        <td>直線的</td>
+      </tr>
+      <tr>
+        <td>マージ元の追跡</td>
+        <td>容易</td>
+        <td>困難</td>
+        <td>困難</td>
+      </tr>
+      <tr>
+        <td>git bisect</td>
+        <td>詳細に追跡可</td>
+        <td>粒度が粗い</td>
+        <td>詳細に追跡可</td>
+      </tr>
+      <tr>
+        <td>推奨シーン</td>
+        <td>大規模・厳密な追跡</td>
+        <td>小PR・クリーンな履歴</td>
+        <td>直線的な履歴を好む</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      Rebase の注意点
+    </div>
+    <p>
+      <strong>共有ブランチ（mainやdevelop）をrebaseしてはいけません。</strong>
+      他の人が参照しているコミットの履歴が書き換わり、チーム全体に影響します。
+      Rebaseは自分のfeatureブランチに対してのみ使いましょう。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-gitrev6">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Squash Merge の特徴として正しいものはどれ？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev6" style="display:none;">
+      <span>ブランチの全コミットが個別にmainに追加される</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="Squash Merge は複数のコミットを1つにまとめてマージするため、main ブランチの履歴がクリーンに保たれます。">
+      <input type="radio" name="q-gitrev6" style="display:none;">
+      <span>複数のコミットを1つにまとめてマージし、クリーンな履歴を保つ</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev6" style="display:none;">
+      <span>マージコミットが作成され、分岐の履歴が残る</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('gitrev6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="gitrev7">
+  <h1>コンフリクト解決</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>マージコンフリクトの仕組みと読み方</li>
+      <li>コンフリクト解決の手順とコツ</li>
+      <li>意味的コンフリクトの概念と予防策</li>
+    </ul>
+  </div>
+
+  <h2>マージコンフリクトとは</h2>
+
+  <p>
+    <strong>マージコンフリクト</strong>は、同じファイルの同じ箇所を複数の人が異なる方法で変更した場合に発生します。
+    Gitが自動でマージできないため、人間が判断して解決する必要があります。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：共同編集の衝突
+    </div>
+    <p>
+      2人が同じ文書の同じ段落を同時に書き換えた場合、どちらの版を採用すべきか自動では判断できません。
+      2人で話し合い「Aさんの表現を採用しつつ、Bさんの追記も含める」のように解決するのがコンフリクト解消です。
+    </p>
+  </div>
+
+  <h2>コンフリクトマーカーの読み方</h2>
+
+<pre><code># コンフリクトが発生したファイルの内容
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+const MAX_RETRIES = 5;
+=======
+const MAX_RETRIES = 10;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/increase-retry
+
+# 読み方：
+# &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD      → 現在のブランチ（マージ先）の内容
+# =======          → 区切り
+# &gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/  → マージ元ブランチの内容</code></pre>
+
+  <h2>コンフリクト解決の手順</h2>
+
+<pre><code># 1. コンフリクトの確認
+git status
+# → both modified: src/config.ts
+
+# 2. ファイルを編集してコンフリクトを解決
+#    マーカーを削除し、正しいコードに修正する
+const MAX_RETRIES = 10;  # 適切な方を選択
+
+# 3. 解決済みとしてマーク
+git add src/config.ts
+
+# 4. マージを完了
+git commit -m "merge: feature/increase-retry のコンフリクトを解決"</code></pre>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      コンフリクト解決のコツ
+    </div>
+    <ul>
+      <li>解決前に両方の変更の意図を理解する（git log で経緯を確認）</li>
+      <li>変更者本人に確認を取る（判断に迷った場合）</li>
+      <li>解決後に必ずテストを実行する</li>
+      <li>エディタやツール（VS Code等）のコンフリクト解決UIを活用する</li>
+    </ul>
+  </div>
+
+  <h2>意味的コンフリクト</h2>
+
+  <p>
+    <strong>意味的コンフリクト</strong>は、Gitが検出できないコンフリクトです。
+    ファイルの異なる箇所を変更した場合、Git上はコンフリクトになりませんが、論理的に矛盾が生じることがあります。
+  </p>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      意味的コンフリクトの例
+    </div>
+<pre><code>// Aさん: 関数名を変更（utils.ts）
+// getUserName → fetchUserName に変更
+
+// Bさん: 同じ関数を呼び出すコードを追加（page.ts）
+// const name = getUserName(id);  ← 古い名前で呼んでいる
+
+// → Gitではコンフリクトにならないが、
+//   マージ後にランタイムエラーが発生する</code></pre>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      意味的コンフリクトの予防策
+    </div>
+    <ul>
+      <li>マージ後に必ずCI（テスト・ビルド）を実行する</li>
+      <li>TypeScriptなどの型チェックで早期に検出する</li>
+      <li>短命なブランチを使い、こまめにマージする</li>
+      <li>関連する変更は同じPRにまとめる</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-gitrev7">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>意味的コンフリクトについて正しい説明はどれ？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev7" style="display:none;">
+      <span>Gitが自動検出してコンフリクトマーカーを挿入する</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev7" style="display:none;">
+      <span>同じファイルの同じ行を変更した時に起きる</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="意味的コンフリクトはGitが検出できない論理的な矛盾です。異なるファイルの変更がマージ後に不整合を起こすため、テストやビルドで検出する必要があります。">
+      <input type="radio" name="q-gitrev7" style="display:none;">
+      <span>Gitでは検出できないが、マージ後に論理的な矛盾が生じるもの</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('gitrev7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="gitrev8">
+  <h1>CI連携</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>PR作成時に自動実行されるCIチェックの仕組み</li>
+      <li>ステータスチェックとブランチ保護ルール</li>
+      <li>CI連携による品質ゲートの構築</li>
+    </ul>
+  </div>
+
+  <h2>PRとCIの関係</h2>
+
+  <p>
+    <strong>CI（継続的インテグレーション）</strong>をPRと連携させることで、
+    人間がレビューする前に自動的にコードの品質をチェックできます。
+    これにより、レビュアーはロジックや設計に集中できます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：入場ゲート
+    </div>
+    <p>
+      CIは空港のセキュリティゲートのようなものです。
+      乗客（コード）が搭乗（マージ）する前に、自動的にチェック（テスト・リント・ビルド）を行います。
+      ゲートを通過できないコードはマージできません。
+    </p>
+  </div>
+
+  <h2>GitHub Actions でのCI設定</h2>
+
+<pre><code># .github/workflows/ci.yml
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type Check
+        run: npm run typecheck
+
+      - name: Test
+        run: npm run test -- --coverage
+
+      - name: Build
+        run: npm run build</code></pre>
+
+  <h2>ステータスチェックとブランチ保護</h2>
+
+  <p>
+    GitHub の<strong>ブランチ保護ルール</strong>を使うと、CIが成功しない限りマージできないように制御できます。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>保護ルール</th>
+        <th>効果</th>
+      </tr>
+      <tr>
+        <td>Require status checks to pass</td>
+        <td>指定したCIジョブが成功しないとマージ不可</td>
+      </tr>
+      <tr>
+        <td>Require branches to be up to date</td>
+        <td>ベースブランチの最新をマージしてからでないとマージ不可</td>
+      </tr>
+      <tr>
+        <td>Require pull request reviews</td>
+        <td>指定人数のApproveがないとマージ不可</td>
+      </tr>
+      <tr>
+        <td>Require conversation resolution</td>
+        <td>レビューコメントが全て解決済みでないとマージ不可</td>
+      </tr>
+    </table>
+  </div>
+
+<pre><code># gh CLI でブランチ保護を確認
+gh api repos/{owner}/{repo}/branches/main/protection
+
+# ステータスチェックの結果を確認
+gh pr checks &lt;PR番号&gt;</code></pre>
+
+  <h2>CI連携のベストプラクティス</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      効果的なCI構成
+    </div>
+    <ul>
+      <li>高速なチェック（lint、型チェック）を先に実行する</li>
+      <li>テストの並列実行でCI時間を短縮する</li>
+      <li>キャッシュ（node_modules等）を活用する</li>
+      <li>PRごとにプレビュー環境をデプロイする</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      やってはいけないCI運用
+    </div>
+    <ul>
+      <li>CIが失敗してもマージを許可する設定</li>
+      <li>不安定なテスト（Flaky Test）を放置する</li>
+      <li>CIの実行時間が長すぎて開発者が待てない（目安：10分以内）</li>
+      <li>ブランチ保護なしでmainへの直接プッシュを許可する</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-gitrev8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ブランチ保護ルールの「Require status checks to pass」の効果はどれ？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev8" style="display:none;">
+      <span>PRのタイトルが規約に沿っているかチェックする</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev8" style="display:none;">
+      <span>コードの行数が多すぎる場合にマージをブロックする</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="Require status checks to pass を有効にすると、指定したCIジョブ（テスト、リント、ビルドなど）が全て成功しない限り、PRをマージできなくなります。">
+      <input type="radio" name="q-gitrev8" style="display:none;">
+      <span>指定したCIジョブが成功しないとマージできないようにする</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev8')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('gitrev8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="gitrev9">
+  <h1>自動レビューツール</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Danger.js によるPR自動チェック</li>
+      <li>reviewdog によるリント結果のPRコメント化</li>
+      <li>GitHub Actions を使った自動レビューの構築</li>
+    </ul>
+  </div>
+
+  <h2>自動レビューツールとは</h2>
+
+  <p>
+    <strong>自動レビューツール</strong>は、人間のレビュアーに代わって機械的にチェック可能な項目を自動で指摘するツールです。
+    スタイルの統一やルール違反の検出を自動化することで、レビュアーが本質的な問題に集中できるようになります。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：スペルチェッカー
+    </div>
+    <p>
+      文章を書く時、スペルチェッカーが自動で誤字を指摘してくれます。
+      校正者（レビュアー）はスペルミスを探す手間が省け、文章の内容や論理構成に集中できます。
+      自動レビューツールはコードにおけるスペルチェッカーです。
+    </p>
+  </div>
+
+  <h2>Danger.js</h2>
+
+  <p>
+    <strong>Danger.js</strong>は、PRのメタ情報（変更行数、変更ファイル、説明文など）を元にルールベースのチェックを行うツールです。
+  </p>
+
+<pre><code>// dangerfile.ts
+import { danger, warn, fail, message } from 'danger';
+
+// PRの説明が空の場合に警告
+if (!danger.github.pr.body || danger.github.pr.body.length &lt; 10) {
+  warn('PRの説明を記載してください。');
+}
+
+// PRが大きすぎる場合に警告
+const bigPRThreshold = 500;
+if (danger.github.pr.additions + danger.github.pr.deletions &gt; bigPRThreshold) {
+  warn('PRの変更が500行を超えています。分割を検討してください。');
+}
+
+// テストファイルの追加を確認
+const hasTestChanges = danger.git.modified_files
+  .some(f =&gt; f.includes('.test.') || f.includes('.spec.'));
+const hasSrcChanges = danger.git.modified_files
+  .some(f =&gt; f.includes('src/'));
+
+if (hasSrcChanges &amp;&amp; !hasTestChanges) {
+  warn('ソースコードの変更がありますが、テストが更新されていません。');
+}
+
+// package.json の変更時にlockfileも更新されているか
+const packageChanged = danger.git.modified_files.includes('package.json');
+const lockfileChanged = danger.git.modified_files.includes('package-lock.json');
+
+if (packageChanged &amp;&amp; !lockfileChanged) {
+  fail('package.json が変更されていますが、package-lock.json が更新されていません。');
+}</code></pre>
+
+  <h2>reviewdog</h2>
+
+  <p>
+    <strong>reviewdog</strong>は、リンターやフォーマッターの出力をPRのインラインコメントとして投稿するツールです。
+  </p>
+
+<pre><code># .github/workflows/reviewdog.yml
+name: reviewdog
+
+on:
+  pull_request:
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm ci
+
+      - uses: reviewdog/action-eslint@v1
+        with:
+          reporter: github-pr-review
+          eslint_flags: 'src/'
+
+  actionlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: reviewdog/action-actionlint@v1
+        with:
+          reporter: github-pr-review</code></pre>
+
+  <h2>GitHub Actions による自動ラベル付け</h2>
+
+<pre><code># .github/workflows/labeler.yml
+name: Labeler
+
+on:
+  pull_request:
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/labeler@v5
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+
+# .github/labeler.yml（ラベルルール）
+frontend:
+  - changed-files:
+    - any-glob-to-any-file: 'src/components/**'
+
+backend:
+  - changed-files:
+    - any-glob-to-any-file: 'src/api/**'
+
+documentation:
+  - changed-files:
+    - any-glob-to-any-file: 'docs/**'</code></pre>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">自動化すべきチェック</div>
+      <ul>
+        <li>コードスタイル（ESLint, Prettier）</li>
+        <li>型チェック（TypeScript）</li>
+        <li>PRサイズの警告</li>
+        <li>テスト有無の確認</li>
+        <li>依存関係の脆弱性チェック</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">人間が判断すべきこと</div>
+      <ul>
+        <li>設計の妥当性</li>
+        <li>ビジネスロジックの正しさ</li>
+        <li>命名の適切さ（文脈依存）</li>
+        <li>アーキテクチャとの整合性</li>
+        <li>ユーザー体験への影響</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-gitrev9">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Danger.js の主な役割として正しいものはどれ？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev9" style="display:none;">
+      <span>コードのセキュリティ脆弱性を自動修正する</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="Danger.js はPRの変更行数・説明文・変更ファイルなどのメタ情報を基にルールベースのチェックを行い、警告やエラーをPR上にコメントします。">
+      <input type="radio" name="q-gitrev9" style="display:none;">
+      <span>PRのメタ情報を基にルールベースのチェックを行い、警告をPR上にコメントする</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev9" style="display:none;">
+      <span>テストを自動生成してカバレッジを向上させる</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('gitrev9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="gitrev10">
+  <h1>ペアプロ / モブプロ</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ペアプログラミングとモブプログラミングの違い</li>
+      <li>リアルタイムレビューとしての効果</li>
+      <li>知識共有を加速させる実践方法</li>
+    </ul>
+  </div>
+
+  <h2>ペアプログラミングとは</h2>
+
+  <p>
+    <strong>ペアプログラミング</strong>は、2人の開発者が1つの画面で一緒にコードを書く手法です。
+    1人が「ドライバー」（キーボードを操作）、もう1人が「ナビゲーター」（方向性を指示・レビュー）を担当します。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：ラリーのドライバーとコドライバー
+    </div>
+    <p>
+      ラリー競技では、ドライバーが運転し、コドライバーが地図を読んでコースを指示します。
+      2人が協力することで、1人では辿り着けない速さと正確さで目的地に到達できます。
+      ペアプロも同様に、2人の力を合わせてより良いコードをより速く書きます。
+    </p>
+  </div>
+
+  <h2>モブプログラミングとは</h2>
+
+  <p>
+    <strong>モブプログラミング</strong>は、チーム全員（3人以上）が1つの画面で一緒にコードを書く手法です。
+    ドライバーが交代しながら進めます。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>特徴</th>
+        <th>ペアプロ</th>
+        <th>モブプロ</th>
+      </tr>
+      <tr>
+        <td>参加人数</td>
+        <td>2人</td>
+        <td>3人以上（チーム全員）</td>
+      </tr>
+      <tr>
+        <td>役割</td>
+        <td>ドライバー＋ナビゲーター</td>
+        <td>ドライバー＋残り全員がナビゲーター</td>
+      </tr>
+      <tr>
+        <td>適したシーン</td>
+        <td>通常の開発タスク、メンタリング</td>
+        <td>設計判断、複雑な問題、オンボーディング</td>
+      </tr>
+      <tr>
+        <td>コスト感</td>
+        <td>2人分の時間</td>
+        <td>チーム全員の時間</td>
+      </tr>
+      <tr>
+        <td>知識共有の範囲</td>
+        <td>2人間</td>
+        <td>チーム全体</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>リアルタイムレビューとしての効果</h2>
+
+  <p>
+    ペアプロ/モブプロは<strong>リアルタイムのコードレビュー</strong>です。
+    コードを書いている瞬間にフィードバックを受けるため、後からPRレビューで大幅な修正が必要になることが減ります。
+  </p>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      ペアプロ/モブプロのメリット
+    </div>
+    <ul>
+      <li><strong>品質向上</strong>：2つ以上の目でリアルタイムにチェック</li>
+      <li><strong>知識共有</strong>：暗黙知が自然に伝播する</li>
+      <li><strong>集中力</strong>：1人で作業するより集中を維持しやすい</li>
+      <li><strong>設計の合意</strong>：その場で議論・合意できる</li>
+      <li><strong>オンボーディング</strong>：新メンバーが実践的に学べる</li>
+    </ul>
+  </div>
+
+  <h2>効果的な実践方法</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th>プラクティス</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>ポモドーロ</td>
+        <td>25分作業 + 5分休憩のリズムで進める</td>
+      </tr>
+      <tr>
+        <td>ドライバー交代</td>
+        <td>15〜30分ごとにドライバーを交代する</td>
+      </tr>
+      <tr>
+        <td>Ping-Pong</td>
+        <td>テスト→実装を交互に担当する（TDDと組み合わせ）</td>
+      </tr>
+      <tr>
+        <td>Strong-style</td>
+        <td>「アイデアはナビゲーターの口を通り、ドライバーの手を通る」</td>
+      </tr>
+    </table>
+  </div>
+
+<pre><code># リモートペアプロのツール例
+
+# VS Code Live Share
+# - リアルタイムでコードを共有・共同編集
+# - ターミナルやデバッグセッションも共有可能
+
+# Git の Co-authored-by
+# ペアプロの成果をコミットに記録
+git commit -m "feat: 検索機能を実装
+
+Co-authored-by: Alice &lt;alice@example.com&gt;
+Co-authored-by: Bob &lt;bob@example.com&gt;"</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      ペアプロ/モブプロの注意点
+    </div>
+    <ul>
+      <li>全ての作業にペアプロが必要なわけではない（ルーチンタスクは1人で可）</li>
+      <li>ドライバーが一方的に進めず、ナビゲーターに考える時間を与える</li>
+      <li>疲労を考慮し、長時間の連続セッションは避ける</li>
+      <li>性格や好みを尊重し、強制しない</li>
+    </ul>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">ペアプロに適した場面</div>
+      <ul>
+        <li>複雑なバグの調査・修正</li>
+        <li>新しい技術・アーキテクチャの導入</li>
+        <li>新メンバーのオンボーディング</li>
+        <li>重要な設計判断を伴う実装</li>
+        <li>セキュリティに関わるコード</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">ペアプロに不向きな場面</div>
+      <ul>
+        <li>単純なリファクタリング作業</li>
+        <li>ドキュメントの更新</li>
+        <li>依存関係のアップデート</li>
+        <li>個人の調査・プロトタイピング</li>
+        <li>定型的なCRUD実装</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-gitrev10">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ペアプログラミングの「Strong-style」とはどのようなルール？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev10" style="display:none;">
+      <span>経験豊富な方が常にドライバーを担当する</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="Strong-style ペアリングでは、ナビゲーターがアイデアを言語化し、ドライバーがそれを実装します。これにより知識移転が促進されます。">
+      <input type="radio" name="q-gitrev10" style="display:none;">
+      <span>アイデアはナビゲーターが口で伝え、ドライバーが手で実装する</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-gitrev10" style="display:none;">
+      <span>テストが全て通るまでドライバーを交代しない</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev10')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('gitrev10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

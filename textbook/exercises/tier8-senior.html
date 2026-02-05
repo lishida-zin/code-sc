@@ -1219,3 +1219,219 @@ const preventionPlan = {
     <span class="icon">✓</span> このページを完了
   </button>
 </section>
+
+<!-- ex-t8-16: DDD集約の整合性バグ -->
+<section id="ex-t8-16">
+  <h1>問題 16: DDD集約の整合性バグ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🔧</span> コード修正</div>
+    <p>ECサイトで「在庫が0なのに注文が通ってしまう」というバグが断続的に発生しています。特に人気商品のタイムセール時に頻発します。調査の結果、注文処理の集約設計にトランザクション境界の問題と楽観ロックの欠如が見つかりました。</p>
+  </div>
+
+  <h2>以下のコードにバグがあります</h2>
+  <pre><code>class OrderService {
+  async placeOrder(userId: string, productId: string, qty: number) {
+    // 在庫を確認（読み取り時点のスナップショット）
+    const product = await this.productRepo.findById(productId);
+    if (product.stock &lt; qty) {
+      throw new Error('在庫不足');
+    }
+
+    // 注文を作成（別トランザクション）
+    const order = Order.create(userId, productId, qty, product.price);
+    await this.orderRepo.save(order);
+
+    // 在庫を減算（さらに別トランザクション）
+    product.stock -= qty;
+    await this.productRepo.save(product);
+
+    // 決済処理
+    await this.paymentService.charge(userId, order.totalAmount);
+
+    return order;
+  }
+}
+
+class ProductRepository {
+  async save(product: Product) {
+    await this.db.query(
+      'UPDATE products SET stock = $1, price = $2 WHERE id = $3',
+      [product.stock, product.price, product.id]
+    );
+  }
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t8-16">
+    <div class="quiz-question"><strong>問題：</strong>このコードの修正方法として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t8-16" value="a">
+        在庫確認の直前にSELECT ... FOR UPDATEで行ロックを取得し、処理完了までロックを保持する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t8-16" value="b">
+        在庫減算をRedisのアトミックなDECR操作に置き換え、RDBの在庫は非同期で同期する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="このコードには3つの致命的な問題があります。(1) 在庫確認と減算が別トランザクションで実行されるため、並行リクエストで同じ在庫を二重に確認（TOCTOU: Time of Check to Time of Use）してしまう。(2) 楽観ロック（version列）がないため、在庫の上書きを検知できない。(3) 決済処理が在庫減算の後にあるため、決済失敗時に在庫のロールバックが必要だが処理されていない。正しい修正は、在庫確認・注文作成・在庫減算を1つのトランザクションで包み、在庫減算時にversion列で楽観ロック（UPDATE ... WHERE id = $1 AND version = $2）を使い、決済をSagaパターンで補償トランザクション付きにすることです。FOR UPDATEは悲観ロックでタイムセール時にデッドロックやパフォーマンス劣化を招きます。">
+        <input type="radio" name="quiz-ex-t8-16" value="c">
+        在庫確認・注文作成・在庫減算を1つのトランザクションにまとめ、在庫減算にversion列による楽観ロックを追加し、決済は補償トランザクション（Saga）で処理する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t8-16" value="d">
+        注文処理全体をメッセージキューに入れてシリアルに処理すれば、並行性の問題は発生しない
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-16')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t8-16')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t8-17: イベント駆動のイベント順序バグ -->
+<section id="ex-t8-17">
+  <h1>問題 17: イベント駆動のイベント順序バグ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🔧</span> コード修正</div>
+    <p>マイクロサービス間のイベント駆動連携で以下の障害が報告されています：(1) 注文完了メールが2通送信されることがある、(2) 「注文キャンセル」イベントが「注文確定」イベントより先に処理され、キャンセルが無視される、(3) メッセージブローカーの一時障害後にイベントが消失する。</p>
+  </div>
+
+  <h2>以下のコードにバグがあります</h2>
+  <pre><code>// イベント発行側
+class OrderService {
+  async confirmOrder(orderId: string) {
+    const order = await this.orderRepo.findById(orderId);
+    order.status = 'CONFIRMED';
+    await this.orderRepo.save(order);
+
+    // DB保存とイベント発行が別トランザクション
+    await this.eventBus.publish('order.confirmed', {
+      orderId: order.id,
+      userId: order.userId,
+      amount: order.totalAmount
+    });
+  }
+}
+
+// イベント消費側
+class NotificationConsumer {
+  async handleOrderConfirmed(event: OrderConfirmedEvent) {
+    // 冪等性チェックなし
+    const user = await this.userRepo.findById(event.userId);
+    await this.mailer.send({
+      to: user.email,
+      subject: '注文確定のお知らせ',
+      body: `注文 ${event.orderId} が確定しました`
+    });
+  }
+}
+
+// イベント消費側（順序依存）
+class InventoryConsumer {
+  async handleEvent(event: any) {
+    if (event.type === 'order.confirmed') {
+      await this.reserveStock(event.orderId);
+    }
+    if (event.type === 'order.cancelled') {
+      // 確定イベントが未処理だと在庫解放が空振り
+      await this.releaseStock(event.orderId);
+    }
+  }
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t8-17">
+    <div class="quiz-question"><strong>問題：</strong>このコードの修正方法として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t8-17" value="a">
+        イベント発行をsetTimeout()で遅延させ、DB保存が確実に完了してから発行する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t8-17" value="b">
+        全イベントを同期的にHTTP APIで送信し、レスポンスを確認してから次の処理に進む
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t8-17" value="d">
+        メッセージブローカーをKafkaに変更すれば、イベント順序とAt-least-once配信が自動的に保証される
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="3つの問題それぞれに対する正しい修正は：(1) イベント消失対策：Transactional Outboxパターンを使い、DB保存とイベントレコード(outboxテーブル)への書き込みを同一トランザクションで行う。別プロセス（Relay/CDC）がoutboxからイベントを発行することで、DB保存成功＝イベント発行保証を実現する。(2) 重複処理対策：コンシューマ側でイベントIDによる冪等性チェックを行い、処理済みイベントを記録するテーブルで重複を排除する。(3) 順序バグ対策：コンシューマ側で注文のステータスを確認し、前提となるイベントが未処理なら処理を保留（リトライキューに戻す）するか、イベントにシーケンス番号を付与して順序を保証する。setTimeoutは不確実で、同期HTTPはイベント駆動の利点を失い、Kafka導入だけではアプリケーション層の冪等性は保証されません。">
+        <input type="radio" name="quiz-ex-t8-17" value="c">
+        Transactional Outboxパターンでイベント発行を保証し、コンシューマにイベントIDによる冪等性チェックを追加し、順序依存の処理はステータス確認で前提条件を検証する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-17')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t8-17')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t8-18: トレードオフ: イベント駆動かリクエスト/レスポンスか -->
+<section id="ex-t8-18">
+  <h1>問題 18: イベント駆動かリクエスト/レスポンスか</h1>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚖️</span> トレードオフ判断</div>
+    <p>あなたはフィンテック企業で決済システムの設計を担当しています。要件は以下の通りです：</p>
+    <ul>
+      <li>月間100万件の決済トランザクションを処理</li>
+      <li>決済フロー：与信枠確認 → 決済実行 → 売上計上 → 通知送信</li>
+      <li>規制要件：決済結果は5秒以内にユーザーに返す必要がある</li>
+      <li>監査要件：全ステップのトレーサビリティが必須</li>
+      <li>チーム：バックエンド8名、SRE 2名、マイクロサービスの運用経験あり</li>
+    </ul>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-left">
+      <h3>選択肢A: 完全イベント駆動</h3>
+      <ul>
+        <li>各ステップが独立したサービスで非同期イベント連携</li>
+        <li>高いスケーラビリティと障害隔離</li>
+        <li>エンドツーエンドのレイテンシ制御が難しい</li>
+      </ul>
+    </div>
+    <div class="compare-right">
+      <h3>選択肢B: 同期リクエスト/レスポンス</h3>
+      <ul>
+        <li>決済フローをオーケストレータが同期的に制御</li>
+        <li>レイテンシとエラーハンドリングが予測可能</li>
+        <li>オーケストレータが単一障害点になりうる</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-ex-t8-18">
+    <div class="quiz-question"><strong>問題：</strong>このシナリオで最も適切な判断はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t8-18" value="a">
+        完全イベント駆動で設計する。月間100万件のスケーラビリティにはイベント駆動が必須であり、5秒のSLAはタイムアウト設定で対応できる
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="決済システムでは「結果の即座の確定」が規制要件として求められるため、コアの決済フロー（与信確認→決済実行→売上計上）は同期的なオーケストレーション（Sagaオーケストレータ）で5秒以内の応答を保証します。一方、通知送信や監査ログ記録は決済の成否に影響しないため、イベント駆動で非同期処理にすることでコア処理のレイテンシに影響を与えずスケールできます。オーケストレータの冗長化（Active-Standby）と補償トランザクションでSPOF対策と障害復旧を確保します。完全イベント駆動では5秒SLAの保証が困難であり、完全同期では通知送信のような副次処理がレイテンシに上乗せされ、Kafkaだけではアプリケーション層の整合性は解決しません。">
+        <input type="radio" name="quiz-ex-t8-18" value="b">
+        コア決済フロー（与信→決済→売上）はSagaオーケストレータで同期的に制御しSLAを保証する。通知送信・監査ログは決済完了イベントで非同期に処理する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t8-18" value="c">
+        全ステップを単一のモノリシックなトランザクションで処理する。分散システムの複雑さを排除し、ACIDトランザクションで整合性を完全に保証する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t8-18" value="d">
+        Kafkaを導入してイベントソーシングで全ステップを記録する。イベントストアがあれば同期・非同期の問題は全て解決する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-18')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t8-18')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

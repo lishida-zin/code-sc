@@ -1148,5 +1148,230 @@ color: rgb(255, 0, 0);</code></pre>
     </section>
 
     <!-- ============================================
+         CSS 8: レスポンシブデザイン基礎
+         ============================================ -->
+    <section id="css8">
+      <h1>15. レスポンシブデザイン基礎</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>メディアクエリ</li>
+          <li>モバイルファースト</li>
+          <li>Flexbox/Gridの応用</li>
+        </ul>
+      </div>
+
+      <h2>レスポンシブデザインとは</h2>
+
+      <p>
+        <strong>レスポンシブデザイン</strong>とは、<strong>1つのHTMLで様々な画面サイズに対応する</strong>手法です。
+      </p>
+
+      <p>
+        スマートフォン、タブレット、デスクトップ...どの端末で見ても、見やすいレイアウトになります。
+      </p>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🏠</span>
+          たとえ話：折りたたみ家具
+        </div>
+        <p style="margin:0;">
+          レスポンシブデザインは「<strong>折りたたみ家具</strong>」のようなものです。広い部屋では大きく広げて使い、狭い部屋では折りたたんでコンパクトに。<strong>空間に合わせて形が変わる</strong>のがレスポンシブデザインです。
+        </p>
+      </div>
+
+      <h2>viewport meta タグ</h2>
+
+      <p>
+        レスポンシブデザインには、HTMLの<code>&lt;head&gt;</code>に以下のmetaタグが<strong>必須</strong>です。
+      </p>
+
+      <pre><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code></pre>
+
+      <p>
+        これがないと、スマートフォンがデスクトップ用のレイアウトを縮小して表示してしまいます。
+      </p>
+
+      <h2>メディアクエリの書き方</h2>
+
+      <p>
+        <strong>メディアクエリ</strong>は、画面サイズに応じてCSSを切り替える仕組みです。
+      </p>
+
+      <pre><code>/* 画面幅が768px以下の場合 */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+}
+
+/* モバイルファースト：画面幅が768px以上の場合 */
+@media (min-width: 768px) {
+  .container {
+    flex-direction: row;
+  }
+}</code></pre>
+
+      <h3>モバイルファーストアプローチ</h3>
+
+      <p>
+        <strong>モバイルファースト</strong>は、まずスマートフォン向けのCSSを書き、<code>min-width</code>で大きい画面に広げていく考え方です。
+      </p>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          なぜモバイルファースト？
+        </div>
+        <ul>
+          <li>スマートフォン利用者が過半数を占める</li>
+          <li>シンプルなレイアウトから拡張するほうが設計しやすい</li>
+          <li>パフォーマンスが良い（不要なCSSを読み込まない）</li>
+        </ul>
+      </div>
+
+      <h2>Flexboxでのレスポンシブ実装</h2>
+
+      <p>
+        <code>flex-wrap: wrap</code> を使うと、画面幅に応じて自動的に折り返されます。
+      </p>
+
+      <pre><code>.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.card {
+  flex: 1 1 300px; /* 最小300px、残りを均等に分配 */
+}</code></pre>
+
+      <h2>ブレイクポイントの目安</h2>
+
+      <table>
+        <tr>
+          <th>デバイス</th>
+          <th>幅の目安</th>
+          <th>メディアクエリ例</th>
+        </tr>
+        <tr>
+          <td>モバイル</td>
+          <td>〜767px</td>
+          <td>デフォルト（モバイルファースト）</td>
+        </tr>
+        <tr>
+          <td>タブレット</td>
+          <td>768px〜1023px</td>
+          <td><code>@media (min-width: 768px)</code></td>
+        </tr>
+        <tr>
+          <td>デスクトップ</td>
+          <td>1024px〜</td>
+          <td><code>@media (min-width: 1024px)</code></td>
+        </tr>
+      </table>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-label">
+            <span class="icon">❌</span> 固定幅
+          </div>
+          <pre><code>.container {
+  width: 960px;
+  /* 画面が狭いと横スクロール */
+}</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-label">
+            <span class="icon">⭕</span> レスポンシブ
+          </div>
+          <pre><code>.container {
+  max-width: 960px;
+  width: 100%;
+  /* 画面に合わせて縮む */
+}</code></pre>
+        </div>
+      </div>
+
+      <h2>コード例：レスポンシブカードレイアウト</h2>
+
+      <pre><code>&lt;div class="card-grid"&gt;
+  &lt;article class="card"&gt;カード1&lt;/article&gt;
+  &lt;article class="card"&gt;カード2&lt;/article&gt;
+  &lt;article class="card"&gt;カード3&lt;/article&gt;
+&lt;/div&gt;
+
+&lt;style&gt;
+.card-grid {
+  display: grid;
+  gap: 20px;
+  /* モバイル：1列 */
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .card-grid {
+    /* タブレット：2列 */
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .card-grid {
+    /* デスクトップ：3列 */
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+&lt;/style&gt;</code></pre>
+
+      <h2>まとめ</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">✨</span>
+          覚えておこう
+        </div>
+        <ol>
+          <li>レスポンシブデザインは<strong>1つのHTMLで複数の画面サイズに対応</strong></li>
+          <li><strong>viewport meta タグ</strong>は必須</li>
+          <li><strong>モバイルファースト</strong>で <code>min-width</code> を使って広げていく</li>
+          <li><strong>flex-wrap</strong> や <strong>Grid</strong> でレスポンシブレイアウトを作る</li>
+        </ol>
+      </div>
+
+      <div class="quiz" id="quiz-css8">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>モバイルファーストアプローチで使うメディアクエリは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-css8" style="display:none;">
+          A. @media (max-width: 768px)
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-css8" style="display:none;">
+          B. @media (min-width: 768px)
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-css8" style="display:none;">
+          C. @media (width: 768px)
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-css8')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('css8')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
          実践 1: DevTools
          ============================================ -->

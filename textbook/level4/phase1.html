@@ -1,7 +1,184 @@
 <!-- ============================================
      Level 4 Phase 1: Node.js基礎
-     node1-node8
+     node0-node8
      ============================================ -->
+
+<!-- node0: フロント→バックエンドのデータフロー全体像 -->
+<section id="node0">
+  <h1>フロント→バックエンドのデータフロー全体像</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Level 3→4の接続</li>
+      <li>Webアプリのデータフロー</li>
+      <li>各レイヤーの役割</li>
+    </ul>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      Level 3で学んだReactがここでバックエンドとつながります
+    </div>
+    <p>
+      Level 3ではReactを使ってフロントエンド（画面側）を作りました。
+      しかし、データの保存や他のユーザーとの共有には<strong>バックエンド（サーバー側）</strong>が必要です。
+      Level 4では、フロントエンドとバックエンドを<strong>つなぐ技術</strong>を学びます。
+    </p>
+  </div>
+
+  <h2>Webアプリの全体像</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      データフロー図
+    </div>
+    <svg viewBox="0 0 600 200" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="ブラウザからデータベースまでのデータフロー図">
+      <!-- ブラウザ(React) -->
+      <rect x="10" y="60" width="120" height="80" fill="#DBEAFE" stroke="#3B82F6" stroke-width="2" rx="8"/>
+      <text x="70" y="95" text-anchor="middle" font-size="14" font-weight="bold" fill="currentColor">ブラウザ</text>
+      <text x="70" y="115" text-anchor="middle" font-size="12" fill="currentColor">(React)</text>
+
+      <!-- 矢印1 -->
+      <defs>
+        <marker id="arrowFlow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#3B82F6"/>
+        </marker>
+      </defs>
+      <line x1="130" y1="90" x2="170" y2="90" stroke="#3B82F6" stroke-width="2" marker-end="url(#arrowFlow)"/>
+      <text x="150" y="80" text-anchor="middle" font-size="10" fill="currentColor">HTTP</text>
+
+      <!-- HTTP/API -->
+      <rect x="170" y="60" width="120" height="80" fill="#DBEAFE" stroke="#3B82F6" stroke-width="2" rx="8"/>
+      <text x="230" y="95" text-anchor="middle" font-size="14" font-weight="bold" fill="currentColor">HTTP/API</text>
+      <text x="230" y="115" text-anchor="middle" font-size="12" fill="currentColor">(REST)</text>
+
+      <!-- 矢印2 -->
+      <line x1="290" y1="90" x2="330" y2="90" stroke="#3B82F6" stroke-width="2" marker-end="url(#arrowFlow)"/>
+      <text x="310" y="80" text-anchor="middle" font-size="10" fill="currentColor">JSON</text>
+
+      <!-- Node.js/Express -->
+      <rect x="330" y="60" width="120" height="80" fill="#DBEAFE" stroke="#3B82F6" stroke-width="2" rx="8"/>
+      <text x="390" y="95" text-anchor="middle" font-size="14" font-weight="bold" fill="currentColor">Node.js</text>
+      <text x="390" y="115" text-anchor="middle" font-size="12" fill="currentColor">(Express)</text>
+
+      <!-- 矢印3 -->
+      <line x1="450" y1="90" x2="490" y2="90" stroke="#3B82F6" stroke-width="2" marker-end="url(#arrowFlow)"/>
+      <text x="470" y="80" text-anchor="middle" font-size="10" fill="currentColor">SQL</text>
+
+      <!-- データベース -->
+      <rect x="490" y="60" width="100" height="80" fill="#DBEAFE" stroke="#3B82F6" stroke-width="2" rx="8"/>
+      <text x="540" y="95" text-anchor="middle" font-size="14" font-weight="bold" fill="currentColor">DB</text>
+      <text x="540" y="115" text-anchor="middle" font-size="12" fill="currentColor">(PostgreSQL)</text>
+
+      <!-- ラベル行 -->
+      <text x="70" y="170" text-anchor="middle" font-size="11" fill="#3B82F6">フロントエンド</text>
+      <text x="230" y="170" text-anchor="middle" font-size="11" fill="#3B82F6">通信層</text>
+      <text x="390" y="170" text-anchor="middle" font-size="11" fill="#3B82F6">バックエンド</text>
+      <text x="540" y="170" text-anchor="middle" font-size="11" fill="#3B82F6">データ層</text>
+    </svg>
+  </div>
+
+  <h2>各レイヤーの役割</h2>
+
+  <div class="card">
+    <table class="table-responsive">
+      <thead>
+        <tr>
+          <th>レイヤー</th>
+          <th>技術</th>
+          <th>役割</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>フロントエンド</td>
+          <td>React</td>
+          <td>画面の表示、ユーザー操作の受付</td>
+        </tr>
+        <tr>
+          <td>通信層</td>
+          <td>HTTP/REST API</td>
+          <td>フロントとバックエンドのデータ橋渡し</td>
+        </tr>
+        <tr>
+          <td>バックエンド</td>
+          <td>Node.js/Express</td>
+          <td>ビジネスロジック、認証、データ加工</td>
+        </tr>
+        <tr>
+          <td>データ層</td>
+          <td>PostgreSQL</td>
+          <td>データの永続化（保存・検索・更新）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>リクエスト/レスポンスの流れ</h2>
+
+  <div class="card">
+    <p><strong>例：ユーザーがプロフィールを表示する場合</strong></p>
+    <ol>
+      <li><strong>ブラウザ</strong>: ユーザーがプロフィールページを開く</li>
+      <li><strong>React</strong>: <code>fetch('/api/users/123')</code> でAPIにリクエスト送信</li>
+      <li><strong>HTTP</strong>: <code>GET /api/users/123</code> がサーバーに届く</li>
+      <li><strong>Express</strong>: ルーティングで該当ハンドラーが処理</li>
+      <li><strong>Node.js</strong>: 認証チェック → DBクエリ実行</li>
+      <li><strong>DB</strong>: <code>SELECT * FROM users WHERE id = 123</code></li>
+      <li><strong>Express</strong>: 結果をJSONに変換してレスポンス</li>
+      <li><strong>React</strong>: 受け取ったJSONを画面に表示</li>
+    </ol>
+  </div>
+
+  <h2>これからLevel 4で学ぶこと</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">🗺️</span>
+      Level 4 ロードマップ
+    </div>
+    <ul>
+      <li><strong>Phase 1</strong>: Node.js基礎（サーバー側JSの基本）</li>
+      <li><strong>Phase 2</strong>: API設計（REST、HTTPステータス、OpenAPI）</li>
+      <li><strong>Phase 3</strong>: データベース（SQL、ORM、マイグレーション）</li>
+      <li><strong>Phase 4</strong>: 認証・セキュリティ（JWT、OAuth2、脆弱性対策）</li>
+      <li><strong>Phase 5</strong>: テスト・品質（単体テスト、統合テスト、CI/CD）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-node0">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Webアプリでフロントエンドとバックエンドをつなぐ役割を持つのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node0" style="display:none;">
+      A. データベース
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-node0" style="display:none;">
+      B. HTTP/REST API
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-node0" style="display:none;">
+      C. CSS
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-node0')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('node0')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
 
 <!-- node1: Node.jsとは -->
 <section id="node1">

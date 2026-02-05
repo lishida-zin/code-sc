@@ -2064,6 +2064,208 @@ const data = await response.json();</code></pre>
       </button>
     </section>
 
+    <!-- async9: イベントループSVG図解 -->
+    <section id="async9">
+      <h1>イベントループの仕組み（図解）</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>このページで学ぶこと
+        </div>
+        <ul>
+          <li>イベントループの全体像を視覚的に理解する</li>
+          <li>Call Stack / Task Queue / Microtask Queue の役割</li>
+          <li>非同期処理の実行順序を正確に把握する</li>
+        </ul>
+      </div>
+
+      <h2>イベントループ全体図</h2>
+
+      <p>
+        JavaScriptの非同期処理を支えるイベントループを<br>
+        図で理解しましょう。
+      </p>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🔄</span>
+          イベントループ図解
+        </div>
+        <svg viewBox="0 0 600 400" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="イベントループの仕組みを示す図。Call Stack、Web APIs、Task Queue、Microtask Queueの4つの要素とEvent Loopの関係を表す。">
+          <!-- Call Stack（左上） -->
+          <rect x="20" y="20" width="220" height="140" rx="12" fill="#FEE2E2" stroke="#EF4444" stroke-width="2"/>
+          <text x="130" y="55" text-anchor="middle" font-size="16" font-weight="bold" fill="currentColor">Call Stack</text>
+          <text x="130" y="80" text-anchor="middle" font-size="12" fill="currentColor">（コールスタック）</text>
+          <rect x="50" y="95" width="160" height="24" rx="4" fill="#FECACA" stroke="#EF4444" stroke-width="1"/>
+          <text x="130" y="112" text-anchor="middle" font-size="11" fill="currentColor">実行中の関数</text>
+          <rect x="50" y="123" width="160" height="24" rx="4" fill="#FECACA" stroke="#EF4444" stroke-width="1"/>
+          <text x="130" y="140" text-anchor="middle" font-size="11" fill="currentColor">呼び出し元の関数</text>
+
+          <!-- Web APIs（右上） -->
+          <rect x="360" y="20" width="220" height="140" rx="12" fill="#DBEAFE" stroke="#3B82F6" stroke-width="2"/>
+          <text x="470" y="55" text-anchor="middle" font-size="16" font-weight="bold" fill="currentColor">Web APIs</text>
+          <text x="470" y="80" text-anchor="middle" font-size="12" fill="currentColor">（ブラウザ提供）</text>
+          <text x="470" y="105" text-anchor="middle" font-size="11" fill="currentColor">setTimeout / fetch</text>
+          <text x="470" y="125" text-anchor="middle" font-size="11" fill="currentColor">addEventListener</text>
+          <text x="470" y="145" text-anchor="middle" font-size="11" fill="currentColor">XMLHttpRequest</text>
+
+          <!-- Call Stack → Web APIs 矢印 -->
+          <line x1="240" y1="70" x2="360" y2="70" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+          <text x="300" y="62" text-anchor="middle" font-size="10" fill="currentColor">非同期処理を委託</text>
+
+          <!-- Task Queue（左下） -->
+          <rect x="20" y="240" width="220" height="140" rx="12" fill="#DCFCE7" stroke="#22C55E" stroke-width="2"/>
+          <text x="130" y="275" text-anchor="middle" font-size="16" font-weight="bold" fill="currentColor">Task Queue</text>
+          <text x="130" y="300" text-anchor="middle" font-size="12" fill="currentColor">（マクロタスク）</text>
+          <text x="130" y="325" text-anchor="middle" font-size="11" fill="currentColor">setTimeout / setInterval</text>
+          <text x="130" y="345" text-anchor="middle" font-size="11" fill="currentColor">I/O / UIイベント</text>
+
+          <!-- Microtask Queue（右下） -->
+          <rect x="360" y="240" width="220" height="140" rx="12" fill="#EDE9FE" stroke="#8B5CF6" stroke-width="2"/>
+          <text x="470" y="275" text-anchor="middle" font-size="16" font-weight="bold" fill="currentColor">Microtask Queue</text>
+          <text x="470" y="300" text-anchor="middle" font-size="12" fill="currentColor">（マイクロタスク）</text>
+          <text x="470" y="325" text-anchor="middle" font-size="11" fill="currentColor">Promise.then / catch</text>
+          <text x="470" y="345" text-anchor="middle" font-size="11" fill="currentColor">queueMicrotask</text>
+
+          <!-- Web APIs → Task Queue 矢印 -->
+          <path d="M470,160 L470,200 L130,200 L130,240" fill="none" stroke="#22C55E" stroke-width="2" marker-end="url(#arrowGreen)"/>
+          <text x="300" y="195" text-anchor="middle" font-size="10" fill="currentColor">コールバック登録</text>
+
+          <!-- Web APIs → Microtask Queue 矢印 -->
+          <line x1="520" y1="160" x2="520" y2="240" stroke="#8B5CF6" stroke-width="2" marker-end="url(#arrowPurple)"/>
+          <text x="555" y="200" text-anchor="middle" font-size="10" fill="currentColor">Promise</text>
+
+          <!-- Event Loop 中央の回転矢印 -->
+          <circle cx="300" cy="310" r="35" fill="none" stroke="#F59E0B" stroke-width="3" stroke-dasharray="8,4"/>
+          <path d="M300,275 L308,285 L292,285 Z" fill="#F59E0B"/>
+          <text x="300" y="315" text-anchor="middle" font-size="11" font-weight="bold" fill="currentColor">Event</text>
+          <text x="300" y="330" text-anchor="middle" font-size="11" font-weight="bold" fill="currentColor">Loop</text>
+
+          <!-- Task Queue → Call Stack 矢印 -->
+          <path d="M60,240 L60,200 L60,160" fill="none" stroke="#22C55E" stroke-width="2" marker-end="url(#arrowGreen)"/>
+          <text x="25" y="200" text-anchor="middle" font-size="10" fill="currentColor" transform="rotate(-90,25,200)">タスク実行</text>
+
+          <!-- Microtask Queue → Call Stack 矢印（優先） -->
+          <path d="M400,240 L400,200 L240,160" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arrowPurple)"/>
+          <text x="340" y="185" text-anchor="middle" font-size="10" font-weight="bold" fill="#8B5CF6">優先実行!</text>
+
+          <!-- 矢印マーカー定義 -->
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+            </marker>
+            <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#22C55E"/>
+            </marker>
+            <marker id="arrowPurple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#8B5CF6"/>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+
+      <h2>実行順序のルール</h2>
+
+      <p>イベントループは以下の順序で処理を実行します。</p>
+
+      <ol>
+        <li><strong>Call Stackが空になる</strong>まで同期処理を実行</li>
+        <li><strong>Microtask Queueを全て処理</strong>（Promise.then, queueMicrotask等）</li>
+        <li><strong>Task Queueから1つだけ</strong>タスクを取り出して実行（setTimeout, setInterval等）</li>
+        <li><strong>1に戻る</strong>（このサイクルを繰り返す）</li>
+      </ol>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          超重要：MicrotaskはTaskより先に実行される
+        </div>
+        <p style="margin:0;">
+          <code>Promise.then()</code>のコールバック（Microtask）は、<br>
+          <code>setTimeout()</code>のコールバック（Task）よりも<strong>常に先に実行</strong>されます。<br>
+          たとえsetTimeoutが先に登録されていても同じです。
+        </p>
+      </div>
+
+      <h2>コード例で確認</h2>
+
+      <pre><code>console.log('1: 同期処理');
+
+setTimeout(() =&gt; {
+  console.log('2: setTimeout（Task Queue）');
+}, 0);
+
+Promise.resolve().then(() =&gt; {
+  console.log('3: Promise.then（Microtask Queue）');
+});
+
+console.log('4: 同期処理');
+
+// 出力順序:
+// 1: 同期処理
+// 4: 同期処理
+// 3: Promise.then（Microtask Queue）  ← setTimeoutより先！
+// 2: setTimeout（Task Queue）</code></pre>
+
+      <p>
+        <strong>ポイント：</strong>setTimeout(0)で0ミリ秒を指定しても、<br>
+        Promise.thenの方が先に実行されます。<br>
+        これはMicrotask QueueがTask Queueより<strong>優先度が高い</strong>からです。
+      </p>
+
+      <h2>もう少し複雑な例</h2>
+
+      <pre><code>console.log('A');
+
+setTimeout(() =&gt; console.log('B'), 0);
+
+Promise.resolve()
+  .then(() =&gt; console.log('C'))
+  .then(() =&gt; console.log('D'));
+
+setTimeout(() =&gt; console.log('E'), 0);
+
+console.log('F');
+
+// 出力順序:
+// A → F → C → D → B → E
+//
+// 解説:
+// 1. 同期処理: A, F
+// 2. Microtask: C, D（Promiseチェーン全部）
+// 3. Task: B（最初のsetTimeout）
+// 4. Microtask: なし
+// 5. Task: E（2番目のsetTimeout）</code></pre>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-async9">
+        <div class="quiz-title"><span class="icon">❓</span>確認クイズ</div>
+        <p>次のコードの出力順序は？</p>
+        <pre><code>console.log('1');
+setTimeout(() =&gt; console.log('2'), 0);
+Promise.resolve().then(() =&gt; console.log('3'));
+console.log('4');</code></pre>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-async9" style="display:none;">
+          1 → 2 → 3 → 4
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-async9" style="display:none;">
+          1 → 4 → 2 → 3
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-async9" style="display:none;">
+          1 → 4 → 3 → 2
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-async9')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('async9')">
+        <span class="icon">✓</span> このページを完了
+      </button>
+    </section>
+
     <!-- ============================================
          Phase 4: モダンJS・実践
          ============================================ -->

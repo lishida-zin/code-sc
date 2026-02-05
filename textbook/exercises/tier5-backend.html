@@ -1254,3 +1254,193 @@ router.post('/api/deleteUser/:id', async (req, res) =&gt; {
     <span class="icon">✓</span> このページを完了
   </button>
 </section>
+
+<!-- ex-t5-16: SQLインジェクション脆弱性修正 -->
+<section id="ex-t5-16">
+  <h1>問題 16: SQLインジェクション脆弱性修正</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🔧</span> コード修正</div>
+    <p>本番環境のログ監視で不審なクエリが検出されました。調査の結果、ユーザー検索APIで任意のSQLが実行可能な脆弱性が見つかりました。攻撃者は <code>' OR 1=1 --</code> のような入力で全ユーザーのデータを取得できる状態です。緊急修正が必要です。</p>
+  </div>
+
+  <h2>以下のコードにバグがあります</h2>
+  <pre><code>const express = require('express');
+const router = express.Router();
+const db = require('./db');
+
+// ユーザー検索API
+router.get('/api/users/search', async (req, res) =&gt; {
+  const { name, email, role } = req.query;
+
+  let sql = "SELECT id, name, email, role FROM users WHERE 1=1";
+
+  if (name) {
+    sql += " AND name LIKE '%" + name + "%'";
+  }
+  if (email) {
+    sql += " AND email = '" + email + "'";
+  }
+  if (role) {
+    sql += " AND role = '" + role + "'";
+  }
+
+  const result = await db.query(sql);
+  res.json(result.rows);
+});</code></pre>
+
+  <div class="quiz" id="quiz-ex-t5-16">
+    <div class="quiz-question"><strong>問題：</strong>このコードの修正方法として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-16" value="a">
+        入力値をencodeURIComponent()でエンコードしてからSQL文字列に連結する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-16" value="b">
+        入力値からシングルクォートを除去する正規表現フィルタ（replace(/'/g, '')）を追加する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-16" value="c">
+        SQL文の前に「SET sql_safe_updates = 1」を実行し、危険なクエリをブロックする
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="パラメータ化クエリ（プリペアドステートメント）を使用することが唯一の正しい対策です。db.query('SELECT ... WHERE name LIKE $1 AND email = $2', ['%' + name + '%', email]) のように、ユーザー入力をSQL文字列に直接連結するのではなく、プレースホルダ（$1, $2...）を使い、値を別パラメータとして渡します。encodeURIComponent()はURL用であってSQL用ではなく、シングルクォート除去はバイパス手法が多数存在するため不十分です。sql_safe_updatesはMySQLのUPDATE/DELETE制限であり、SELECTのインジェクションは防げません。">
+        <input type="radio" name="quiz-ex-t5-16" value="d">
+        パラメータ化クエリ（$1, $2等のプレースホルダ）を使い、ユーザー入力を値として別途バインドする
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-16')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-16')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t5-17: REST APIのエラーレスポンス不備 -->
+<section id="ex-t5-17">
+  <h1>問題 17: REST APIのエラーレスポンス不備</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🔧</span> コード修正</div>
+    <p>顧客から「APIがエラー時に内部情報を返している」とセキュリティ報告を受けました。調査すると、エラー発生時にスタックトレースやDB接続情報が外部に漏洩していることが判明しました。また、全てのエラーがHTTP 500で返されており、クライアント側でエラー種別を判別できない状態です。</p>
+  </div>
+
+  <h2>以下のコードにバグがあります</h2>
+  <pre><code>const express = require('express');
+const app = express();
+
+app.post('/api/orders', async (req, res) =&gt; {
+  try {
+    const { userId, items } = req.body;
+    const user = await db.query(
+      'SELECT * FROM users WHERE id = $1', [userId]
+    );
+    if (!user.rows.length) {
+      throw new Error('User not found in database: ' + userId);
+    }
+    const order = await createOrder(userId, items);
+    res.json(order);
+  } catch (err) {
+    // エラーをそのまま返す
+    res.status(500).json({
+      error: err.message,
+      stack: err.stack,
+      query: err.query,
+      detail: err.detail
+    });
+  }
+});</code></pre>
+
+  <div class="quiz" id="quiz-ex-t5-17">
+    <div class="quiz-question"><strong>問題：</strong>このコードの修正方法として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="正しい修正は以下の3点の組み合わせです。(1) エラー種別に応じたHTTPステータスコードの使い分け（ユーザー未存在は404、バリデーションエラーは400、認証エラーは401、サーバー内部エラーのみ500）。(2) クライアントにはエラーコードと安全なメッセージのみを返し、stack/query/detailなどの内部情報は含めない。(3) err.stackやerr.queryはサーバー側のログにのみ記録し、外部には公開しない。try-catchを削除するとサーバーがクラッシュし、console.logだけでは構造化されたエラー追跡ができません。">
+        <input type="radio" name="quiz-ex-t5-17" value="a">
+        エラー種別に応じてステータスコード（400/404/500）を使い分け、クライアントには安全なメッセージのみ返し、詳細はサーバーログに記録する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-17" value="b">
+        try-catchブロックを削除してExpressのデフォルトエラーハンドラに任せる
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-17" value="c">
+        catch内でconsole.log(err)を追加し、レスポンスはres.status(500).json({ error: 'Error' })に統一する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-17" value="d">
+        err.messageの内容をBase64エンコードしてクライアントに返すことで、一般ユーザーには読めないようにする
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-17')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-17')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t5-18: トレードオフ: RDBMSかNoSQLか -->
+<section id="ex-t5-18">
+  <h1>問題 18: RDBMSかNoSQLか</h1>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚖️</span> トレードオフ判断</div>
+    <p>あなたはECサイトのリニューアルプロジェクトのテックリードです。現在PostgreSQLで運用中ですが、新システムのDB選定を任されました。要件は以下の通りです：</p>
+    <ul>
+      <li>商品カタログ：10万SKU、カテゴリごとに属性項目が大きく異なる（衣類はサイズ・色、家電はスペック表、食品は賞味期限等）</li>
+      <li>注文管理：月間5万件、在庫連動・決済・配送ステータス管理が必要</li>
+      <li>チーム：バックエンド5名、全員RDBMSの経験あり、NoSQL経験者は1名</li>
+      <li>SLA：注文処理は99.9%可用性、商品検索は多少の遅延は許容</li>
+    </ul>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-left">
+      <h3>選択肢A: 全てPostgreSQL</h3>
+      <ul>
+        <li>チーム全員が使い慣れており即座に開発開始可能</li>
+        <li>注文・在庫のトランザクション処理が堅牢</li>
+        <li>商品属性の柔軟性に欠ける（EAVパターンやJSONB列で対応が必要）</li>
+      </ul>
+    </div>
+    <div class="compare-right">
+      <h3>選択肢B: 全てMongoDB</h3>
+      <ul>
+        <li>商品属性のスキーマレス管理が自然にできる</li>
+        <li>水平スケーリングが容易</li>
+        <li>注文・在庫の複雑なトランザクション処理が困難</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-ex-t5-18">
+    <div class="quiz-question"><strong>問題：</strong>このシナリオで最も適切な判断はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-18" value="a">
+        全てMongoDBに移行する。NoSQLの方がモダンであり、商品カタログも注文管理もドキュメント指向で統一すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-18" value="b">
+        全てPostgreSQLのまま。商品属性はEAVパターンで管理し、データベースを一元化することでチームの学習コストをゼロにする
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="このシナリオでは、注文管理はトランザクション整合性が重要（99.9% SLA、決済・在庫連動）なのでRDBMS（PostgreSQL）が適切です。一方、商品カタログはカテゴリごとに属性が大きく異なるためスキーマレスが有利ですが、チームのNoSQL経験が1名しかいない点、月間5万件・10万SKUという規模ならPostgreSQLのJSONB機能でも十分対応できる点を考慮すると、まずPostgreSQLのJSONBで商品属性の柔軟性を確保し、将来的に検索性能がボトルネックになった時点でElasticsearchやMongoDBの導入を検討するのが現実的です。">
+        <input type="radio" name="quiz-ex-t5-18" value="c">
+        注文管理はPostgreSQLを継続し、商品カタログの属性部分はJSONB列で柔軟に対応する。将来的に検索性能が問題になればElasticsearch等の導入を検討する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-18" value="d">
+        最初からPostgreSQL + MongoDB + Elasticsearchの3つを導入し、それぞれの得意領域を活かしたポリグロットパーシステンスを構築する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-18')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-18')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

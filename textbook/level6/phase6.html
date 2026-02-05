@@ -1242,3 +1242,156 @@ export class User {
     <span class="icon">*</span> このページを完了
   </button>
 </section>
+
+<section id="clean11">
+  <h1>11. テスト戦略とアーキテクチャの統合</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📚</span>このページで学ぶこと</div>
+    <ul>
+      <li>テスタブルなアーキテクチャの設計</li>
+      <li>ポートとアダプタでのテスト戦略</li>
+      <li>テストピラミッドとアーキテクチャ層の対応</li>
+    </ul>
+  </div>
+
+  <h2>クリーンアーキテクチャがテストを容易にする理由</h2>
+  <p>
+    クリーンアーキテクチャでは、<strong>依存関係が内側に向かう</strong>ため、
+    外側の技術的詳細をモックに差し替えてテストできます。<br>
+    つまり、<strong>ビジネスロジックをDB接続やHTTP通信なしでテスト</strong>できるのです。
+  </p>
+
+  <h2>ヘキサゴナルアーキテクチャでのテスト戦略</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>レイヤー</th>
+        <th>テスト種類</th>
+        <th>特徴</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ドメイン層</strong></td>
+        <td>純粋な単体テスト</td>
+        <td>外部依存なし、高速、決定的</td>
+      </tr>
+      <tr>
+        <td><strong>アプリケーション層</strong></td>
+        <td>モック利用の統合テスト</td>
+        <td>ポートのモックでユースケース検証</td>
+      </tr>
+      <tr>
+        <td><strong>インフラ層</strong></td>
+        <td>実環境に近い結合テスト</td>
+        <td>実DB・外部サービスへの接続テスト</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📊</span> テストピラミッドとアーキテクチャ層</div>
+    <svg viewBox="0 0 500 300" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="テストピラミッドとアーキテクチャ層の対応図">
+      <title>テストピラミッドとアーキテクチャ層の対応</title>
+      <!-- ピラミッド -->
+      <polygon points="250,30 400,250 100,250" fill="none" stroke="currentColor" stroke-width="2"/>
+      <!-- 層の区切り線 -->
+      <line x1="155" y1="130" x2="345" y2="130" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4"/>
+      <line x1="128" y1="190" x2="372" y2="190" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4"/>
+
+      <!-- E2E -->
+      <text x="250" y="95" text-anchor="middle" fill="currentColor" font-size="12" font-weight="bold">E2Eテスト</text>
+      <text x="250" y="112" text-anchor="middle" fill="currentColor" font-size="10">（少数・低速）</text>
+
+      <!-- 統合 -->
+      <text x="250" y="160" text-anchor="middle" fill="currentColor" font-size="12" font-weight="bold">統合テスト</text>
+      <text x="250" y="177" text-anchor="middle" fill="currentColor" font-size="10">（中程度）</text>
+
+      <!-- 単体 -->
+      <text x="250" y="225" text-anchor="middle" fill="currentColor" font-size="12" font-weight="bold">単体テスト</text>
+      <text x="250" y="242" text-anchor="middle" fill="currentColor" font-size="10">（多数・高速）</text>
+
+      <!-- 対応するアーキテクチャ層 -->
+      <text x="430" y="95" text-anchor="start" fill="currentColor" font-size="10">← インフラ層</text>
+      <text x="430" y="160" text-anchor="start" fill="currentColor" font-size="10">← アプリケーション層</text>
+      <text x="430" y="225" text-anchor="start" fill="currentColor" font-size="10">← ドメイン層</text>
+
+      <text x="250" y="280" text-anchor="middle" fill="currentColor" font-size="11">下層ほど多く・速く、上層ほど少なく・確実に</text>
+    </svg>
+  </div>
+
+  <h2>依存性注入（DI）がテストを可能にする</h2>
+  <p>
+    <strong>ポート（インターフェース）</strong>を定義し、
+    テスト時にはモックを注入することで、外部依存なしにテストできます。
+  </p>
+
+  <pre><code>// ポート（インターフェース）の定義
+class UserRepository {
+  async findById(id) { throw new Error('Not implemented'); }
+  async save(user) { throw new Error('Not implemented'); }
+}
+
+// 本番用アダプタ
+class PostgresUserRepository extends UserRepository {
+  async findById(id) {
+    return await db.query('SELECT * FROM users WHERE id = $1', [id]);
+  }
+}
+
+// テスト用モック
+class MockUserRepository extends UserRepository {
+  constructor() { this.users = new Map(); }
+  async findById(id) { return this.users.get(id) || null; }
+  async save(user) { this.users.set(user.id, user); }
+}
+
+// ユースケースのテスト（外部依存なし！）
+describe('CreateUserUseCase', () =&gt; {
+  it('should create a user', async () =&gt; {
+    const repo = new MockUserRepository();
+    const useCase = new CreateUserUseCase(repo);
+
+    await useCase.execute({ name: 'Alice', email: 'alice@test.com' });
+
+    const saved = await repo.findById(1);
+    expect(saved.name).toBe('Alice');
+  });
+});</code></pre>
+
+  <div class="card card-success">
+    <div class="card-title"><span class="icon">✓</span> 良いアーキテクチャ = テストしやすいアーキテクチャ</div>
+    <p>
+      テストが書きにくいと感じたら、それは<strong>アーキテクチャの問題</strong>かもしれません。<br>
+      依存関係の方向を見直し、ポートとアダプタで分離することで、
+      テスタビリティは劇的に向上します。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-clean11">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: クリーンアーキテクチャでドメイン層のテストが高速で決定的な理由は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean11" value="a">
+        <span>テストフレームワークが高速だから</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ドメイン層は外部依存（DB、API、ファイル）を持たないため、モックも不要で、純粋なロジックのテストが可能です。これにより高速で結果が安定します。">
+        <input type="radio" name="q-clean11" value="b">
+        <span>外部依存がなく、純粋なビジネスロジックのみだから</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-clean11" value="c">
+        <span>テストの数が少ないから</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-clean11')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('clean11')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

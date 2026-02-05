@@ -1,0 +1,1474 @@
+<!-- ============================================
+     Level 9 Phase 7: テックリーダーシップ
+     lead1-lead10
+     ============================================ -->
+
+<!-- lead1: テックリードの役割 -->
+<section id="lead1">
+  <h1>テックリードの役割</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>テックリードの3つの柱：技術方針策定・チーム支援・品質の番人</li>
+      <li>マネージャーとテックリードの責務の違い</li>
+      <li>日々の業務でテックリードが果たす具体的な行動</li>
+    </ul>
+  </div>
+
+  <h2>テックリードとは何か</h2>
+
+  <p>
+    テックリードは「一番コードが書ける人」ではありません。
+    <strong>チームの技術力を最大化し、プロダクトの品質を維持する責任者</strong>です。
+    自分が手を動かすことよりも、チーム全体の生産性と技術品質に目を向ける役割です。
+  </p>
+
+  <h2>テックリードの3つの柱</h2>
+
+  <table>
+    <tr>
+      <th>柱</th>
+      <th>説明</th>
+      <th>具体的なアクション</th>
+    </tr>
+    <tr>
+      <td><strong>技術方針策定</strong></td>
+      <td>チームが向かう技術的方向を決める</td>
+      <td>アーキテクチャ決定、技術スタック選定、設計方針の文書化</td>
+    </tr>
+    <tr>
+      <td><strong>チーム支援</strong></td>
+      <td>メンバーが力を発揮できる環境を作る</td>
+      <td>ブロッカーの除去、技術相談、コードレビュー、ペアプロ</td>
+    </tr>
+    <tr>
+      <td><strong>品質の番人</strong></td>
+      <td>コード・設計・プロセスの品質を守る</td>
+      <td>レビュー基準策定、テスト戦略、技術的負債の管理</td>
+    </tr>
+  </table>
+
+  <h2>マネージャーとの違い</h2>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">テックリード</div>
+      <ul>
+        <li>技術的意思決定の責任者</li>
+        <li>「何をどう作るか」に集中</li>
+        <li>コードに触れ、技術を理解し続ける</li>
+        <li>チームの技術力向上を支援</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">エンジニアリングマネージャー</div>
+      <ul>
+        <li>人事・評価・キャリアの責任者</li>
+        <li>「誰がいつやるか」に集中</li>
+        <li>1on1やチームビルディングが中心</li>
+        <li>採用・予算・組織設計を担当</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>テックリードの時間配分の目安</h2>
+
+  <table>
+    <tr>
+      <th>活動</th>
+      <th>割合</th>
+      <th>内容</th>
+    </tr>
+    <tr>
+      <td>コーディング</td>
+      <td>30%</td>
+      <td>複雑な部分の実装、プロトタイプ作成</td>
+    </tr>
+    <tr>
+      <td>コードレビュー</td>
+      <td>20%</td>
+      <td>品質担保、知識共有、教育的フィードバック</td>
+    </tr>
+    <tr>
+      <td>設計・技術調査</td>
+      <td>20%</td>
+      <td>アーキテクチャ検討、技術選定、PoC</td>
+    </tr>
+    <tr>
+      <td>メンタリング・相談</td>
+      <td>15%</td>
+      <td>技術相談、ペアプロ、知識移転</td>
+    </tr>
+    <tr>
+      <td>会議・調整</td>
+      <td>15%</td>
+      <td>ステークホルダーとの調整、計画策定</td>
+    </tr>
+  </table>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      テックリードのアンチパターン
+    </div>
+    <ul>
+      <li><strong>ヒーロー症候群</strong>：全部自分で書こうとし、チームが成長しない</li>
+      <li><strong>象牙の塔</strong>：現場から離れ、理想論ばかり語る</li>
+      <li><strong>ボトルネック化</strong>：全てのレビュー・決定を自分に集中させる</li>
+      <li><strong>技術偏重</strong>：ビジネス価値を考えず技術的正しさだけを追求する</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      テックリードのセルフチェックリスト
+    </div>
+    <ul>
+      <li>チームの全員が今取り組んでいることを把握しているか</li>
+      <li>技術的なブロッカーを24時間以内に解消しているか</li>
+      <li>重要な技術決定を文書化しているか</li>
+      <li>自分がいなくてもチームが回る仕組みを作っているか</li>
+      <li>定期的にコードに触れて技術力を維持しているか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-lead1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>テックリードの最も重要な役割はどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead1" style="display:none;">
+      チームで一番多くのコードを書くこと
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-lead1" style="display:none;">
+      チーム全体の技術力と品質を最大化すること
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead1" style="display:none;">
+      メンバーの人事評価とキャリア支援を行うこと
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-lead1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('lead1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- lead2: 技術的意思決定 -->
+<section id="lead2">
+  <h1>技術的意思決定</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ADR（Architecture Decision Record）の書き方と運用</li>
+      <li>トレードオフ分析の方法論</li>
+      <li>チームでの合意形成プロセス</li>
+    </ul>
+  </div>
+
+  <h2>なぜ意思決定を記録するのか</h2>
+
+  <p>
+    技術的な判断は時間が経つと「なぜこうなったのか」が分からなくなります。
+    <strong>ADR（Architecture Decision Record）</strong>は、決定の背景・選択肢・理由を記録する軽量なドキュメントです。
+    未来の自分やチームメンバーが「なぜ」を理解できるようにするための重要な資産です。
+  </p>
+
+  <h2>ADRのテンプレート</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      ADRテンプレート
+    </div>
+    <pre><code># ADR-001: [タイトル]
+
+## ステータス
+提案中 / 承認済み / 廃止 / 置換（ADR-XXXにより）
+
+## コンテキスト
+- 何が問題なのか
+- どんな制約があるか
+- 関連する技術的背景
+
+## 決定
+何を決めたか（簡潔に）
+
+## 選択肢
+### 案A: [名前]
+- メリット: ...
+- デメリット: ...
+
+### 案B: [名前]
+- メリット: ...
+- デメリット: ...
+
+## 理由
+なぜこの選択肢を選んだか
+
+## 影響
+- この決定によって何が変わるか
+- リスクと軽減策</code></pre>
+  </div>
+
+  <h2>トレードオフ分析</h2>
+
+  <p>
+    技術的な意思決定には常にトレードオフが伴います。
+    「完璧な選択肢」は存在せず、<strong>制約条件の中で最適な判断</strong>を下すことが求められます。
+  </p>
+
+  <table>
+    <tr>
+      <th>評価軸</th>
+      <th>説明</th>
+      <th>例</th>
+    </tr>
+    <tr>
+      <td>開発速度</td>
+      <td>どれだけ早く実装できるか</td>
+      <td>フレームワークAは学習コストが低い</td>
+    </tr>
+    <tr>
+      <td>保守性</td>
+      <td>長期的に維持しやすいか</td>
+      <td>フレームワークBはコミュニティが活発</td>
+    </tr>
+    <tr>
+      <td>パフォーマンス</td>
+      <td>性能要件を満たせるか</td>
+      <td>言語Cはレイテンシが低い</td>
+    </tr>
+    <tr>
+      <td>チームスキル</td>
+      <td>チームが使いこなせるか</td>
+      <td>技術Dの経験者が社内にいる</td>
+    </tr>
+    <tr>
+      <td>コスト</td>
+      <td>ライセンス・インフラ・人件費</td>
+      <td>SaaS Eは月額費用がかかるが運用負荷が低い</td>
+    </tr>
+  </table>
+
+  <h2>合意形成のプロセス</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      合意形成の4ステップ
+    </div>
+    <ol>
+      <li><strong>問題の共有</strong>：何を解決しようとしているか全員が理解する</li>
+      <li><strong>選択肢の列挙</strong>：最低3つの選択肢を用意（「やらない」を含む）</li>
+      <li><strong>評価基準の合意</strong>：何を重視するかをまず決める</li>
+      <li><strong>決定と記録</strong>：全員が納得しなくても「同意して進める」ことが大事</li>
+    </ol>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      意思決定のアンチパターン
+    </div>
+    <ul>
+      <li><strong>HiPPO</strong>：一番偉い人の意見が常に通る（Highest Paid Person's Opinion）</li>
+      <li><strong>決定の先延ばし</strong>：情報不足を理由に永遠に決められない</li>
+      <li><strong>全員一致の強制</strong>：全員賛成でないと進めないため停滞する</li>
+      <li><strong>記録なし</strong>：決まった理由が誰も分からず、同じ議論を繰り返す</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-lead2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ADR（Architecture Decision Record）の最も重要な目的はどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead2" style="display:none;">
+      上司の承認を得るための形式的なドキュメント
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead2" style="display:none;">
+      技術的に完璧な選択肢を導き出すためのフレームワーク
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-lead2" style="display:none;">
+      決定の背景と理由を記録し、将来の理解を助けること
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-lead2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('lead2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- lead3: メンタリング基礎 -->
+<section id="lead3">
+  <h1>メンタリング基礎</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>「教える」と「導く」の違いと使い分け</li>
+      <li>メンティーの成長段階を見極める方法</li>
+      <li>効果的なメンタリングセッションの進め方</li>
+    </ul>
+  </div>
+
+  <h2>メンタリングとは</h2>
+
+  <p>
+    メンタリングは単に「教える」ことではありません。
+    <strong>相手が自分で考え、成長する力を引き出す</strong>ことです。
+    答えを与えるのではなく、答えにたどり着くプロセスを支援します。
+  </p>
+
+  <h2>「教える」と「導く」の違い</h2>
+
+  <table>
+    <tr>
+      <th>観点</th>
+      <th>教える（ティーチング）</th>
+      <th>導く（コーチング）</th>
+    </tr>
+    <tr>
+      <td>アプローチ</td>
+      <td>知識・答えを伝える</td>
+      <td>質問で気づきを促す</td>
+    </tr>
+    <tr>
+      <td>適する場面</td>
+      <td>基礎知識、ツールの使い方</td>
+      <td>問題解決、設計判断</td>
+    </tr>
+    <tr>
+      <td>メンティーの状態</td>
+      <td>知識がなく、何もできない</td>
+      <td>基礎はあるが応用できない</td>
+    </tr>
+    <tr>
+      <td>成果</td>
+      <td>即座に行動できる</td>
+      <td>自分で考える力がつく</td>
+    </tr>
+  </table>
+
+  <h2>ドレイファスモデル：成長段階の見極め</h2>
+
+  <table>
+    <tr>
+      <th>段階</th>
+      <th>特徴</th>
+      <th>必要な支援</th>
+    </tr>
+    <tr>
+      <td><strong>初心者</strong></td>
+      <td>ルールに従って作業、コンテキスト理解なし</td>
+      <td>明確な手順書、ティーチング中心</td>
+    </tr>
+    <tr>
+      <td><strong>中級者</strong></td>
+      <td>パターンを認識し始めるが、優先順位がつけられない</td>
+      <td>ガイドライン提供、徐々にコーチングへ</td>
+    </tr>
+    <tr>
+      <td><strong>上級者</strong></td>
+      <td>全体像を把握し、自分で問題を解決できる</td>
+      <td>コーチング中心、壁打ち相手になる</td>
+    </tr>
+    <tr>
+      <td><strong>熟達者</strong></td>
+      <td>直感的に正しい判断ができる</td>
+      <td>新しい挑戦の機会、スポンサーシップ</td>
+    </tr>
+  </table>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      効果的な質問の例
+    </div>
+    <ul>
+      <li>「この設計にした理由は？」（思考プロセスを確認）</li>
+      <li>「他にどんな方法が考えられる？」（選択肢を広げる）</li>
+      <li>「この方法のデメリットは何だと思う？」（批判的思考を促す）</li>
+      <li>「もし○○だったらどうする？」（応用力を鍛える）</li>
+      <li>「次に同じ問題にぶつかったらどうアプローチする？」（学びの定着）</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      メンタリングのアンチパターン
+    </div>
+    <ul>
+      <li><strong>答えをすぐ教える</strong>：考える機会を奪い、依存を生む</li>
+      <li><strong>放置する</strong>：「自分で考えろ」と突き放し、フォローしない</li>
+      <li><strong>自分のやり方を押しつける</strong>：メンティーの個性や強みを無視する</li>
+      <li><strong>成長段階を無視</strong>：初心者にコーチングだけで対応し、混乱させる</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-lead3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>基礎知識があるが応用で苦戦している中級者に対して、最も効果的なアプローチはどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead3" style="display:none;">
+      詳細な手順書を作成して渡す
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-lead3" style="display:none;">
+      質問を通じて自分で答えにたどり着くよう導く
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead3" style="display:none;">
+      難しいタスクは全て自分が引き取って手本を見せる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-lead3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('lead3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- lead4: ペアプロ/モブプロ実践 -->
+<section id="lead4">
+  <h1>ペアプログラミング・モブプログラミング実践</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ドライバーとナビゲーターの役割と切り替え</li>
+      <li>ペアプロ・モブプロによる知識移転の効果</li>
+      <li>効果的に実践するためのルールとコツ</li>
+    </ul>
+  </div>
+
+  <h2>ペアプログラミングとは</h2>
+
+  <p>
+    ペアプログラミングは2人のエンジニアが1台のPCで一緒にコードを書く手法です。
+    「人件費2倍で非効率」と思われがちですが、<strong>バグの早期発見・知識共有・設計品質の向上</strong>により、
+    総合的には生産性が上がることが多くの研究で示されています。
+  </p>
+
+  <h2>ドライバーとナビゲーター</h2>
+
+  <table>
+    <tr>
+      <th>役割</th>
+      <th>担当</th>
+      <th>意識すること</th>
+    </tr>
+    <tr>
+      <td><strong>ドライバー</strong></td>
+      <td>キーボードを操作し、コードを書く</td>
+      <td>考えていることを声に出す、ナビゲーターの指示を素直に受ける</td>
+    </tr>
+    <tr>
+      <td><strong>ナビゲーター</strong></td>
+      <td>全体を見渡し、方向性を示す</td>
+      <td>「こう書け」ではなく「こういう方針で」と伝える、先を見据える</td>
+    </tr>
+  </table>
+
+  <p>
+    <strong>15〜30分ごとに役割を交代</strong>するのが基本です。
+    経験差がある場合は、ジュニアがドライバーを多めに担当すると学習効果が高まります。
+  </p>
+
+  <h2>モブプログラミング</h2>
+
+  <p>
+    モブプログラミングは3人以上のチームで1台のPCを使い、全員で一緒にコードを書く手法です。
+    ドライバーは「タイピスト」として他のメンバーの指示に従い、残り全員がナビゲーターとして参加します。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      ペアプロ・モブプロに適した場面
+    </div>
+    <ul>
+      <li><strong>複雑な問題</strong>：アーキテクチャ設計、難易度の高いバグ修正</li>
+      <li><strong>オンボーディング</strong>：新メンバーのコードベース理解</li>
+      <li><strong>知識の属人化解消</strong>：特定の人しか知らない領域を共有</li>
+      <li><strong>重要な機能</strong>：リリース前のクリティカルなコード</li>
+      <li><strong>学習目的</strong>：新しい技術やツールの習得</li>
+    </ul>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      ペアプロが機能しない兆候
+    </div>
+    <ul>
+      <li>ナビゲーターがスマホを触っている（集中していない）</li>
+      <li>ドライバーがナビゲーターの意見を無視して一人で進める</li>
+      <li>役割交代をせず、片方がずっと見ているだけ</li>
+      <li>心理的安全性がなく、ミスを指摘されることを恐れている</li>
+    </ul>
+  </div>
+
+  <h2>リモートでのペアプロ</h2>
+
+  <table>
+    <tr>
+      <th>ツール</th>
+      <th>特徴</th>
+    </tr>
+    <tr>
+      <td>VS Code Live Share</td>
+      <td>リアルタイム共同編集、ターミナル共有</td>
+    </tr>
+    <tr>
+      <td>画面共有（Zoom等）</td>
+      <td>手軽だがラグあり、操作交代に手間</td>
+    </tr>
+    <tr>
+      <td>Tuple / Pop</td>
+      <td>ペアプロ専用ツール、低遅延で操作交代が容易</td>
+    </tr>
+  </table>
+
+  <div class="quiz" id="quiz-lead4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ペアプログラミングで経験差がある場合、学習効果を最大化する方法はどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead4" style="display:none;">
+      シニアが常にドライバーを担当し、お手本を見せる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead4" style="display:none;">
+      ジュニアにナビゲーターを担当させ、全体像を学ばせる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-lead4" style="display:none;">
+      ジュニアがドライバーを多めに担当し、シニアがナビゲートする
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-lead4')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('lead4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- lead5: 技術戦略策定 -->
+<section id="lead5">
+  <h1>技術戦略策定</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>技術ロードマップの作り方と運用</li>
+      <li>採用技術の選定基準とTechnology Radar</li>
+      <li>技術戦略とビジネス戦略の整合性</li>
+    </ul>
+  </div>
+
+  <h2>技術ロードマップとは</h2>
+
+  <p>
+    技術ロードマップは、<strong>「今どこにいて、どこに向かうのか」を技術面で可視化</strong>したものです。
+    ビジネスの成長計画と連動し、必要な技術投資の計画を示します。
+    3〜6ヶ月先を見据え、四半期ごとに見直すのが一般的です。
+  </p>
+
+  <h2>技術ロードマップのテンプレート</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      ロードマップの構成要素
+    </div>
+    <table>
+      <tr>
+        <th>要素</th>
+        <th>内容</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td>現状分析</td>
+        <td>今の技術スタック、課題、強み</td>
+        <td>モノリスからの脱却が必要</td>
+      </tr>
+      <tr>
+        <td>目標状態</td>
+        <td>6〜12ヶ月後にあるべき姿</td>
+        <td>主要ドメインのマイクロサービス化</td>
+      </tr>
+      <tr>
+        <td>マイルストーン</td>
+        <td>達成すべき中間目標</td>
+        <td>Q1: 認証基盤の分離、Q2: 決済の分離</td>
+      </tr>
+      <tr>
+        <td>リスクと軽減策</td>
+        <td>障害になりうる要素と対策</td>
+        <td>人材不足→外部パートナーの確保</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>Technology Radarによる技術選定</h2>
+
+  <p>
+    ThoughtWorks社の<strong>Technology Radar</strong>の考え方を自チームに適用し、
+    技術を4つのカテゴリに分類して管理します。
+  </p>
+
+  <table>
+    <tr>
+      <th>カテゴリ</th>
+      <th>意味</th>
+      <th>行動</th>
+    </tr>
+    <tr>
+      <td><strong>Adopt</strong></td>
+      <td>積極的に採用すべき</td>
+      <td>新規プロジェクトでデフォルト採用</td>
+    </tr>
+    <tr>
+      <td><strong>Trial</strong></td>
+      <td>試験的に使ってみる</td>
+      <td>小規模プロジェクトやPoCで検証</td>
+    </tr>
+    <tr>
+      <td><strong>Assess</strong></td>
+      <td>評価中</td>
+      <td>技術調査・情報収集を行う</td>
+    </tr>
+    <tr>
+      <td><strong>Hold</strong></td>
+      <td>新規採用は控える</td>
+      <td>既存利用は維持、新規は別の技術を使う</td>
+    </tr>
+  </table>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      技術選定のアンチパターン
+    </div>
+    <ul>
+      <li><strong>Resume Driven Development</strong>：自分の履歴書を豪華にするために流行技術を採用</li>
+      <li><strong>銀の弾丸症候群</strong>：新しい技術が全ての問題を解決すると信じる</li>
+      <li><strong>FOMO（流行への恐れ）</strong>：周りが使っているからという理由で採用</li>
+      <li><strong>評価なき採用</strong>：PoCや検証なしに本番投入する</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      技術選定チェックリスト
+    </div>
+    <ul>
+      <li>チーム内に経験者がいるか、学習コストは許容範囲か</li>
+      <li>コミュニティの活発さ、メンテナンス状況はどうか</li>
+      <li>既存のエコシステムとの統合は容易か</li>
+      <li>撤退コスト（ロックイン）はどの程度か</li>
+      <li>3年後もサポートされている見込みがあるか</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-lead5">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Technology Radarの「Hold」カテゴリの正しい意味はどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead5" style="display:none;">
+      すぐに全てのプロジェクトから削除すべき技術
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-lead5" style="display:none;">
+      新規採用は控えるが、既存利用は維持する技術
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead5" style="display:none;">
+      評価が完了するまで利用を保留する技術
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-lead5')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('lead5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- lead6: Build vs Buy判断 -->
+<section id="lead6">
+  <h1>Build vs Buy 判断</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>自作・購入・OSSの判断フレームワーク</li>
+      <li>Total Cost of Ownership（TCO）の考え方</li>
+      <li>コアコンピタンスに基づく判断基準</li>
+    </ul>
+  </div>
+
+  <h2>Build vs Buy vs OSS</h2>
+
+  <p>
+    新しい機能やシステムが必要になったとき、<strong>自分たちで作るか、既製品を買うか、OSSを使うか</strong>は重要な判断です。
+    「自分たちで作れるから作る」は正しいとは限りません。
+    ビジネスにとって最も価値のある部分にリソースを集中するための判断です。
+  </p>
+
+  <h2>判断フレームワーク</h2>
+
+  <table>
+    <tr>
+      <th>判断軸</th>
+      <th>Build（自作）</th>
+      <th>Buy（購入）</th>
+      <th>OSS</th>
+    </tr>
+    <tr>
+      <td>コア競争力</td>
+      <td>差別化の源泉なら自作</td>
+      <td>差別化に関係ないなら購入</td>
+      <td>カスタマイズが必要なら検討</td>
+    </tr>
+    <tr>
+      <td>初期コスト</td>
+      <td>高い（開発工数）</td>
+      <td>中程度（ライセンス費）</td>
+      <td>低い（無料）</td>
+    </tr>
+    <tr>
+      <td>運用コスト</td>
+      <td>保守は自社負担</td>
+      <td>ベンダーがサポート</td>
+      <td>自社で保守・アップデート</td>
+    </tr>
+    <tr>
+      <td>カスタマイズ性</td>
+      <td>完全に自由</td>
+      <td>制限あり</td>
+      <td>コード変更可能だが保守負担</td>
+    </tr>
+    <tr>
+      <td>Time to Market</td>
+      <td>遅い</td>
+      <td>速い</td>
+      <td>中程度</td>
+    </tr>
+  </table>
+
+  <h2>TCO（Total Cost of Ownership）で考える</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      TCO算出の要素
+    </div>
+    <table>
+      <tr>
+        <th>コスト要素</th>
+        <th>Build</th>
+        <th>Buy</th>
+      </tr>
+      <tr>
+        <td>初期開発費</td>
+        <td>エンジニア人件費 x 期間</td>
+        <td>ライセンス費 + 導入費</td>
+      </tr>
+      <tr>
+        <td>年間保守費</td>
+        <td>初期開発費の15〜20%/年</td>
+        <td>年間サブスクリプション</td>
+      </tr>
+      <tr>
+        <td>機会損失</td>
+        <td>他のことに使えたリソース</td>
+        <td>カスタマイズできないことの制約</td>
+      </tr>
+      <tr>
+        <td>リスクコスト</td>
+        <td>計画遅延・品質問題</td>
+        <td>ベンダーロックイン・値上げ</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>コアコンピタンスの見極め</h2>
+
+  <p>
+    <strong>コアコンピタンス（自社の強み・差別化要因）に関わる部分は自作</strong>し、
+    それ以外は積極的に外部サービスを活用するのが基本方針です。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      Build vs Buy のアンチパターン
+    </div>
+    <ul>
+      <li><strong>NIH症候群</strong>（Not Invented Here）：「自分たちで作ったほうが良い」と何でも自作する</li>
+      <li><strong>ベンダー依存</strong>：重要な部分を全て外部に依存し、交渉力を失う</li>
+      <li><strong>隠れたコスト無視</strong>：初期コストだけで判断し、運用コストを考慮しない</li>
+      <li><strong>OSSの「無料」幻想</strong>：導入・カスタマイズ・保守のコストを忘れる</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-lead6">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Build vs Buy判断で最も重要な基準はどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead6" style="display:none;">
+      初期開発コストが安い方を選ぶ
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead6" style="display:none;">
+      社内にエンジニアがいるなら常に自作する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-lead6" style="display:none;">
+      コア競争力に関わるかどうかで判断する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-lead6')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('lead6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- lead7: 技術的負債の交渉 -->
+<section id="lead7">
+  <h1>技術的負債の交渉</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>技術的負債をビジネスサイドに説明する方法</li>
+      <li>投資対効果（ROI）を用いた説得技法</li>
+      <li>負債返済のための予算と時間の確保戦略</li>
+    </ul>
+  </div>
+
+  <h2>技術的負債はなぜ返済が進まないのか</h2>
+
+  <p>
+    エンジニアは技術的負債の問題を感覚的に理解していますが、
+    <strong>ビジネスサイドには「見えないコスト」</strong>です。
+    「リファクタリングしたい」だけでは予算も時間も確保できません。
+    ビジネスの言葉で影響を伝え、投資判断として提案する必要があります。
+  </p>
+
+  <h2>ビジネスサイドへの説明フレームワーク</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      技術的負債の説明テンプレート
+    </div>
+    <pre><code>## 現状（As-Is）
+- [具体的な問題を数値で示す]
+- 例: 新機能の開発に平均4週間かかっている
+
+## 影響（Impact）
+- [ビジネスへの影響を定量化]
+- 例: 競合は同等の機能を2週間でリリースしている
+
+## 提案（Proposal）
+- [何をするか、どれくらいかかるか]
+- 例: 2スプリント（4週間）の投資で基盤を改善
+
+## 期待効果（Expected Outcome）
+- [改善後の定量的な効果]
+- 例: 開発サイクルが4週間→2週間に短縮
+
+## リスク（Risk of Inaction）
+- [放置した場合に何が起きるか]
+- 例: 12ヶ月後には開発速度がさらに50%低下</code></pre>
+  </div>
+
+  <h2>負債を「利子」で説明する</h2>
+
+  <table>
+    <tr>
+      <th>負債の種類</th>
+      <th>利子（日常的なコスト）</th>
+      <th>ビジネスインパクト</th>
+    </tr>
+    <tr>
+      <td>テストがない</td>
+      <td>変更のたびに手動テスト2日</td>
+      <td>リリース頻度が月1回に制限</td>
+    </tr>
+    <tr>
+      <td>モノリス肥大化</td>
+      <td>デプロイに3時間、影響範囲の調査に1日</td>
+      <td>緊急修正に最短2日かかる</td>
+    </tr>
+    <tr>
+      <td>ドキュメント不足</td>
+      <td>新メンバーの立ち上がりに3ヶ月</td>
+      <td>チームスケールに2倍のコスト</td>
+    </tr>
+    <tr>
+      <td>古いライブラリ</td>
+      <td>セキュリティパッチの適用に1週間</td>
+      <td>脆弱性放置によるインシデントリスク</td>
+    </tr>
+  </table>
+
+  <h2>予算確保の戦略</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      負債返済の時間確保パターン
+    </div>
+    <ul>
+      <li><strong>20%ルール</strong>：各スプリントの20%を技術改善に充てる</li>
+      <li><strong>ボーイスカウトルール</strong>：触ったコードは少しだけ改善して戻す</li>
+      <li><strong>専用スプリント</strong>：四半期に1スプリントを技術負債に専念</li>
+      <li><strong>機能開発と抱き合わせ</strong>：新機能開発時に関連する負債も一緒に返済</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      交渉のアンチパターン
+    </div>
+    <ul>
+      <li><strong>技術用語で説明</strong>：「SOLIDに違反している」では伝わらない</li>
+      <li><strong>感情的な訴え</strong>：「このコードは汚い」は説得力がない</li>
+      <li><strong>全か無か</strong>：「3ヶ月かけてフルリファクタリング」は通らない</li>
+      <li><strong>隠れてやる</strong>：報告せずにリファクタリングすると信頼を失う</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-lead7">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>技術的負債の返済をビジネスサイドに提案する際、最も効果的なアプローチはどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead7" style="display:none;">
+      「コードが汚いので、きれいにする時間をください」と感情的に伝える
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-lead7" style="display:none;">
+      現在の開発速度低下を数値で示し、改善後の効果を定量的に提案する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead7" style="display:none;">
+      ビジネスサイドに報告せず、機能開発の裏でリファクタリングを進める
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-lead7')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('lead7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- lead8: アーキテクチャ審査 -->
+<section id="lead8">
+  <h1>アーキテクチャ審査</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>アーキテクチャレビューのプロセスと観点</li>
+      <li>設計基準（Design Principles）の策定方法</li>
+      <li>アーキテクチャの品質属性と評価手法</li>
+    </ul>
+  </div>
+
+  <h2>なぜアーキテクチャ審査が必要か</h2>
+
+  <p>
+    コードレビューが個々のコードの品質を守るように、
+    <strong>アーキテクチャ審査はシステム全体の構造的な品質を守ります</strong>。
+    問題がアーキテクチャレベルで発見されれば、コードレベルで修正するよりはるかにコストが低いです。
+  </p>
+
+  <h2>アーキテクチャ品質属性</h2>
+
+  <table>
+    <tr>
+      <th>品質属性</th>
+      <th>定義</th>
+      <th>確認ポイント</th>
+    </tr>
+    <tr>
+      <td><strong>可用性</strong></td>
+      <td>システムが稼働し続ける能力</td>
+      <td>SLA目標、障害時の復旧手順</td>
+    </tr>
+    <tr>
+      <td><strong>スケーラビリティ</strong></td>
+      <td>負荷増加に対応する能力</td>
+      <td>想定トラフィック、スケーリング戦略</td>
+    </tr>
+    <tr>
+      <td><strong>セキュリティ</strong></td>
+      <td>不正アクセスからの保護</td>
+      <td>認証・認可、データ暗号化、監査ログ</td>
+    </tr>
+    <tr>
+      <td><strong>保守性</strong></td>
+      <td>変更のしやすさ</td>
+      <td>モジュール分離、依存関係の方向</td>
+    </tr>
+    <tr>
+      <td><strong>テスタビリティ</strong></td>
+      <td>テストのしやすさ</td>
+      <td>依存注入、テスト戦略の明確さ</td>
+    </tr>
+    <tr>
+      <td><strong>観測可能性</strong></td>
+      <td>内部状態を外部から理解できる能力</td>
+      <td>ログ、メトリクス、トレーシング</td>
+    </tr>
+  </table>
+
+  <h2>レビュープロセス</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      アーキテクチャレビューの進め方
+    </div>
+    <ol>
+      <li><strong>設計書の提出</strong>：設計者がアーキテクチャ設計書（またはADR）を作成</li>
+      <li><strong>事前レビュー</strong>：レビュアーが事前に設計書を読み、質問を準備</li>
+      <li><strong>レビュー会議</strong>：設計者がウォークスルー、レビュアーが質問・指摘</li>
+      <li><strong>フィードバック整理</strong>：Must（必須修正）/ Should（推奨）/ Could（あると良い）に分類</li>
+      <li><strong>修正と承認</strong>：Mustを修正後、再レビューまたは承認</li>
+    </ol>
+  </div>
+
+  <h2>設計基準の例</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      チームの設計原則テンプレート
+    </div>
+    <ul>
+      <li><strong>サービス間通信は非同期を基本とする</strong>（理由：障害の伝播を防ぐ）</li>
+      <li><strong>データベースは各サービスが独立して持つ</strong>（理由：独立デプロイの実現）</li>
+      <li><strong>外部APIは必ずアダプター層を経由する</strong>（理由：変更の局所化）</li>
+      <li><strong>新しいエンドポイントにはレート制限を設ける</strong>（理由：可用性の保護）</li>
+    </ul>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      アーキテクチャ審査のアンチパターン
+    </div>
+    <ul>
+      <li><strong>形骸化</strong>：チェックリストを埋めるだけで、本質的な議論がない</li>
+      <li><strong>事後審査</strong>：実装が終わってから審査し、手戻りが大きい</li>
+      <li><strong>権威主義</strong>：アーキテクトの意見が絶対で、議論にならない</li>
+      <li><strong>過度な審査</strong>：小さな変更にも重いプロセスを要求する</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-lead8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>アーキテクチャレビューのフィードバック分類で「Must」に該当するものはどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead8" style="display:none;">
+      コーディングスタイルの統一
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead8" style="display:none;">
+      ドキュメントの追加
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-lead8" style="display:none;">
+      セキュリティ要件を満たしていない設計の修正
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-lead8')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('lead8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- lead9: エンジニア評価・育成 -->
+<section id="lead9">
+  <h1>エンジニア評価・育成</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>スキルマトリクスの設計と活用方法</li>
+      <li>成長計画（Individual Development Plan）の立て方</li>
+      <li>効果的なフィードバックの技法</li>
+    </ul>
+  </div>
+
+  <h2>スキルマトリクス</h2>
+
+  <p>
+    スキルマトリクスは、<strong>チームメンバーのスキルを可視化し、育成計画の基礎</strong>とするツールです。
+    「誰が何をできるか」を明確にし、知識の偏りやリスクを発見します。
+  </p>
+
+  <h2>スキルマトリクスの例</h2>
+
+  <table>
+    <tr>
+      <th>スキル領域</th>
+      <th>レベル1（知識あり）</th>
+      <th>レベル2（実践可能）</th>
+      <th>レベル3（指導可能）</th>
+      <th>レベル4（設計可能）</th>
+    </tr>
+    <tr>
+      <td>フロントエンド</td>
+      <td>HTML/CSS基礎</td>
+      <td>Reactで機能開発</td>
+      <td>設計パターンを指導</td>
+      <td>アーキテクチャ設計</td>
+    </tr>
+    <tr>
+      <td>バックエンド</td>
+      <td>API基礎</td>
+      <td>CRUD実装</td>
+      <td>パフォーマンス最適化</td>
+      <td>分散システム設計</td>
+    </tr>
+    <tr>
+      <td>インフラ</td>
+      <td>クラウド基礎</td>
+      <td>環境構築</td>
+      <td>IaC運用</td>
+      <td>マルチリージョン設計</td>
+    </tr>
+    <tr>
+      <td>テスト</td>
+      <td>ユニットテスト</td>
+      <td>統合テスト設計</td>
+      <td>テスト戦略策定</td>
+      <td>品質文化の構築</td>
+    </tr>
+  </table>
+
+  <h2>IDP（Individual Development Plan）</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      成長計画テンプレート
+    </div>
+    <pre><code>## 名前: [エンジニア名]
+## 期間: [四半期]
+
+### 現在のレベル
+- 強み: [具体的なスキル]
+- 伸ばしたい領域: [具体的なスキル]
+
+### 目標（3ヶ月後のありたい姿）
+1. [具体的・測定可能な目標]
+2. [具体的・測定可能な目標]
+
+### アクションプラン
+| アクション | 期限 | サポート |
+|-----------|------|---------|
+| [具体的な行動] | [日付] | [必要な支援] |
+
+### 振り返り（月次）
+- 進捗:
+- 課題:
+- 次のアクション:</code></pre>
+  </div>
+
+  <h2>効果的なフィードバック</h2>
+
+  <table>
+    <tr>
+      <th>手法</th>
+      <th>構造</th>
+      <th>例</th>
+    </tr>
+    <tr>
+      <td><strong>SBI</strong></td>
+      <td>Situation - Behavior - Impact</td>
+      <td>「先日のレビュー会議で（S）、設計の代替案を3つ提示してくれた（B）。チームの議論が深まり、良い設計になった（I）」</td>
+    </tr>
+    <tr>
+      <td><strong>STAR/AR</strong></td>
+      <td>Situation - Task - Action - Result / Alternative action - Alternative result</td>
+      <td>改善点を伝える際に「こうしていたら、さらに良い結果になった」と建設的に提案</td>
+    </tr>
+  </table>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      評価・育成のアンチパターン
+    </div>
+    <ul>
+      <li><strong>年1回の驚き</strong>：普段フィードバックせず、年次評価で突然低評価を伝える</li>
+      <li><strong>曖昧な評価</strong>：「もっと頑張れ」では何をすべきか分からない</li>
+      <li><strong>比較評価</strong>：「Aさんと比べてダメ」はモチベーションを破壊する</li>
+      <li><strong>一律の育成</strong>：全員に同じ研修を受けさせ、個人の強みを無視する</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-lead9">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>SBIフィードバックの「I」が表すものはどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead9" style="display:none;">
+      Instruction（改善の指示）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-lead9" style="display:none;">
+      Impact（行動がもたらした影響）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead9" style="display:none;">
+      Improvement（今後の改善点）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-lead9')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('lead9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- lead10: 影響力の行使 -->
+<section id="lead10">
+  <h1>影響力の行使</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>権限なきリーダーシップの実践方法</li>
+      <li>技術的な提案を通すための説得力の磨き方</li>
+      <li>信頼構築の原則と日々の行動</li>
+    </ul>
+  </div>
+
+  <h2>権限なきリーダーシップとは</h2>
+
+  <p>
+    テックリードは多くの場合、<strong>人事権や決裁権を持たない</strong>立場です。
+    しかし、技術方針やチームの行動に大きな影響を与えます。
+    これは「権限」ではなく「影響力」で人を動かすリーダーシップです。
+  </p>
+
+  <h2>影響力の6つの源泉</h2>
+
+  <table>
+    <tr>
+      <th>源泉</th>
+      <th>説明</th>
+      <th>テックリードでの活用</th>
+    </tr>
+    <tr>
+      <td><strong>専門性</strong></td>
+      <td>技術的な知識と実力</td>
+      <td>的確な技術判断で「この人に聞けば大丈夫」という信頼を得る</td>
+    </tr>
+    <tr>
+      <td><strong>一貫性</strong></td>
+      <td>言動の一致と予測可能性</td>
+      <td>自分が言ったことを実行する、基準をぶらさない</td>
+    </tr>
+    <tr>
+      <td><strong>実績</strong></td>
+      <td>過去の成功体験</td>
+      <td>困難なプロジェクトを成功させた経験を積む</td>
+    </tr>
+    <tr>
+      <td><strong>共感</strong></td>
+      <td>相手の立場を理解する力</td>
+      <td>メンバーの困りごとを理解し、一緒に解決する</td>
+    </tr>
+    <tr>
+      <td><strong>コミュニケーション</strong></td>
+      <td>分かりやすく伝える力</td>
+      <td>複雑な技術を平易に説明、ビジネス言語に翻訳</td>
+    </tr>
+    <tr>
+      <td><strong>関係構築</strong></td>
+      <td>組織内外のネットワーク</td>
+      <td>他チームとの連携、社外コミュニティへの参加</td>
+    </tr>
+  </table>
+
+  <h2>説得力を高める技法</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📋</span>
+      提案を通すための5つのステップ
+    </div>
+    <ol>
+      <li><strong>相手の関心事を理解する</strong>：ビジネス側ならROI、エンジニアなら技術的メリット</li>
+      <li><strong>データで語る</strong>：「感覚的に遅い」ではなく「レスポンスが3秒→500msに改善」</li>
+      <li><strong>小さく始める提案</strong>：「全面刷新」ではなく「まずこの部分で検証」</li>
+      <li><strong>味方を作る</strong>：事前に賛同者を確保し、会議で孤立しない</li>
+      <li><strong>代替案を用意する</strong>：「これしかない」ではなく「3つの中でこれが最適」</li>
+    </ol>
+  </div>
+
+  <h2>信頼構築の日々の行動</h2>
+
+  <table>
+    <tr>
+      <th>行動</th>
+      <th>効果</th>
+    </tr>
+    <tr>
+      <td>約束を守る（小さなことでも）</td>
+      <td>「この人は信頼できる」という認識を築く</td>
+    </tr>
+    <tr>
+      <td>ミスを素直に認める</td>
+      <td>心理的安全性を高め、チームも率直になる</td>
+    </tr>
+    <tr>
+      <td>他人の功績を認め、公の場で称賛する</td>
+      <td>「この人は自分の手柄にしない」という信頼を得る</td>
+    </tr>
+    <tr>
+      <td>困っている人を助ける</td>
+      <td>互恵性が生まれ、自分が困った時に助けてもらえる</td>
+    </tr>
+    <tr>
+      <td>一貫した判断基準を持つ</td>
+      <td>「この人はフェアだ」という評価を得る</td>
+    </tr>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      影響力行使のアンチパターン
+    </div>
+    <ul>
+      <li><strong>政治的な駆け引き</strong>：裏工作や根回しで相手を出し抜こうとする</li>
+      <li><strong>権威の借用</strong>：「CTOが言っていた」と虎の威を借りる</li>
+      <li><strong>恐怖による支配</strong>：技術力で相手を圧倒し、意見を封じる</li>
+      <li><strong>過度な妥協</strong>：人間関係を恐れて、技術的に正しいことを言えない</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      信頼を失う行動
+    </div>
+    <ul>
+      <li>言ったことを守らない（信頼の貯金が一気にゼロになる）</li>
+      <li>他人のミスを公の場で晒す（心理的安全性の破壊）</li>
+      <li>自分のミスを他人のせいにする（責任転嫁）</li>
+      <li>特定のメンバーだけを贔屓する（公平性の欠如）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-lead10">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>権限なきリーダーシップで最も重要な基盤はどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead10" style="display:none;">
+      技術力で他のメンバーを圧倒すること
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-lead10" style="display:none;">
+      上位者の権威を活用して意見を通すこと
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-lead10" style="display:none;">
+      日々の行動を通じて信頼を積み重ねること
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-lead10')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('lead10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

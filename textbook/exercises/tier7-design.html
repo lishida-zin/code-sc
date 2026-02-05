@@ -1303,3 +1303,205 @@ class OrderProcessor {
     <span class="icon">✓</span> このページを完了
   </button>
 </section>
+
+<!-- ex-t7-16: SOLID原則違反の修正 -->
+<section id="ex-t7-16">
+  <h1>問題 16: SOLID原則違反の修正</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🔧</span> コード修正</div>
+    <p>レポート生成機能に新しいフォーマット（Excel出力）を追加する要望が来ましたが、既存コードを見た担当者が「どこに追加すればいいか分からない、修正すると他のフォーマットが壊れそう」と報告しています。SRP（単一責任）とOCP（開放閉鎖）の両方に違反しているコードを修正してください。</p>
+  </div>
+
+  <h2>以下のコードにバグがあります</h2>
+  <pre><code>class ReportGenerator {
+  generateReport(data: SalesData[], format: string): string | Buffer {
+    // データ集計（責務1）
+    let total = 0;
+    let taxTotal = 0;
+    for (const d of data) {
+      total += d.amount;
+      taxTotal += d.amount * 0.1;
+    }
+
+    // フォーマット別出力（責務2 + OCP違反）
+    if (format === 'html') {
+      return `&lt;table&gt;&lt;tr&gt;&lt;td&gt;合計&lt;/td&gt;&lt;td&gt;${total}&lt;/td&gt;&lt;/tr&gt;
+              &lt;tr&gt;&lt;td&gt;税&lt;/td&gt;&lt;td&gt;${taxTotal}&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;`;
+    } else if (format === 'csv') {
+      return `合計,${total}\n税,${taxTotal}`;
+    } else if (format === 'pdf') {
+      const pdf = new PDFDocument();
+      pdf.text(`合計: ${total}`);
+      pdf.text(`税: ${taxTotal}`);
+      return pdf.output();
+    } else {
+      throw new Error('Unsupported format: ' + format);
+    }
+  }
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t7-16">
+    <div class="quiz-question"><strong>問題：</strong>このコードの修正方法として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-16" value="a">
+        else ifにExcelのケースを追加し、formatパラメータの型をユニオン型に変更する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-16" value="b">
+        generateReportメソッドをgenerateHtml、generateCsv、generatePdfに分割して3つのメソッドにする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-16" value="c">
+        switch文に変更し、defaultケースでエラーを投げるようにする
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="正しい修正は2つの原則違反を同時に解決します。(1) SRP: データ集計ロジックとフォーマット出力を分離する。ReportAggregatorが集計を担当し、ReportSummary（合計・税額等）を返す。(2) OCP: ReportFormatterインターフェースを定義し、HtmlFormatter, CsvFormatter, PdfFormatter等が実装する。新フォーマット追加時は新クラスを追加するだけで既存コードの修正が不要になる。これにより、ExcelFormatterを追加しても既存のHTML/CSV/PDFフォーマッタには一切触れる必要がなくなります。メソッド分割やswitch文は、新フォーマット追加のたびに既存クラスを修正する必要があり、OCP違反が解消されません。">
+        <input type="radio" name="quiz-ex-t7-16" value="d">
+        集計ロジックを別クラスに抽出し、フォーマット出力はReportFormatterインターフェースの実装クラス（Html/Csv/Pdf各Formatter）に分離する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-16')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t7-16')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t7-17: Observerパターンのメモリリーク -->
+<section id="ex-t7-17">
+  <h1>問題 17: Observerパターンのメモリリーク</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🔧</span> コード修正</div>
+    <p>チャットアプリケーションで、ユーザーがルームに入退室を繰り返すとメモリ使用量が増加し続け、最終的にプロセスがOOMで停止するバグが報告されました。ヒープダンプを分析すると、解放されていないイベントリスナーが大量に残っていることが判明しました。</p>
+  </div>
+
+  <h2>以下のコードにバグがあります</h2>
+  <pre><code>class EventEmitter {
+  private listeners: Map&lt;string, Set&lt;Function&gt;&gt; = new Map();
+
+  on(event: string, listener: Function) {
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, new Set());
+    }
+    this.listeners.get(event)!.add(listener);
+  }
+
+  emit(event: string, ...args: any[]) {
+    this.listeners.get(event)?.forEach(fn =&gt; fn(...args));
+  }
+}
+
+class ChatRoom extends EventEmitter { /* ... */ }
+
+class ChatUI {
+  private room: ChatRoom;
+
+  joinRoom(room: ChatRoom) {
+    this.room = room;
+    // 入室するたびにリスナーを登録
+    this.room.on('message', (msg) =&gt; {
+      this.renderMessage(msg);
+    });
+    this.room.on('userJoined', (user) =&gt; {
+      this.renderNotification(user + ' が入室しました');
+    });
+  }
+
+  leaveRoom() {
+    // リスナーを解除せずにルームを切り替え
+    this.room = null;
+  }
+
+  renderMessage(msg: string) { /* DOM更新 */ }
+  renderNotification(text: string) { /* DOM更新 */ }
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t7-17">
+    <div class="quiz-question"><strong>問題：</strong>このコードの修正方法として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="メモリリークの原因は、joinRoom()で登録したリスナーがleaveRoom()で解除されていないことです。正しい修正は：(1) EventEmitterにoff(event, listener)メソッドを追加してリスナー解除を可能にする。(2) joinRoom()でリスナーを匿名関数ではなくインスタンスフィールド（this.onMessage, this.onUserJoined）に保持する。匿名関数は参照が失われるためoff()で特定できない。(3) leaveRoom()でthis.room.off('message', this.onMessage)のようにリスナーを確実に解除してからthis.room = nullにする。WeakRefはイベントリスナーのユースケースには適さず、setIntervalでの定期クリアはタイミング問題を生み、GC強制はリスナー参照が残っている限り効果がありません。">
+        <input type="radio" name="quiz-ex-t7-17" value="a">
+        EventEmitterにoff()メソッドを追加し、リスナーを名前付き関数としてフィールドに保持、leaveRoom()でoff()を呼んで全リスナーを解除する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-17" value="b">
+        リスナーの参照をWeakRefで保持すれば、ChatUIがGCされた時点で自動的にリスナーも回収される
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-17" value="c">
+        setInterval()で定期的にlistenersマップをクリアし、必要なリスナーだけ再登録する仕組みにする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-17" value="d">
+        leaveRoom()でglobal.gc()を呼び出して強制的にガベージコレクションを実行する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-17')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t7-17')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t7-18: トレードオフ: 継承かコンポジションか -->
+<section id="ex-t7-18">
+  <h1>問題 18: 継承かコンポジションか</h1>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚖️</span> トレードオフ判断</div>
+    <p>あなたはUIコンポーネントライブラリの設計を担当しています。Buttonコンポーネントをベースに、IconButton、LoadingButton、DropdownButton、IconLoadingButton（アイコン付きローディング）などのバリエーションを作る必要があります。現在、チームメンバーが継承ベースの設計を提案していますが、別のメンバーはコンポジションを主張しています。バリエーションは今後さらに増える見込みです。</p>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-left">
+      <h3>選択肢A: 継承ベース</h3>
+      <ul>
+        <li>BaseButton → IconButton → IconLoadingButton のような階層で、メソッドオーバーライドで振る舞いを変更</li>
+        <li>共通ロジックが親クラスに集約されて重複が少ない</li>
+        <li>組み合わせ爆発（Icon+Loading, Icon+Dropdown等）でクラス数が指数的に増加する</li>
+      </ul>
+    </div>
+    <div class="compare-right">
+      <h3>選択肢B: コンポジションベース</h3>
+      <ul>
+        <li>Button本体 + Icon/Loading/Dropdownの各機能をpropsやchildren、HOC、hooksで合成</li>
+        <li>任意の組み合わせが自由にでき、新バリエーション追加が容易</li>
+        <li>各機能の組み合わせ方をドキュメント化しないと使い方が分かりにくい</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-ex-t7-18">
+    <div class="quiz-question"><strong>問題：</strong>このシナリオで最も適切な判断はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-18" value="a">
+        継承で設計する。オブジェクト指向の基本であり、BaseButtonの変更が全バリエーションに自動反映されるため保守が楽
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-18" value="b">
+        全バリエーションを1つの巨大なButtonコンポーネントにまとめ、propsのフラグ（hasIcon, isLoading, hasDropdown）で制御する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="UIコンポーネントのバリエーションが今後増える前提では、コンポジションが明確に適切です。継承の場合、Icon+Loading, Icon+Dropdown, Loading+Dropdown等の組み合わせごとにクラスが必要になり、nパターンの機能で最大2^n個のクラスが発生します（組み合わせ爆発）。コンポジションなら、Icon・Loading・Dropdownをそれぞれ独立した機能として実装し、任意に合成できます。ただし、よく使う組み合わせ（IconButton, LoadingButton等）はプリセットコンポーネントとして提供することで、利用者の利便性とドキュメントのわかりやすさを確保します。1つの巨大コンポーネントにフラグで制御する方法は、SRP違反で内部が複雑になり保守が困難です。">
+        <input type="radio" name="quiz-ex-t7-18" value="c">
+        コンポジションで設計し、Icon・Loading・Dropdownを独立した合成可能な機能として実装する。よく使う組み合わせはプリセットとして提供する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-18" value="d">
+        Mixinパターンを採用し、各機能をMixinとしてButtonクラスに動的に合成する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-18')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t7-18')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

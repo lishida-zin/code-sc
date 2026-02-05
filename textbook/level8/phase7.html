@@ -2334,3 +2334,187 @@ jobs:
     このページを完了
   </button>
 </section>
+
+<section id="ci11">
+  <h1>Flakyテスト対策</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Flakyテストとは何か</li>
+      <li>Flakyテストの原因分析</li>
+      <li>対策パターンと自動検出</li>
+    </ul>
+  </div>
+
+  <h2>Flakyテストとは</h2>
+  <p>
+    <strong>Flakyテスト</strong>とは、コードを変更していないのに
+    <strong>成功/失敗がランダムに変わる</strong>テストのことです。<br>
+    「今回は落ちたけど、もう一回実行したら通った」がFlakyテストの典型です。
+  </p>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      Flakyテストは信頼を破壊する
+    </div>
+    <p>
+      Flakyテストが増えると、チームは<strong>テスト結果を信用しなくなります</strong>。<br>
+      「どうせFlakyでしょ」と失敗を無視し始め、
+      <strong>本物のバグも見逃す</strong>ようになります。<br>
+      テストスイートの価値がゼロになる最大の原因です。
+    </p>
+  </div>
+
+  <h2>主な原因</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>原因</th>
+        <th>具体例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1. タイミング依存</strong></td>
+        <td>非同期処理のawait不足、setTimeout依存</td>
+      </tr>
+      <tr>
+        <td><strong>2. テスト間の状態共有</strong></td>
+        <td>DB/ファイル/グローバル変数の汚染</td>
+      </tr>
+      <tr>
+        <td><strong>3. 外部サービス依存</strong></td>
+        <td>ネットワーク遅延、APIレート制限</td>
+      </tr>
+      <tr>
+        <td><strong>4. 順序依存</strong></td>
+        <td>テストAが作ったデータにテストBが依存</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>対策パターン</h2>
+
+  <h3>リトライよりも根本原因の修正</h3>
+  <pre><code>// NG: リトライで誤魔化す
+// retry: 3 ← これは対症療法
+
+// OK: 根本原因を修正
+// Before（Flaky）
+test('should fetch data', async () =&gt; {
+  fetchData();
+  await sleep(1000); // タイミング依存！
+  expect(result).toBeDefined();
+});
+
+// After（安定）
+test('should fetch data', async () =&gt; {
+  const result = await fetchData(); // awaitで確実に待つ
+  expect(result).toBeDefined();
+});</code></pre>
+
+  <h3>テスト分離</h3>
+  <pre><code>// 各テストが独立した状態を持つ
+beforeEach(async () =&gt; {
+  // テストごとにDBをクリーンな状態にリセット
+  await database.reset();
+  // テスト固有のデータをセットアップ
+  await database.seed(testFixtures);
+});</code></pre>
+
+  <h3>決定的なテスト</h3>
+  <pre><code>// 乱数シードを固定
+Math.random = seedrandom('fixed-seed');
+
+// 時刻をモック
+jest.useFakeTimers();
+jest.setSystemTime(new Date('2025-01-01T00:00:00Z'));</code></pre>
+
+  <h3>Quarantine（隔離）戦略</h3>
+  <p>
+    Flakyだと判明したテストを<strong>一時的に隔離</strong>し、
+    CIの成否に影響しないようにします。<br>
+    ただし隔離は<strong>一時的な措置</strong>であり、必ず修正する期限を設けます。
+  </p>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">NG: Flakyなテスト</div>
+      <ul>
+        <li>sleepやsetTimeoutで待機</li>
+        <li>テスト間でDB状態を共有</li>
+        <li>外部APIを直接呼び出す</li>
+        <li>実行順序に依存</li>
+        <li>失敗したらリトライ</li>
+      </ul>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">OK: 安定したテスト</div>
+      <ul>
+        <li>awaitやwaitForで確実に待機</li>
+        <li>各テストが独立した状態を持つ</li>
+        <li>外部APIはモック/スタブ</li>
+        <li>どの順序でも成功する</li>
+        <li>根本原因を修正</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Flakyテスト検出の自動化</h2>
+
+  <pre><code># GitHub Actions でのFlaky検出
+name: Flaky Test Detection
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # 毎週月曜に実行
+
+jobs:
+  flaky-detect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+
+      # 同じテストを複数回実行して不安定なものを検出
+      - name: Run tests multiple times
+        run: |
+          for i in {1..5}; do
+            npm test -- --json --outputFile="result-$i.json" || true
+          done
+
+      - name: Analyze flaky tests
+        run: node scripts/detect-flaky.js result-*.json</code></pre>
+
+  <div class="quiz" id="quiz-ci11">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Flakyテストへの最も適切な対処法は？</p>
+    <label class="quiz-option">
+      <input type="radio" name="q-ci11" style="display:none;">
+      <span>リトライ回数を増やして通るようにする</span>
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="リトライは対症療法にすぎません。タイミング依存、状態共有、外部依存など根本原因を特定し修正することが重要です。">
+      <input type="radio" name="q-ci11" style="display:none;">
+      <span>根本原因を特定して修正する</span>
+    </label>
+    <label class="quiz-option">
+      <input type="radio" name="q-ci11" style="display:none;">
+      <span>Flakyなテストを削除する</span>
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ci11')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ci11')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>

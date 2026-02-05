@@ -1085,3 +1085,195 @@ jobs:
     <span class="icon">✓</span> このページを完了
   </button>
 </section>
+
+<!-- ex-t6-16: Dockerfile最適化修正 -->
+<section id="ex-t6-16">
+  <h1>問題 16: Dockerfile最適化修正</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🔧</span> コード修正</div>
+    <p>本番デプロイのたびにDockerイメージのビルドに15分以上かかり、イメージサイズも1.2GBに膨れ上がっています。また、セキュリティスキャンでコンテナがroot権限で実行されている警告が出ています。このDockerfileを修正してください。</p>
+  </div>
+
+  <h2>以下のコードにバグがあります</h2>
+  <pre><code>FROM node:20
+
+WORKDIR /app
+
+# ソースコードを全てコピー
+COPY . .
+
+# 依存関係インストール（devDependenciesも含む）
+RUN npm install
+
+# TypeScriptビルド
+RUN npm run build
+
+# ビルド成果物もソースもテストも全て含んだまま
+EXPOSE 3000
+
+CMD ["node", "dist/server.js"]</code></pre>
+
+  <div class="quiz" id="quiz-ex-t6-16">
+    <div class="quiz-question"><strong>問題：</strong>このコードの修正方法として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-16" value="a">
+        「RUN npm install」を「RUN npm install --production」に変え、「RUN rm -rf src test」でソースを削除する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-16" value="b">
+        ベースイメージをnode:20-alpineに変更するだけで、イメージサイズとセキュリティの問題は解決する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="正しい修正は以下の全てを組み合わせたマルチステージビルドです。(1) ステージ1（builder）: node:20-alpineで依存関係インストールとTypeScriptビルドを行う。package*.jsonを先にCOPYしてnpm ciでレイヤーキャッシュを活かす。(2) ステージ2（runner）: node:20-alpineで、ビルド成果物とproduction依存のみをCOPYする。ソースコード、テスト、devDependenciesは含まれない。(3) USER nodeで非root実行にする。これにより、イメージサイズは100-200MB程度に削減され、ビルドキャッシュも効率的に使え、rootで実行されるセキュリティリスクも排除されます。">
+        <input type="radio" name="quiz-ex-t6-16" value="c">
+        マルチステージビルドでビルド用ステージとランタイム用ステージを分離し、package*.jsonの先行COPYでキャッシュ最適化、本番依存のみインストール、USER nodeで非root実行にする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-16" value="d">
+        docker buildコマンドに--squashオプションを付けてレイヤーを統合すればイメージサイズは解決する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-16')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-16')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t6-17: GitHub Actions CI設定バグ -->
+<section id="ex-t6-17">
+  <h1>問題 17: GitHub Actions CI設定バグ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🔧</span> コード修正</div>
+    <p>CI/CDパイプラインに問題が発生しています。(1) node_modulesのキャッシュが効かず毎回フルインストールで5分かかる、(2) テストが未完了なのにデプロイジョブが開始されることがある、(3) mainブランチ以外のpushでもデプロイが走ることがある、と報告されています。</p>
+  </div>
+
+  <h2>以下のコードにバグがあります</h2>
+  <pre><code># .github/workflows/ci.yml
+name: CI/CD Pipeline
+on:
+  push:
+    branches: ['*']
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install
+      - run: npm run lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: npm-${{ hashFiles('package.json') }}
+      - run: npm install
+      - run: npm test
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install
+      - run: npm run build
+      - run: ./deploy.sh production</code></pre>
+
+  <div class="quiz" id="quiz-ex-t6-17">
+    <div class="quiz-question"><strong>問題：</strong>このコードの修正方法として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-17" value="a">
+        キャッシュのkeyを「npm-cache」という固定文字列に変更して常にキャッシュがヒットするようにする
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="3つの問題の正しい修正は以下の通りです。(1) キャッシュ: keyにpackage.jsonではなくpackage-lock.jsonのハッシュを使う。package.jsonが変わらなくてもlockファイルが変わればdependenciesが変わるため。また、npm ciを使えばlockファイルと完全に一致する依存関係がインストールされる。(2) デプロイジョブの依存関係: 「needs: [lint, test]」を追加して、lint・testが両方成功した後にのみ実行されるようにする。(3) デプロイのブランチ制限: on.pushのbranchesを['main']にするか、deployジョブに「if: github.ref == 'refs/heads/main'」を追加する。">
+        <input type="radio" name="quiz-ex-t6-17" value="b">
+        キャッシュkeyをpackage-lock.jsonのハッシュに修正、deployジョブに「needs: [lint, test]」を追加、デプロイはmainブランチのみに制限する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-17" value="c">
+        全てのジョブを1つのジョブにまとめれば、依存関係の問題もキャッシュの問題も解決する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-17" value="d">
+        actions/cacheの代わりにセルフホストランナーを使えばnode_modulesが永続化されるのでキャッシュ不要になる
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-17')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-17')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t6-18: トレードオフ: モノリスかマイクロサービスか -->
+<section id="ex-t6-18">
+  <h1>問題 18: モノリスかマイクロサービスか</h1>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">⚖️</span> トレードオフ判断</div>
+    <p>あなたはシリーズAの資金調達に成功したスタートアップのCTOです。現在のプロダクトはRailsモノリスで動いており、ユーザー数は月間1万人。エンジニアは5名（フルスタック3名、インフラ1名、新卒1名）。投資家から「スケーラビリティのためにマイクロサービスに移行すべきでは？」と提案を受けています。今後1年でユーザー数10倍を目指しています。</p>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-left">
+      <h3>選択肢A: モノリス継続</h3>
+      <ul>
+        <li>開発・デバッグ・デプロイが単純で5人チームでも回せる</li>
+        <li>サービス間通信のオーバーヘッドがない</li>
+        <li>特定機能だけのスケールアウトができない</li>
+      </ul>
+    </div>
+    <div class="compare-right">
+      <h3>選択肢B: マイクロサービス移行</h3>
+      <ul>
+        <li>各サービスを独立してスケール・デプロイ可能</li>
+        <li>技術選定の自由度が高い</li>
+        <li>サービス間通信、分散トレーシング、データ整合性など運用コストが大幅に増加</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-ex-t6-18">
+    <div class="quiz-question"><strong>問題：</strong>このシナリオで最も適切な判断はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-18" value="a">
+        投資家の助言に従い、全面的にマイクロサービスに移行する。スケーラビリティはスタートアップの生命線であり、今から備えるべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-18" value="b">
+        Kubernetesクラスタを構築し、現在のモノリスをコンテナ化した上で段階的にサービスを分割する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="5人のスタートアップでマイクロサービスを運用するのは、インフラ・監視・障害対応のコストが開発速度を大きく犠牲にします。月間1万→10万ユーザー程度なら、モノリスのまま垂直スケーリング（サーバースペック向上）と水平スケーリング（ロードバランサ+複数台）で十分対応可能です。ただし、将来の分割を見据えてモジュール間の境界を明確に保つ（モジュラーモノリス）ことが重要です。ドメインごとにモジュール/名前空間を分離し、モジュール間はインターフェース経由でのみ通信する設計にしておけば、実際にボトルネックが明確になった時点で該当部分だけを切り出せます。">
+        <input type="radio" name="quiz-ex-t6-18" value="c">
+        モノリスを継続しつつ、モジュール境界を明確にしたモジュラーモノリスに整理する。実際にスケーリングが必要になった箇所から段階的に分離を検討する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-18" value="d">
+        RailsからGoやRustに全面リライトし、パフォーマンスの根本的な問題を解決した上でマイクロサービス化する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-18')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-18')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

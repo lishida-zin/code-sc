@@ -1664,3 +1664,321 @@ function Search() {
         Phase 3を完了
       </button>
     </section>
+
+    <!-- hooks9: React Hooks → バックエンド設計への架け橋 -->
+    <section id="hooks9">
+      <h1>React Hooks → バックエンド設計への架け橋</h1>
+
+      <div class="card card-info">
+        <div class="card-title"><span class="icon">🌉</span> ブリッジセクション</div>
+        <p>Level 3で学んだReact Hooksの考え方が、Level 4のバックエンド開発でどのように活きるかを解説します。フロントエンドとバックエンドの「共通する設計思想」を理解することで、フルスタック開発への準備が整います。</p>
+      </div>
+
+      <!-- useState → サーバーサイドの状態管理 -->
+      <div class="card">
+        <h2>useState → サーバーサイドの状態管理</h2>
+
+        <p>
+          Reactの<code>useState</code>は「UIの状態を管理する仕組み」でした。
+          バックエンドにも「状態」があります。ただし管理方法が異なります。
+        </p>
+
+        <div class="code-block">
+          <div class="code-header">概念の対比</div>
+          <pre><code>// フロントエンド: useState でUIの状態管理
+const [user, setUser] = useState(null);
+const [cart, setCart] = useState([]);
+
+// バックエンド: 状態はDB・セッション・キャッシュに保持
+// Express + セッション
+app.use(session({ secret: 'key', resave: false }));
+app.get('/api/user', (req, res) => {
+  const user = req.session.user; // セッションから状態取得
+  res.json(user);
+});
+
+// DBに永続化された状態
+const user = await db.users.findById(userId);
+// Redisキャッシュに一時保存された状態
+const cached = await redis.get(`user:${userId}`);</code></pre>
+        </div>
+
+        <p><strong>共通点：</strong>どちらも「現在の状態を保持し、変更を検知して処理する」仕組み</p>
+        <p><strong>違い：</strong>フロントはメモリ上（リロードで消える）、バックエンドはDB/セッション/キャッシュ（永続化可能）</p>
+      </div>
+
+      <!-- useEffect → サーバーサイドのライフサイクル -->
+      <div class="card">
+        <h2>useEffect → サーバーサイドのライフサイクル</h2>
+
+        <p>
+          <code>useEffect</code>は「マウント時の初期化」と「アンマウント時のクリーンアップ」を管理しました。
+          バックエンドのサーバーにも同じライフサイクルがあります。
+        </p>
+
+        <div class="code-block">
+          <div class="code-header">ライフサイクルの対比</div>
+          <pre><code>// フロントエンド: useEffect のライフサイクル
+useEffect(() => {
+  // マウント時: 初期化処理
+  const ws = new WebSocket('ws://localhost:3001');
+
+  return () => {
+    // アンマウント時: クリーンアップ
+    ws.close();
+  };
+}, []);
+
+// バックエンド: サーバーのライフサイクル
+const server = app.listen(3000, () => {
+  // 起動時: 初期化処理（DB接続、キャッシュウォームアップ）
+  console.log('Server started');
+  connectDatabase();
+  initializeCache();
+});
+
+// Graceful Shutdown: クリーンアップ
+process.on('SIGTERM', async () => {
+  console.log('Shutting down gracefully...');
+  await closeDatabase();       // DB接続を閉じる
+  await flushCache();          // キャッシュを書き出す
+  server.close();              // サーバーを停止
+});</code></pre>
+        </div>
+
+        <p><strong>共通点：</strong>「開始時に初期化、終了時にクリーンアップ」という考え方は同じ</p>
+        <p><strong>バックエンドでクリーンアップが重要な理由：</strong>DB接続の解放漏れ、ファイルハンドルの残存、未完了トランザクションの放置はサーバー障害につながる</p>
+      </div>
+
+      <!-- カスタムHooks → サービス層 -->
+      <div class="card">
+        <h2>カスタムHooks → バックエンドのサービス層</h2>
+
+        <p>
+          カスタムHooksは「再利用可能なロジックを分離する」パターンでした。
+          バックエンドでは<strong>サービス層（Service Layer）</strong>が同じ役割を果たします。
+        </p>
+
+        <div class="code-block">
+          <div class="code-header">ロジック分離の対比</div>
+          <pre><code>// フロントエンド: カスタムHooksでロジック分離
+function useAuth() {
+  const [user, setUser] = useState(null);
+  const login = async (email, password) => { /* ... */ };
+  const logout = async () => { /* ... */ };
+  return { user, login, logout };
+}
+
+// バックエンド: サービス層でロジック分離
+// services/authService.ts
+class AuthService {
+  async login(email: string, password: string) { /* ... */ }
+  async logout(userId: string) { /* ... */ }
+  async validateToken(token: string) { /* ... */ }
+}
+
+// routes/auth.ts（ルーティング層はサービスを呼ぶだけ）
+router.post('/login', async (req, res) => {
+  const result = await authService.login(req.body.email, req.body.password);
+  res.json(result);
+});</code></pre>
+        </div>
+
+        <p><strong>共通の設計原則：</strong></p>
+        <ul>
+          <li><strong>関心の分離</strong> — UI/ルーティングとビジネスロジックを分ける</li>
+          <li><strong>再利用性</strong> — 同じロジックを複数箇所から呼び出せる</li>
+          <li><strong>テスタビリティ</strong> — ロジック単体でテストできる</li>
+        </ul>
+      </div>
+
+      <!-- データフェッチ → API設計 -->
+      <div class="card">
+        <h2>データフェッチ → REST API / GraphQLの設計</h2>
+
+        <p>
+          フロントエンドでは<code>fetch</code>や<code>TanStack Query</code>でAPIを「呼ぶ側」でした。
+          Level 4では「呼ばれる側」（APIを設計・実装する側）を学びます。
+        </p>
+
+        <div class="code-block">
+          <div class="code-header">呼ぶ側 → 作る側</div>
+          <pre><code>// フロントエンド: APIを呼ぶ側（Level 3で学んだ）
+const { data, loading } = useFetch('/api/users/1');
+
+// バックエンド: APIを作る側（Level 4で学ぶ）
+// REST API
+app.get('/api/users/:id', async (req, res) => {
+  try {
+    const user = await UserService.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});</code></pre>
+        </div>
+
+        <p><strong>フロントの知識が活きるポイント：</strong></p>
+        <ul>
+          <li>「どんなレスポンスが使いやすいか」をフロント視点で設計できる</li>
+          <li>ローディング状態やエラーハンドリングの必要性を理解している</li>
+          <li>非同期処理の基本（async/await、Promise）を既に習得済み</li>
+        </ul>
+      </div>
+
+      <!-- エラーハンドリング -->
+      <div class="card">
+        <h2>エラーハンドリング → バックエンドのエラー戦略</h2>
+
+        <p>
+          フロントエンドでは<code>try-catch</code>やError Boundaryでエラーを処理しました。
+          バックエンドではこれがミドルウェアパターンに進化します。
+        </p>
+
+        <div class="code-block">
+          <div class="code-header">エラーハンドリングの対比</div>
+          <pre><code>// フロントエンド: コンポーネント単位のエラー処理
+useEffect(() => {
+  try {
+    const data = await fetchData();
+    setData(data);
+  } catch (err) {
+    setError(err.message); // UIにエラー表示
+  }
+}, []);
+
+// バックエンド: Express エラーミドルウェア（一元管理）
+// 各ルートでエラーを投げる
+app.get('/api/users/:id', async (req, res, next) => {
+  try {
+    const user = await UserService.findById(req.params.id);
+    if (!user) throw new NotFoundError('User not found');
+    res.json(user);
+  } catch (error) {
+    next(error); // エラーミドルウェアに委譲
+  }
+});
+
+// エラーミドルウェアで一元処理
+app.use((err, req, res, next) => {
+  const status = err.statusCode || 500;
+  res.status(status).json({
+    error: err.message,
+    code: err.code,
+  });
+});</code></pre>
+        </div>
+
+        <p><strong>共通の考え方：</strong>「エラーを握りつぶさず、適切な粒度でハンドリングする」</p>
+        <p><strong>バックエンドの進化ポイント：</strong>ミドルウェアパターンでエラー処理を一元化し、ルートハンドラをシンプルに保つ</p>
+      </div>
+
+      <!-- 比較表 -->
+      <div class="card">
+        <h2>対応表：Hooks概念 → バックエンド概念</h2>
+
+        <table class="table-responsive">
+          <thead>
+            <tr>
+              <th>Hooks概念</th>
+              <th>バックエンド対応概念</th>
+              <th>具体例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>useState</td>
+              <td>DB / セッション / キャッシュ</td>
+              <td>ユーザー情報をDBに永続化、セッションでログイン状態管理</td>
+            </tr>
+            <tr>
+              <td>useEffect（マウント）</td>
+              <td>サーバー起動時の初期化</td>
+              <td>DB接続確立、キャッシュウォームアップ、ヘルスチェック開始</td>
+            </tr>
+            <tr>
+              <td>useEffect（クリーンアップ）</td>
+              <td>Graceful Shutdown</td>
+              <td>DB接続クローズ、未処理リクエストの完了待ち</td>
+            </tr>
+            <tr>
+              <td>カスタムHooks</td>
+              <td>サービス層（Service Layer）</td>
+              <td>AuthService, UserService でロジック分離</td>
+            </tr>
+            <tr>
+              <td>useContext</td>
+              <td>依存性注入（DI）</td>
+              <td>リクエストスコープでDB接続やロガーを共有</td>
+            </tr>
+            <tr>
+              <td>useReducer</td>
+              <td>状態マシン / イベントソーシング</td>
+              <td>注文ステータス管理（pending → paid → shipped）</td>
+            </tr>
+            <tr>
+              <td>useMemo</td>
+              <td>サーバーサイドキャッシュ</td>
+              <td>Redis、インメモリキャッシュで計算結果を再利用</td>
+            </tr>
+            <tr>
+              <td>データフェッチ（fetch/TanStack Query）</td>
+              <td>REST API / GraphQL設計</td>
+              <td>Express/Fastifyでエンドポイント実装</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Next.js的なフルスタック視点 -->
+      <div class="card card-success">
+        <h2>フルスタック視点への準備：Next.js</h2>
+
+        <p>
+          Level 3ではReact（フロントエンド）を学びました。Level 4ではバックエンドを学びます。
+          その先にある<strong>Next.js</strong>は、フロントとバックエンドを<strong>1つのプロジェクト</strong>で扱うフレームワークです。
+        </p>
+
+        <ul>
+          <li><strong>Server Components</strong> — サーバー側でレンダリング、Hooksの知識が「どこで実行されるか」を考える基盤に</li>
+          <li><strong>API Routes</strong> — Next.jsの中にバックエンドAPIを書ける（Level 4の知識が直結）</li>
+          <li><strong>Server Actions</strong> — フォーム送信をサーバー側で直接処理</li>
+        </ul>
+
+        <p>
+          <strong>Level 3 + Level 4の知識があれば、Next.jsでフルスタック開発ができるようになります。</strong>
+          Hooksで学んだ「状態管理」「副作用」「ロジック分離」の考え方は、バックエンドでもフルスタックでも共通の土台です。
+        </p>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-hooks9-1">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>ReactのカスタムHooksとバックエンドのサービス層（Service Layer）に共通する設計思想はどれですか？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks9-1" style="display:none;">
+          A. UIの描画を高速化する
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-hooks9-1" style="display:none;">
+          B. ビジネスロジックをUI/ルーティングから分離し、再利用可能にする
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-hooks9-1" style="display:none;">
+          C. データベースへの接続を管理する
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-hooks9-1')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('hooks9')">
+        <span class="icon">✓</span>
+        このセクションを完了
+      </button>
+    </section>
