@@ -191,6 +191,13 @@
   color: #F1F5F9;
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
+[data-theme="dark"] .next-page-btn {
+  background: #2563EB;
+}
+[data-theme="dark"] .next-page-btn:hover {
+  background: #3B82F6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
 [data-theme="dark"] code {
   background: #334155;
   color: #E2E8F0;
@@ -819,6 +826,60 @@ tr:nth-child(even) {
 }
 
 /* ============================================
+   次のページへボタン
+   ============================================ */
+.next-page-wrapper {
+  margin-top: calc(var(--spacing-unit) * 3);
+  animation: fadeSlideIn 0.4s ease-out;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.next-page-btn {
+  background: var(--accent-blue);
+  color: white;
+  border: none;
+  padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 5);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing-unit) * 2);
+  transition: transform 0.1s, box-shadow 0.1s;
+  width: 100%;
+  justify-content: center;
+}
+
+.next-page-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+}
+
+.next-page-btn:active {
+  transform: translateY(0);
+}
+
+.next-page-arrow {
+  font-size: 24px;
+  transition: transform 0.2s;
+}
+
+.next-page-btn:hover .next-page-arrow {
+  transform: translateX(4px);
+}
+
+/* ============================================
    進捗バー
    ============================================ */
 .progress-container {
@@ -1200,6 +1261,13 @@ progress::-webkit-progress-value {
     padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 3);
     width: 100%;
     justify-content: center;
+    min-height: 48px;
+  }
+
+  /* 次のページへボタン */
+  .next-page-btn {
+    font-size: 18px;
+    padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 3);
     min-height: 48px;
   }
 

@@ -824,6 +824,18 @@ function checkQuiz(quizId) {
 // ============================================
 // 完了機能
 // ============================================
+function getNextSectionId(currentId) {
+  const allSections = Object.keys(sectionMapping);
+  const currentIndex = allSections.indexOf(currentId);
+  if (currentIndex === -1 || currentIndex >= allSections.length - 1) return null;
+  return allSections[currentIndex + 1];
+}
+
+function getNextSectionLabel(sectionId) {
+  const link = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
+  return link ? link.textContent.trim() : sectionId;
+}
+
 function completeSection(sectionId) {
   // ローカルストレージに保存
   const completed = JSON.parse(localStorage.getItem('completedSections') || '[]');
@@ -843,8 +855,32 @@ function completeSection(sectionId) {
     btn.innerHTML = '<span class="icon">✓</span> 完了済み';
   }
 
+  // 「次のページへ」ボタンを表示
+  showNextPageButton(sectionId);
+
   // 進捗更新
   updateProgress();
+}
+
+function showNextPageButton(sectionId) {
+  const section = document.getElementById(sectionId);
+  if (!section) return;
+
+  // 既に表示済みなら何もしない
+  if (section.querySelector('.next-page-btn')) return;
+
+  const nextId = getNextSectionId(sectionId);
+  if (!nextId) return;
+
+  const nextLabel = getNextSectionLabel(nextId);
+  const wrapper = document.createElement('div');
+  wrapper.className = 'next-page-wrapper';
+  wrapper.innerHTML =
+    '<button class="next-page-btn" onclick="loadSection(\'' + nextId + '\')">' +
+    '<span>次のページへ: ' + nextLabel + '</span>' +
+    '<span class="next-page-arrow">→</span>' +
+    '</button>';
+  section.appendChild(wrapper);
 }
 
 function applyCompletedStates() {
@@ -858,6 +894,9 @@ function applyCompletedStates() {
       btn.classList.add('completed');
       btn.innerHTML = '<span class="icon">✓</span> 完了済み';
     }
+
+    // 完了済みセクションに「次のページへ」ボタンを表示
+    showNextPageButton(sectionId);
   });
 }
 
