@@ -1,0 +1,1256 @@
+<!-- ============================================
+     Tier 5: API/DB/Security 実践中級
+     ex-t5-1 ~ ex-t5-15
+     ============================================ -->
+
+<!-- ex-t5-1: RESTfulでないURL設計 -->
+<section id="ex-t5-1">
+  <h1>問題 1: RESTfulでないURL設計</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>あなたはバックエンドAPIのコードレビューを担当しています。新人が作成したExpressルーターのURL設計を確認してください。RESTful APIの原則に反している箇所を見つけてください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// routes/users.js
+const express = require('express');
+const router = express.Router();
+
+// ユーザー一覧取得
+router.get('/api/getAllUsers', async (req, res) =&gt; {
+  const users = await User.findAll();
+  res.json(users);
+});
+
+// ユーザー作成
+router.post('/api/createNewUser', async (req, res) =&gt; {
+  const user = await User.create(req.body);
+  res.json(user);
+});
+
+// ユーザー削除
+router.post('/api/deleteUser/:id', async (req, res) =&gt; {
+  await User.destroy({ where: { id: req.params.id } });
+  res.json({ message: '削除しました' });
+});
+
+// ユーザーの投稿のコメントのいいね一覧
+router.get('/api/users/:userId/posts/:postId/comments/:commentId/likes/getAllLikes', async (req, res) =&gt; {
+  const likes = await Like.findAll({
+    where: { commentId: req.params.commentId }
+  });
+  res.json(likes);
+});
+
+// ユーザー更新
+router.post('/api/updateUserInfo/:id', async (req, res) =&gt; {
+  const user = await User.update(req.body, {
+    where: { id: req.params.id }
+  });
+  res.json(user);
+});</code></pre>
+
+  <div class="quiz" id="quiz-ex-t5-1">
+    <div class="quiz-question"><strong>問題：</strong>このAPI設計の最も根本的な問題はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-1" value="a">
+        async/awaitの使い方が間違っている
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="RESTful APIでは、URLはリソース（名詞）を表し、操作はHTTPメソッド（GET/POST/PUT/DELETE）で表現します。getAllUsers → GET /api/users、createNewUser → POST /api/users、deleteUser → DELETE /api/users/:id のようにすべきです。また、ネストが4階層以上になるURLは設計を見直すべきです。削除にPOSTを使っているのもHTTPメソッドの誤用です。">
+        <input type="radio" name="quiz-ex-t5-1" value="b">
+        URLに動詞（getAll, create, delete, update）が含まれ、HTTPメソッドも適切でない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-1" value="c">
+        findAllではなくfindAndCountAllを使うべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-1" value="d">
+        routerではなくappを直接使うべき
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t5-2: HTTPステータスコードの誤用 -->
+<section id="ex-t5-2">
+  <h1>問題 2: HTTPステータスコードの誤用</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>フロントエンドチームから「エラーハンドリングがうまくいかない」と報告がありました。APIのレスポンスを確認したところ、ステータスコードの使い方に問題がありそうです。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// controllers/productController.js
+const getProduct = async (req, res) =&gt; {
+  try {
+    const product = await Product.findByPk(req.params.id);
+
+    if (!product) {
+      return res.status(200).json({
+        success: false,
+        error: '商品が見つかりません'
+      });
+    }
+
+    res.status(200).json({ success: true, data: product });
+  } catch (err) {
+    res.status(200).json({
+      success: false,
+      error: 'サーバーエラーが発生しました'
+    });
+  }
+};
+
+const createProduct = async (req, res) =&gt; {
+  try {
+    const { name, price } = req.body;
+
+    if (!name || !price) {
+      return res.status(200).json({
+        success: false,
+        error: '名前と価格は必須です'
+      });
+    }
+
+    const product = await Product.create({ name, price });
+    res.status(200).json({ success: true, data: product });
+  } catch (err) {
+    res.status(200).json({
+      success: false,
+      error: err.message
+    });
+  }
+};</code></pre>
+
+  <div class="quiz" id="quiz-ex-t5-2">
+    <div class="quiz-question"><strong>問題：</strong>このコードの最大の問題点は何ですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-2" value="a">
+        try-catchのネストが深すぎる
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-2" value="b">
+        findByPkではなくfindOneを使うべき
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="全てのレスポンスが200（成功）で返されているため、フロントエンドのHTTPクライアント（axiosなど）がエラーを自動検知できません。正しくは、見つからない→404、バリデーション失敗→400、サーバーエラー→500、作成成功→201 を返すべきです。フロントはresponse.data.successで判定する必要があり、HTTPの仕組みを活かせていません。">
+        <input type="radio" name="quiz-ex-t5-2" value="c">
+        全レスポンスがステータス200で返され、エラー時も200を使用している
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-2" value="d">
+        JSON形式ではなくXMLで返すべき
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t5-3: SQLインジェクション -->
+<section id="ex-t5-3">
+  <h1>問題 3: SQLインジェクション脆弱性</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>社内の検索機能にセキュリティ脆弱性がないか調査しています。以下のコードは商品検索APIのエンドポイントです。攻撃者が悪意のある入力を送信した場合のリスクを評価してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// routes/search.js
+const express = require('express');
+const router = express.Router();
+const { Pool } = require('pg');
+const pool = new Pool();
+
+router.get('/api/products/search', async (req, res) =&gt; {
+  const { keyword, category, minPrice, maxPrice } = req.query;
+
+  let query = `SELECT id, name, price, description
+               FROM products
+               WHERE 1=1`;
+
+  if (keyword) {
+    query += ` AND name LIKE '%${keyword}%'`;
+  }
+  if (category) {
+    query += ` AND category = '${category}'`;
+  }
+  if (minPrice) {
+    query += ` AND price &gt;= ${minPrice}`;
+  }
+  if (maxPrice) {
+    query += ` AND price &lt;= ${maxPrice}`;
+  }
+
+  query += ` ORDER BY created_at DESC LIMIT 50`;
+
+  try {
+    const result = await pool.query(query);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: '検索に失敗しました' });
+  }
+});</code></pre>
+
+  <div class="quiz" id="quiz-ex-t5-3">
+    <div class="quiz-question"><strong>問題：</strong>攻撃者が <code>keyword='; DROP TABLE products; --</code> と送信した場合、何が起きますか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-3" value="a">
+        LIKEはDROPを受け付けないので安全
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-3" value="b">
+        PostgreSQLが自動的にエスケープするので問題ない
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="文字列結合でSQLを組み立てているため、ユーザー入力がそのままSQL文に挿入されます。これはSQLインジェクションの典型例です。対策として、パラメータ化クエリ（プレースホルダ）を使います。例: pool.query('SELECT * FROM products WHERE name LIKE $1', [`%${keyword}%`])。ORMやクエリビルダーの使用も有効です。">
+        <input type="radio" name="quiz-ex-t5-3" value="c">
+        productsテーブルが削除される可能性がある（SQLインジェクション）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-3" value="d">
+        500エラーが返されるだけで実害はない
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t5-4: パスワード平文保存 / MD5ハッシュ -->
+<section id="ex-t5-4">
+  <h1>問題 4: パスワードの不適切な保存</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>既存のユーザー認証システムのセキュリティ監査を行っています。ユーザー登録とログインの処理を確認してください。パスワードの保存方法に致命的な問題があります。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// services/authService.js
+const crypto = require('crypto');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+// ユーザー登録
+const register = async (email, password) =&gt; {
+  // MD5でハッシュ化
+  const hashedPassword = crypto
+    .createHash('md5')
+    .update(password)
+    .digest('hex');
+
+  const user = await prisma.user.create({
+    data: {
+      email,
+      password: hashedPassword,
+    },
+  });
+
+  return user;
+};
+
+// ログイン
+const login = async (email, password) =&gt; {
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (!user) {
+    throw new Error('ユーザーが見つかりません');
+  }
+
+  const hashedPassword = crypto
+    .createHash('md5')
+    .update(password)
+    .digest('hex');
+
+  if (user.password !== hashedPassword) {
+    throw new Error('パスワードが間違っています');
+  }
+
+  return user;
+};</code></pre>
+
+  <div class="quiz" id="quiz-ex-t5-4">
+    <div class="quiz-question"><strong>問題：</strong>このパスワード管理の最大の問題点と正しい対策はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-4" value="a">
+        MD5の代わりにSHA-256を使えば安全
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="MD5は高速なハッシュ関数であり、レインボーテーブル攻撃で簡単に元のパスワードを復元できます。SHA-256も同様に高速すぎるため不適切です。パスワードハッシュにはbcrypt、scrypt、Argon2idなどの「意図的に遅い」ハッシュ関数を使うべきです。bcryptはソルト（ランダムな文字列）を自動的に付与し、計算コストを調整できます。">
+        <input type="radio" name="quiz-ex-t5-4" value="b">
+        MD5は高速すぎてブルートフォースに弱い。bcryptやArgon2idを使うべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-4" value="c">
+        パスワードを暗号化（AES）して保存すれば安全
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-4" value="d">
+        パスワードを2回MD5ハッシュすれば十分安全
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t5-5: JWT シークレットのハードコード、期限なしトークン -->
+<section id="ex-t5-5">
+  <h1>問題 5: JWTの危険な実装</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>認証機能のコードレビューを依頼されました。JWTを使ったトークン発行と検証の実装です。セキュリティ上の問題を複数見つけてください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// middleware/auth.js
+const jwt = require('jsonwebtoken');
+
+const SECRET = 'my-app-secret-key-2024';
+
+const generateToken = (user) =&gt; {
+  const token = jwt.sign(
+    {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      password: user.password,
+    },
+    SECRET
+  );
+
+  return token;
+};
+
+const verifyToken = (req, res, next) =&gt; {
+  const token = req.headers.authorization;
+
+  if (!token) {
+    return res.status(401).json({ error: '認証が必要です' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(401).json({ error: 'トークンが無効です' });
+  }
+};
+
+module.exports = { generateToken, verifyToken, SECRET };</code></pre>
+
+  <div class="quiz" id="quiz-ex-t5-5">
+    <div class="quiz-question"><strong>問題：</strong>このJWT実装に含まれるセキュリティ問題を全て含む選択肢はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-5" value="a">
+        シークレットキーが短すぎることだけが問題
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-5" value="b">
+        jwt.verifyの使い方が間違っている
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="問題は複数あります。(1) シークレットキーがソースコードにハードコードされている → 環境変数（process.env.JWT_SECRET）を使うべき。(2) トークンに有効期限（expiresIn）が設定されていない → 漏洩時に永久に有効。(3) パスワードがペイロードに含まれている → JWTはBase64デコードで中身が見える。(4) SECRETをmodule.exportsしている → 他モジュールから参照可能で漏洩リスク増大。">
+        <input type="radio" name="quiz-ex-t5-5" value="c">
+        シークレットのハードコード、有効期限なし、パスワードをペイロードに含む、SECRETのエクスポート
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-5" value="d">
+        Bearerプレフィックスの検証がないことだけが問題
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t5-6: XSS脆弱性 -->
+<section id="ex-t5-6">
+  <h1>問題 6: XSS（クロスサイトスクリプティング）脆弱性</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ユーザープロフィール表示機能のバグ報告がありました。「特定のユーザーのプロフィールを開くとアラートが表示される」とのことです。サーバーサイドレンダリングのコードを確認してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// routes/profile.js
+const express = require('express');
+const router = express.Router();
+
+router.get('/profile/:userId', async (req, res) =&gt; {
+  const user = await User.findByPk(req.params.userId);
+
+  if (!user) {
+    return res.status(404).send('ユーザーが見つかりません');
+  }
+
+  // プロフィールページをサーバーサイドで生成
+  const html = `
+    &lt;!DOCTYPE html&gt;
+    &lt;html&gt;
+    &lt;head&gt;&lt;title&gt;${user.name}のプロフィール&lt;/title&gt;&lt;/head&gt;
+    &lt;body&gt;
+      &lt;h1&gt;${user.name}&lt;/h1&gt;
+      &lt;p&gt;自己紹介: ${user.bio}&lt;/p&gt;
+      &lt;p&gt;ウェブサイト: &lt;a href="${user.website}"&gt;${user.website}&lt;/a&gt;&lt;/p&gt;
+      &lt;div class="comments"&gt;
+        &lt;h2&gt;最新コメント&lt;/h2&gt;
+        ${user.comments.map(c =&gt; `&lt;p&gt;${c.text}&lt;/p&gt;`).join('')}
+      &lt;/div&gt;
+    &lt;/body&gt;
+    &lt;/html&gt;
+  `;
+
+  res.send(html);
+});
+
+// 検索結果表示
+router.get('/search', async (req, res) =&gt; {
+  const { q } = req.query;
+  const results = await User.search(q);
+
+  res.send(`
+    &lt;h1&gt;「${q}」の検索結果&lt;/h1&gt;
+    &lt;p&gt;${results.length}件見つかりました&lt;/p&gt;
+  `);
+});</code></pre>
+
+  <div class="quiz" id="quiz-ex-t5-6">
+    <div class="quiz-question"><strong>問題：</strong>このコードに存在するXSS脆弱性と正しい対策はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-6" value="a">
+        テンプレートリテラルを使っているのが問題。文字列結合にすべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-6" value="b">
+        HTTPSを使えばXSSは防げるので問題ない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-6" value="c">
+        res.sendではなくres.jsonを使えば安全
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ユーザー入力（user.name, user.bio, user.website, c.text, q）がエスケープなしでHTMLに埋め込まれています。例えばbioに&lt;script&gt;alert('XSS')&lt;/script&gt;を入れると、表示したユーザーのブラウザでスクリプトが実行されます。対策: (1) HTMLエスケープ関数で&lt;&gt;&quot;'&amp;を変換する (2) テンプレートエンジン（EJS、Handlebarsなど）の自動エスケープ機能を使う (3) Content-Security-Policyヘッダーを設定する。">
+        <input type="radio" name="quiz-ex-t5-6" value="d">
+        ユーザー入力をHTMLエスケープせずに埋め込んでおり、スクリプト注入が可能
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t5-7: CSRF脆弱性 -->
+<section id="ex-t5-7">
+  <h1>問題 7: CSRF（クロスサイトリクエストフォージェリ）脆弱性</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ECサイトの決済APIをレビューしています。ユーザーがログイン中に悪意のあるサイトを訪問した場合、意図しない操作が実行される可能性がないか確認してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// app.js
+const express = require('express');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const app = express();
+
+app.use(cookieParser());
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { httpOnly: true }
+}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// 認証ミドルウェア
+const requireAuth = (req, res, next) =&gt; {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: 'ログインが必要です' });
+  }
+  next();
+};
+
+// パスワード変更
+app.post('/api/change-password', requireAuth, async (req, res) =&gt; {
+  const { newPassword } = req.body;
+  await User.update(
+    { password: await bcrypt.hash(newPassword, 10) },
+    { where: { id: req.session.userId } }
+  );
+  res.json({ message: 'パスワードを変更しました' });
+});
+
+// 送金処理
+app.post('/api/transfer', requireAuth, async (req, res) =&gt; {
+  const { toAccountId, amount } = req.body;
+  await TransferService.execute(req.session.userId, toAccountId, amount);
+  res.json({ message: '送金が完了しました' });
+});
+
+// メールアドレス変更
+app.post('/api/change-email', requireAuth, async (req, res) =&gt; {
+  const { newEmail } = req.body;
+  await User.update(
+    { email: newEmail },
+    { where: { id: req.session.userId } }
+  );
+  res.json({ message: 'メールアドレスを変更しました' });
+});</code></pre>
+
+  <div class="quiz" id="quiz-ex-t5-7">
+    <div class="quiz-question"><strong>問題：</strong>このコードのCSRF脆弱性について正しい説明はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-7" value="a">
+        express-sessionを使っていればCSRFは自動的に防げる
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="セッションCookieは同一ブラウザから自動送信されるため、攻撃者の罠サイトからPOSTリクエストを送信すると、ログイン中のユーザーのセッションで処理が実行されます。対策: (1) CSRFトークンの検証（csurfミドルウェア等）(2) SameSite=Strict属性をCookieに設定 (3) Originヘッダーの検証 (4) 重要操作では再認証（パスワード入力）を要求。特に送金やパスワード変更のような重要操作には必須です。">
+        <input type="radio" name="quiz-ex-t5-7" value="b">
+        CSRFトークンの検証がなく、悪意のあるサイトからログイン中のユーザーの送金やパスワード変更が実行できる
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-7" value="c">
+        httpOnly: trueが設定されているのでCSRFは防げている
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-7" value="d">
+        express.json()がCSRFを防ぐフィルターとして機能する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t5-8: N+1クエリ問題 -->
+<section id="ex-t5-8">
+  <h1>問題 8: N+1クエリ問題</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ブログアプリの記事一覧ページが非常に遅いという報告がありました。データベースのクエリログを確認したところ、1ページ表示に数百のクエリが実行されていました。原因を特定してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// services/articleService.js
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+const getArticleList = async (page = 1, limit = 20) =&gt; {
+  // 記事一覧を取得
+  const articles = await prisma.article.findMany({
+    skip: (page - 1) * limit,
+    take: limit,
+    orderBy: { createdAt: 'desc' },
+  });
+
+  // 各記事に著者情報とタグとコメント数を付与
+  const result = [];
+  for (const article of articles) {
+    const author = await prisma.user.findUnique({
+      where: { id: article.authorId },
+    });
+
+    const tags = await prisma.tag.findMany({
+      where: {
+        articles: { some: { id: article.id } },
+      },
+    });
+
+    const commentCount = await prisma.comment.count({
+      where: { articleId: article.id },
+    });
+
+    result.push({
+      ...article,
+      author: { name: author.name, avatar: author.avatar },
+      tags: tags.map(t =&gt; t.name),
+      commentCount,
+    });
+  }
+
+  return result;
+};</code></pre>
+
+  <div class="quiz" id="quiz-ex-t5-8">
+    <div class="quiz-question"><strong>問題：</strong>20件の記事を表示する場合、データベースへのクエリは合計何回実行されますか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-8" value="a">
+        20回（記事の数だけ）
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="最初の1回（記事一覧取得）+ 20回（著者取得）+ 20回（タグ取得）+ 20回（コメント数取得）= 61回です。これがN+1問題です。記事が100件なら301回になります。対策: Prismaのincludeを使って1回のクエリで関連データを取得します。例: prisma.article.findMany({ include: { author: true, tags: true, _count: { select: { comments: true } } } }) とすれば、JOINを使った少数のクエリで済みます。">
+        <input type="radio" name="quiz-ex-t5-8" value="b">
+        61回（1 + 20 x 3）。これがN+1クエリ問題
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-8" value="c">
+        3回（記事、著者、タグの3テーブル分）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-8" value="d">
+        1回（Prismaが自動的にJOINに最適化する）
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-8')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t5-9: トランザクション未使用 -->
+<section id="ex-t5-9">
+  <h1>問題 9: トランザクション未使用による不整合</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ECサイトの注文処理で「支払いは完了したが在庫が減っていない」「在庫は減ったが注文レコードが作成されていない」というバグが散発的に報告されています。注文処理のコードを確認してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// services/orderService.js
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+const PaymentService = require('./paymentService');
+
+const createOrder = async (userId, items) =&gt; {
+  // 1. 在庫チェック
+  for (const item of items) {
+    const product = await prisma.product.findUnique({
+      where: { id: item.productId },
+    });
+    if (product.stock &lt; item.quantity) {
+      throw new Error(`${product.name}の在庫が不足しています`);
+    }
+  }
+
+  // 2. 注文レコード作成
+  const order = await prisma.order.create({
+    data: {
+      userId,
+      status: 'pending',
+      items: {
+        create: items.map(item =&gt; ({
+          productId: item.productId,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+      },
+    },
+  });
+
+  // 3. 在庫を減らす
+  for (const item of items) {
+    await prisma.product.update({
+      where: { id: item.productId },
+      data: { stock: { decrement: item.quantity } },
+    });
+  }
+
+  // 4. 決済処理
+  const payment = await PaymentService.charge(userId, order.totalAmount);
+
+  // 5. 注文ステータスを更新
+  await prisma.order.update({
+    where: { id: order.id },
+    data: { status: 'paid', paymentId: payment.id },
+  });
+
+  return order;
+};</code></pre>
+
+  <div class="quiz" id="quiz-ex-t5-9">
+    <div class="quiz-question"><strong>問題：</strong>ステップ4の決済処理が失敗した場合、何が起きますか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="トランザクションを使っていないため、各ステップは独立して実行されます。ステップ4で例外が発生すると、ステップ2（注文レコード）とステップ3（在庫減少）はすでに確定しているため、「在庫は減ったが支払いは未完了」の状態になります。対策: prisma.$transaction()で全操作をラップし、どこかで失敗したら全てロールバックさせます。また、在庫チェックと在庫減少の間に他のリクエストが入る競合条件（Race Condition）も問題です。">
+        <input type="radio" name="quiz-ex-t5-9" value="a">
+        注文レコードが残り在庫も減ったまま、支払いは未完了という不整合が発生する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-9" value="b">
+        Prismaが自動的にロールバックしてくれる
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-9" value="c">
+        try-catchで囲めば自動的にデータが元に戻る
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-9" value="d">
+        JavaScriptはシングルスレッドなので不整合は起きない
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t5-10: インデックス未設定の大量JOIN -->
+<section id="ex-t5-10">
+  <h1>問題 10: インデックス未設定の大量JOIN</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>管理画面のレポート機能が本番環境でタイムアウトしています。開発環境（データ数百件）では問題なく動作していましたが、本番（データ数百万件）で極端に遅くなっています。以下のSQLとスキーマを確認してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>-- スキーマ定義（Prisma → SQL変換後）
+CREATE TABLE orders (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE order_items (
+  id SERIAL PRIMARY KEY,
+  order_id INTEGER NOT NULL,
+  product_id INTEGER NOT NULL,
+  quantity INTEGER NOT NULL,
+  price DECIMAL(10, 2) NOT NULL
+);
+
+CREATE TABLE products (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  category_id INTEGER NOT NULL
+);
+
+CREATE TABLE categories (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL
+);
+
+-- レポートクエリ：カテゴリ別月次売上集計
+SELECT
+  c.name AS category_name,
+  DATE_TRUNC('month', o.created_at) AS month,
+  SUM(oi.quantity * oi.price) AS total_sales,
+  COUNT(DISTINCT o.id) AS order_count
+FROM orders o
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+JOIN categories c ON p.category_id = c.id
+WHERE o.status = 'completed'
+  AND o.created_at &gt;= '2024-01-01'
+GROUP BY c.name, DATE_TRUNC('month', o.created_at)
+ORDER BY month DESC, total_sales DESC;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t5-10">
+    <div class="quiz-question"><strong>問題：</strong>このクエリが本番で遅い最大の原因と対策はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-10" value="a">
+        JOINの数が多すぎるのでサブクエリに書き換えるべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-10" value="b">
+        DATE_TRUNCが遅いのでアプリケーション側で集計すべき
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="外部キー（user_id, order_id, product_id, category_id）とWHERE句の条件列（status, created_at）にインデックスが全くありません。データ百万件では、JOINのたびにフルテーブルスキャンが発生します。対策: (1) CREATE INDEX idx_orders_status_created ON orders(status, created_at); (2) CREATE INDEX idx_order_items_order_id ON order_items(order_id); (3) CREATE INDEX idx_order_items_product_id ON order_items(product_id); (4) CREATE INDEX idx_products_category_id ON products(category_id); 複合インデックスを適切に設計することで劇的に改善します。">
+        <input type="radio" name="quiz-ex-t5-10" value="c">
+        外部キー列とWHERE条件列にインデックスがなく、フルテーブルスキャンが発生している
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-10" value="d">
+        GROUP BYがボトルネックなのでVIEWを作るべき
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-10')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t5-11: 正規化不足/過剰正規化 -->
+<section id="ex-t5-11">
+  <h1>問題 11: 正規化不足と過剰正規化の判断</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>データベース設計のレビューを依頼されました。2つのテーブル設計案があります。注文履歴テーブルの設計として、どちらが適切かを判断してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>-- 案A: 正規化不足（非正規化テーブル）
+CREATE TABLE order_history (
+  id SERIAL PRIMARY KEY,
+  user_name VARCHAR(100) NOT NULL,
+  user_email VARCHAR(255) NOT NULL,
+  user_address TEXT NOT NULL,
+  product_name VARCHAR(255) NOT NULL,
+  product_price DECIMAL(10, 2) NOT NULL,
+  product_category VARCHAR(100) NOT NULL,
+  quantity INTEGER NOT NULL,
+  order_date TIMESTAMP DEFAULT NOW()
+);
+
+-- 案B: 過剰正規化
+CREATE TABLE order_history_v2 (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id),
+  order_date TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE order_items_v2 (
+  id SERIAL PRIMARY KEY,
+  order_id INTEGER REFERENCES order_history_v2(id),
+  product_id INTEGER REFERENCES products(id),
+  quantity INTEGER NOT NULL
+);
+-- ※ 商品の価格はproductsテーブルのみに保存
+-- ※ 配送先住所はusersテーブルの現在の住所を参照
+
+-- 案Bで過去の注文の合計金額を取得するクエリ
+SELECT o.id, SUM(p.price * oi.quantity) AS total
+FROM order_history_v2 o
+JOIN order_items_v2 oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+WHERE o.user_id = 123
+GROUP BY o.id;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t5-11">
+    <div class="quiz-question"><strong>問題：</strong>案Bの最大の問題点はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-11" value="a">
+        JOINが多くてパフォーマンスが悪い
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="注文時の価格を保存せずproductsテーブルの現在価格を参照しているため、商品が値上げされると過去の注文金額も変わってしまいます。同様に、配送先住所もusersテーブルの現在住所を参照すると、引っ越し後に過去の配送先が変わります。注文データのような「スナップショット」が必要なデータでは、注文時点の価格・住所を注文テーブル自体に保存すべきです。これは「意図的な非正規化」の正当な例です。">
+        <input type="radio" name="quiz-ex-t5-11" value="b">
+        注文時点の価格を保存していないため、商品価格が変更されると過去の注文金額が変わってしまう
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-11" value="c">
+        SERIAL型ではなくUUIDを使うべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-11" value="d">
+        外部キー制約があるとINSERTが遅くなる
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-11')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-11')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t5-12: Prisma findUniqueのnullチェック漏れ -->
+<section id="ex-t5-12">
+  <h1>問題 12: Prisma findUniqueのnullチェック漏れ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>本番環境で「Cannot read properties of null」というエラーが頻発しています。エラーログからPrismaのデータ取得部分が原因とわかりました。以下のAPIコードを確認してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// controllers/dashboardController.js
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+const getDashboard = async (req, res) =&gt; {
+  const userId = req.user.id;
+
+  // ユーザー情報取得
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  // プロフィール取得（1対1リレーション）
+  const profile = await prisma.profile.findUnique({
+    where: { userId },
+  });
+
+  // 最新の注文を取得
+  const latestOrder = await prisma.order.findFirst({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+  });
+
+  // レスポンスを組み立て
+  const dashboardData = {
+    userName: user.name,
+    userEmail: user.email,
+    bio: profile.bio,
+    avatarUrl: profile.avatarUrl,
+    lastOrderDate: latestOrder.createdAt.toISOString(),
+    lastOrderTotal: latestOrder.totalAmount,
+    memberSince: user.createdAt.toISOString(),
+  };
+
+  res.json(dashboardData);
+};
+
+const getTeamInfo = async (req, res) =&gt; {
+  const user = await prisma.user.findUnique({
+    where: { id: req.user.id },
+    include: { team: true },
+  });
+
+  const teamMembers = await prisma.user.findMany({
+    where: { teamId: user.team.id },
+  });
+
+  res.json({
+    teamName: user.team.name,
+    members: teamMembers.map(m =&gt; m.name),
+  });
+};</code></pre>
+
+  <div class="quiz" id="quiz-ex-t5-12">
+    <div class="quiz-question"><strong>問題：</strong>このコードでnullになりうる箇所は何箇所ありますか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-12" value="a">
+        1箇所（profileだけがnullになりうる）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-12" value="b">
+        2箇所（profileとlatestOrder）
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="(1) user: ユーザーが削除された場合null (2) profile: プロフィール未作成の場合null (3) latestOrder: 注文がない新規ユーザーの場合null (4) user.team: チーム未所属の場合null。全てのfindUnique/findFirstの結果はnullの可能性があります。オプショナルチェーン（?.）やnullチェックを入れるか、findUniqueOrThrow（見つからない場合に例外をスロー）を使うべきです。TypeScriptを使えば型チェックでnull漏れを検出できます。">
+        <input type="radio" name="quiz-ex-t5-12" value="c">
+        4箇所（user, profile, latestOrder, user.team）。全てのfindUnique/findFirstはnullを返しうる
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-12" value="d">
+        0箇所（認証済みなのでuserは必ず存在する）
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-12')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-12')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t5-13: 認可チェック漏れ -->
+<section id="ex-t5-13">
+  <h1>問題 13: 認可チェック漏れ（IDOR脆弱性）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ペネトレーションテストで「他のユーザーの個人情報にアクセスできる」という重大な脆弱性が報告されました。認証は実装されていますが、認可（権限チェック）に問題があるようです。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// routes/userRoutes.js
+const express = require('express');
+const router = express.Router();
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+const { requireAuth } = require('../middleware/auth');
+
+// 全ルートに認証を適用
+router.use(requireAuth);
+
+// ユーザー情報取得
+router.get('/users/:id', async (req, res) =&gt; {
+  const user = await prisma.user.findUnique({
+    where: { id: parseInt(req.params.id) },
+    include: {
+      profile: true,
+      addresses: true,
+      paymentMethods: true,
+    },
+  });
+  res.json(user);
+});
+
+// ユーザー情報更新
+router.put('/users/:id', async (req, res) =&gt; {
+  const { name, email, phone } = req.body;
+  const user = await prisma.user.update({
+    where: { id: parseInt(req.params.id) },
+    data: { name, email, phone },
+  });
+  res.json(user);
+});
+
+// クレジットカード情報取得
+router.get('/users/:id/payment-methods', async (req, res) =&gt; {
+  const methods = await prisma.paymentMethod.findMany({
+    where: { userId: parseInt(req.params.id) },
+  });
+  res.json(methods);
+});
+
+// 注文履歴取得
+router.get('/users/:id/orders', async (req, res) =&gt; {
+  const orders = await prisma.order.findMany({
+    where: { userId: parseInt(req.params.id) },
+    include: { items: true },
+  });
+  res.json(orders);
+});</code></pre>
+
+  <div class="quiz" id="quiz-ex-t5-13">
+    <div class="quiz-question"><strong>問題：</strong>ユーザーID=1でログイン中の攻撃者が <code>GET /users/2/payment-methods</code> にリクエストを送るとどうなりますか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-13" value="a">
+        requireAuthが別ユーザーのアクセスを自動的にブロックする
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="認証（Authentication）は「誰であるか」の確認で、認可（Authorization）は「何ができるか」の確認です。このコードは認証のみで認可がありません。req.params.idとreq.user.idの一致を確認していないため、ログイン済みのユーザーは任意のユーザーIDを指定して他人のデータにアクセスできます。これはIDOR（Insecure Direct Object Reference）脆弱性と呼ばれます。対策: if (parseInt(req.params.id) !== req.user.id) return res.status(403).json({ error: '権限がありません' });">
+        <input type="radio" name="quiz-ex-t5-13" value="b">
+        ユーザーID=2のクレジットカード情報が取得できてしまう（IDOR脆弱性）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-13" value="c">
+        Prismaが自動的にアクセス権限をチェックする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-13" value="d">
+        router.useで認証を適用しているので安全
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-13')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-13')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t5-14: エラーハンドリングでスタックトレース漏洩 -->
+<section id="ex-t5-14">
+  <h1>問題 14: スタックトレースのレスポンス漏洩</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>本番環境のAPIで不正なリクエストを送ると、内部のファイルパスやデータベース接続情報がレスポンスに含まれているという報告がありました。エラーハンドリングミドルウェアを確認してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// middleware/errorHandler.js
+const errorHandler = (err, req, res, next) =&gt; {
+  console.error('Error:', err);
+
+  res.status(err.status || 500).json({
+    error: {
+      message: err.message,
+      stack: err.stack,
+      code: err.code,
+      detail: err.detail,
+      // Prismaエラーの場合、接続情報も含まれる
+      meta: err.meta,
+    },
+  });
+};
+
+// app.js での使用
+const app = express();
+
+app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
+
+// 404ハンドラー
+app.use((req, res) =&gt; {
+  res.status(404).json({
+    error: `${req.method} ${req.originalUrl} は存在しません`,
+    availableRoutes: [
+      'GET /api/users',
+      'POST /api/users',
+      'GET /api/products',
+      'GET /api/admin/dashboard',
+    ],
+  });
+});
+
+// エラーハンドラー
+app.use(errorHandler);
+
+// 本番環境でもNODE_ENVを確認していない
+// process.env.NODE_ENV === 'production' のチェックなし</code></pre>
+
+  <div class="quiz" id="quiz-ex-t5-14">
+    <div class="quiz-question"><strong>問題：</strong>このエラーハンドリングに含まれるセキュリティ問題を全て含む選択肢はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-14" value="a">
+        console.errorを使っていることだけが問題
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="(1) スタックトレース漏洩: ファイルパス、行番号が攻撃者に見える (2) DB接続情報漏洩: Prismaのmeta情報にDB URLが含まれる可能性 (3) APIルート一覧の公開: 404レスポンスで管理画面を含む全ルートが見える (4) 環境による出し分けなし: 本番でもデバッグ情報が出る。対策: 本番ではgenericなエラーメッセージのみ返し、詳細はサーバーログにだけ記録する。404ではルート一覧を返さない。">
+        <input type="radio" name="quiz-ex-t5-14" value="b">
+        スタックトレース漏洩、DB情報漏洩、APIルート一覧公開、環境判定なし、全てが問題
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-14" value="c">
+        ステータスコード500を返していることが問題
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-14" value="d">
+        JSONで返していることが問題。HTMLエラーページにすべき
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-14')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-14')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- ex-t5-15: 総合 ユーザーCRUD APIの全体レビュー -->
+<section id="ex-t5-15">
+  <h1>問題 15: 総合問題 - ユーザーCRUD APIの全体レビュー</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>新人エンジニアが作成したユーザーCRUD APIの全体レビューを依頼されました。これまでの学習で身につけた知識を総動員して、このコードに含まれる問題を全て見つけてください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// routes/api.js
+const express = require('express');
+const router = express.Router();
+const { Pool } = require('pg');
+const jwt = require('jsonwebtoken');
+
+const pool = new Pool({
+  connectionString: 'postgresql://admin:password123@db.example.com:5432/myapp'
+});
+
+const SECRET = 'super-secret-key';
+
+// ユーザー登録
+router.post('/api/createUser', async (req, res) =&gt; {
+  const { name, email, password } = req.body;
+
+  const query = `INSERT INTO users (name, email, password)
+                 VALUES ('${name}', '${email}', '${password}')
+                 RETURNING *`;
+  try {
+    const result = await pool.query(query);
+    const user = result.rows[0];
+
+    const token = jwt.sign({ id: user.id, password: user.password }, SECRET);
+
+    res.status(200).json({
+      success: true,
+      user,
+      token,
+    });
+  } catch (err) {
+    res.status(200).json({
+      success: false,
+      error: err.message,
+      stack: err.stack,
+    });
+  }
+});
+
+// ユーザー取得
+router.get('/api/getUser/:id', async (req, res) =&gt; {
+  const query = `SELECT * FROM users WHERE id = ${req.params.id}`;
+  const result = await pool.query(query);
+  res.json(result.rows[0]);
+});
+
+// ユーザー更新
+router.post('/api/updateUser/:id', async (req, res) =&gt; {
+  const { name, email } = req.body;
+  const query = `UPDATE users SET name = '${name}', email = '${email}'
+                 WHERE id = ${req.params.id} RETURNING *`;
+  const result = await pool.query(query);
+  res.json(result.rows[0]);
+});
+
+// ユーザー削除
+router.post('/api/deleteUser/:id', async (req, res) =&gt; {
+  await pool.query(`DELETE FROM users WHERE id = ${req.params.id}`);
+  res.json({ message: '削除しました' });
+});</code></pre>
+
+  <div class="quiz" id="quiz-ex-t5-15">
+    <div class="quiz-question"><strong>問題：</strong>このコードに含まれる重大な問題の数として最も近いものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-15" value="a">
+        3個程度（SQLインジェクション、パスワード平文保存、JWT問題）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-15" value="b">
+        5個程度（上記に加え、ステータスコード誤用、RESTful違反）
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="問題点の完全なリスト: (1) SQLインジェクション（全クエリで文字列結合）(2) パスワード平文保存（ハッシュ化なし）(3) JWTにパスワードを含む (4) JWTシークレットのハードコード (5) JWTに有効期限なし (6) DB接続文字列のハードコード（パスワード含む）(7) 全エラーをステータス200で返す (8) スタックトレースをレスポンスに含む (9) RESTful違反（URLに動詞、削除にPOST使用）(10) 認証・認可チェックなし (11) 取得・更新のnullチェックなし (12) RETURNING *でパスワード含む全カラムを返す (13) try-catchの不統一（一部のルートにしかない）。実に13個以上の問題があります。">
+        <input type="radio" name="quiz-ex-t5-15" value="c">
+        10個以上（セキュリティ、設計、エラーハンドリング全てに問題がある）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t5-15" value="d">
+        1〜2個（SQLインジェクションだけが重大な問題）
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-15')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t5-15')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

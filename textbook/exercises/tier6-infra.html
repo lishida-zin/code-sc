@@ -1,0 +1,1087 @@
+<!-- ============================================
+     Tier 6: インフラ実践コーディング演習
+     Docker / Kubernetes / Cloud / CI-CD
+     ============================================ -->
+
+<section id="ex-t6-1">
+  <h1>問題 1: Dockerfileのセキュリティ違反（rootユーザー + .envコピー）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      新人エンジニアがNode.jsアプリケーション用のDockerfileを作成しました。
+      コードレビューで、セキュリティ上の問題がないか確認してください。
+      本番環境にデプロイされるDockerイメージです。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>FROM node:20
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+COPY .env .env
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]</code></pre>
+
+  <div class="quiz" id="quiz-ex-t6-1">
+    <div class="quiz-question"><strong>問題：</strong>このDockerfileに含まれるセキュリティ上の問題として、最も深刻な組み合わせはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-1" value="a">
+        EXPOSEでポートを公開していること、node:20タグが不安定であること
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-1" value="b">
+        npm ciではなくnpm installを使うべき、WORKDIRが/appであること
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="2つの深刻な問題があります。(1) .envファイルをCOPYすると、APIキーやDB接続情報などの機密情報がイメージに焼き込まれます。イメージを取得した誰もが秘密情報を読めてしまいます。.dockerignoreで除外し、実行時に環境変数として注入すべきです。(2) USERディレクティブがないためrootで実行されます。コンテナ内で脆弱性を突かれた場合、root権限でホストに影響を与える可能性があります。USER node などで非特権ユーザーに切り替えるべきです。">
+        <input type="radio" name="quiz-ex-t6-1" value="c">
+        .envファイルがイメージに含まれ機密情報が漏洩する、rootユーザーで実行される
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-1" value="d">
+        COPY . .が2回実行されている、package.jsonを先にコピーする意味がない
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t6-2">
+  <h1>問題 2: マルチステージビルド未使用の巨大イメージ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      Go言語で書かれたAPIサーバーのDockerfileです。
+      ビルドしたイメージが1.2GBもあり、デプロイに時間がかかると報告がありました。
+      どう改善すべきか、レビューしてください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>FROM golang:1.22
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+RUN go build -o /app/server ./cmd/server
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    vim \
+    htop \
+    net-tools
+
+EXPOSE 8080
+
+CMD ["/app/server"]</code></pre>
+
+  <div class="quiz" id="quiz-ex-t6-2">
+    <div class="quiz-question"><strong>問題：</strong>このイメージが巨大になっている主な原因と、正しい改善策はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-2" value="a">
+        go mod downloadが遅いのが原因。go vendorを使ってローカルに依存を固めるべき
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Go言語はシングルバイナリにコンパイルされるため、実行時にはGoのツールチェーン、ソースコード、開発ツール（curl, vim, htop等）は一切不要です。マルチステージビルドを使い、ビルドステージでコンパイルし、実行ステージではscratchやdistrolessなど最小限のベースイメージにバイナリだけをコピーすれば、数十MB程度まで削減できます。本番イメージにデバッグツールを入れるのはセキュリティリスクでもあります。">
+        <input type="radio" name="quiz-ex-t6-2" value="b">
+        マルチステージビルドで、ビルドステージとは別にscratchやdistrolessベースの実行ステージを作り、コンパイル済みバイナリだけをコピーすべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-2" value="c">
+        golang:1.22-alpineに変更すれば十分。マルチステージビルドは複雑になるだけ
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-2" value="d">
+        .dockerignoreを追加してCOPY . .の対象を減らせば、イメージサイズは大幅に減る
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t6-3">
+  <h1>問題 3: Docker Composeのdepends_onにヘルスチェックがない</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      WebアプリケーションとPostgreSQLデータベースのDocker Compose構成です。
+      開発者から「docker compose upすると、アプリがDB接続エラーで起動に失敗することがある」
+      と報告がありました。原因を特定してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>version: "3.8"
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: secret123
+      POSTGRES_DB: myapp
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://appuser:secret123@db:5432/myapp
+    depends_on:
+      - db
+
+volumes:
+  pgdata:</code></pre>
+
+  <div class="quiz" id="quiz-ex-t6-3">
+    <div class="quiz-question"><strong>問題：</strong>アプリがDB接続エラーで失敗する原因と、正しい対策はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-3" value="a">
+        ポート5432が競合している。ホスト側ポートを5433に変更すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-3" value="b">
+        DATABASE_URLにホスト名dbを使えない。localhostに変更すべき
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="depends_onはデフォルトでは「コンテナの起動順序」を保証するだけで、サービスが「使用可能な状態」になったことは保証しません。PostgreSQLコンテナが起動しても、実際にSQL接続を受け付けるまでには数秒かかります。その間にアプリが接続しようとすると失敗します。depends_on に condition: service_healthy を指定し、dbサービスに healthcheck（pg_isready コマンド等）を設定することで、DBが実際に接続可能になってからアプリを起動できます。">
+        <input type="radio" name="quiz-ex-t6-3" value="c">
+        depends_onはコンテナの起動順序のみ保証する。dbにhealthcheckを追加し、depends_onでcondition: service_healthyを指定すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-3" value="d">
+        version: "3.8"が古い。version: "3.9"にすれば自動的にヘルスチェックが有効になる
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t6-4">
+  <h1>問題 4: Kubernetes SecurityContext未設定と特権コンテナ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      本番クラスタにデプロイされるKubernetes Deploymentマニフェストです。
+      セキュリティチームからレビュー依頼がありました。
+      セキュリティの観点で問題を見つけてください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-server
+  namespace: production
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api-server
+  template:
+    metadata:
+      labels:
+        app: api-server
+    spec:
+      containers:
+        - name: api
+          image: myregistry/api:latest
+          ports:
+            - containerPort: 8080
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"</code></pre>
+
+  <div class="quiz" id="quiz-ex-t6-4">
+    <div class="quiz-question"><strong>問題：</strong>このDeploymentに含まれるセキュリティ上の問題として、最も重大なものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-4" value="a">
+        namespace: productionを指定しているが、defaultネームスペースを使うべき
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="privileged: true は最も危険な設定の一つです。特権コンテナはホストのカーネル機能へのフルアクセスを持ち、コンテナからホストへのエスケープが可能になります。本番環境では privileged: false にし、runAsNonRoot: true、readOnlyRootFilesystem: true、allowPrivilegeEscalation: false を設定すべきです。また image: latest タグは、どのバージョンが動いているか不明になるため、具体的なバージョンタグ（例: v1.2.3）を使うべきです。resources.limits も未設定で、リソース枯渇攻撃のリスクもあります。">
+        <input type="radio" name="quiz-ex-t6-4" value="b">
+        privileged: trueでコンテナがホストのカーネルにフルアクセスでき、コンテナエスケープの危険がある
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-4" value="c">
+        replicas: 3が少なすぎる。本番環境では最低5台は必要
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-4" value="d">
+        containerPort: 8080が指定されているが、ポート番号は80を使うべき
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t6-5">
+  <h1>問題 5: Kubernetes readiness/livenessプローブの設定ミス</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      デプロイ後、ローリングアップデート中にユーザーから「502エラーが出る」と報告がありました。
+      また、アプリがハングした際にPodが再起動されないという問題も発生しています。
+      以下のProbe設定を確認してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-frontend
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: web-frontend
+  template:
+    metadata:
+      labels:
+        app: web-frontend
+    spec:
+      containers:
+        - name: web
+          image: myregistry/web:v2.1.0
+          ports:
+            - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            failureThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            failureThreshold: 1</code></pre>
+
+  <div class="quiz" id="quiz-ex-t6-5">
+    <div class="quiz-question"><strong>問題：</strong>502エラーとPod未再起動の原因となる設定ミスはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-5" value="a">
+        httpGetではなくtcpSocketを使うべき。HTTPプローブはオーバーヘッドが大きい
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-5" value="b">
+        maxUnavailable: 1が原因。maxUnavailable: 0にすれば502は出ない
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="2つの問題があります。(1) readinessProbeはinitialDelaySeconds: 0で即座にチェックを開始し、failureThreshold: 1のため1回の失敗でPodがServiceのEndpointsから外されます。起動直後に一瞬だけプローブが成功してトラフィックが流れ始め、その後の起動処理で応答できなくなると502を返します。さらにperiodSeconds: 10と長いため、回復しても再度readyになるまで最大10秒かかります。startupProbeの併用やinitialDelaySecondsの適切な設定で対処すべきです。(2) livenessProbeのfailureThreshold: 1は、一時的なレスポンス遅延や瞬断でも即座にPodをkill＆再起動します。GCやスパイクで不要な再起動が頻発し、カスケード障害の原因になります。failureThreshold は 3 以上にすべきです。">
+        <input type="radio" name="quiz-ex-t6-5" value="c">
+        readinessのfailureThreshold: 1で一時的な失敗でも即トラフィック停止、livenessのfailureThreshold: 1で一時的遅延でも即kill
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-5" value="d">
+        livenessとreadinessで同じパス/healthを使っていることが問題。別々のエンドポイントにすべき
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t6-6">
+  <h1>問題 6: ConfigMapとSecretの取り違え（Base64の誤解）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      チームメンバーが「SecretはBase64エンコードされているから安全」と主張し、
+      以下のマニフェストをGitリポジトリにコミットしました。
+      この主張とマニフェストの問題点を指摘してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: production
+data:
+  APP_ENV: "production"
+  LOG_LEVEL: "info"
+  DB_HOST: "prod-db.internal.example.com"
+  DB_NAME: "myapp_production"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secrets
+  namespace: production
+data:
+  DB_PASSWORD: cDRzc3cwcmQxMjM=
+  API_KEY: c2stbGl2ZS1hYmNkZWYxMjM0NTY=
+  JWT_SECRET: bXktc3VwZXItc2VjcmV0LWtleQ==</code></pre>
+
+  <div class="quiz" id="quiz-ex-t6-6">
+    <div class="quiz-question"><strong>問題：</strong>このマニフェストに関する説明で正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-6" value="a">
+        ConfigMapにDB_HOSTを入れているのが問題。ホスト名もSecretに入れるべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-6" value="b">
+        Secretの値はBase64で暗号化されているので、Gitにコミットしても安全
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Base64はエンコード（符号化）であり、暗号化ではありません。echo 'cDRzc3cwcmQxMjM=' | base64 -d で簡単に元の値に戻せます。つまりGitにコミットすると、リポジトリにアクセスできる全員がパスワードやAPIキーを読めてしまいます。Secretマニフェストは絶対にGitにコミットしてはいけません。対策としては、Sealed Secrets、External Secrets Operator、HashiCorp Vault などを使い、暗号化された状態でのみGitに保存するか、Secret自体をGit管理外にします。">
+        <input type="radio" name="quiz-ex-t6-6" value="c">
+        Base64はエンコードであり暗号化ではない。Secretマニフェストをそのままgitにコミットすると、誰でもデコードして機密情報を読める
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-6" value="d">
+        ConfigMapとSecretを同じファイルに書いていることが問題。別ファイルに分割すべき
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t6-7">
+  <h1>問題 7: AWS IAMポリシーのフルアクセス許可</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      開発チームが新しいLambda関数用のIAMロールを作成しました。
+      「開発を早く進めたいから、権限周りで困らないようにした」とのことです。
+      Terraformで定義されたIAMポリシーをレビューしてください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>resource "aws_iam_role" "lambda_role" {
+  name = "lambda-api-handler"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "lambda_policy" {
+  name = "lambda-full-access"
+  role = aws_iam_role.lambda_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = "*"
+      Resource = "*"
+    }]
+  })
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t6-7">
+    <div class="quiz-question"><strong>問題：</strong>このIAMポリシーの最も重大な問題と、正しい対策はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-7" value="a">
+        assume_role_policyのPrincipalにlambda.amazonaws.comだけでなく、EC2も追加すべき
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Action: '*' と Resource: '*' の組み合わせは、AWSアカウント内のすべてのサービスのすべての操作を許可します。Lambda関数が侵害された場合、攻撃者はS3バケットの全データ削除、IAMユーザー作成、EC2インスタンスの起動（暗号通貨マイニング）など、何でもできてしまいます。最小権限の原則（Principle of Least Privilege）に従い、そのLambdaが実際に必要とするアクション（例: s3:GetObject, dynamodb:PutItem）と、対象リソースのARNを具体的に指定すべきです。">
+        <input type="radio" name="quiz-ex-t6-7" value="b">
+        Action: '*', Resource: '*' で全AWSサービスの全操作を許可しており、最小権限の原則に違反。必要なアクションとリソースだけに絞るべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-7" value="c">
+        インラインポリシーではなくマネージドポリシーを使うべき。動作は同じだがベストプラクティス
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-7" value="d">
+        Lambda関数にはIAMロールではなく、アクセスキーを直接渡すべき
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t6-8">
+  <h1>問題 8: S3バケットのパブリックアクセス許可</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      フロントエンドチームが「画像をS3にアップロードしてWebから参照したい」と依頼し、
+      インフラ担当が以下のTerraformコードを作成しました。
+      動作確認はOKでしたが、セキュリティレビューに回されました。問題点を指摘してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>resource "aws_s3_bucket" "user_uploads" {
+  bucket = "myapp-user-uploads-prod"
+}
+
+resource "aws_s3_bucket_public_access_block" "user_uploads" {
+  bucket = aws_s3_bucket.user_uploads.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_policy" "user_uploads" {
+  bucket = aws_s3_bucket.user_uploads.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Sid       = "PublicRead"
+      Effect    = "Allow"
+      Principal = "*"
+      Action    = ["s3:GetObject", "s3:PutObject"]
+      Resource  = "${aws_s3_bucket.user_uploads.arn}/*"
+    }]
+  })
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t6-8">
+    <div class="quiz-question"><strong>問題：</strong>このS3バケット構成の最も深刻な問題はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-8" value="a">
+        バケット名に「prod」が含まれているが、環境変数で動的に設定すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-8" value="b">
+        バージョニングが有効になっていない。誤って上書きした場合に復元できない
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Principal: '*' は「全世界のインターネットユーザー」を意味します。s3:GetObjectだけでなく s3:PutObject も許可されているため、誰でもバケットに任意のファイルをアップロードできます。マルウェア配布、フィッシングページのホスティング、ストレージコストの爆発など、深刻なリスクがあります。正しい対策は、(1) パブリックアクセスブロックをすべてtrue にする、(2) CloudFront経由でのみ配信（OAC/OAI）、(3) アップロードはPresigned URLで認証済みユーザーのみ許可、とすべきです。">
+        <input type="radio" name="quiz-ex-t6-8" value="c">
+        Principal: '*' で全世界にGetObjectとPutObjectを許可しており、誰でもファイルの読み書きが可能。CloudFront + OACで配信し、PutObjectはPresigned URLに限定すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-8" value="d">
+        暗号化設定（SSE-S3やSSE-KMS）が有効になっていないのが問題
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-8')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t6-9">
+  <h1>問題 9: Terraformでterraform destroyを防ぐ設定の欠如</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      本番環境のRDSデータベースをTerraformで管理しています。
+      先日、別のチームメンバーが誤って<code>terraform destroy</code>を実行し、
+      データベースが削除されるインシデントが発生しました。
+      以下の構成に、どのような防護策が不足しているか確認してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>resource "aws_db_instance" "production" {
+  identifier     = "myapp-prod-db"
+  engine         = "postgres"
+  engine_version = "16.1"
+  instance_class = "db.r6g.xlarge"
+
+  allocated_storage     = 100
+  max_allocated_storage = 500
+  storage_encrypted     = true
+
+  db_name  = "myapp"
+  username = "admin"
+  password = var.db_password
+
+  multi_az               = true
+  backup_retention_period = 7
+  skip_final_snapshot    = true
+
+  vpc_security_group_ids = [aws_security_group.db.id]
+  db_subnet_group_name   = aws_db_subnet_group.main.name
+
+  tags = {
+    Environment = "production"
+    Team        = "backend"
+  }
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t6-9">
+    <div class="quiz-question"><strong>問題：</strong>terraform destroyによるデータベース削除を防ぐために不足している設定はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-9" value="a">
+        multi_az = true を設定しているので、片方が削除されても問題ない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-9" value="b">
+        backup_retention_period = 7 があるので、バックアップから復元できるため問題ない
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="3つの重要な防護策が欠けています。(1) lifecycle { prevent_destroy = true } を設定すると、terraform destroyやリソース再作成を伴う変更時にTerraformがエラーを出して停止します。(2) skip_final_snapshot = true は、削除時に最終スナップショットを作らない設定です。本番DBではfalseにし、final_snapshot_identifierを指定すべきです。(3) deletion_protection = true を設定すると、AWS API レベルで削除が拒否されます。Terraformだけでなく、AWSコンソールやCLIからの誤削除も防げます。この3つを組み合わせることで多層防御が実現できます。">
+        <input type="radio" name="quiz-ex-t6-9" value="c">
+        lifecycle { prevent_destroy = true }、skip_final_snapshot = false、deletion_protection = true の3つが不足している
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-9" value="d">
+        tagsにProtected = trueを追加すれば、Terraformは自動的に削除を拒否する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t6-10">
+  <h1>問題 10: Terraformのstateファイルにシークレットが平文保存</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      チームでTerraformを使ってインフラを管理しています。
+      ローカルでtfstateファイルを確認したところ、データベースのパスワードが
+      平文で記録されていることに気づきました。以下のTerraform構成を確認し、
+      stateファイルの管理における問題を指摘してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code># main.tf
+variable "db_password" {
+  type      = string
+  sensitive = true
+}
+
+resource "aws_db_instance" "main" {
+  identifier     = "myapp-db"
+  engine         = "postgres"
+  instance_class = "db.t3.medium"
+  username       = "admin"
+  password       = var.db_password
+}
+
+# backend.tf
+terraform {
+  backend "s3" {
+    bucket = "mycompany-terraform-state"
+    key    = "prod/terraform.tfstate"
+    region = "ap-northeast-1"
+  }
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t6-10">
+    <div class="quiz-question"><strong>問題：</strong>このTerraform構成において、シークレット管理に関する正しい説明はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-10" value="a">
+        sensitive = true を設定しているので、stateファイルにもマスクされて安全
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Terraformの sensitive = true は terraform plan/apply の出力をマスクするだけで、stateファイルには平文で保存されます。これはTerraformの仕様上避けられません。S3は2023年からデフォルト暗号化（SSE-S3）を提供していますが、これはディスクレベルの保護に過ぎず、S3へのアクセス権があればstateファイルの中身（パスワード含む）は平文で読めます。対策として、(1) S3バックエンドにencrypt = trueとDynamoDBロックを設定する、(2) S3バケットポリシーやIAMでアクセス権限を最小限に制限する、(3) パスワード自体はAWS Secrets ManagerやSSM Parameter Storeで管理し、Terraformではdata sourceで参照するか、random_passwordリソースとSecrets Managerの組み合わせで管理する、といった対策が必要です。">
+        <input type="radio" name="quiz-ex-t6-10" value="b">
+        sensitive = trueは出力のマスクのみで、stateには平文保存される。S3バックエンドにencrypt = trueを追加し、stateへのアクセス権限を厳格に制限すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-10" value="c">
+        S3は2023年からデフォルト暗号化（SSE-S3）があるため、stateファイル内のシークレットも保護されており問題ない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-10" value="d">
+        variableではなく、直接main.tfにパスワードをハードコードすれば、stateに保存されない
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-10')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t6-11">
+  <h1>問題 11: GitHub Actions pull_request_targetのインジェクション</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      OSSプロジェクトのCI設定をレビューしています。
+      外部コントリビューターからのPRでもCIを実行したいため、
+      <code>pull_request_target</code>トリガーが使われています。
+      セキュリティの観点で問題がないか確認してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code># .github/workflows/ci.yml
+name: CI
+on:
+  pull_request_target:
+    types: [opened, synchronize]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install and Test
+        run: |
+          npm ci
+          npm test
+
+      - name: Comment PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: 'Tests passed! ✅'
+            })</code></pre>
+
+  <div class="quiz" id="quiz-ex-t6-11">
+    <div class="quiz-question"><strong>問題：</strong>このワークフローに含まれる深刻なセキュリティ脆弱性はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="pull_request_target はベースブランチのコンテキストで実行され、secrets にアクセスできます。しかし ref: github.event.pull_request.head.sha でPR作成者のコードをチェックアウトしている場合、悪意あるPR作成者が package.json の scripts.test や postinstall に任意のコマンドを仕込めます。npm ci や npm test がそのコードを実行するため、secrets.GITHUB_TOKEN が盗まれたり、リポジトリに悪意ある変更を加えられる可能性があります。対策は (1) pull_request_target では信頼できないコードを実行しない、(2) テストは pull_request トリガーで実行する、(3) どうしても必要なら、ワークフローを分離し、信頼できないコードはサンドボックス内で実行する、です。">
+        <input type="radio" name="quiz-ex-t6-11" value="a">
+        pull_request_targetでsecrets付きのコンテキストでPR作成者の任意コードを実行しており、secretsの漏洩やリポジトリの改ざんが可能
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-11" value="b">
+        actions/checkout@v4がメジャーバージョンタグで、サプライチェーン攻撃のリスクがある
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-11" value="c">
+        GITHUB_TOKENをsecretsから取得しているが、自動生成されるので明示的に渡す必要はない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-11" value="d">
+        ubuntu-latestが不安定。ubuntu-22.04のように固定バージョンを指定すべき
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-11')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-11')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t6-12">
+  <h1>問題 12: GitHub Actionsのキャッシュキー不一致で毎回フルビルド</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      Node.jsプロジェクトのCIパイプラインで、「ビルドが毎回5分以上かかる」と
+      報告がありました。キャッシュを設定しているはずなのに、毎回npm installが
+      フルで実行されています。キャッシュ設定を確認してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code># .github/workflows/build.yml
+name: Build
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test</code></pre>
+
+  <div class="quiz" id="quiz-ex-t6-12">
+    <div class="quiz-question"><strong>問題：</strong>キャッシュが効かない原因と、正しい設定はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-12" value="a">
+        actions/cache@v4が古い。v5にアップグレードすれば自動的にキャッシュが効く
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="2つの問題があります。(1) hashFiles('package.json') をキーに使っていますが、依存バージョンのロック情報は package-lock.json にあります。package.json はバージョン範囲（^, ~）で記述するため、ロックファイルが変わってもキーが変わらず、古いキャッシュがヒットして不整合が起きます。逆に、package.json の description 等を変えただけでキャッシュが無効になることもあります。正しくは hashFiles('**/package-lock.json') です。(2) node_modules を直接キャッシュし npm install を使っていますが、npm ci + npmキャッシュ（~/.npm）のキャッシュの方が確実です。npm ci は node_modules を削除してからクリーンインストールするため、node_modules キャッシュとは相性が悪いですが、~/.npm キャッシュがあればダウンロードをスキップできます。">
+        <input type="radio" name="quiz-ex-t6-12" value="b">
+        hashFiles('package.json')ではなくhashFiles('**/package-lock.json')を使うべき。またnode_modulesではなく~/.npmキャッシュを対象にしてnpm ciを使うべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-12" value="c">
+        restore-keysの設定が間違っている。完全一致のキーのみ使用すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-12" value="d">
+        runner.osをキーに含めているのが問題。すべてubuntu-latestなので不要
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-12')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-12')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t6-13">
+  <h1>問題 13: 構造化ログ未導入で検索不能なログ出力</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      本番環境で障害が発生し、ログを調査する必要がありますが、
+      「CloudWatch Logsで特定のユーザーのリクエストを検索できない」
+      「エラー率の集計ができない」と運用チームから悲鳴が上がっています。
+      以下のアプリケーションのログ出力コードを確認してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// server.js (Express.js)
+const express = require('express');
+const app = express();
+
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
+app.get('/api/users/:id', async (req, res) => {
+  try {
+    const user = await db.findUser(req.params.id);
+    console.log('User found: ' + user.name);
+    res.json(user);
+  } catch (error) {
+    console.log('Error occurred: ' + error.message);
+    console.log('Stack: ' + error.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.post('/api/orders', async (req, res) => {
+  try {
+    const order = await db.createOrder(req.body);
+    console.log(`Order created: ${order.id} for user ${req.body.userId}`);
+    res.status(201).json(order);
+  } catch (error) {
+    console.log(`Failed to create order: ${error}`);
+    res.status(500).json({ error: 'Failed to create order' });
+  }
+});</code></pre>
+
+  <div class="quiz" id="quiz-ex-t6-13">
+    <div class="quiz-question"><strong>問題：</strong>このログ出力の問題と、適切な改善策はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-13" value="a">
+        console.logではなくconsole.errorを使うべき。それ以外は問題ない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-13" value="b">
+        ログにタイムスタンプを付けていないことが問題。new Date()を追加すれば解決
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="console.logで自由形式のテキストを出力すると、ログ収集ツール（CloudWatch, Datadog等）での検索・フィルタリング・集計が極めて困難になります。構造化ログとは、JSON形式でログを出力し、各フィールド（level, message, userId, requestId, method, path, statusCode, duration, error等）を明示的に定義する手法です。これにより、(1) 特定ユーザーのリクエストをuserIdで検索、(2) エラー率をlevelでフィルタして集計、(3) 遅いリクエストをdurationでソート、といった運用が可能になります。winston, pino等のロガーライブラリを使い、requestIdで一連のリクエストを追跡する（リクエストトレーシング）のがベストプラクティスです。">
+        <input type="radio" name="quiz-ex-t6-13" value="c">
+        自由形式のテキストログでは検索・フィルタリング・集計が不可能。JSON形式の構造化ログ（level, requestId, userId等のフィールド付き）に変更すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-13" value="d">
+        ログの量が多すぎることが問題。本番環境ではログ出力を最小限にすべき
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-13')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-13')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t6-14">
+  <h1>問題 14: アラート閾値の設定ミス（ノイズと検知漏れ）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      運用チームから2つの問題が報告されています。
+      (1) CPU使用率のアラートが1日に100回以上鳴り、全員が無視するようになった。
+      (2) 先週のメモリリークによるOOM Killは事前に検知できなかった。
+      以下のTerraformで定義されたCloudWatchアラーム設定を確認してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>resource "aws_cloudwatch_metric_alarm" "cpu_high" {
+  alarm_name          = "api-cpu-high"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/ECS"
+  period              = 60
+  statistic           = "Average"
+  threshold           = 50
+  alarm_description   = "CPU使用率が高い"
+
+  dimensions = {
+    ClusterName = "production"
+    ServiceName = "api-server"
+  }
+
+  alarm_actions = [aws_sns_topic.alerts.arn]
+}
+
+resource "aws_cloudwatch_metric_alarm" "memory_high" {
+  alarm_name          = "api-memory-high"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 10
+  metric_name         = "MemoryUtilization"
+  namespace           = "AWS/ECS"
+  period              = 300
+  statistic           = "Average"
+  threshold           = 95
+  alarm_description   = "メモリ使用率が高い"
+
+  dimensions = {
+    ClusterName = "production"
+    ServiceName = "api-server"
+  }
+
+  alarm_actions = [aws_sns_topic.alerts.arn]
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t6-14">
+    <div class="quiz-question"><strong>問題：</strong>CPUアラートがノイズだらけで、メモリアラートが検知漏れする原因はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="CPUアラートは、threshold: 50（50%）かつ evaluation_periods: 1、period: 60 なので、1分間の平均が50%を超えるだけで即発火します。通常のトラフィックスパイクでも頻繁に閾値を超え、ノイズだらけになります。対策: 閾値を70-80%に上げ、evaluation_periods を3以上にして持続的な高負荷のみ検知する。メモリアラートは、threshold: 95（95%）かつ evaluation_periods: 10、period: 300 なので、5分x10回 = 50分間連続で95%を超えないと発火しません。メモリリークは通常、95%に達してすぐOOM Killされるため、50分待つ前にプロセスがkillされます。対策: 閾値を80%に下げ、evaluation_periods を3程度に短くして早期に検知する。段階的アラート（warning: 70%, critical: 85%）の設計も有効です。">
+        <input type="radio" name="quiz-ex-t6-14" value="a">
+        CPU: 閾値50%が低すぎ+1分1回で即発火しノイズ化。メモリ: 閾値95%が高すぎ+50分間持続しないと発火せずOOM Kill前に検知不能
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-14" value="b">
+        CPUもメモリもAverageではなくMaximumを使うべき。統計手法の選択が間違っている
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-14" value="c">
+        SNSトピックが同じなのが問題。CPUとメモリで通知先を分けるべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-14" value="d">
+        CloudWatchではなくDatadogやPrometheusを使うべき。AWS純正の監視では精度が不十分
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-14')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-14')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t6-15">
+  <h1>問題 15: 総合レビュー - Dockerfile + Compose + GitHub Actions</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      新規プロジェクトの初期構成が完成し、総合レビューを依頼されました。
+      Dockerfile、Docker Compose、GitHub Actionsの3つのファイルを確認し、
+      全体を通して最も改善すべき点を特定してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code># === Dockerfile ===
+FROM node:20
+WORKDIR /app
+COPY . .
+RUN npm install
+EXPOSE 3000
+CMD ["npm", "start"]
+
+# === docker-compose.yml ===
+version: "3.8"
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DB_PASSWORD=mysecretpassword
+      - API_KEY=sk-live-abc123
+    depends_on:
+      - redis
+      - db
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    ports:
+      - "5432:5432"
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+# === .github/workflows/deploy.yml ===
+name: Deploy
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t myapp:latest .
+      - run: docker push myregistry/myapp:latest
+      - name: Deploy to server
+        run: |
+          ssh ${{ secrets.SERVER_HOST }} \
+            "docker pull myregistry/myapp:latest && \
+             docker compose up -d"</code></pre>
+
+  <div class="quiz" id="quiz-ex-t6-15">
+    <div class="quiz-question"><strong>問題：</strong>この構成全体を通して、最も多く見られる共通の問題パターンはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-15" value="a">
+        ポート番号の選択が間違っている。3000, 5432, 6379は標準外のポート
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-15" value="b">
+        docker composeではなくKubernetesを使うべき。Composeは本番に適さない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t6-15" value="c">
+        GitHubActionsでdocker buildを使っているが、buildxを使うべき
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="3つのファイル全体に共通する問題は「セキュリティの軽視」と「再現性の欠如」です。(1) セキュリティ: Composeに DB_PASSWORD と API_KEY が平文でハードコード、Dockerfileで root実行、redis/dbのポートが外部公開。(2) 再現性の欠如: 全イメージが :latest タグで、どのバージョンが動いているか不明。デプロイも latest を pullするだけで、ロールバックが困難。(3) Dockerfileの最適化不足: COPY . . の前にpackage*.jsonをコピーしていないためレイヤーキャッシュが効かない、npm install で devDependencies も入る、マルチステージビルド未使用。(4) CI/CD: docker login なしで push、テストなしでデプロイ、タグ管理なし。改善: secrets管理ツールの導入、具体的なバージョンタグ使用、マルチステージビルド、テストステージの追加が必要です。">
+        <input type="radio" name="quiz-ex-t6-15" value="d">
+        シークレットの平文管理、latestタグによる再現性の欠如、セキュリティ設定の欠如が全体に共通する問題
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-15')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t6-15')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

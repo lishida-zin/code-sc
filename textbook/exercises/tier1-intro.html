@@ -1,0 +1,1085 @@
+<!-- ============================================
+     コーディング演習 Tier 1: HTML/CSS 入門
+     15問 (ex-t1-1 〜 ex-t1-15)
+     ============================================ -->
+
+<section id="ex-t1-1">
+  <h1>問題 1: divだらけのマークアップ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>新人エンジニアが企業サイトのトップページを作成しました。レビュー依頼が来たので、コードを確認してください。すべて <code>&lt;div&gt;</code> で構成されており、見た目は問題なく表示されていますが、構造的に改善すべき点があります。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;株式会社サンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="header"&gt;
+    &lt;div class="logo"&gt;株式会社サンプル&lt;/div&gt;
+    &lt;div class="nav"&gt;
+      &lt;div class="nav-item"&gt;&lt;a href="/"&gt;ホーム&lt;/a&gt;&lt;/div&gt;
+      &lt;div class="nav-item"&gt;&lt;a href="/about"&gt;会社概要&lt;/a&gt;&lt;/div&gt;
+      &lt;div class="nav-item"&gt;&lt;a href="/contact"&gt;お問い合わせ&lt;/a&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class="main"&gt;
+    &lt;div class="article"&gt;
+      &lt;div class="title"&gt;お知らせ&lt;/div&gt;
+      &lt;div class="text"&gt;本日より新サービスを開始しました。&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="sidebar"&gt;
+      &lt;div class="title"&gt;カテゴリ&lt;/div&gt;
+      &lt;div class="list"&gt;
+        &lt;div&gt;ニュース&lt;/div&gt;
+        &lt;div&gt;プレスリリース&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class="footer"&gt;
+    &lt;div class="copyright"&gt;&amp;copy; 2025 株式会社サンプル&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t1-1">
+    <div class="quiz-question"><strong>問題：</strong>このコードの最大の問題点はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-1" value="a">
+        CSSファイルが読み込まれていないため、見た目が崩れる
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="すべてがdivで構成されており、header、nav、main、article、aside、footerなどのセマンティックHTMLタグが一切使われていません。セマンティックタグを使うことで、スクリーンリーダーや検索エンジンがページ構造を正しく理解でき、アクセシビリティとSEOが向上します。divは『意味を持たない汎用コンテナ』であり、構造を表現するには不適切です。">
+        <input type="radio" name="quiz-ex-t1-1" value="b">
+        セマンティックHTMLタグ（header, nav, main, footer等）を使うべきところが全てdivになっている
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-1" value="c">
+        classの命名がBEM記法に従っていない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-1" value="d">
+        リスト部分にul/liタグを使うべきだが、それ以外は問題ない
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t1-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t1-1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t1-2">
+  <h1>問題 2: アクセシビリティの問題</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>お問い合わせフォームのHTMLを確認しています。見た目は正常に動作していますが、スクリーンリーダーを使用するユーザーから「フォームが使えない」という報告が来ました。コードを確認してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>&lt;form action="/contact" method="POST"&gt;
+  &lt;div class="form-group"&gt;
+    &lt;span class="label-text"&gt;お名前&lt;/span&gt;
+    &lt;input type="text" class="form-input" placeholder="山田太郎"&gt;
+  &lt;/div&gt;
+
+  &lt;div class="form-group"&gt;
+    &lt;span class="label-text"&gt;メールアドレス&lt;/span&gt;
+    &lt;input type="email" class="form-input" placeholder="example@mail.com"&gt;
+  &lt;/div&gt;
+
+  &lt;div class="form-group"&gt;
+    &lt;span class="label-text"&gt;お問い合わせ内容&lt;/span&gt;
+    &lt;textarea class="form-input" rows="5"&gt;&lt;/textarea&gt;
+  &lt;/div&gt;
+
+  &lt;div class="form-group"&gt;
+    &lt;img src="/images/info-icon.png"&gt;
+    &lt;span&gt;個人情報の取り扱いについて&lt;/span&gt;
+  &lt;/div&gt;
+
+  &lt;button type="submit"&gt;送信する&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t1-2">
+    <div class="quiz-question"><strong>問題：</strong>このフォームのアクセシビリティ上の問題として、最も深刻な組み合わせはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-2" value="a">
+        placeholderの文字色が薄い・送信ボタンにclass指定がない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-2" value="b">
+        textareaにplaceholderがない・formにid属性がない
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="spanをラベルとして使っていますが、label要素ではないためinputとの紐付けがありません。スクリーンリーダーは入力欄の目的を読み上げられません。さらにimgにalt属性がないため、画像の内容も伝わりません。正しくは、&lt;label for='name'&gt;お名前&lt;/label&gt;と&lt;input id='name'&gt;のように紐付け、imgには適切なalt属性を付けます。">
+        <input type="radio" name="quiz-ex-t1-2" value="c">
+        labelタグを使わずspanでラベルを表示している（inputとの紐付けがない）・imgにalt属性がない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-2" value="d">
+        required属性が付いていない・バリデーション機能がない
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t1-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t1-2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t1-3">
+  <h1>問題 3: HTMLの入れ子ルール違反</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ブログ記事のHTMLをレビューしています。ブラウザで表示すると、意図しないレイアウト崩れが起きています。HTMLの入れ子ルールに関する問題が疑われます。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>&lt;article class="blog-post"&gt;
+  &lt;h2&gt;ブログのタイトル&lt;/h2&gt;
+
+  &lt;p class="intro"&gt;
+    このブログでは最新技術について紹介します。
+    &lt;div class="highlight-box"&gt;
+      &lt;strong&gt;注目ポイント：&lt;/strong&gt;
+      この記事は初心者向けです。
+    &lt;/div&gt;
+    続きの文章がここに入ります。
+  &lt;/p&gt;
+
+  &lt;p class="content"&gt;
+    詳しい内容を以下に記載します。
+    &lt;h3&gt;第1章：はじめに&lt;/h3&gt;
+    ここから本文が始まります。
+  &lt;/p&gt;
+
+  &lt;ul&gt;
+    &lt;li&gt;ポイント1&lt;/li&gt;
+    &lt;li&gt;ポイント2
+      &lt;p&gt;補足説明です。&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;ポイント3&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/article&gt;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t1-3">
+    <div class="quiz-question"><strong>問題：</strong>ブラウザがこのHTMLを解析したとき、実際にどのような問題が発生しますか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-3" value="a">
+        ul内のliにpを入れることは違反なのでリスト全体が表示されない
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="p要素の中にdivやh3を入れることはHTMLの仕様違反です。pはフレージングコンテンツ（テキストやspan等）しか含められません。ブラウザはdivやh3に遭遇すると、pタグを自動的に閉じてしまいます。その結果、「続きの文章」はp.introの外に出てしまい、レイアウトが崩れます。なお、li内にpを入れることは仕様上問題ありません。">
+        <input type="radio" name="quiz-ex-t1-3" value="b">
+        pタグの中にdivとh3が入っているため、ブラウザがpを自動的に閉じてしまい、意図しない位置で要素が分断される
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-3" value="c">
+        article内にh2とh3が両方あるのは見出しレベルの違反であり、SEOに悪影響がある
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-3" value="d">
+        strongタグをdivの中で使うのは違反で、ブラウザがエラーを出す
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t1-3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t1-3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t1-4">
+  <h1>問題 4: レスポンシブ対応の欠落</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>クライアントから「スマートフォンで見ると文字が極端に小さく表示される」とクレームが来ました。PCでは問題なく表示されています。headタグの中身を確認してみましょう。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;レストラン花月&lt;/title&gt;
+  &lt;link rel="stylesheet" href="style.css"&gt;
+  &lt;style&gt;
+    body {
+      font-size: 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .hero {
+      width: 100%;
+      height: 400px;
+      background: url('hero.jpg') center/cover;
+    }
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding: 20px;
+    }
+    @media (max-width: 768px) {
+      .menu-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="hero"&gt;
+    &lt;h1&gt;レストラン花月&lt;/h1&gt;
+  &lt;/div&gt;
+  &lt;div class="menu-grid"&gt;
+    &lt;div class="menu-item"&gt;ランチ&lt;/div&gt;
+    &lt;div class="menu-item"&gt;ディナー&lt;/div&gt;
+    &lt;div class="menu-item"&gt;テイクアウト&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t1-4">
+    <div class="quiz-question"><strong>問題：</strong>スマートフォンで文字が極端に小さく表示される原因は何ですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-4" value="a">
+        font-sizeが16pxで固定されているため、スマホの画面サイズに対応できない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-4" value="b">
+        media queryのブレイクポイントが768pxで、一般的なスマホのサイズと合っていない
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="&lt;meta name='viewport' content='width=device-width, initial-scale=1.0'&gt;が設定されていません。このmetaタグがないと、モバイルブラウザはページを980px程度のPC画面幅として描画し、それを小さな画面に縮小表示します。そのため文字やレイアウトが極端に小さくなります。media queryを書いていても、viewport指定がなければ端末は自分のことを『幅980pxの画面』と認識するため、768px以下の条件に一致しません。">
+        <input type="radio" name="quiz-ex-t1-4" value="c">
+        meta viewportタグが設定されていないため、モバイルブラウザがPC用の幅（約980px）で描画し縮小表示している
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-4" value="d">
+        max-width: 1200pxが指定されているため、スマホの画面幅に収まらない
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t1-4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t1-4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t1-5">
+  <h1>問題 5: CSS詳細度の競合</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>デザイナーから「ボタンの色が指定した赤色になっていない」と指摘がありました。CSSを確認すると、複数のセレクタが同じ要素に対して異なる色を指定しています。どの色が最終的に適用されるか判断してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>&lt;!-- HTML --&gt;
+&lt;div id="sidebar"&gt;
+  &lt;div class="widget"&gt;
+    &lt;button class="btn primary-btn"&gt;購入する&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- CSS --&gt;
+&lt;style&gt;
+  /* ルール1 */
+  .widget .btn {
+    background-color: blue;
+  }
+
+  /* ルール2 */
+  .primary-btn {
+    background-color: red;
+  }
+
+  /* ルール3 */
+  #sidebar button {
+    background-color: green;
+  }
+
+  /* ルール4 */
+  div.widget button.btn {
+    background-color: orange;
+  }
+&lt;/style&gt;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t1-5">
+    <div class="quiz-question"><strong>問題：</strong>このボタンの背景色は最終的に何色になりますか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-5" value="a">
+        赤（red）- ルール2が最後に近い位置にあるから
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-5" value="b">
+        オレンジ（orange）- ルール4が最も多くのクラスを指定しているから
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="CSS詳細度は (IDの数, クラス/属性/疑似クラスの数, 要素/疑似要素の数) で計算します。ルール1: (0,2,0)、ルール2: (0,1,0)、ルール3: (1,0,1)、ルール4: (0,2,2)。IDセレクタの詳細度はクラスセレクタより常に高いため、ルール3の(1,0,1)が最も高くなります。IDセレクタ1つは、クラスセレクタをいくつ重ねても勝てません。">
+        <input type="radio" name="quiz-ex-t1-5" value="c">
+        緑（green）- ルール3がIDセレクタを含み、詳細度が最も高いから
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-5" value="d">
+        青（blue）- ルール1が最初に定義されているから
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t1-5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t1-5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t1-6">
+  <h1>問題 6: box-sizingの罠</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>3カラムレイアウトを作成中に、カラムが横並びにならず2行に折り返されてしまいます。各カラムの幅をちょうど33.33%に設定したはずなのに、なぜか親要素からはみ出しています。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>&lt;div class="container"&gt;
+  &lt;div class="column"&gt;カラム1&lt;/div&gt;
+  &lt;div class="column"&gt;カラム2&lt;/div&gt;
+  &lt;div class="column"&gt;カラム3&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;style&gt;
+  .container {
+    width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .column {
+    width: 33.33%;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+  }
+&lt;/style&gt;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t1-6">
+    <div class="quiz-question"><strong>問題：</strong>カラムが折り返される原因と、正しい修正方法はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-6" value="a">
+        flex-wrapをnowrapに変更すれば折り返さなくなる
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="デフォルトのbox-sizing: content-boxでは、widthはコンテンツ領域のみの幅を指定します。padding: 20px（左右計40px）とborder: 1px（左右計2px）が幅に加算されるため、各カラムの実際の幅は33.33% + 42pxとなり、3つ合計すると900pxを大幅に超えます。box-sizing: border-boxを指定すれば、widthにpaddingとborderが含まれるようになり、33.33%の中に収まります。">
+        <input type="radio" name="quiz-ex-t1-6" value="b">
+        box-sizing: border-boxが未指定のため、paddingとborderがwidthに加算されてはみ出す。columnにbox-sizing: border-boxを追加する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-6" value="c">
+        33.33%は端数があるため合計が100%を超える。width: 33%にすれば解決する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-6" value="d">
+        containerのwidthが900pxで3で割り切れないことが原因
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t1-6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t1-6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t1-7">
+  <h1>問題 7: Flexboxの方向を取り違える</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ナビゲーションバーを作成しています。ロゴを左端に、メニューリンクを右端に配置し、バーの高さの中央に垂直方向で揃えたいのですが、プロパティの使い方が間違っているようです。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>&lt;nav class="navbar"&gt;
+  &lt;div class="logo"&gt;MyApp&lt;/div&gt;
+  &lt;ul class="nav-links"&gt;
+    &lt;li&gt;&lt;a href="#"&gt;ホーム&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#"&gt;サービス&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#"&gt;お問い合わせ&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;
+
+&lt;style&gt;
+  .navbar {
+    display: flex;
+    height: 60px;
+    background: #333;
+    color: white;
+    padding: 0 20px;
+    align-items: space-between;   /* ← A */
+    justify-content: center;      /* ← B */
+  }
+
+  .nav-links {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+  }
+
+  .nav-links a {
+    color: white;
+    text-decoration: none;
+  }
+&lt;/style&gt;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t1-7">
+    <div class="quiz-question"><strong>問題：</strong>ロゴを左端・メニューを右端に配置し、垂直中央揃えにするために、AとBをどう修正すべきですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-7" value="a">
+        A: align-items: flex-start / B: justify-content: flex-end
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Flexboxのデフォルトはflex-direction: rowです。この場合、justify-contentは主軸（水平方向）の配置を制御し、align-itemsは交差軸（垂直方向）の配置を制御します。space-betweenは要素間にスペースを均等配置する値でjustify-contentに使うもの。align-itemsに指定しても無効です。正しくは、justify-content: space-between（左右に分散配置）、align-items: center（垂直中央）です。">
+        <input type="radio" name="quiz-ex-t1-7" value="b">
+        A: align-items: center / B: justify-content: space-between
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-7" value="c">
+        A: align-items: center / B: justify-content: space-around
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-7" value="d">
+        A: align-items: stretch / B: justify-content: space-between
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t1-7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t1-7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t1-8">
+  <h1>問題 8: position: absoluteの基準要素</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>商品カードの右上に「SALE」バッジを配置しようとしています。<code>position: absolute</code>を使ってバッジを配置したのに、カードの右上ではなくページ全体の右上に表示されてしまいます。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>&lt;div class="product-list"&gt;
+  &lt;div class="product-card"&gt;
+    &lt;div class="badge"&gt;SALE&lt;/div&gt;
+    &lt;img src="product.jpg" alt="商品画像"&gt;
+    &lt;h3&gt;おしゃれTシャツ&lt;/h3&gt;
+    &lt;p class="price"&gt;&amp;yen;2,980&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;style&gt;
+  .product-list {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .product-card {
+    width: 250px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    /* position の指定なし */
+  }
+
+  .badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: red;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+
+  .product-card img {
+    width: 100%;
+    border-radius: 4px;
+  }
+&lt;/style&gt;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t1-8">
+    <div class="quiz-question"><strong>問題：</strong>バッジがカードの右上ではなくページの右上に表示される原因と修正方法はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-8" value="a">
+        badgeにz-indexを指定していないため。z-index: 1を追加する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-8" value="b">
+        badgeをproduct-cardの子要素ではなく兄弟要素として配置すべき
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="position: absoluteの要素は、最も近い『位置指定された祖先要素』（position: relative/absolute/fixed/stickyのいずれかが設定された要素）を基準に配置されます。product-cardにpositionが設定されていないため、ブラウザはさらに上の要素を探し、最終的に初期包含ブロック（ビューポート）を基準にしてしまいます。product-cardにposition: relativeを追加すれば、バッジはカードを基準に配置されます。">
+        <input type="radio" name="quiz-ex-t1-8" value="c">
+        product-cardにposition: relativeが指定されていないため、absoluteの基準がビューポートになっている。product-cardにposition: relativeを追加する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-8" value="d">
+        position: absoluteではなくposition: fixedを使うべき
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t1-8')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t1-8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t1-9">
+  <h1>問題 9: CSS Gridの定義ミス</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>フォトギャラリーのレイアウトをCSS Gridで作成しています。4列のグリッドにしたいのに、実際には3列にしかなりません。CSS Gridの定義を確認してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>&lt;section class="gallery"&gt;
+  &lt;h2&gt;フォトギャラリー&lt;/h2&gt;
+  &lt;div class="gallery-grid"&gt;
+    &lt;div class="gallery-item"&gt;
+      &lt;img src="photo1.jpg" alt="風景写真1"&gt;
+    &lt;/div&gt;
+    &lt;div class="gallery-item"&gt;
+      &lt;img src="photo2.jpg" alt="風景写真2"&gt;
+    &lt;/div&gt;
+    &lt;div class="gallery-item"&gt;
+      &lt;img src="photo3.jpg" alt="風景写真3"&gt;
+    &lt;/div&gt;
+    &lt;div class="gallery-item"&gt;
+      &lt;img src="photo4.jpg" alt="風景写真4"&gt;
+    &lt;/div&gt;
+    &lt;div class="gallery-item"&gt;
+      &lt;img src="photo5.jpg" alt="風景写真5"&gt;
+    &lt;/div&gt;
+    &lt;div class="gallery-item"&gt;
+      &lt;img src="photo6.jpg" alt="風景写真6"&gt;
+    &lt;/div&gt;
+    &lt;div class="gallery-item"&gt;
+      &lt;img src="photo7.jpg" alt="風景写真7"&gt;
+    &lt;/div&gt;
+    &lt;div class="gallery-item"&gt;
+      &lt;img src="photo8.jpg" alt="風景写真8"&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;style&gt;
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+&lt;/style&gt;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t1-9">
+    <div class="quiz-question"><strong>問題：</strong>4列のグリッドにするための正しい修正はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-9" value="a">
+        grid-template-rows: repeat(2, auto) を追加して行数を指定する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-9" value="b">
+        gallery-itemにgrid-column: span 1を指定する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="grid-template-columnsで列数が決まります。現在は「1fr 1fr 1fr」で3列分しか定義されていません。4列にするには「1fr 1fr 1fr 1fr」または「repeat(4, 1fr)」と書きます。repeat()は同じ値の繰り返しを簡潔に書くためのCSS関数で、repeat(4, 1fr)は「1fr 1fr 1fr 1fr」と同じ意味です。列数を変更するだけで、8つのアイテムは自動的に4列×2行に配置されます。">
+        <input type="radio" name="quiz-ex-t1-9" value="c">
+        grid-template-columnsの値を「repeat(4, 1fr)」または「1fr 1fr 1fr 1fr」に変更する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-9" value="d">
+        grid-auto-flow: column を追加して自動的に列を増やす
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t1-9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t1-9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t1-10">
+  <h1>問題 10: target="_blank"のセキュリティリスク</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>外部リンク集のページをレビューしています。すべてのリンクが新しいタブで開くように <code>target="_blank"</code> が設定されていますが、セキュリティ面で不足があります。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>&lt;section class="external-links"&gt;
+  &lt;h2&gt;おすすめリンク集&lt;/h2&gt;
+  &lt;ul&gt;
+    &lt;li&gt;
+      &lt;a href="https://example-blog.com/article" target="_blank"&gt;
+        参考記事：Webデザインの基本
+      &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;a href="https://external-tool.com/editor" target="_blank"&gt;
+        オンラインエディタ
+      &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;a href="https://unknown-site.net/resource" target="_blank"&gt;
+        無料素材サイト
+      &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;a href="/internal/page"&gt;
+        サイト内ページ（同一タブ）
+      &lt;/a&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/section&gt;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t1-10">
+    <div class="quiz-question"><strong>問題：</strong><code>target="_blank"</code> が付いた外部リンクに潜むセキュリティリスクと、その対策はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-10" value="a">
+        新しいタブで開くとCookieが共有されるため、httpsonlyフラグを設定する必要がある
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="target='_blank'で開いたページからは、window.openerプロパティを通じて元のページ（あなたのサイト）のwindowオブジェクトにアクセスできます。悪意あるサイトがwindow.opener.location = 'https://偽サイト.com'とすることで、元のタブをフィッシングサイトに書き換える攻撃（タブナビング）が可能です。rel='noopener noreferrer'を追加することで、window.openerをnullにし、この攻撃を防ぎます。現代のブラウザではデフォルトでnoopenerが適用されますが、古いブラウザのためにも明示的に指定すべきです。">
+        <input type="radio" name="quiz-ex-t1-10" value="b">
+        リンク先がwindow.openerで元ページを操作できる（タブナビング攻撃）。rel="noopener noreferrer"を追加すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-10" value="c">
+        target="_blank"を使うとクロスサイトスクリプティング（XSS）攻撃を受ける。target属性自体を削除すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-10" value="d">
+        外部リンクはすべてHTTPSであることを確認すれば安全で、追加の対策は不要
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t1-10')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t1-10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t1-11">
+  <h1>問題 11: 巨大画像の縮小表示</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ECサイトの商品一覧ページのパフォーマンスが非常に悪く、ページの読み込みに10秒以上かかっています。開発者ツールでネットワークを確認すると、画像のダウンロードに大量の時間がかかっていました。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>&lt;div class="product-grid"&gt;
+  &lt;!-- 商品カード × 20個（同じ構造） --&gt;
+  &lt;div class="product-card"&gt;
+    &lt;img
+      src="/uploads/original/product-001.jpg"
+      width="300"
+      height="300"
+      alt="商品A"
+    &gt;
+    &lt;!-- 元画像: 4000x4000px, 5MB --&gt;
+    &lt;h3&gt;商品A&lt;/h3&gt;
+    &lt;p&gt;&amp;yen;3,980&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="product-card"&gt;
+    &lt;img
+      src="/uploads/original/product-002.jpg"
+      width="300"
+      height="300"
+      alt="商品B"
+    &gt;
+    &lt;!-- 元画像: 3800x3800px, 4.2MB --&gt;
+    &lt;h3&gt;商品B&lt;/h3&gt;
+    &lt;p&gt;&amp;yen;5,480&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;!-- ... 残り18個の商品カード ... --&gt;
+&lt;/div&gt;
+
+&lt;style&gt;
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+  .product-card img {
+    width: 100%;
+    height: auto;
+  }
+&lt;/style&gt;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t1-11">
+    <div class="quiz-question"><strong>問題：</strong>ページの読み込みが遅い最大の原因と、最も効果的な改善策はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-11" value="a">
+        gridレイアウトの計算が重い。Flexboxに変更すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-11" value="b">
+        img要素にwidthとheightをHTML属性で指定しているのが原因。CSS側でのみサイズを制御すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-11" value="c">
+        商品が20個もあるのでページネーションを導入すべき。画像サイズは関係ない
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="4000x4000px・5MBの元画像をそのままHTMLで読み込み、width/height属性やCSSで見た目だけ300px程度に縮小表示しています。しかしブラウザは元の巨大ファイル（5MB×20枚=約100MB）をすべてダウンロードします。改善策: (1)サーバー側で適切なサイズ（600px程度）にリサイズした画像を用意する (2)WebPなどの軽量フォーマットを使う (3)srcsetでデバイスに応じた画像を提供する (4)loading='lazy'で遅延読み込みする。HTML属性でのサイズ指定は表示サイズを変えるだけで、ダウンロードサイズは変わりません。">
+        <input type="radio" name="quiz-ex-t1-11" value="d">
+        元画像が4000×4000px・5MBの巨大ファイルを20枚そのまま読み込んでいる。サーバー側でリサイズ済み画像を用意し、srcsetやloading="lazy"も活用すべき
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t1-11')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t1-11')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t1-12">
+  <h1>問題 12: z-indexが効かない</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>モーダルダイアログを実装しています。オーバーレイ（半透明の背景）の上にモーダル本体を表示したいのですが、<code>z-index</code> を大きな値にしてもモーダルがオーバーレイの後ろに隠れてしまいます。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>&lt;div class="page-content"&gt;
+  &lt;h1&gt;ページコンテンツ&lt;/h1&gt;
+  &lt;p&gt;ここにメインの内容が入ります。&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;div class="overlay"&gt;&lt;/div&gt;
+
+&lt;div class="modal"&gt;
+  &lt;h2&gt;確認ダイアログ&lt;/h2&gt;
+  &lt;p&gt;本当に削除しますか？&lt;/p&gt;
+  &lt;button&gt;はい&lt;/button&gt;
+  &lt;button&gt;いいえ&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;style&gt;
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+  }
+
+  .modal {
+    width: 400px;
+    margin: 100px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    /* position の指定なし */
+  }
+&lt;/style&gt;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t1-12">
+    <div class="quiz-question"><strong>問題：</strong>z-index: 9999を設定してもモーダルがオーバーレイの後ろに隠れる原因はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="z-indexは、position: static（デフォルト値）の要素には効果がありません。z-indexが機能するのは、positionがrelative, absolute, fixed, stickyのいずれかに設定されている要素のみです。modalにはpositionの指定がないためデフォルトのstaticとなり、z-index: 9999は完全に無視されます。修正するには、.modalにposition: fixed（またはrelative）を追加します。fixedにする場合は、top/leftとtranslateで中央配置するのが一般的です。">
+        <input type="radio" name="quiz-ex-t1-12" value="a">
+        modalにpositionプロパティが指定されていない（デフォルトのstatic）ため、z-indexが無効になっている
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-12" value="b">
+        z-indexの値が9999では足りない。100000以上に設定する必要がある
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-12" value="c">
+        overlayがHTML上でmodalより前に記述されているため、後から描画されるoverlayが上に来る
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-12" value="d">
+        overlayにposition: fixedが使われているため、同じfixedでないと重なり順が制御できない
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t1-12')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t1-12')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t1-13">
+  <h1>問題 13: インラインスタイルの乱用</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>チームメンバーが作成したページをレビューしたところ、すべてのスタイルが <code>style</code> 属性で直接書かれていました。「CSSファイルを使わなくても見た目は同じだから問題ない」と主張しています。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>&lt;div style="max-width: 800px; margin: 0 auto; padding: 20px; font-family: sans-serif;"&gt;
+  &lt;h1 style="color: #333; font-size: 28px; border-bottom: 2px solid #007bff; padding-bottom: 10px;"&gt;
+    お知らせ一覧
+  &lt;/h1&gt;
+
+  &lt;div style="background: #f8f9fa; border-left: 4px solid #007bff; padding: 16px; margin: 16px 0; border-radius: 4px;"&gt;
+    &lt;h3 style="color: #333; font-size: 18px; margin: 0 0 8px 0;"&gt;システムメンテナンスのお知らせ&lt;/h3&gt;
+    &lt;p style="color: #666; font-size: 14px; margin: 0;"&gt;2025年4月1日 10:00〜12:00&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div style="background: #f8f9fa; border-left: 4px solid #007bff; padding: 16px; margin: 16px 0; border-radius: 4px;"&gt;
+    &lt;h3 style="color: #333; font-size: 18px; margin: 0 0 8px 0;"&gt;新機能リリースのお知らせ&lt;/h3&gt;
+    &lt;p style="color: #666; font-size: 14px; margin: 0;"&gt;2025年3月15日&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div style="background: #f8f9fa; border-left: 4px solid #007bff; padding: 16px; margin: 16px 0; border-radius: 4px;"&gt;
+    &lt;h3 style="color: #333; font-size: 18px; margin: 0 0 8px 0;"&gt;利用規約変更のお知らせ&lt;/h3&gt;
+    &lt;p style="color: #666; font-size: 14px; margin: 0;"&gt;2025年3月1日&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t1-13">
+    <div class="quiz-question"><strong>問題：</strong>インラインスタイルの大量使用で最も深刻な実務上の問題はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-13" value="a">
+        インラインスタイルはブラウザの描画速度が遅くなるため、パフォーマンスが大幅に低下する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-13" value="b">
+        インラインスタイルはHTMLバリデーションエラーになるため、使用自体が禁止されている
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="インラインスタイルの最大の問題は保守性です。(1)DRY違反：同じスタイルが3箇所にコピーされており、色を変更するだけで全箇所を修正する必要がある (2)media queryが使えず、レスポンシブ対応ができない (3)hover等の疑似クラスが使えない (4)詳細度が非常に高い（IDセレクタよりも高い）ため、後からCSSで上書きするには!importantが必要になる。正しくはクラス（例: .notice-card）を定義し、CSSファイルにスタイルをまとめるべきです。">
+        <input type="radio" name="quiz-ex-t1-13" value="c">
+        同じスタイルの繰り返し（DRY違反）により保守が困難になり、media queryや疑似クラスも使えず、詳細度が高すぎて後からの上書きも困難
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-13" value="d">
+        SEOに悪影響があり、検索順位が大幅に下がる
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t1-13')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t1-13')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t1-14">
+  <h1>問題 14: フォームのセキュリティ問題</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>会員登録フォームのセキュリティレビューを行っています。フォームの基本的な設定に複数の問題が潜んでいます。実務でよくある見落としを確認してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>&lt;form action="http://api.example.com/register" method="GET"&gt;
+  &lt;div class="form-group"&gt;
+    &lt;label for="username"&gt;ユーザー名&lt;/label&gt;
+    &lt;input type="text" id="username" name="username" required&gt;
+  &lt;/div&gt;
+
+  &lt;div class="form-group"&gt;
+    &lt;label for="email"&gt;メールアドレス&lt;/label&gt;
+    &lt;input type="email" id="email" name="email" required&gt;
+  &lt;/div&gt;
+
+  &lt;div class="form-group"&gt;
+    &lt;label for="password"&gt;パスワード&lt;/label&gt;
+    &lt;input type="text" id="password" name="password" required&gt;
+  &lt;/div&gt;
+
+  &lt;div class="form-group"&gt;
+    &lt;label for="address"&gt;住所&lt;/label&gt;
+    &lt;input type="text" id="address" name="address"&gt;
+  &lt;/div&gt;
+
+  &lt;button type="submit"&gt;登録する&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t1-14">
+    <div class="quiz-question"><strong>問題：</strong>このフォームに含まれるセキュリティ上の問題として、正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-14" value="a">
+        required属性が住所欄に付いていないことだけが問題
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="このフォームには重大な問題が3つあります。(1) method='GET'：パスワードや個人情報がURLのクエリパラメータに含まれ、ブラウザ履歴・サーバーログ・リファラーヘッダーに残る。POSTにすべき。(2) action='http://...'：HTTPSではなくHTTPで通信しているため、パスワードが平文で送信される。盗聴される危険がある。(3) パスワード入力がtype='text'：入力内容が画面に丸見えで、周囲から覗き見される。type='password'にすべき。さらに実務ではCSRFトークンも必須です。">
+        <input type="radio" name="quiz-ex-t1-14" value="b">
+        GETメソッドでパスワードがURLに露出する・HTTPで暗号化されていない通信・パスワード欄がtype="text"で丸見え、の3つが問題
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-14" value="c">
+        autocomplete属性が指定されていないことが唯一のセキュリティリスク
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-14" value="d">
+        formにid属性がないため、JavaScriptでバリデーションできないことが問題
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t1-14')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t1-14')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t1-15">
+  <h1>問題 15: 総合問題 - LP風HTMLの問題点</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>フリーランスのデザイナーが納品したランディングページ（LP）のHTMLを、本番公開前にコードレビューしています。見た目は完璧ですが、コードの品質に複数の問題があります。全体を確認して問題点を洗い出してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;最高のサービス | Service Pro&lt;/title&gt;
+  &lt;style&gt;
+    .hero { height: 100vh; }
+    .btn { cursor: pointer; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="header"&gt;
+    &lt;div class="logo"&gt;
+      &lt;img src="logo.png"&gt;
+    &lt;/div&gt;
+    &lt;div class="nav"&gt;
+      &lt;div&gt;&lt;a href="#features"&gt;特徴&lt;/a&gt;&lt;/div&gt;
+      &lt;div&gt;&lt;a href="#pricing"&gt;料金&lt;/a&gt;&lt;/div&gt;
+      &lt;div&gt;&lt;a href="#contact"&gt;お問い合わせ&lt;/a&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class="hero" style="background: url('hero-bg.jpg') center/cover; color: white; display: flex; align-items: center; justify-content: center; flex-direction: column;"&gt;
+    &lt;div style="font-size: 48px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);"&gt;
+      ビジネスを加速させる
+    &lt;/div&gt;
+    &lt;div style="font-size: 20px; margin-top: 16px;"&gt;
+      月額わずか&amp;yen;980から始められます
+    &lt;/div&gt;
+    &lt;a href="https://external-signup.com/register" target="_blank" style="margin-top: 32px; padding: 16px 48px; background: #ff6b00; color: white; text-decoration: none; border-radius: 8px; font-size: 18px;"&gt;
+      無料で始める
+    &lt;/a&gt;
+  &lt;/div&gt;
+
+  &lt;div id="features"&gt;
+    &lt;div style="font-size: 32px; font-weight: bold; text-align: center; margin: 40px 0;"&gt;特徴&lt;/div&gt;
+    &lt;div style="display: flex; gap: 20px; padding: 0 40px;"&gt;
+      &lt;div style="flex: 1; padding: 20px; background: #f5f5f5; border-radius: 8px;"&gt;
+        &lt;img src="/images/feature1-original.png" width="80" height="80"&gt;
+        &lt;div style="font-size: 20px; font-weight: bold; margin: 12px 0;"&gt;高速&lt;/div&gt;
+        &lt;div style="color: #666;"&gt;業界最速のパフォーマンス&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div style="flex: 1; padding: 20px; background: #f5f5f5; border-radius: 8px;"&gt;
+        &lt;img src="/images/feature2-original.png" width="80" height="80"&gt;
+        &lt;div style="font-size: 20px; font-weight: bold; margin: 12px 0;"&gt;安全&lt;/div&gt;
+        &lt;div style="color: #666;"&gt;万全のセキュリティ対策&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div id="contact"&gt;
+    &lt;form action="http://api.example.com/contact" method="POST"&gt;
+      &lt;span&gt;お名前&lt;/span&gt;
+      &lt;input type="text" name="name"&gt;
+      &lt;span&gt;メール&lt;/span&gt;
+      &lt;input type="email" name="email"&gt;
+      &lt;button type="submit"&gt;送信&lt;/button&gt;
+    &lt;/form&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t1-15">
+    <div class="quiz-question"><strong>問題：</strong>このLPのコードに含まれる問題点の組み合わせとして、最も正確かつ網羅的なものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-15" value="a">
+        CSSファイルが外部化されていない・JavaScriptがない・色が統一されていない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-15" value="b">
+        html要素にlang属性がない・metaviewportがない・imgにalt属性がない、の3点のみ
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="問題点は5つ以上あります。(1) html要素にlang属性がない（アクセシビリティ・SEO） (2) meta viewportがない（スマホで表示崩れ） (3) セマンティックHTMLが未使用（header/nav/main/section/footerがすべてdiv） (4) imgにalt属性がない（アクセシビリティ違反） (5) インラインスタイルの大量使用（保守性・DRY違反） (6) target='_blank'にrel='noopener noreferrer'がない（セキュリティ） (7) フォームのactionがHTTPでHTTPSでない（通信の暗号化なし） (8) label要素を使わずspanでラベル表示（アクセシビリティ） (9) 見出し要素（h1-h6）が一切使われていない。">
+        <input type="radio" name="quiz-ex-t1-15" value="c">
+        lang属性なし・viewport未設定・セマンティックタグ未使用・alt属性なし・インラインスタイル乱用・target="_blank"にrel未指定・HTTP通信・labelなし・見出しタグ未使用
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t1-15" value="d">
+        デザイン面の問題（色のコントラスト不足、フォントサイズが不適切）が最大の問題
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t1-15')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t1-15')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
