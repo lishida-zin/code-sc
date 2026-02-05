@@ -674,14 +674,57 @@ function initializeQuizzes(container) {
 }
 
 // ============================================
+// ハンバーガーメニュー制御
+// ============================================
+function toggleMobileNav() {
+  const btn = document.getElementById('hamburger-btn');
+  const nav = document.getElementById('main-nav');
+  const overlay = document.getElementById('nav-overlay');
+  if (!btn || !nav || !overlay) return;
+
+  const isOpen = nav.classList.toggle('open');
+  btn.classList.toggle('active', isOpen);
+  overlay.classList.toggle('active', isOpen);
+  btn.setAttribute('aria-expanded', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+
+function closeMobileNav() {
+  const btn = document.getElementById('hamburger-btn');
+  const nav = document.getElementById('main-nav');
+  const overlay = document.getElementById('nav-overlay');
+  if (!btn || !nav || !overlay) return;
+
+  nav.classList.remove('open');
+  btn.classList.remove('active');
+  overlay.classList.remove('active');
+  btn.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
+}
+
+// ============================================
 // ナビゲーション制御
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
+  // ハンバーガーボタン
+  const hamburgerBtn = document.getElementById('hamburger-btn');
+  if (hamburgerBtn) {
+    hamburgerBtn.addEventListener('click', toggleMobileNav);
+  }
+
+  // オーバーレイクリックで閉じる
+  const navOverlay = document.getElementById('nav-overlay');
+  if (navOverlay) {
+    navOverlay.addEventListener('click', closeMobileNav);
+  }
+
   document.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
       const sectionId = link.dataset.section;
       loadSection(sectionId);
+      // モバイルではナビを閉じる
+      closeMobileNav();
     });
   });
 
@@ -691,6 +734,7 @@ document.addEventListener('DOMContentLoaded', () => {
     navTitle.addEventListener('click', (e) => {
       e.preventDefault();
       showSection('dashboard');
+      closeMobileNav();
     });
   }
 });
