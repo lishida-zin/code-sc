@@ -59,6 +59,7 @@ router.post('/api/updateUserInfo/:id', async (req, res) =&gt; {
         async/awaitの使い方が間違っている
       </label>
       <label class="quiz-option" data-correct="true" data-explanation="RESTful APIでは、URLはリソース（名詞）を表し、操作はHTTPメソッド（GET/POST/PUT/DELETE）で表現します。getAllUsers → GET /api/users、createNewUser → POST /api/users、deleteUser → DELETE /api/users/:id のようにすべきです。また、ネストが4階層以上になるURLは設計を見直すべきです。削除にPOSTを使っているのもHTTPメソッドの誤用です。">
+        <input type="radio" name="quiz-ex-t5-1" value="b">
         URLに動詞（getAll, create, delete, update）が含まれ、HTTPメソッドも適切でない
       </label>
       <label class="quiz-option" data-correct="false">
@@ -143,6 +144,7 @@ const createProduct = async (req, res) =&gt; {
         findByPkではなくfindOneを使うべき
       </label>
       <label class="quiz-option" data-correct="true" data-explanation="全てのレスポンスが200（成功）で返されているため、フロントエンドのHTTPクライアント（axiosなど）がエラーを自動検知できません。正しくは、見つからない→404、バリデーション失敗→400、サーバーエラー→500、作成成功→201 を返すべきです。フロントはresponse.data.successで判定する必要があり、HTTPの仕組みを活かせていません。">
+        <input type="radio" name="quiz-ex-t5-2" value="c">
         全レスポンスがステータス200で返され、エラー時も200を使用している
       </label>
       <label class="quiz-option" data-correct="false">
@@ -218,6 +220,7 @@ router.get('/api/products/search', async (req, res) =&gt; {
         PostgreSQLが自動的にエスケープするので問題ない
       </label>
       <label class="quiz-option" data-correct="true" data-explanation="文字列結合でSQLを組み立てているため、ユーザー入力がそのままSQL文に挿入されます。これはSQLインジェクションの典型例です。対策として、パラメータ化クエリ（プレースホルダ）を使います。例: pool.query('SELECT * FROM products WHERE name LIKE $1', [`%${keyword}%`])。ORMやクエリビルダーの使用も有効です。">
+        <input type="radio" name="quiz-ex-t5-3" value="c">
         productsテーブルが削除される可能性がある（SQLインジェクション）
       </label>
       <label class="quiz-option" data-correct="false">
@@ -297,6 +300,7 @@ const login = async (email, password) =&gt; {
         MD5の代わりにSHA-256を使えば安全
       </label>
       <label class="quiz-option" data-correct="true" data-explanation="MD5は高速なハッシュ関数であり、レインボーテーブル攻撃で簡単に元のパスワードを復元できます。SHA-256も同様に高速すぎるため不適切です。パスワードハッシュにはbcrypt、scrypt、Argon2idなどの「意図的に遅い」ハッシュ関数を使うべきです。bcryptはソルト（ランダムな文字列）を自動的に付与し、計算コストを調整できます。">
+        <input type="radio" name="quiz-ex-t5-4" value="b">
         MD5は高速すぎてブルートフォースに弱い。bcryptやArgon2idを使うべき
       </label>
       <label class="quiz-option" data-correct="false">
@@ -376,6 +380,7 @@ module.exports = { generateToken, verifyToken, SECRET };</code></pre>
         jwt.verifyの使い方が間違っている
       </label>
       <label class="quiz-option" data-correct="true" data-explanation="問題は複数あります。(1) シークレットキーがソースコードにハードコードされている → 環境変数（process.env.JWT_SECRET）を使うべき。(2) トークンに有効期限（expiresIn）が設定されていない → 漏洩時に永久に有効。(3) パスワードがペイロードに含まれている → JWTはBase64デコードで中身が見える。(4) SECRETをmodule.exportsしている → 他モジュールから参照可能で漏洩リスク増大。">
+        <input type="radio" name="quiz-ex-t5-5" value="c">
         シークレットのハードコード、有効期限なし、パスワードをペイロードに含む、SECRETのエクスポート
       </label>
       <label class="quiz-option" data-correct="false">
@@ -460,6 +465,7 @@ router.get('/search', async (req, res) =&gt; {
         res.sendではなくres.jsonを使えば安全
       </label>
       <label class="quiz-option" data-correct="true" data-explanation="ユーザー入力（user.name, user.bio, user.website, c.text, q）がエスケープなしでHTMLに埋め込まれています。例えばbioに&lt;script&gt;alert('XSS')&lt;/script&gt;を入れると、表示したユーザーのブラウザでスクリプトが実行されます。対策: (1) HTMLエスケープ関数で&lt;&gt;&quot;'&amp;を変換する (2) テンプレートエンジン（EJS、Handlebarsなど）の自動エスケープ機能を使う (3) Content-Security-Policyヘッダーを設定する。">
+        <input type="radio" name="quiz-ex-t5-6" value="d">
         ユーザー入力をHTMLエスケープせずに埋め込んでおり、スクリプト注入が可能
       </label>
     </div>
@@ -541,6 +547,7 @@ app.post('/api/change-email', requireAuth, async (req, res) =&gt; {
         express-sessionを使っていればCSRFは自動的に防げる
       </label>
       <label class="quiz-option" data-correct="true" data-explanation="セッションCookieは同一ブラウザから自動送信されるため、攻撃者の罠サイトからPOSTリクエストを送信すると、ログイン中のユーザーのセッションで処理が実行されます。対策: (1) CSRFトークンの検証（csurfミドルウェア等）(2) SameSite=Strict属性をCookieに設定 (3) Originヘッダーの検証 (4) 重要操作では再認証（パスワード入力）を要求。特に送金やパスワード変更のような重要操作には必須です。">
+        <input type="radio" name="quiz-ex-t5-7" value="b">
         CSRFトークンの検証がなく、悪意のあるサイトからログイン中のユーザーの送金やパスワード変更が実行できる
       </label>
       <label class="quiz-option" data-correct="false">
@@ -619,6 +626,7 @@ const getArticleList = async (page = 1, limit = 20) =&gt; {
         20回（記事の数だけ）
       </label>
       <label class="quiz-option" data-correct="true" data-explanation="最初の1回（記事一覧取得）+ 20回（著者取得）+ 20回（タグ取得）+ 20回（コメント数取得）= 61回です。これがN+1問題です。記事が100件なら301回になります。対策: Prismaのincludeを使って1回のクエリで関連データを取得します。例: prisma.article.findMany({ include: { author: true, tags: true, _count: { select: { comments: true } } } }) とすれば、JOINを使った少数のクエリで済みます。">
+        <input type="radio" name="quiz-ex-t5-8" value="b">
         61回（1 + 20 x 3）。これがN+1クエリ問題
       </label>
       <label class="quiz-option" data-correct="false">
@@ -704,6 +712,7 @@ const createOrder = async (userId, items) =&gt; {
     <div class="quiz-question"><strong>問題：</strong>ステップ4の決済処理が失敗した場合、何が起きますか？</div>
     <div class="quiz-options">
       <label class="quiz-option" data-correct="true" data-explanation="トランザクションを使っていないため、各ステップは独立して実行されます。ステップ4で例外が発生すると、ステップ2（注文レコード）とステップ3（在庫減少）はすでに確定しているため、「在庫は減ったが支払いは未完了」の状態になります。対策: prisma.$transaction()で全操作をラップし、どこかで失敗したら全てロールバックさせます。また、在庫チェックと在庫減少の間に他のリクエストが入る競合条件（Race Condition）も問題です。">
+        <input type="radio" name="quiz-ex-t5-9" value="a">
         注文レコードが残り在庫も減ったまま、支払いは未完了という不整合が発生する
       </label>
       <label class="quiz-option" data-correct="false">
@@ -792,6 +801,7 @@ ORDER BY month DESC, total_sales DESC;</code></pre>
         DATE_TRUNCが遅いのでアプリケーション側で集計すべき
       </label>
       <label class="quiz-option" data-correct="true" data-explanation="外部キー（user_id, order_id, product_id, category_id）とWHERE句の条件列（status, created_at）にインデックスが全くありません。データ百万件では、JOINのたびにフルテーブルスキャンが発生します。対策: (1) CREATE INDEX idx_orders_status_created ON orders(status, created_at); (2) CREATE INDEX idx_order_items_order_id ON order_items(order_id); (3) CREATE INDEX idx_order_items_product_id ON order_items(product_id); (4) CREATE INDEX idx_products_category_id ON products(category_id); 複合インデックスを適切に設計することで劇的に改善します。">
+        <input type="radio" name="quiz-ex-t5-10" value="c">
         外部キー列とWHERE条件列にインデックスがなく、フルテーブルスキャンが発生している
       </label>
       <label class="quiz-option" data-correct="false">
@@ -863,6 +873,7 @@ GROUP BY o.id;</code></pre>
         JOINが多くてパフォーマンスが悪い
       </label>
       <label class="quiz-option" data-correct="true" data-explanation="注文時の価格を保存せずproductsテーブルの現在価格を参照しているため、商品が値上げされると過去の注文金額も変わってしまいます。同様に、配送先住所もusersテーブルの現在住所を参照すると、引っ越し後に過去の配送先が変わります。注文データのような「スナップショット」が必要なデータでは、注文時点の価格・住所を注文テーブル自体に保存すべきです。これは「意図的な非正規化」の正当な例です。">
+        <input type="radio" name="quiz-ex-t5-11" value="b">
         注文時点の価格を保存していないため、商品価格が変更されると過去の注文金額が変わってしまう
       </label>
       <label class="quiz-option" data-correct="false">
@@ -958,6 +969,7 @@ const getTeamInfo = async (req, res) =&gt; {
         2箇所（profileとlatestOrder）
       </label>
       <label class="quiz-option" data-correct="true" data-explanation="(1) user: ユーザーが削除された場合null (2) profile: プロフィール未作成の場合null (3) latestOrder: 注文がない新規ユーザーの場合null (4) user.team: チーム未所属の場合null。全てのfindUnique/findFirstの結果はnullの可能性があります。オプショナルチェーン（?.）やnullチェックを入れるか、findUniqueOrThrow（見つからない場合に例外をスロー）を使うべきです。TypeScriptを使えば型チェックでnull漏れを検出できます。">
+        <input type="radio" name="quiz-ex-t5-12" value="c">
         4箇所（user, profile, latestOrder, user.team）。全てのfindUnique/findFirstはnullを返しうる
       </label>
       <label class="quiz-option" data-correct="false">
@@ -1042,6 +1054,7 @@ router.get('/users/:id/orders', async (req, res) =&gt; {
         requireAuthが別ユーザーのアクセスを自動的にブロックする
       </label>
       <label class="quiz-option" data-correct="true" data-explanation="認証（Authentication）は「誰であるか」の確認で、認可（Authorization）は「何ができるか」の確認です。このコードは認証のみで認可がありません。req.params.idとreq.user.idの一致を確認していないため、ログイン済みのユーザーは任意のユーザーIDを指定して他人のデータにアクセスできます。これはIDOR（Insecure Direct Object Reference）脆弱性と呼ばれます。対策: if (parseInt(req.params.id) !== req.user.id) return res.status(403).json({ error: '権限がありません' });">
+        <input type="radio" name="quiz-ex-t5-13" value="b">
         ユーザーID=2のクレジットカード情報が取得できてしまう（IDOR脆弱性）
       </label>
       <label class="quiz-option" data-correct="false">
@@ -1121,6 +1134,7 @@ app.use(errorHandler);
         console.errorを使っていることだけが問題
       </label>
       <label class="quiz-option" data-correct="true" data-explanation="(1) スタックトレース漏洩: ファイルパス、行番号が攻撃者に見える (2) DB接続情報漏洩: Prismaのmeta情報にDB URLが含まれる可能性 (3) APIルート一覧の公開: 404レスポンスで管理画面を含む全ルートが見える (4) 環境による出し分けなし: 本番でもデバッグ情報が出る。対策: 本番ではgenericなエラーメッセージのみ返し、詳細はサーバーログにだけ記録する。404ではルート一覧を返さない。">
+        <input type="radio" name="quiz-ex-t5-14" value="b">
         スタックトレース漏洩、DB情報漏洩、APIルート一覧公開、環境判定なし、全てが問題
       </label>
       <label class="quiz-option" data-correct="false">
@@ -1224,6 +1238,7 @@ router.post('/api/deleteUser/:id', async (req, res) =&gt; {
         5個程度（上記に加え、ステータスコード誤用、RESTful違反）
       </label>
       <label class="quiz-option" data-correct="true" data-explanation="問題点の完全なリスト: (1) SQLインジェクション（全クエリで文字列結合）(2) パスワード平文保存（ハッシュ化なし）(3) JWTにパスワードを含む (4) JWTシークレットのハードコード (5) JWTに有効期限なし (6) DB接続文字列のハードコード（パスワード含む）(7) 全エラーをステータス200で返す (8) スタックトレースをレスポンスに含む (9) RESTful違反（URLに動詞、削除にPOST使用）(10) 認証・認可チェックなし (11) 取得・更新のnullチェックなし (12) RETURNING *でパスワード含む全カラムを返す (13) try-catchの不統一（一部のルートにしかない）。実に13個以上の問題があります。">
+        <input type="radio" name="quiz-ex-t5-15" value="c">
         10個以上（セキュリティ、設計、エラーハンドリング全てに問題がある）
       </label>
       <label class="quiz-option" data-correct="false">

@@ -312,7 +312,7 @@ await syncAllUsers([1, 2, 3, 4, 5]);</code></pre>
       </label>
       <label class="quiz-option" data-correct="true" data-explanation="AIは forEach と async/await の組み合わせの問題を見落とすことが非常に多いです。forEach はコールバックの戻り値（Promise）を無視するため、await が機能しません。結果として forEach は即座に完了し、「完了しました」が最初に表示され、その後に各ユーザーの保存処理が非同期で走ります。正しくは for...of ループを使うか、Promise.all(userIds.map(async (id) => {...})) を使う必要があります。AIはこのパターンを頻繁に生成しますが、これは学習データに forEach + callback の古いパターンが多いためです。">
         <input type="radio" name="quiz-ex-ai-6" value="b">
-        B. 保存処理が始まる前に即座に表示される（forEachはawaitを待たない）
+        B. 各ユーザーの保存が完了する前に即座に表示される（forEachはawaitを待たない）
       </label>
       <label class="quiz-option" data-correct="false">
         <input type="radio" name="quiz-ex-ai-6" value="c">
@@ -592,7 +592,7 @@ const nextConfig = {
   swcMinify: true,
   experimental: {
     turboMode: true,
-    optimizeCss: true,
+    autoCodeSplitting: true,
     autoStaticOptimization: true,
   },
   images: {
@@ -622,7 +622,7 @@ module.exports = nextConfig;</code></pre>
         <input type="radio" name="quiz-ex-ai-10" value="a">
         A. module.exportsの代わりにexport defaultを使うべき
       </label>
-      <label class="quiz-option" data-correct="true" data-explanation="AIは設定ファイルの生成時に、実在するオプションと架空のオプションを混ぜてしまうことがあります。turboMode、autoStaticOptimization、autoOptimize、lazyBoundary、performanceセクション全体は、Next.jsに存在しないオプションです。AIは複数のツール（Next.js、Webpack、Viteなど）の設定を混同したり、過去のバージョンにあったが削除されたオプションを提案することがあります。設定ファイルのオプションは必ず公式ドキュメントで確認しましょう。存在しないオプションは無視されるだけのこともありますが、予期しない動作を引き起こす場合もあります。">
+      <label class="quiz-option" data-correct="true" data-explanation="AIは設定ファイルの生成時に、実在するオプションと架空のオプションを混ぜてしまうことがあります。turboMode、autoCodeSplitting、autoStaticOptimization、autoOptimize、lazyBoundary、performanceセクション全体は、Next.jsに存在しないオプションです。AIは複数のツール（Next.js、Webpack、Viteなど）の設定を混同したり、過去のバージョンにあったが削除されたオプションを提案することがあります。設定ファイルのオプションは必ず公式ドキュメントで確認しましょう。存在しないオプションは無視されるだけのこともありますが、予期しない動作を引き起こす場合もあります。">
         <input type="radio" name="quiz-ex-ai-10" value="b">
         B. turboMode、autoOptimize、performanceなどNext.jsに存在しない架空のオプションが混在している
       </label>

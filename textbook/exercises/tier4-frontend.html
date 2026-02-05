@@ -77,7 +77,7 @@ export default LoginForm;</code></pre>
 
   <div class="card card-info">
     <div class="card-title"><span class="icon">📝</span> シナリオ</div>
-    <p>タスク管理アプリで、新しいタスクを追加する機能を実装しました。追加ボタンを押してもUIが更新されないというバグ報告がありました。</p>
+    <p>タスク管理アプリで、タスクの追加と削除の機能を実装しました。追加は一見動くものの、削除ボタンを押してもUIが更新されないというバグ報告がありました。また、追加も場合によっては正しく反映されないことがあるようです。</p>
   </div>
 
   <h2>以下のコードを読んでください</h2>
@@ -126,7 +126,7 @@ function TodoList() {
 export default TodoList;</code></pre>
 
   <div class="quiz" id="quiz-ex-t4-2">
-    <div class="quiz-question"><strong>問題：</strong>UIが更新されない根本原因はどれですか？</div>
+    <div class="quiz-question"><strong>問題：</strong>削除時にUIが更新されない根本原因はどれですか？</div>
     <div class="quiz-options">
       <label class="quiz-option" data-correct="false">
         <input type="radio" name="quiz-ex-t4-2" value="a">
@@ -136,7 +136,7 @@ export default TodoList;</code></pre>
         <input type="radio" name="quiz-ex-t4-2" value="b">
         useStateの初期値が文字列配列のため、型チェックでエラーが発生している
       </label>
-      <label class="quiz-option" data-correct="true" data-explanation="Reactは state の変更を Object.is() で比較します。push() や splice() は元の配列を変更するだけで、新しい配列を作りません。setTodos(todos) は同じ参照を渡しているため、Reactは「変更なし」と判断して再レンダリングをスキップします。正しくは setTodos([...todos, input]) や setTodos(todos.filter((_, i) => i !== index)) のように新しい配列を作ります。">
+      <label class="quiz-option" data-correct="true" data-explanation="Reactは state の変更を Object.is() で比較します。push() や splice() は元の配列を変更するだけで、新しい配列を作りません。setTodos(todos) は同じ参照を渡しているため、Reactは「変更なし」と判断して再レンダリングをスキップします。追加時は setInput('') が別のstate更新を引き起こすため、偶然その再レンダリングで変更後の配列が表示されますが、これは正しい動作ではありません。削除時には他のstate更新がないため、UIは全く更新されません。正しくは setTodos([...todos, input]) や setTodos(todos.filter((_, i) => i !== index)) のように新しい配列を作ります。">
         <input type="radio" name="quiz-ex-t4-2" value="c">
         push/spliceは元の配列を変更するだけで新しい参照を作らないため、Reactが変更を検知できない
       </label>

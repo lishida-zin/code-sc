@@ -478,11 +478,11 @@ console.log('元のtags:', originalConfig.tags);</code></pre>
 </section>
 
 <section id="ex-t3-8">
-  <h1>問題 8: モジュールの循環参照によるundefined</h1>
+  <h1>問題 8: モジュールの循環参照によるReferenceError</h1>
 
   <div class="card card-info">
     <div class="card-title"><span class="icon">📝</span> シナリオ</div>
-    <p>モジュール分割を行ったところ、特定の関数が「undefined」になるという報告を受けました。コードを確認すると、2つのモジュール間で循環参照（circular dependency）が発生していました。</p>
+    <p>モジュール分割を行ったところ、特定の変数を参照する箇所で「ReferenceError: Cannot access before initialization」が発生するという報告を受けました。コードを確認すると、2つのモジュール間で循環参照（circular dependency）が発生していました。</p>
   </div>
 
   <h2>以下のコードを読んでください</h2>
@@ -507,7 +507,7 @@ export function formatUser(name, role) {
 }
 
 export function getDefaultGreeting() {
-  // DEFAULT_ROLEがundefinedになる可能性がある！
+  // DEFAULT_ROLEがTDZ（初期化前）でReferenceErrorになる可能性がある！
   return `ようこそ、デフォルト権限は${DEFAULT_ROLE}です`;
 }
 
@@ -519,19 +519,19 @@ console.log(createUser('田中'));
 console.log(getDefaultGreeting());</code></pre>
 
   <div class="quiz" id="quiz-ex-t3-8">
-    <div class="quiz-question"><strong>問題：</strong>循環参照によってundefinedが発生する原因と、最も適切な対処法はどれですか？</div>
+    <div class="quiz-question"><strong>問題：</strong>循環参照によってReferenceErrorが発生する原因と、最も適切な対処法はどれですか？</div>
     <div class="quiz-options">
       <label class="quiz-option" data-correct="false">
         <input type="radio" name="quiz-ex-t3-8" value="a">
         ESモジュールでは循環参照は完全にエラーとなるため、import文を削除する必要がある
       </label>
-      <label class="quiz-option" data-correct="true" data-explanation="ESモジュールの循環参照では、モジュールの評価順序により、moduleAが先に評価される前にmoduleBがmoduleAの値を参照すると、まだ初期化されていないためundefinedになります。解決策は共有定数を別モジュール（constants.js等）に切り出し、両モジュールがそこからimportする構造にすることです。">
+      <label class="quiz-option" data-correct="true" data-explanation="ESモジュールの循環参照では、モジュールの評価順序により、moduleAが先に評価される前にmoduleBがmoduleAのconst変数を参照すると、TDZ（Temporal Dead Zone: 一時的なデッドゾーン）によりReferenceErrorが発生します。constやletはvarと異なり、宣言が評価されるまでアクセスできません。解決策は共有定数を別モジュール（constants.js等）に切り出し、両モジュールがそこからimportする構造にすることです。">
         <input type="radio" name="quiz-ex-t3-8" value="b">
-        モジュール評価順序によりexport前の値がundefinedになる。共有定数を別モジュールに切り出して循環を断つ
+        モジュール評価順序によりconst変数がTDZ（初期化前）でReferenceErrorになる。共有定数を別モジュールに切り出して循環を断つ
       </label>
       <label class="quiz-option" data-correct="false">
         <input type="radio" name="quiz-ex-t3-8" value="c">
-        constではなくvarで宣言すれば巻き上げにより循環参照でもundefinedにならない
+        constではなくvarで宣言すれば巻き上げによりReferenceErrorは出ない（ただしundefinedになる可能性はある）
       </label>
       <label class="quiz-option" data-correct="false">
         <input type="radio" name="quiz-ex-t3-8" value="d">

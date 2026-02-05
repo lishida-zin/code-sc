@@ -322,9 +322,9 @@ spec:
         <input type="radio" name="quiz-ex-t6-5" value="b">
         maxUnavailable: 1が原因。maxUnavailable: 0にすれば502は出ない
       </label>
-      <label class="quiz-option" data-correct="true" data-explanation="2つの問題があります。(1) readinessProbeのinitialDelaySeconds: 0 かつ failureThreshold: 1 は、アプリの起動が完了する前にトラフィックが送られる原因です。起動に数秒かかるアプリでは、起動中のPodにリクエストが来て502になります。initialDelaySecondsを適切に設定するか、startupProbeを併用すべきです。(2) livenessProbeのfailureThreshold: 1は、一時的なレスポンス遅延でも即座にPodをkillします。一方で正常なハングアップ検出には問題ありませんが、一時的なスパイクで不要な再起動が頻発します。failureThreshold は 3 以上にすべきです。">
+      <label class="quiz-option" data-correct="true" data-explanation="2つの問題があります。(1) readinessProbeはinitialDelaySeconds: 0で即座にチェックを開始し、failureThreshold: 1のため1回の失敗でPodがServiceのEndpointsから外されます。起動直後に一瞬だけプローブが成功してトラフィックが流れ始め、その後の起動処理で応答できなくなると502を返します。さらにperiodSeconds: 10と長いため、回復しても再度readyになるまで最大10秒かかります。startupProbeの併用やinitialDelaySecondsの適切な設定で対処すべきです。(2) livenessProbeのfailureThreshold: 1は、一時的なレスポンス遅延や瞬断でも即座にPodをkill＆再起動します。GCやスパイクで不要な再起動が頻発し、カスケード障害の原因になります。failureThreshold は 3 以上にすべきです。">
         <input type="radio" name="quiz-ex-t6-5" value="c">
-        readinessのinitialDelaySeconds: 0で起動前にトラフィックが来る、livenessのfailureThreshold: 1で一時的遅延でも即kill
+        readinessのfailureThreshold: 1で一時的な失敗でも即トラフィック停止、livenessのfailureThreshold: 1で一時的遅延でも即kill
       </label>
       <label class="quiz-option" data-correct="false">
         <input type="radio" name="quiz-ex-t6-5" value="d">
@@ -658,13 +658,13 @@ terraform {
         <input type="radio" name="quiz-ex-t6-10" value="a">
         sensitive = true を設定しているので、stateファイルにもマスクされて安全
       </label>
-      <label class="quiz-option" data-correct="true" data-explanation="Terraformの sensitive = true は terraform plan/apply の出力をマスクするだけで、stateファイルには平文で保存されます。これはTerraformの仕様上避けられません。対策として、(1) S3バックエンドにencrypt = trueとDynamoDBロックを設定し、stateファイルを暗号化する、(2) S3バケットのアクセス権限を厳格に制限する、(3) パスワード自体はAWS Secrets ManagerやSSM Parameter Storeで管理し、Terraformではdata sourceで参照するか、random_passwordリソースとSecrets Managerの組み合わせで管理する、といった対策が必要です。">
+      <label class="quiz-option" data-correct="true" data-explanation="Terraformの sensitive = true は terraform plan/apply の出力をマスクするだけで、stateファイルには平文で保存されます。これはTerraformの仕様上避けられません。S3は2023年からデフォルト暗号化（SSE-S3）を提供していますが、これはディスクレベルの保護に過ぎず、S3へのアクセス権があればstateファイルの中身（パスワード含む）は平文で読めます。対策として、(1) S3バックエンドにencrypt = trueとDynamoDBロックを設定する、(2) S3バケットポリシーやIAMでアクセス権限を最小限に制限する、(3) パスワード自体はAWS Secrets ManagerやSSM Parameter Storeで管理し、Terraformではdata sourceで参照するか、random_passwordリソースとSecrets Managerの組み合わせで管理する、といった対策が必要です。">
         <input type="radio" name="quiz-ex-t6-10" value="b">
         sensitive = trueは出力のマスクのみで、stateには平文保存される。S3バックエンドにencrypt = trueを追加し、stateへのアクセス権限を厳格に制限すべき
       </label>
       <label class="quiz-option" data-correct="false">
         <input type="radio" name="quiz-ex-t6-10" value="c">
-        S3バックエンドを使っていればAWSが自動的に暗号化するので問題ない
+        S3は2023年からデフォルト暗号化（SSE-S3）があるため、stateファイル内のシークレットも保護されており問題ない
       </label>
       <label class="quiz-option" data-correct="false">
         <input type="radio" name="quiz-ex-t6-10" value="d">
