@@ -818,6 +818,8 @@ tr:nth-child(even) {
 .complete-btn.completed {
   background: var(--text-light);
   cursor: default;
+  pointer-events: none;
+  opacity: 0.7;
 }
 
 .complete-btn.completed:hover {
@@ -830,7 +832,9 @@ tr:nth-child(even) {
    ============================================ */
 .next-page-wrapper {
   margin-top: calc(var(--spacing-unit) * 3);
-  animation: fadeSlideIn 0.4s ease-out;
+  padding-top: calc(var(--spacing-unit) * 3);
+  border-top: 2px solid var(--border-light);
+  animation: fadeSlideIn 0.4s ease-out both;
 }
 
 @keyframes fadeSlideIn {
