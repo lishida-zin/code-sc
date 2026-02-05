@@ -1,0 +1,1627 @@
+<!-- ============================================
+     Level 6 Phase 1: オブジェクト指向の本質
+     ============================================ -->
+
+<section id="oop1">
+  <h1>OOPとは何か</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>オブジェクト指向プログラミング（OOP）の歴史</li>
+      <li>なぜOOPが生まれたのか</li>
+      <li>OOPの4つの柱</li>
+    </ul>
+  </div>
+
+  <h2>プログラミングパラダイムの進化</h2>
+
+  <p>
+    プログラミングの歴史は<strong>複雑さとの戦い</strong>です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：工場の進化
+    </div>
+    <p>
+      <strong>手工業時代</strong> = 命令型プログラミング<br>
+      一人が全部やる。小さな作業なら効率的だが、規模が大きくなると限界。
+    </p>
+    <p>
+      <strong>分業制工場</strong> = 手続き型プログラミング<br>
+      作業を関数に分割。再利用できるが、データと処理がバラバラ。
+    </p>
+    <p style="margin:0;">
+      <strong>チーム制工場</strong> = オブジェクト指向プログラミング<br>
+      データと処理を「チーム（オブジェクト）」としてまとめる。<br>
+      各チームは自分の責務を持ち、他チームと協力する。
+    </p>
+  </div>
+
+  <h2>OOPが解決する問題</h2>
+
+  <p>
+    1960年代、プログラムが大規模化すると<strong>2つの問題</strong>が顕在化しました。
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">問題1：スパゲッティコード</div>
+      <p>
+        グローバル変数を多数の関数が触る。<br>
+        どこで何が変わるか追えない。
+      </p>
+<pre><code>// グローバル変数
+let userData = { name: "", age: 0 };
+let orderData = [];
+
+// どの関数がどのデータを触るか不明
+function processA() { userData.age++; }
+function processB() { orderData.push({}); }
+function processC() { userData = null; }</code></pre>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">問題2：変更の波及</div>
+      <p>
+        1箇所を変えると、全体に影響。<br>
+        「何が壊れるか分からない」恐怖。
+      </p>
+<pre><code>// userDataの構造を変えると...
+// → processA, processB, processC全部修正
+// → テスト全部やり直し
+// → 予期しないバグ発生</code></pre>
+    </div>
+  </div>
+
+  <h2>OOPの4つの柱</h2>
+
+  <p>
+    OOPは<strong>4つの原則</strong>でこれらの問題を解決します。
+  </p>
+
+  <!-- OOP4つの柱の関係図 -->
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📊</span>
+      OOPの4つの柱の関係
+    </div>
+    <svg viewBox="0 0 500 320" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="OOPの4つの柱の関係図">
+      <title>OOPの4つの柱の関係図</title>
+      <!-- 背景の円（中心） -->
+      <circle cx="250" cy="160" r="45" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="5,5"/>
+      <text x="250" y="155" text-anchor="middle" fill="currentColor" font-size="12" font-weight="bold">複雑さ</text>
+      <text x="250" y="170" text-anchor="middle" fill="currentColor" font-size="12" font-weight="bold">との戦い</text>
+
+      <!-- カプセル化（上） -->
+      <rect x="175" y="20" width="150" height="50" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+      <text x="250" y="42" text-anchor="middle" fill="white" font-size="13" font-weight="bold">カプセル化</text>
+      <text x="250" y="58" text-anchor="middle" fill="#e0e7ff" font-size="10">データと処理をまとめる</text>
+      <line x1="250" y1="70" x2="250" y2="115" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-blue)"/>
+
+      <!-- 抽象化（右） -->
+      <rect x="340" y="135" width="150" height="50" rx="8" fill="#10b981" stroke="#047857" stroke-width="2"/>
+      <text x="415" y="157" text-anchor="middle" fill="white" font-size="13" font-weight="bold">抽象化</text>
+      <text x="415" y="173" text-anchor="middle" fill="#d1fae5" font-size="10">詳細を隠す</text>
+      <line x1="340" y1="160" x2="295" y2="160" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+      <!-- 継承（下） -->
+      <rect x="175" y="250" width="150" height="50" rx="8" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+      <text x="250" y="272" text-anchor="middle" fill="white" font-size="13" font-weight="bold">継承</text>
+      <text x="250" y="288" text-anchor="middle" fill="#fef3c7" font-size="10">機能を引き継ぐ</text>
+      <line x1="250" y1="250" x2="250" y2="205" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow-orange)"/>
+
+      <!-- ポリモーフィズム（左） -->
+      <rect x="10" y="135" width="150" height="50" rx="8" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
+      <text x="85" y="157" text-anchor="middle" fill="white" font-size="13" font-weight="bold">ポリモーフィズム</text>
+      <text x="85" y="173" text-anchor="middle" fill="#fee2e2" font-size="10">同じ操作で異なる振る舞い</text>
+      <line x1="160" y1="160" x2="205" y2="160" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow-red)"/>
+
+      <!-- 矢印マーカー定義 -->
+      <defs>
+        <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#3b82f6"/>
+        </marker>
+        <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#10b981"/>
+        </marker>
+        <marker id="arrow-orange" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#f59e0b"/>
+        </marker>
+        <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#ef4444"/>
+        </marker>
+      </defs>
+    </svg>
+    <p style="text-align:center;margin:0;font-size:0.9rem;color:var(--text-muted);">
+      4つの柱が連携して「複雑さとの戦い」に挑む
+    </p>
+  </div>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">原則</th>
+        <th style="width:35%;">意味</th>
+        <th>解決する問題</th>
+      </tr>
+      <tr>
+        <td><strong>カプセル化</strong></td>
+        <td>データと処理をまとめ、内部を隠す</td>
+        <td>グローバル変数の乱用</td>
+      </tr>
+      <tr>
+        <td><strong>抽象化</strong></td>
+        <td>複雑な詳細を隠し、本質だけを公開</td>
+        <td>複雑さの軽減</td>
+      </tr>
+      <tr>
+        <td><strong>継承</strong></td>
+        <td>既存クラスの機能を引き継ぐ</td>
+        <td>コードの重複</td>
+      </tr>
+      <tr>
+        <td><strong>ポリモーフィズム</strong></td>
+        <td>同じ操作で異なる振る舞い</td>
+        <td>条件分岐の複雑さ</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>OOPの歴史</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📜</span>
+      知っておきたい歴史
+    </div>
+    <ul>
+      <li><strong>1967年</strong>：Simula（OOP最初の言語）</li>
+      <li><strong>1972年</strong>：Smalltalk（「オブジェクト指向」命名）</li>
+      <li><strong>1983年</strong>：C++（C言語にOOP追加）</li>
+      <li><strong>1995年</strong>：Java（OOPを主流に）</li>
+      <li><strong>2012年</strong>：TypeScript登場（JavaScriptに静的型付けを追加）</li>
+    </ul>
+    <p style="margin:0;">
+      「オブジェクト指向」はAlan Kayが名付けました。<br>
+      彼の理想は「メッセージ送信」でしたが、<br>
+      現代のOOPは「クラスとメソッド」に進化しています。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-oop1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>OOPが解決しようとした主な問題は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop1" style="display:none;">
+      A. プログラムの実行速度
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-oop1" style="display:none;">
+      B. 大規模プログラムの複雑さと変更の波及
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop1" style="display:none;">
+      C. メモリ使用量の削減
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-oop1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('oop1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="oop2">
+  <h1>カプセル化</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>カプセル化の意味と目的</li>
+      <li>public / private の使い分け</li>
+      <li>getter / setter の役割</li>
+    </ul>
+  </div>
+
+  <h2>カプセル化とは</h2>
+
+  <p>
+    <strong>カプセル化</strong> = データと処理をまとめ、内部を隠すこと
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：薬のカプセル
+    </div>
+    <p>
+      薬のカプセルは<strong>中身を隠している</strong>。<br>
+      利用者は「飲む」だけでよく、中の成分を直接触らない。
+    </p>
+    <p style="margin:0;">
+      同様に、オブジェクトも<strong>内部データを隠し</strong>、<br>
+      <strong>メソッドを通じてのみ操作</strong>させる。
+    </p>
+  </div>
+
+  <h2>なぜカプセル化が必要か</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">カプセル化なし</div>
+<pre><code>class User {
+  public id: string;
+  public email: string;
+  public password: string;  // 丸見え！
+}
+
+const user = new User();
+user.password = "";  // 空にできてしまう
+user.email = "invalid";  // バリデーションなし</code></pre>
+      <p style="margin:0;">
+        誰でも好きなように変更できる<br>
+        = 不正なデータが入り込む
+      </p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">カプセル化あり</div>
+<pre><code>class User {
+  private email: string;
+  private passwordHash: string;
+
+  changeEmail(newEmail: string): void {
+    if (!this.isValidEmail(newEmail)) {
+      throw new Error('Invalid email');
+    }
+    this.email = newEmail;
+  }
+
+  private isValidEmail(email: string): boolean {
+    return email.includes('@');
+  }
+}</code></pre>
+      <p style="margin:0;">
+        メソッドを通じてのみ変更<br>
+        = バリデーションを強制できる
+      </p>
+    </div>
+  </div>
+
+  <h2>アクセス修飾子</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">修飾子</th>
+        <th style="width:30%;">アクセス範囲</th>
+        <th>使いどころ</th>
+      </tr>
+      <tr>
+        <td><code>public</code></td>
+        <td>どこからでも</td>
+        <td>外部に公開するメソッド</td>
+      </tr>
+      <tr>
+        <td><code>private</code></td>
+        <td>クラス内のみ</td>
+        <td>内部データ、ヘルパー関数</td>
+      </tr>
+      <tr>
+        <td><code>protected</code></td>
+        <td>クラス内 + 子クラス</td>
+        <td>継承で使う内部メソッド</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>getter / setter の役割</h2>
+
+  <p>
+    getter/setterは<strong>読み書きにロジックを挟む</strong>ためのもの。
+  </p>
+
+  <div class="card">
+<pre><code>class Temperature {
+  private _celsius: number = 0;
+
+  // getter: 読み取り時に計算
+  get fahrenheit(): number {
+    return this._celsius * 9/5 + 32;
+  }
+
+  // setter: 書き込み時にバリデーション
+  set celsius(value: number) {
+    if (value < -273.15) {
+      throw new Error('絶対零度以下は不可');
+    }
+    this._celsius = value;
+  }
+}
+
+const temp = new Temperature();
+temp.celsius = 25;
+console.log(temp.fahrenheit);  // 77</code></pre>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      getter/setterの注意点
+    </div>
+    <p>
+      <strong>単にprivateフィールドを公開するだけ</strong>のgetter/setterは無意味です。
+    </p>
+<pre><code>// ❌ 無意味なgetter/setter
+class User {
+  private _name: string;
+
+  get name(): string { return this._name; }
+  set name(value: string) { this._name = value; }
+}
+// これならpublicと同じ</code></pre>
+    <p style="margin:0;">
+      <strong>バリデーションや計算</strong>がある場合にのみ使いましょう。
+    </p>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら指摘しましょう：</p>
+    <ul>
+      <li><strong>全フィールドがpublic</strong>：カプセル化違反</li>
+      <li><strong>パスワードがpublic</strong>：セキュリティ問題</li>
+      <li><strong>意味のないgetter/setter</strong>：冗長なコード</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-oop2-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>このコードの問題点は？</p>
+<pre><code>class BankAccount {
+  public balance: number = 0;
+}</code></pre>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop2-1" style="display:none;">
+      A. 初期値が0なのが問題
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-oop2-1" style="display:none;">
+      B. balanceがpublicで直接変更できてしまう
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop2-1" style="display:none;">
+      C. 型がnumberなのが問題
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-oop2-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-oop2-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>カプセル化の主な目的は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop2-2" style="display:none;">
+      A. プログラムの実行速度を上げる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-oop2-2" style="display:none;">
+      B. データを保護し、不正な操作を防ぐ
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop2-2" style="display:none;">
+      C. コードの行数を減らす
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-oop2-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('oop2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="oop3">
+  <h1>抽象化</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>抽象化の意味と目的</li>
+      <li>インターフェースと抽象クラスの違い</li>
+      <li>実装詳細を隠す重要性</li>
+    </ul>
+  </div>
+
+  <h2>抽象化とは</h2>
+
+  <p>
+    <strong>抽象化</strong> = 複雑な詳細を隠し、本質的な機能だけを公開すること
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：車の運転
+    </div>
+    <p>
+      車を運転するとき、エンジンの仕組みを知る必要はない。<br>
+      <strong>アクセル、ブレーキ、ハンドル</strong>だけ知っていればいい。
+    </p>
+    <p style="margin:0;">
+      内部の複雑さ（燃焼、変速機、ABS）は<strong>隠されている</strong>。<br>
+      これが抽象化です。
+    </p>
+  </div>
+
+  <h2>インターフェース</h2>
+
+  <p>
+    <strong>インターフェース</strong>は「何ができるか」を定義します。<br>
+    「どうやるか」は定義しません。
+  </p>
+
+  <div class="card">
+<pre><code>// 「何ができるか」だけ定義
+interface PaymentMethod {
+  pay(amount: number): Promise&lt;PaymentResult&gt;;
+  refund(transactionId: string): Promise&lt;void&gt;;
+}
+
+// 「どうやるか」は実装クラスが決める
+class CreditCard implements PaymentMethod {
+  async pay(amount: number): Promise&lt;PaymentResult&gt; {
+    // クレジットカード固有の処理
+    return { success: true, transactionId: "cc_123" };
+  }
+
+  async refund(transactionId: string): Promise&lt;void&gt; {
+    // クレジットカード固有の返金処理
+  }
+}
+
+class PayPal implements PaymentMethod {
+  async pay(amount: number): Promise&lt;PaymentResult&gt; {
+    // PayPal固有の処理
+    return { success: true, transactionId: "pp_456" };
+  }
+
+  async refund(transactionId: string): Promise&lt;void&gt; {
+    // PayPal固有の返金処理
+  }
+}</code></pre>
+  </div>
+
+  <h2>抽象クラス</h2>
+
+  <p>
+    <strong>抽象クラス</strong>は「一部の実装を共有」しつつ、<br>
+    「一部をサブクラスに任せる」ことができます。
+  </p>
+
+  <div class="card">
+<pre><code>abstract class Animal {
+  // 共通の実装
+  sleep(): void {
+    console.log("Zzz...");
+  }
+
+  // サブクラスに実装を任せる
+  abstract makeSound(): void;
+}
+
+class Dog extends Animal {
+  makeSound(): void {
+    console.log("ワン！");
+  }
+}
+
+class Cat extends Animal {
+  makeSound(): void {
+    console.log("ニャー");
+  }
+}
+
+// 両方ともsleep()は使える
+const dog = new Dog();
+dog.sleep();      // "Zzz..."
+dog.makeSound();  // "ワン！"</code></pre>
+  </div>
+
+  <h2>インターフェース vs 抽象クラス</h2>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">インターフェース</div>
+      <ul>
+        <li>「契約」のみ定義</li>
+        <li>複数実装できる（多重継承OK）</li>
+        <li>状態を持てない</li>
+        <li>使いどころ：異なるクラス間の共通機能</li>
+      </ul>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">抽象クラス</div>
+      <ul>
+        <li>「契約 + 一部実装」を定義</li>
+        <li>1つしか継承できない</li>
+        <li>状態（フィールド）を持てる</li>
+        <li>使いどころ：似たクラスの共通処理</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p><strong>実装詳細の露出</strong>を見つけたら指摘しましょう：</p>
+<pre><code>// ❌ 実装詳細が露出している
+class UserRepository {
+  // MySQLの接続オブジェクトが公開されている
+  public connection: MySQLConnection;
+
+  getUser(id: string): User {
+    // 呼び出し側がconnectionを直接触れてしまう
+  }
+}
+
+// ⭕ 抽象化されている
+interface UserRepository {
+  getUser(id: string): Promise&lt;User | null&gt;;
+  save(user: User): Promise&lt;void&gt;;
+}
+// 内部でMySQL/PostgreSQL/Mongoのどれを使うか隠されている</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-oop3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>抽象化の主な目的は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-oop3" style="display:none;">
+      A. 複雑な詳細を隠し、使いやすいインターフェースを提供する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop3" style="display:none;">
+      B. コードの実行速度を上げる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop3" style="display:none;">
+      C. メモリ使用量を減らす
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-oop3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('oop3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="oop4">
+  <h1>継承</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>継承（is-a関係）の意味</li>
+      <li>オーバーライドの仕組み</li>
+      <li>継承の問題点</li>
+    </ul>
+  </div>
+
+  <h2>継承とは</h2>
+
+  <p>
+    <strong>継承</strong> = 既存クラスの機能を引き継いで新しいクラスを作ること
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：家系図
+    </div>
+    <p>
+      子供は親の<strong>特徴を受け継ぐ</strong>。<br>
+      でも、子供独自の特徴も持つ。
+    </p>
+    <p style="margin:0;">
+      プログラムでも同じ。<br>
+      <strong>親クラス</strong>の機能を継承しつつ、<br>
+      <strong>子クラス</strong>独自の機能を追加できる。
+    </p>
+  </div>
+
+  <h2>is-a関係</h2>
+
+  <p>
+    継承は<strong>「AはBである（is-a）」</strong>関係を表します。
+  </p>
+
+  <div class="card">
+<pre><code>// 「犬は動物である」
+class Animal {
+  move(): void {
+    console.log("移動する");
+  }
+}
+
+class Dog extends Animal {
+  bark(): void {
+    console.log("ワン！");
+  }
+}
+
+const dog = new Dog();
+dog.move();  // 親クラスのメソッドが使える
+dog.bark();  // 子クラス独自のメソッド
+
+// 「DogはAnimalである」が成り立つ
+const animal: Animal = new Dog();  // OK</code></pre>
+  </div>
+
+  <h2>オーバーライド</h2>
+
+  <p>
+    子クラスで親クラスのメソッドを<strong>上書き</strong>できます。
+  </p>
+
+  <div class="card">
+<pre><code>class Animal {
+  speak(): void {
+    console.log("...");
+  }
+}
+
+class Dog extends Animal {
+  // 親のspeak()を上書き
+  speak(): void {
+    console.log("ワン！");
+  }
+}
+
+class Cat extends Animal {
+  speak(): void {
+    console.log("ニャー");
+  }
+}
+
+const animals: Animal[] = [new Dog(), new Cat()];
+animals.forEach(a => a.speak());
+// "ワン！"
+// "ニャー"</code></pre>
+  </div>
+
+  <h2>superキーワード</h2>
+
+  <p>
+    <code>super</code>で親クラスのメソッドを呼び出せます。
+  </p>
+
+  <div class="card">
+<pre><code>class Animal {
+  constructor(protected name: string) {}
+
+  describe(): string {
+    return `名前: ${this.name}`;
+  }
+}
+
+class Dog extends Animal {
+  constructor(name: string, private breed: string) {
+    super(name);  // 親のコンストラクタを呼ぶ
+  }
+
+  describe(): string {
+    // 親のメソッドを呼び出して拡張
+    return super.describe() + `, 犬種: ${this.breed}`;
+  }
+}
+
+const dog = new Dog("ポチ", "柴犬");
+console.log(dog.describe());
+// "名前: ポチ, 犬種: 柴犬"</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点：深い継承階層
+    </div>
+<pre><code>// ❌ 深い継承階層（Fragile Base Class問題）
+class Animal {}
+class Mammal extends Animal {}
+class Carnivore extends Mammal {}
+class Feline extends Carnivore {}
+class DomesticCat extends Feline {}  // 5階層！
+
+// 親クラスの変更が全子クラスに波及
+// 理解・テストが困難になる</code></pre>
+    <p style="margin:0;">
+      <strong>3階層以上</strong>の継承は危険信号です。<br>
+      コンポジションへの書き換えを検討しましょう。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-oop4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>継承で適切な関係は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-oop4" style="display:none;">
+      A. 「犬は動物である」（Dog extends Animal）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop4" style="display:none;">
+      B. 「車はエンジンである」（Car extends Engine）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop4" style="display:none;">
+      C. 「家は部屋である」（House extends Room）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-oop4')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('oop4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="oop5">
+  <h1>ポリモーフィズム</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ポリモーフィズム（多態性）の意味</li>
+      <li>なぜswitch文を減らせるのか</li>
+      <li>ダックタイピング</li>
+    </ul>
+  </div>
+
+  <h2>ポリモーフィズムとは</h2>
+
+  <p>
+    <strong>ポリモーフィズム</strong> = 同じ操作で異なる振る舞いをすること
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：リモコンの「再生」ボタン
+    </div>
+    <p>
+      テレビ、DVDプレーヤー、スマホ...<br>
+      どれも「再生」ボタンがあるが、<strong>やることは違う</strong>。
+    </p>
+    <p style="margin:0;">
+      「再生」という<strong>同じ操作</strong>で、<br>
+      <strong>異なる動作</strong>が実行される。<br>
+      これがポリモーフィズムです。
+    </p>
+  </div>
+
+  <h2>ポリモーフィズムなしの世界</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">switch文だらけ</div>
+<pre><code>function calculateArea(shape: Shape): number {
+  switch (shape.type) {
+    case 'circle':
+      return Math.PI * shape.radius ** 2;
+    case 'rectangle':
+      return shape.width * shape.height;
+    case 'triangle':
+      return shape.base * shape.height / 2;
+    // 新しい図形が増えるたびに修正が必要
+    default:
+      throw new Error('Unknown shape');
+  }
+}</code></pre>
+      <p style="margin:0;">
+        図形が増えるたびに<strong>switch文を修正</strong>
+      </p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">ポリモーフィズムを活用</div>
+<pre><code>interface Shape {
+  calculateArea(): number;
+}
+
+class Circle implements Shape {
+  constructor(private radius: number) {}
+  calculateArea(): number {
+    return Math.PI * this.radius ** 2;
+  }
+}
+
+class Rectangle implements Shape {
+  constructor(private w: number, private h: number) {}
+  calculateArea(): number {
+    return this.w * this.h;
+  }
+}
+
+// どんな図形でも同じように扱える
+function printArea(shape: Shape): void {
+  console.log(shape.calculateArea());
+}</code></pre>
+      <p style="margin:0;">
+        新しい図形は<strong>新クラスを追加</strong>するだけ
+      </p>
+    </div>
+  </div>
+
+  <h2>ダックタイピング</h2>
+
+  <p>
+    <strong>「アヒルのように歩き、アヒルのように鳴くなら、それはアヒルだ」</strong>
+  </p>
+
+  <div class="card">
+<pre><code>// TypeScriptは「構造」で型を判断する
+interface Printable {
+  print(): void;
+}
+
+class Document {
+  print(): void {
+    console.log("文書を印刷");
+  }
+}
+
+class Photo {
+  print(): void {
+    console.log("写真を印刷");
+  }
+}
+
+// どちらもPrintableとして扱える
+function printAll(items: Printable[]): void {
+  items.forEach(item => item.print());
+}
+
+printAll([new Document(), new Photo()]);
+// "文書を印刷"
+// "写真を印刷"</code></pre>
+    <p style="margin:0;">
+      <code>implements Printable</code>を書かなくても、<br>
+      <code>print()</code>メソッドがあれば<code>Printable</code>として扱える。
+    </p>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点：switch文での型判定
+    </div>
+<pre><code>// ❌ 型をswitch文で判定している
+function process(item: Dog | Cat | Bird): void {
+  switch (item.type) {
+    case 'dog':
+      item.bark();
+      break;
+    case 'cat':
+      item.meow();
+      break;
+    case 'bird':
+      item.chirp();
+      break;
+  }
+}
+
+// ⭕ ポリモーフィズムで解決
+interface Animal {
+  speak(): void;
+}
+
+function process(animal: Animal): void {
+  animal.speak();  // 各クラスが適切な実装を持つ
+}</code></pre>
+    <p style="margin:0;">
+      <strong>型によるswitch/if文</strong>を見つけたら、<br>
+      ポリモーフィズムで書き換えられないか検討しましょう。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-oop5-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>ポリモーフィズムの主な利点は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop5-1" style="display:none;">
+      A. プログラムの実行速度が上がる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-oop5-1" style="display:none;">
+      B. 新しい型を追加しても既存コードを変更しなくてよい
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop5-1" style="display:none;">
+      C. メモリ使用量が減る
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-oop5-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-oop5-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>このコードのリファクタリング優先度は？</p>
+<pre><code>if (payment.type === 'credit') {
+  processCreditCard(payment);
+} else if (payment.type === 'paypal') {
+  processPayPal(payment);
+} else if (payment.type === 'crypto') {
+  processCrypto(payment);
+}</code></pre>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop5-2" style="display:none;">
+      A. このままでよい
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-oop5-2" style="display:none;">
+      B. ポリモーフィズムを使って書き換えるべき
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop5-2" style="display:none;">
+      C. switch文に変えるべき
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-oop5-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('oop5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="oop6">
+  <h1>継承 vs コンポジション</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>has-a関係（コンポジション）とは</li>
+      <li>継承の問題点</li>
+      <li>「継承よりコンポジションを優先」の原則</li>
+    </ul>
+  </div>
+
+  <h2>is-a vs has-a</h2>
+
+  <!-- is-a vs has-a SVG図 -->
+  <svg viewBox="0 0 440 150" style="max-width: 440px; width: 100%; height: auto; display: block; margin: 1.5rem auto;" role="img" aria-label="is-a と has-a の関係を示す図">
+    <title>is-a（継承）vs has-a（コンポジション）</title>
+
+    <!-- 左側：is-a（継承） -->
+    <text x="100" y="20" text-anchor="middle" fill="#3498db" font-size="12" font-weight="bold">is-a（継承）</text>
+    <text x="100" y="35" text-anchor="middle" fill="#666" font-size="9">「AはBである」</text>
+
+    <rect x="50" y="45" width="100" height="35" rx="5" fill="#3498db" opacity="0.9"/>
+    <text x="100" y="67" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Animal</text>
+
+    <!-- 継承の矢印（三角形付き） -->
+    <line x1="100" y1="80" x2="100" y2="105" stroke="#3498db" stroke-width="2"/>
+    <polygon points="100,105 93,95 107,95" fill="#3498db"/>
+
+    <rect x="50" y="110" width="100" height="30" rx="4" fill="#2980b9"/>
+    <text x="100" y="129" text-anchor="middle" fill="white" font-size="10">Dog</text>
+
+    <text x="100" y="148" text-anchor="middle" fill="#3498db" font-size="8">犬は動物である</text>
+
+    <!-- 中央の仕切り -->
+    <line x1="220" y1="10" x2="220" y2="150" stroke="#ddd" stroke-width="1" stroke-dasharray="4,4"/>
+
+    <!-- 右側：has-a（コンポジション） -->
+    <text x="340" y="20" text-anchor="middle" fill="#27ae60" font-size="12" font-weight="bold">has-a（コンポジション）</text>
+    <text x="340" y="35" text-anchor="middle" fill="#666" font-size="9">「AはBを持っている」</text>
+
+    <rect x="290" y="70" width="100" height="40" rx="5" fill="#27ae60" opacity="0.9"/>
+    <text x="340" y="95" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Car</text>
+
+    <!-- コンポジションの矢印（菱形付き） -->
+    <line x1="290" y1="90" x2="250" y2="90" stroke="#27ae60" stroke-width="2"/>
+    <polygon points="250,90 260,84 260,96" fill="#27ae60"/>
+
+    <!-- 内包されるオブジェクト -->
+    <rect x="240" y="55" width="45" height="25" rx="3" fill="#1e8449"/>
+    <text x="262" y="72" text-anchor="middle" fill="white" font-size="8">Engine</text>
+
+    <rect x="240" y="100" width="45" height="25" rx="3" fill="#1e8449"/>
+    <text x="262" y="117" text-anchor="middle" fill="white" font-size="8">Wheel</text>
+
+    <text x="340" y="148" text-anchor="middle" fill="#27ae60" font-size="8">車はエンジンを持つ</text>
+  </svg>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">is-a（継承）</div>
+      <p>「AはBである」</p>
+<pre><code>// 犬は動物である
+class Dog extends Animal {}</code></pre>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">has-a（コンポジション）</div>
+      <p>「AはBを持っている」</p>
+<pre><code>// 車はエンジンを持っている
+class Car {
+  private engine: Engine;
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>継承の問題点</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      継承の3つの問題
+    </div>
+    <ul>
+      <li><strong>脆い基底クラス問題</strong>：親を変えると子が壊れる</li>
+      <li><strong>柔軟性の欠如</strong>：実行時に振る舞いを変えられない</li>
+      <li><strong>不要な機能の継承</strong>：使わないメソッドも継承される</li>
+    </ul>
+  </div>
+
+  <div class="card">
+<pre><code>// ❌ 継承の問題：不要な機能まで継承
+class Bird {
+  fly(): void { console.log("飛ぶ"); }
+  eat(): void { console.log("食べる"); }
+}
+
+class Penguin extends Bird {
+  fly(): void {
+    throw new Error("ペンギンは飛べません");  // 継承したけど使えない
+  }
+}
+
+// ペンギンはBirdだが、fly()は使えない → LSP違反</code></pre>
+  </div>
+
+  <h2>コンポジションで解決</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">継承で実装</div>
+<pre><code>// 深い継承階層
+class Animal {}
+class Mammal extends Animal {}
+class Carnivore extends Mammal {}
+class Cat extends Carnivore {}
+
+// 柔軟性がない
+// 「草食の猫」は作れない</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">コンポジションで実装</div>
+<pre><code>interface Behavior {
+  act(): void;
+}
+
+class HuntingBehavior implements Behavior {
+  act(): void { console.log("狩りをする"); }
+}
+
+class GrazingBehavior implements Behavior {
+  act(): void { console.log("草を食べる"); }
+}
+
+class Cat {
+  constructor(private behavior: Behavior) {}
+
+  performBehavior(): void {
+    this.behavior.act();
+  }
+}
+
+// 柔軟に振る舞いを変えられる
+const hunter = new Cat(new HuntingBehavior());
+const grazer = new Cat(new GrazingBehavior());</code></pre>
+    </div>
+  </div>
+
+  <h2>「継承よりコンポジションを優先」</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      設計の原則
+    </div>
+    <p>
+      <strong>「継承よりコンポジションを優先せよ」</strong><br>
+      （Effective Java / Design Patterns）
+    </p>
+    <ul>
+      <li>継承：「何であるか」を決める（静的）</li>
+      <li>コンポジション：「何ができるか」を決める（動的）</li>
+    </ul>
+    <p style="margin:0;">
+      コンポジションを使えば、<strong>実行時に振る舞いを変更</strong>できる。<br>
+      継承は<strong>明確なis-a関係</strong>がある場合のみ使う。
+    </p>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>以下を見つけたら、コンポジションへの書き換えを検討：</p>
+    <ul>
+      <li><strong>3階層以上の継承</strong></li>
+      <li><strong>オーバーライドで例外をthrow</strong>（使えないメソッドの継承）</li>
+      <li><strong>「〜を持っている」関係での継承</strong>（Car extends Engine）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-oop6">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>このコードの問題点は？</p>
+<pre><code>class Car extends Engine {
+  drive(): void { ... }
+}</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-oop6" style="display:none;">
+      A. 「車はエンジンである」は不適切。「車はエンジンを持つ」が正しい
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop6" style="display:none;">
+      B. driveメソッドがないのが問題
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop6" style="display:none;">
+      C. 特に問題はない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-oop6')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('oop6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="oop7">
+  <h1>凝集度と結合度</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>凝集度（Cohesion）とは</li>
+      <li>結合度（Coupling）とは</li>
+      <li>「高凝集・疎結合」の原則</li>
+    </ul>
+  </div>
+
+  <h2>凝集度とは</h2>
+
+  <p>
+    <strong>凝集度</strong> = クラス内の要素がどれだけ関連しているか
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：工具箱
+    </div>
+    <p>
+      <strong>高凝集</strong>：ドライバーセット（関連する工具だけ）<br>
+      <strong>低凝集</strong>：何でも入ってるガラクタ箱
+    </p>
+    <p style="margin:0;">
+      高凝集なクラスは<strong>1つの目的</strong>に集中している。
+    </p>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">低凝集（神クラス）</div>
+<pre><code>// ❌ 責務が多すぎる
+class UserManager {
+  createUser() {}
+  deleteUser() {}
+  sendEmail() {}        // メール？
+  generateReport() {}   // レポート？
+  validateInput() {}    // バリデーション？
+  connectDatabase() {}  // DB接続？
+}
+
+// 何でもやる「神クラス」
+// 変更理由が多すぎる</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">高凝集</div>
+<pre><code>// ⭕ 責務を分離
+class UserRepository {
+  create(user: User): void {}
+  delete(id: string): void {}
+  findById(id: string): User {}
+}
+
+class EmailService {
+  send(to: string, subject: string): void {}
+}
+
+class UserReportGenerator {
+  generate(users: User[]): Report {}
+}
+
+// 各クラスは1つの責務に集中</code></pre>
+    </div>
+  </div>
+
+  <h2>結合度とは</h2>
+
+  <p>
+    <strong>結合度</strong> = クラス間の依存の強さ
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：レゴブロック
+    </div>
+    <p>
+      <strong>疎結合</strong>：レゴブロック（簡単に組み替え可能）<br>
+      <strong>密結合</strong>：接着剤で固めたブロック（分離困難）
+    </p>
+    <p style="margin:0;">
+      疎結合なら、1つを変えても他への影響が少ない。
+    </p>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">密結合</div>
+<pre><code>// ❌ 具象クラスに直接依存
+class OrderService {
+  private emailSender = new GmailSender();
+  private repository = new MySQLRepository();
+
+  createOrder(data: OrderData): void {
+    // GmailとMySQLに密結合
+    // 変更が困難
+  }
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">疎結合</div>
+<pre><code>// ⭕ インターフェースに依存
+class OrderService {
+  constructor(
+    private emailSender: EmailSender,
+    private repository: OrderRepository
+  ) {}
+
+  createOrder(data: OrderData): void {
+    // 具体的な実装を知らない
+    // 差し替え可能
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>「高凝集・疎結合」</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      良い設計の目標
+    </div>
+    <table style="width:100%;">
+      <tr>
+        <th>目標</th>
+        <th>意味</th>
+        <th>メリット</th>
+      </tr>
+      <tr>
+        <td><strong>高凝集</strong></td>
+        <td>クラス内の要素が密接に関連</td>
+        <td>理解しやすい、変更が局所的</td>
+      </tr>
+      <tr>
+        <td><strong>疎結合</strong></td>
+        <td>クラス間の依存が弱い</td>
+        <td>変更の影響が少ない、テストしやすい</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p><strong>神クラス</strong>の兆候：</p>
+    <ul>
+      <li>クラスが500行を超える</li>
+      <li>メソッドが20個以上ある</li>
+      <li>「〜Manager」「〜Handler」「〜Util」という名前</li>
+      <li>複数の理由で変更される</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-oop7-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>「高凝集」の意味は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-oop7-1" style="display:none;">
+      A. クラス内の要素が1つの目的に集中している
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop7-1" style="display:none;">
+      B. クラス間の依存が強い
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop7-1" style="display:none;">
+      C. メソッドの数が多い
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-oop7-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-oop7-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>このコードの問題点は？</p>
+<pre><code>class UserService {
+  private db = new MySQLConnection();
+  // ...
+}</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-oop7-2" style="display:none;">
+      A. MySQLConnectionに密結合している
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop7-2" style="display:none;">
+      B. dbがprivateなのが問題
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop7-2" style="display:none;">
+      C. 特に問題はない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-oop7-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('oop7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="oop8">
+  <h1>OOPの限界と代替</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>OOPが苦手な領域</li>
+      <li>関数型プログラミングとの融合</li>
+      <li>現代的なアプローチ</li>
+    </ul>
+  </div>
+
+  <h2>OOPの限界</h2>
+
+  <p>
+    OOPは万能ではありません。<strong>苦手な領域</strong>があります。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      OOPが苦手なこと
+    </div>
+    <ul>
+      <li><strong>並行処理</strong>：状態の共有が問題を引き起こす</li>
+      <li><strong>データ変換</strong>：単純なデータ加工にクラスは大げさ</li>
+      <li><strong>横断的関心事</strong>：ログ、認証などが複数クラスに散らばる</li>
+      <li><strong>パフォーマンス</strong>：オブジェクト生成のオーバーヘッド</li>
+    </ul>
+  </div>
+
+  <h2>関数型プログラミングとの融合</h2>
+
+  <p>
+    現代のTypeScriptでは<strong>OOPと関数型を組み合わせる</strong>のが一般的です。
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">OOPスタイル</div>
+<pre><code>class UserService {
+  private users: User[] = [];
+
+  addUser(user: User): void {
+    this.users.push(user);  // 状態を変更
+  }
+
+  getAdults(): User[] {
+    return this.users.filter(u => u.age >= 18);
+  }
+}</code></pre>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">関数型スタイル</div>
+<pre><code>// 純粋関数：入力から出力を計算するだけ
+const addUser = (users: User[], user: User): User[] =>
+  [...users, user];  // 新しい配列を返す
+
+const getAdults = (users: User[]): User[] =>
+  users.filter(u => u.age >= 18);
+
+// 状態を変更しない（イミュータブル）</code></pre>
+    </div>
+  </div>
+
+  <h2>現代的なアプローチ</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">場面</th>
+        <th style="width:35%;">アプローチ</th>
+        <th>理由</th>
+      </tr>
+      <tr>
+        <td>ビジネスロジック</td>
+        <td>OOP（エンティティ、集約）</td>
+        <td>状態と振る舞いをカプセル化</td>
+      </tr>
+      <tr>
+        <td>データ変換</td>
+        <td>関数型（map, filter, reduce）</td>
+        <td>シンプルで読みやすい</td>
+      </tr>
+      <tr>
+        <td>UI状態管理</td>
+        <td>関数型（Redux, イミュータブル）</td>
+        <td>予測可能、デバッグしやすい</td>
+      </tr>
+      <tr>
+        <td>インフラ層</td>
+        <td>OOP（リポジトリ、サービス）</td>
+        <td>依存性注入、テスト容易性</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>OOP原理主義の危険</h2>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p><strong>過度なOOP</strong>の兆候：</p>
+<pre><code>// ❌ 単純な処理にクラスは過剰
+class StringUppercaser {
+  private value: string;
+
+  constructor(value: string) {
+    this.value = value;
+  }
+
+  uppercase(): string {
+    return this.value.toUpperCase();
+  }
+}
+
+// ⭕ 関数で十分
+const uppercase = (s: string): string => s.toUpperCase();</code></pre>
+    <p style="margin:0;">
+      <strong>「すべてをオブジェクトに」は間違い</strong>。<br>
+      問題に応じて適切なパラダイムを選びましょう。
+    </p>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">🎉</span>
+      Phase 1 完了！
+    </div>
+    <p>
+      OOPの本質を学びました。<br>
+      次のPhase 2では<strong>SOLID原則</strong>を学びます。
+    </p>
+    <p style="margin:0;">
+      SOLID原則は、OOPの良い設計を<strong>5つの原則</strong>にまとめたものです。<br>
+      コードレビューで最も重要な観点になります。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-oop8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>現代のTypeScript開発で正しいのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop8" style="display:none;">
+      A. すべてをクラスで実装すべき
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-oop8" style="display:none;">
+      B. OOPと関数型を問題に応じて使い分ける
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-oop8" style="display:none;">
+      C. 関数型だけを使うべき
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-oop8')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('oop8')">
+    <span class="icon">✓</span>
+    Phase 1を完了
+  </button>
+</section>

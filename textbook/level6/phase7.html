@@ -1,0 +1,1341 @@
+<!-- ============================================
+     Level 6 Phase 7: DDD戦略的設計
+     ============================================ -->
+
+<section id="ddd-s1">
+  <h1>1. DDDとは</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>ドメイン駆動設計の目的と価値を説明できる</p>
+  </div>
+
+  <h2>DDDを一言で</h2>
+  <p>
+    <strong>DDD（Domain-Driven Design / ドメイン駆動設計）</strong>とは、
+    <strong>ビジネスの問題領域（ドメイン）を中心に</strong>ソフトウェアを設計する手法です。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話</div>
+    <p>
+      DDDは<strong>「通訳者」</strong>のような役割です。<br>
+      ビジネスの専門家（お医者さん、銀行員など）が使う言葉と、
+      エンジニアが書くコードを<strong>同じ言葉でつなぐ</strong>のがDDDの目的です。
+    </p>
+    <p>
+      「顧客」「注文」「在庫」といったビジネス用語が、
+      そのままコードのクラス名やメソッド名になります。
+    </p>
+  </div>
+
+  <h2>なぜDDDが必要？</h2>
+  <p>複雑なビジネスロジックを扱うシステムで、以下の問題を解決します。</p>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">DDDなしの問題</div>
+      <ul>
+        <li>ビジネス担当者とエンジニアの会話が噛み合わない</li>
+        <li>コードを読んでもビジネスルールがわからない</li>
+        <li>変更のたびに予期せぬバグが発生</li>
+        <li>システムが巨大化して誰も全体を把握できない</li>
+      </ul>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">DDDありの解決</div>
+      <ul>
+        <li>共通言語でコミュニケーションが円滑に</li>
+        <li>コードがビジネスルールを表現している</li>
+        <li>変更の影響範囲が明確</li>
+        <li>境界で区切られた理解しやすい構造</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>DDDの2つの側面</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>側面</th>
+        <th>内容</th>
+        <th>対象</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>戦略的設計</strong></td>
+        <td>大きな構造の設計。境界、コンテキスト、統合</td>
+        <td>アーキテクト、PO</td>
+      </tr>
+      <tr>
+        <td><strong>戦術的設計</strong></td>
+        <td>コードレベルの設計。エンティティ、値オブジェクト、集約</td>
+        <td>開発者</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> よくある誤解</div>
+    <p>
+      DDDは<strong>「エンティティや値オブジェクトを使うこと」ではありません</strong>。<br>
+      それは戦術的パターンの一部に過ぎません。<br>
+      本質は<strong>「ドメインを深く理解し、それをコードに反映すること」</strong>です。
+    </p>
+  </div>
+
+  <h2>DDDが適している場面</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>適している</th>
+        <th>適していない</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>複雑なビジネスロジック</td>
+        <td>単純なCRUDアプリ</td>
+      </tr>
+      <tr>
+        <td>長期間メンテナンスするシステム</td>
+        <td>使い捨てのプロトタイプ</td>
+      </tr>
+      <tr>
+        <td>ドメインエキスパートと協業できる</td>
+        <td>技術的な問題のみ（ライブラリなど）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quiz" id="quiz-ddd-s1">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: DDDの本質的な目的は何？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s1" value="a">
+        <span>データベース設計を最適化すること</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="DDDの本質は、ビジネスドメインを深く理解し、その知識をコードに正確に反映することです。エンティティや値オブジェクトは手段であり、目的ではありません。">
+        <input type="radio" name="q-ddd-s1" value="b">
+        <span>ビジネスドメインの知識をコードに反映すること</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s1" value="c">
+        <span>エンティティと値オブジェクトを使うこと</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-s1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-s1')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-s2">
+  <h1>2. ユビキタス言語</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>ユビキタス言語の重要性を理解し、実践できる</p>
+  </div>
+
+  <h2>ユビキタス言語とは？</h2>
+  <p>
+    <strong>ユビキタス言語（Ubiquitous Language）</strong>とは、
+    開発チームとドメインエキスパートが<strong>共通で使う言葉</strong>です。
+  </p>
+  <p>
+    「Ubiquitous」は「どこにでもある」という意味。<br>
+    会話でも、ドキュメントでも、コードでも、<strong>同じ言葉を使う</strong>ことがポイントです。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話</div>
+    <p>
+      病院で「患者」と呼ぶ人を、システムでは「User」と呼んでいたらどうなるでしょう？<br>
+      「この患者のUserデータを更新して」という会話になり、混乱します。
+    </p>
+    <p>
+      ユビキタス言語では、「患者（Patient）」という言葉を
+      会話でもコードでも統一して使います。
+    </p>
+  </div>
+
+  <h2>コードでの実践</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">技術用語とのずれ</div>
+      <pre><code>// ビジネスでは「会員」「休会中」「仮登録」
+class User {
+  status: 'active' | 'inactive' | 'pending';
+
+  // 「退会処理」なのに delete
+  delete(): void { ... }
+}
+
+// 「購入」なのに create
+orderService.createOrder(data);</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">ユビキタス言語を反映</div>
+      <pre><code>// ビジネス用語をそのまま使う
+class Member {
+  membershipStatus: MembershipStatus;
+  // 'active' | 'suspended' | 'provisional'
+
+  // ビジネス用語「退会」
+  withdraw(): void { ... }
+}
+
+// ビジネス用語「購入」
+orderService.placeOrder(data);</code></pre>
+    </div>
+  </div>
+
+  <h2>ユビキタス言語を育てる</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>活動</th>
+        <th>内容</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ドメインエキスパートとの対話</strong></td>
+        <td>業務担当者から「本当の言葉」を聞き出す</td>
+      </tr>
+      <tr>
+        <td><strong>用語集の作成</strong></td>
+        <td>チームで共有する用語辞書を作る</td>
+      </tr>
+      <tr>
+        <td><strong>コードへの反映</strong></td>
+        <td>用語をクラス名、メソッド名に使う</td>
+      </tr>
+      <tr>
+        <td><strong>継続的な更新</strong></td>
+        <td>理解が深まったら言葉も進化させる</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> レビュー観点</div>
+    <p>
+      <strong>コード内の命名がビジネス用語と一致しているか？</strong><br>
+      技術的な名前（User, Data, Manager, Helper）ではなく、
+      ドメインの言葉（Member, Order, Inventory）を使っているか確認。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-s2">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: ユビキタス言語として適切なのは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s2" value="a">
+        <span>開発者が決めた技術用語で統一する</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s2" value="b">
+        <span>ドキュメントとコードで別々の言葉を使う</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ユビキタス言語は、ドメインエキスパートと開発者が共通で使う言葉です。会話、ドキュメント、コードすべてで同じ言葉を使うことで、認識のずれを防ぎます。">
+        <input type="radio" name="q-ddd-s2" value="c">
+        <span>ビジネス担当者と開発者が同じ言葉を使う</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-s2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-s2')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-s3">
+  <h1>3. ドメインの分析</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>コアドメイン、サポートドメイン、汎用ドメインの違いを説明できる</p>
+  </div>
+
+  <h2>ドメインを分類する</h2>
+  <p>
+    DDDでは、ビジネス領域を<strong>3種類のドメイン</strong>に分類します。<br>
+    この分類によって、<strong>どこにリソースを集中すべきか</strong>が明確になります。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話：ECサイトの場合</div>
+    <p>
+      <strong>コアドメイン</strong>: レコメンドエンジン（競合との差別化）<br>
+      <strong>サポートドメイン</strong>: 在庫管理（自社固有のルールあり）<br>
+      <strong>汎用ドメイン</strong>: 決済処理（Stripeで十分）
+    </p>
+  </div>
+
+  <h2>3種類のドメイン</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>種類</th>
+        <th>説明</th>
+        <th>投資レベル</th>
+        <th>例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>コアドメイン</strong></td>
+        <td>競争優位の源泉、ビジネスの差別化要因</td>
+        <td>最大投資</td>
+        <td>独自のマッチングアルゴリズム</td>
+      </tr>
+      <tr>
+        <td><strong>サポートドメイン</strong></td>
+        <td>コアを支える、自社固有のルールあり</td>
+        <td>適度な投資</td>
+        <td>社内の承認ワークフロー</td>
+      </tr>
+      <tr>
+        <td><strong>汎用ドメイン</strong></td>
+        <td>どの企業でも同じ（認証、決済等）</td>
+        <td>外部サービス利用</td>
+        <td>認証（Auth0）、決済（Stripe）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>なぜ分類が重要？</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">分類しない問題</div>
+      <ul>
+        <li>すべてに同じ労力をかけてしまう</li>
+        <li>汎用的な機能を自作して車輪の再発明</li>
+        <li>コアドメインが手薄になる</li>
+        <li>外注すべきでないものを外注してしまう</li>
+      </ul>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">分類する効果</div>
+      <ul>
+        <li>コアドメインに優秀なエンジニアを配置</li>
+        <li>汎用ドメインは外部サービスで効率化</li>
+        <li>サポートドメインは適度な品質でOK</li>
+        <li>リソース配分が最適化される</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>コアドメインを見つける質問</h2>
+  <ul>
+    <li>この機能がなくなると、ビジネスが成り立たない？</li>
+    <li>競合と差別化できているポイントは？</li>
+    <li>この部分で負けると、事業に致命的？</li>
+    <li>外部サービスで代替できない理由は？</li>
+  </ul>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> レビュー観点</div>
+    <p>
+      <strong>コアドメインに投資が集中しているか？</strong><br>
+      汎用ドメイン（認証、決済など）を自作していないか、
+      逆にコアドメインを外部に依存していないか確認。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-s3">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 一般的なECサイトで「決済処理」はどのドメイン？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s3" value="a">
+        <span>コアドメイン（最も重要だから）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s3" value="b">
+        <span>サポートドメイン（自社固有だから）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="決済処理は多くの企業で同じ要件（クレカ処理、PCI DSS準拠等）であり、Stripeなどの専門サービスを使うのが効率的です。自社で実装する差別化ポイントにはなりにくいです。">
+        <input type="radio" name="q-ddd-s3" value="c">
+        <span>汎用ドメイン（どの会社でも同じだから）</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-s3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-s3')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-s4">
+  <h1>4. 境界づけられたコンテキスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>境界づけられたコンテキストの概念を理解し、識別できる</p>
+  </div>
+
+  <h2>境界づけられたコンテキストとは？</h2>
+  <p>
+    <strong>境界づけられたコンテキスト（Bounded Context）</strong>とは、
+    特定のモデルが<strong>意味を持つ範囲</strong>のことです。
+  </p>
+  <p>
+    同じ言葉でも、コンテキストによって意味が変わります。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話</div>
+    <p>
+      「アカウント」という言葉を考えてみましょう。<br>
+      <strong>銀行</strong>では「口座」<br>
+      <strong>SNS</strong>では「ユーザープロフィール」<br>
+      <strong>経理</strong>では「勘定科目」
+    </p>
+    <p>
+      同じ「Account」でも、コンテキストが違えば<strong>全く別のモデル</strong>です。
+      これを無理に1つにまとめると、複雑で理解しにくいシステムになります。
+    </p>
+  </div>
+
+  <h2>コンテキストごとに異なるモデル</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">1つの巨大モデル</div>
+      <pre><code>// 全コンテキストで共有（神クラス）
+class User {
+  id: string;
+  email: string;
+  name: string;
+  address: Address;           // 配送
+  paymentMethods: Payment[];  // 請求
+  supportTickets: Ticket[];   // サポート
+  orders: Order[];            // 販売
+  loyaltyPoints: number;      // マーケ
+  // どんどん肥大化...
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">コンテキストごとのモデル</div>
+      <pre><code>// 販売コンテキスト
+class Customer {
+  id: CustomerId;
+  email: Email;
+  loyaltyTier: LoyaltyTier;
+}
+
+// 配送コンテキスト
+class Recipient {
+  name: string;
+  shippingAddress: Address;
+}
+
+// 請求コンテキスト
+class BillingAccount {
+  accountId: AccountId;
+  paymentMethods: PaymentMethod[];
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>コンテキストを分ける基準</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>基準</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>言葉の意味が変わる</strong></td>
+        <td>同じ用語が異なる意味で使われる</td>
+      </tr>
+      <tr>
+        <td><strong>チームが異なる</strong></td>
+        <td>別チームが担当している領域</td>
+      </tr>
+      <tr>
+        <td><strong>変更理由が異なる</strong></td>
+        <td>異なるビジネス要因で変更される</td>
+      </tr>
+      <tr>
+        <td><strong>ライフサイクルが異なる</strong></td>
+        <td>独立してデプロイ・スケールしたい</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> レビュー観点</div>
+    <p>
+      <strong>コンテキストが適切なサイズか？</strong><br>
+      巨大すぎる（神クラス的）コンテキストや、
+      細かすぎる（1クラス1コンテキスト）分割になっていないか確認。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-s4">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 「商品」が販売コンテキストと在庫コンテキストで別モデルになる理由は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s4" value="a">
+        <span>テーブルを分けた方がパフォーマンスが良いから</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="販売コンテキストの商品は価格や説明文が重要ですが、在庫コンテキストでは数量や倉庫の場所が重要です。関心事が異なるため、無理に1つにすると両方が複雑になります。">
+        <input type="radio" name="q-ddd-s4" value="b">
+        <span>コンテキストによって関心事が異なるから</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s4" value="c">
+        <span>DDDのルールで強制されているから</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-s4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-s4')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-s5">
+  <h1>5. コンテキストマップ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>コンテキストマップを描き、コンテキスト間の関係を可視化できる</p>
+  </div>
+
+  <h2>コンテキストマップとは？</h2>
+  <p>
+    <strong>コンテキストマップ</strong>は、複数の境界づけられたコンテキストが
+    <strong>どのように関係しているか</strong>を図示したものです。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話</div>
+    <p>
+      コンテキストマップは<strong>「国の地図」</strong>のようなものです。<br>
+      各コンテキストは「国」、コンテキスト間の関係は「外交関係」です。<br>
+      同盟国もあれば、支配-従属関係もあり、通訳が必要な国もあります。
+    </p>
+  </div>
+
+  <h2>マップの例</h2>
+
+  <!-- コンテキストマップ SVG図 -->
+  <svg viewBox="0 0 420 300" style="max-width: 420px; width: 100%; height: auto; display: block; margin: 1.5rem auto;" role="img" aria-label="ECシステムのコンテキストマップ">
+    <title>ECシステム - コンテキスト間の関係図</title>
+
+    <!-- 外枠 -->
+    <rect x="10" y="10" width="400" height="250" rx="8" fill="#f8f9fa" stroke="#3498db" stroke-width="2"/>
+    <text x="210" y="35" text-anchor="middle" fill="#2c3e50" font-size="14" font-weight="bold">ECシステム</text>
+
+    <!-- 販売コンテキスト -->
+    <rect x="40" y="55" width="120" height="60" rx="6" fill="#3498db" opacity="0.9"/>
+    <text x="100" y="80" text-anchor="middle" fill="white" font-size="11" font-weight="bold">販売</text>
+    <text x="100" y="98" text-anchor="middle" fill="white" font-size="9">コンテキスト</text>
+
+    <!-- 在庫コンテキスト -->
+    <rect x="250" y="55" width="120" height="60" rx="6" fill="#27ae60" opacity="0.9"/>
+    <text x="310" y="80" text-anchor="middle" fill="white" font-size="11" font-weight="bold">在庫</text>
+    <text x="310" y="98" text-anchor="middle" fill="white" font-size="9">コンテキスト</text>
+
+    <!-- U/D関係の矢印 -->
+    <line x1="160" y1="85" x2="250" y2="85" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrowUD)"/>
+    <text x="205" y="78" text-anchor="middle" fill="#e74c3c" font-size="9" font-weight="bold">U/D</text>
+
+    <!-- ACL矢印（販売→決済） -->
+    <line x1="100" y1="115" x2="100" y2="175" stroke="#9b59b6" stroke-width="2" marker-end="url(#arrowACL)"/>
+    <text x="115" y="148" fill="#9b59b6" font-size="8" font-weight="bold">ACL</text>
+
+    <!-- ACL矢印（在庫→配送） -->
+    <line x1="310" y1="115" x2="310" y2="175" stroke="#9b59b6" stroke-width="2" marker-end="url(#arrowACL)"/>
+    <text x="325" y="148" fill="#9b59b6" font-size="8" font-weight="bold">ACL</text>
+
+    <!-- 決済コンテキスト（外部） -->
+    <rect x="40" y="180" width="120" height="50" rx="6" fill="#95a5a6" stroke="#7f8c8d" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <text x="100" y="200" text-anchor="middle" fill="white" font-size="10" font-weight="bold">決済</text>
+    <text x="100" y="218" text-anchor="middle" fill="white" font-size="8">（外部サービス）</text>
+
+    <!-- 配送コンテキスト（外部） -->
+    <rect x="250" y="180" width="120" height="50" rx="6" fill="#95a5a6" stroke="#7f8c8d" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <text x="310" y="200" text-anchor="middle" fill="white" font-size="10" font-weight="bold">配送</text>
+    <text x="310" y="218" text-anchor="middle" fill="white" font-size="8">（外部サービス）</text>
+
+    <!-- 凡例 -->
+    <text x="30" y="250" fill="#666" font-size="9">
+      <tspan font-weight="bold" fill="#e74c3c">U/D</tspan> = Upstream/Downstream（上流/下流）
+    </text>
+    <text x="30" y="265" fill="#666" font-size="9">
+      <tspan font-weight="bold" fill="#9b59b6">ACL</tspan> = Anti-Corruption Layer（腐敗防止層）
+    </text>
+
+    <!-- 矢印マーカー定義 -->
+    <defs>
+      <marker id="arrowUD" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L9,3 z" fill="#e74c3c"/>
+      </marker>
+      <marker id="arrowACL" markerWidth="10" markerHeight="10" refX="3" refY="6" orient="auto">
+        <path d="M0,0 L6,0 L3,9 z" fill="#9b59b6"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <h2>マップを描くメリット</h2>
+
+  <ul>
+    <li><strong>全体像の把握</strong>: システム全体の構造が一目でわかる</li>
+    <li><strong>依存関係の明確化</strong>: どこが上流でどこが下流か</li>
+    <li><strong>統合ポイントの識別</strong>: 問題が起きやすい箇所がわかる</li>
+    <li><strong>チーム間の認識合わせ</strong>: 共通の理解を持てる</li>
+  </ul>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> レビュー観点</div>
+    <p>
+      <strong>コンテキスト間の関係が定義されているか？</strong><br>
+      暗黙の依存関係がないか、統合パターンが明確か確認。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-s5">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: コンテキストマップの主な目的は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s5" value="a">
+        <span>データベースのER図を作ること</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="コンテキストマップは、複数のコンテキストがどのように関係し、データがどう流れるかを可視化します。技術的な詳細ではなく、ビジネス領域の関係性を表します。">
+        <input type="radio" name="q-ddd-s5" value="b">
+        <span>コンテキスト間の関係と統合方法を可視化すること</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s5" value="c">
+        <span>クラス図を自動生成すること</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-s5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-s5')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-s6">
+  <h1>6. 統合パターン</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>コンテキスト間の主要な統合パターンを説明できる</p>
+  </div>
+
+  <h2>統合パターンとは？</h2>
+  <p>
+    コンテキスト間で<strong>どのようにモデルを共有・変換するか</strong>のパターンです。<br>
+    チーム間の力関係や協力度合いによって、適切なパターンが変わります。
+  </p>
+
+  <h2>主要な統合パターン</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>パターン</th>
+        <th>説明</th>
+        <th>適用場面</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>共有カーネル</strong></td>
+        <td>一部のモデルを複数チームで共有</td>
+        <td>密接に連携するチーム</td>
+      </tr>
+      <tr>
+        <td><strong>顧客/供給者</strong></td>
+        <td>上流（供給者）が下流（顧客）の要件を考慮</td>
+        <td>社内チーム間のAPI提供</td>
+      </tr>
+      <tr>
+        <td><strong>適合者</strong></td>
+        <td>下流が上流のモデルにそのまま従う</td>
+        <td>変更権限のない外部API</td>
+      </tr>
+      <tr>
+        <td><strong>腐敗防止層</strong></td>
+        <td>変換層を挟んで自コンテキストを守る</td>
+        <td>レガシー統合、外部システム</td>
+      </tr>
+      <tr>
+        <td><strong>公開ホストサービス</strong></td>
+        <td>標準化されたAPIを多数に公開</td>
+        <td>プラットフォーム、外部向けAPI</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>パターンの選び方</h2>
+
+  <pre><code>自チームが変更権限を持っている？
+  │
+  ├─ Yes: 相手チームと協力できる？
+  │        ├─ Yes: 共有カーネル or 顧客/供給者
+  │        └─ No: 分離された道
+  │
+  └─ No: 相手のモデルに従うか？
+          ├─ Yes: 適合者
+          └─ No: 腐敗防止層</code></pre>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話</div>
+    <p>
+      <strong>共有カーネル</strong>: 夫婦で共有する銀行口座<br>
+      <strong>顧客/供給者</strong>: 要望を聞いてくれる取引先<br>
+      <strong>適合者</strong>: 政府のルールに従う<br>
+      <strong>腐敗防止層</strong>: 通訳を介した外国との取引
+    </p>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> レビュー観点</div>
+    <p>
+      <strong>統合パターンがチーム間の実態と合っているか？</strong><br>
+      変更権限がないのに共有カーネルを選んでいないか、
+      腐敗防止層が必要な箇所で直接依存していないか確認。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-s6">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: 外部の決済API（Stripeなど）を使う場合、適切なパターンは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s6" value="a">
+        <span>共有カーネル（一緒に開発する）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s6" value="b">
+        <span>顧客/供給者（要望を伝える）</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="外部APIは変更できないため、腐敗防止層で自システムのモデルと外部のモデルを変換します。これにより、外部APIの変更が自システム全体に波及するのを防げます。">
+        <input type="radio" name="q-ddd-s6" value="c">
+        <span>腐敗防止層（変換層を挟む）</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-s6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-s6')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-s7">
+  <h1>7. 腐敗防止層（ACL）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>腐敗防止層の役割を理解し、適切に実装できる</p>
+  </div>
+
+  <h2>腐敗防止層（ACL）とは？</h2>
+  <p>
+    <strong>ACL（Anti-Corruption Layer）</strong>は、
+    外部システムやレガシーシステムのモデルが
+    <strong>自コンテキストに漏れ出すのを防ぐ</strong>変換層です。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話</div>
+    <p>
+      ACLは<strong>「通訳」</strong>のようなものです。<br>
+      外国（レガシーシステム）の言葉を、自国（新システム）の言葉に翻訳します。<br>
+      通訳がいないと、外国語が自国に混入して混乱します。
+    </p>
+  </div>
+
+  <h2>ACLが必要な場面</h2>
+  <ul>
+    <li>レガシーシステムとの統合</li>
+    <li>外部APIの利用</li>
+    <li>異なるチームが管理するシステムとの連携</li>
+    <li>命名規則やデータ形式が異なるシステム</li>
+  </ul>
+
+  <h2>実装例</h2>
+
+  <div class="compare-container">
+    <div class="compare-bad">
+      <div class="compare-title">ACLなし（漏れ出す）</div>
+      <pre><code>// レガシーの型が新システムに漏れ出す
+interface LegacyCustomerData {
+  CUST_ID: string;
+  CUST_NM: string;
+  ACTIVE_FLG: 'Y' | 'N';  // boolean じゃない
+}
+
+class CustomerService {
+  // レガシー型がそのまま使われる
+  async getCustomer(id: string)
+    : Promise&lt;LegacyCustomerData&gt; {
+    return await legacyApi.get(id);
+  }
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">ACLあり（変換する）</div>
+      <pre><code>// ACL: 変換層
+class CustomerTranslator {
+  toDomain(legacy: LegacyCustomerData)
+    : Customer {
+    return new Customer(
+      CustomerId.create(legacy.CUST_ID),
+      CustomerName.create(legacy.CUST_NM),
+      legacy.ACTIVE_FLG === 'Y'
+    );
+  }
+}
+
+class CustomerService {
+  // ドメインモデルを返す
+  async getCustomer(id: CustomerId)
+    : Promise&lt;Customer&gt; {
+    const legacy = await this.legacyApi
+      .get(id.value);
+    return this.translator.toDomain(legacy);
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>ACLの構成要素</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>要素</th>
+        <th>役割</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Translator</strong></td>
+        <td>外部モデル ⇔ ドメインモデルの変換</td>
+      </tr>
+      <tr>
+        <td><strong>Adapter</strong></td>
+        <td>外部システムへの通信を抽象化</td>
+      </tr>
+      <tr>
+        <td><strong>Facade</strong></td>
+        <td>複雑な外部APIを単純化したインターフェース</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-danger">
+    <div class="card-title"><span class="icon">&#128680;</span> よくあるミス</div>
+    <p>
+      ACLを設けても、<strong>レガシーの型をimportしてしまう</strong>と意味がありません。<br>
+      ACLより内側（ドメイン層）では、外部の型を一切参照しないようにしましょう。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-s7-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: 腐敗防止層（ACL）の主な役割は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s7-1" value="a">
+        <span>データベースのパフォーマンスを向上させる</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ACLは外部システムのモデルが自コンテキストに漏れ出すのを防ぎ、ドメインモデルの純粋性を保ちます。外部の変更が内部に波及するのも防げます。">
+        <input type="radio" name="q-ddd-s7-1" value="b">
+        <span>外部システムのモデルが自コンテキストに漏れ出すのを防ぐ</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s7-1" value="c">
+        <span>セキュリティの脆弱性を検出する</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-s7-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-s7-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: 以下のコードの問題点は？</strong></p>
+    <pre><code>// domain/CustomerService.ts
+import { LegacyCustomerData } from '../legacy-api';
+
+class CustomerService {
+  async getCustomer(id: string): Promise&lt;LegacyCustomerData&gt; {
+    return await this.legacyApi.get(id);
+  }
+}</code></pre>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="ドメイン層がレガシーの型に直接依存しています。ACLを設けて、ドメイン層ではドメインモデル（Customer）のみを使うべきです。">
+        <input type="radio" name="q-ddd-s7-2" value="a">
+        <span>ドメイン層がレガシーの型に依存している</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s7-2" value="b">
+        <span>asyncを使っているのが問題</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s7-2" value="c">
+        <span>特に問題はない</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-s7-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-s7')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-s8">
+  <h1>8. イベントストーミング</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>イベントストーミングの進め方を理解する</p>
+  </div>
+
+  <h2>イベントストーミングとは？</h2>
+  <p>
+    <strong>イベントストーミング</strong>は、ドメインエキスパートと開発者が
+    <strong>付箋を使ってドメインを発見する</strong>ワークショップ手法です。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話</div>
+    <p>
+      イベントストーミングは<strong>「ブレインストーミング」のドメイン版</strong>です。<br>
+      付箋を使って「何が起きるか」を書き出し、壁に貼っていきます。<br>
+      参加者全員でビジネスの流れを可視化します。
+    </p>
+  </div>
+
+  <h2>付箋の色と意味</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>色</th>
+        <th>要素</th>
+        <th>例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="background:#ff9800;color:white;">オレンジ</td>
+        <td><strong>ドメインイベント</strong></td>
+        <td>注文が確定された、支払いが完了した</td>
+      </tr>
+      <tr>
+        <td style="background:#2196f3;color:white;">青</td>
+        <td><strong>コマンド</strong></td>
+        <td>注文を確定する、支払いを処理する</td>
+      </tr>
+      <tr>
+        <td style="background:#ffeb3b;color:black;">黄色</td>
+        <td><strong>アクター</strong></td>
+        <td>顧客、管理者、システム</td>
+      </tr>
+      <tr>
+        <td style="background:#e91e63;color:white;">ピンク</td>
+        <td><strong>外部システム</strong></td>
+        <td>決済サービス、配送業者</td>
+      </tr>
+      <tr>
+        <td style="background:#9c27b0;color:white;">紫</td>
+        <td><strong>ポリシー</strong></td>
+        <td>〜が起きたら〜する</td>
+      </tr>
+      <tr>
+        <td style="background:#4caf50;color:white;">緑</td>
+        <td><strong>集約</strong></td>
+        <td>注文、在庫、顧客</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>進め方</h2>
+
+  <ol>
+    <li><strong>ドメインイベントを書き出す</strong>: 「〜された」という過去形で</li>
+    <li><strong>時系列に並べる</strong>: 左から右へ</li>
+    <li><strong>コマンドを追加</strong>: イベントを引き起こすアクション</li>
+    <li><strong>アクターを追加</strong>: 誰がコマンドを実行するか</li>
+    <li><strong>集約を識別</strong>: コマンドを受け付ける責任を持つ</li>
+    <li><strong>境界を引く</strong>: コンテキストの境界を発見</li>
+  </ol>
+
+  <pre><code>【イベントストーミングの流れ】
+
+[顧客]──>[カートに追加]──>[商品がカートに追加された]
+                                    │
+                                    v
+[顧客]──>[注文を確定]──────>[注文が確定された]
+                                    │
+                                    ├──>[在庫引当イベント]
+                                    │
+                                    └──>[決済処理イベント]</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> ポイント</div>
+    <p>
+      イベントストーミングは<strong>技術者だけでやらない</strong>のが重要。<br>
+      ドメインエキスパート（業務担当者）と一緒に行うことで、
+      本当のビジネスフローを発見できます。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-s8">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: イベントストーミングで最初に書き出すのは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s8" value="a">
+        <span>データベースのテーブル設計</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="イベントストーミングは「〜された」という過去形のドメインイベントから始めます。これにより、ビジネスで何が起きるかを自然に洗い出せます。">
+        <input type="radio" name="q-ddd-s8" value="b">
+        <span>ドメインイベント（〜された）</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s8" value="c">
+        <span>クラス図とメソッド</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-s8')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-s8')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-s9">
+  <h1>9. ドメインストーリーテリング</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>ドメインストーリーテリングの手法を理解する</p>
+  </div>
+
+  <h2>ドメインストーリーテリングとは？</h2>
+  <p>
+    <strong>ドメインストーリーテリング</strong>は、
+    <strong>絵と文章でビジネスの物語を描く</strong>手法です。<br>
+    イベントストーミングよりもシンプルで、非技術者にも理解しやすいのが特徴です。
+  </p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> たとえ話</div>
+    <p>
+      ドメインストーリーテリングは<strong>「絵本」</strong>を作るようなものです。<br>
+      「誰が」「何を」「どうする」を絵と文章で表現します。<br>
+      子どもでも理解できるくらいシンプルに描きます。
+    </p>
+  </div>
+
+  <h2>基本要素</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>要素</th>
+        <th>記号</th>
+        <th>例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>アクター</strong></td>
+        <td>人のアイコン</td>
+        <td>顧客、店員、管理者</td>
+      </tr>
+      <tr>
+        <td><strong>ワークオブジェクト</strong></td>
+        <td>四角形</td>
+        <td>注文書、商品、請求書</td>
+      </tr>
+      <tr>
+        <td><strong>アクティビティ</strong></td>
+        <td>矢印 + 動詞</td>
+        <td>作成する、送る、確認する</td>
+      </tr>
+      <tr>
+        <td><strong>番号</strong></td>
+        <td>1, 2, 3...</td>
+        <td>ストーリーの順序</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>ストーリーの例</h2>
+
+  <pre><code>【オンライン注文のストーリー】
+
+1. [顧客] ──商品を選ぶ──> [商品カタログ]
+
+2. [顧客] ──カートに入れる──> [ショッピングカート]
+
+3. [顧客] ──注文を確定する──> [注文]
+
+4. [システム] ──在庫を確認する──> [在庫]
+
+5. [システム] ──決済を依頼する──> [決済サービス]
+
+6. [倉庫スタッフ] ──商品を発送する──> [配送]</code></pre>
+
+  <h2>イベントストーミングとの違い</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>観点</th>
+        <th>イベントストーミング</th>
+        <th>ドメインストーリーテリング</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>焦点</strong></td>
+        <td>何が起きたか（イベント）</td>
+        <td>誰が何をするか（アクター）</td>
+      </tr>
+      <tr>
+        <td><strong>形式</strong></td>
+        <td>付箋を壁に貼る</td>
+        <td>絵と文章で描く</td>
+      </tr>
+      <tr>
+        <td><strong>難易度</strong></td>
+        <td>やや複雑</td>
+        <td>シンプル</td>
+      </tr>
+      <tr>
+        <td><strong>適した場面</strong></td>
+        <td>複雑なドメインの発見</td>
+        <td>初期の理解、共有</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quiz" id="quiz-ddd-s9">
+    <h3>理解度チェック</h3>
+    <p><strong>Q: ドメインストーリーテリングの特徴は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s9" value="a">
+        <span>プログラミング言語で記述する</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ドメインストーリーテリングは「誰が」「何を」「どうする」を絵と文章でシンプルに表現します。非技術者にも理解しやすいのが特徴です。">
+        <input type="radio" name="q-ddd-s9" value="b">
+        <span>絵と文章でビジネスの物語を描く</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s9" value="c">
+        <span>データベース設計を自動生成する</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-s9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-s9')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>
+
+<section id="ddd-s10">
+  <h1>10. 戦略的設計のまとめ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">&#127919;</span> このページのゴール</div>
+    <p>戦略的設計の全体像を理解し、マイクロサービスとの関係を説明できる</p>
+  </div>
+
+  <h2>戦略的設計の全体像</h2>
+
+  <pre><code>【戦略的設計のフロー】
+
+1. ドメインを理解する
+   └─> イベントストーミング、ドメインストーリーテリング
+
+2. ドメインを分類する
+   └─> コア / サポート / 汎用
+
+3. 境界を引く
+   └─> 境界づけられたコンテキストを識別
+
+4. 関係を定義する
+   └─> コンテキストマップ、統合パターン
+
+5. 言語を統一する
+   └─> ユビキタス言語を確立</code></pre>
+
+  <h2>マイクロサービスとの関係</h2>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">&#128161;</span> 重要なポイント</div>
+    <p>
+      <strong>境界づけられたコンテキスト ≒ マイクロサービスの境界</strong><br>
+      DDDの戦略的設計は、マイクロサービスの分割指針として最適です。
+    </p>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>DDDの概念</th>
+        <th>マイクロサービスでの対応</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>境界づけられたコンテキスト</td>
+        <td>サービスの境界</td>
+      </tr>
+      <tr>
+        <td>コンテキストマップ</td>
+        <td>サービス間の依存関係</td>
+      </tr>
+      <tr>
+        <td>腐敗防止層</td>
+        <td>API Gateway、BFF</td>
+      </tr>
+      <tr>
+        <td>ドメインイベント</td>
+        <td>非同期メッセージング</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>戦略的設計チェックリスト</h2>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">&#9888;&#65039;</span> レビュー観点</div>
+    <ul style="margin-bottom:0;">
+      <li>ユビキタス言語がコードに反映されているか？</li>
+      <li>コアドメインに投資が集中しているか？</li>
+      <li>境界づけられたコンテキストが識別されているか？</li>
+      <li>コンテキスト間の統合パターンが定義されているか？</li>
+      <li>腐敗防止層でレガシー/外部を隔離しているか？</li>
+    </ul>
+  </div>
+
+  <h2>よくある失敗パターン</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>失敗</th>
+        <th>原因</th>
+        <th>対策</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>巨大なコンテキスト</td>
+        <td>分割の判断基準がない</td>
+        <td>言葉の意味が変わる箇所で分ける</td>
+      </tr>
+      <tr>
+        <td>技術的な分割</td>
+        <td>ビジネス視点の欠如</td>
+        <td>ビジネス機能で分ける</td>
+      </tr>
+      <tr>
+        <td>暗黙の依存</td>
+        <td>コンテキストマップがない</td>
+        <td>関係を可視化・定義する</td>
+      </tr>
+      <tr>
+        <td>外部モデルの漏洩</td>
+        <td>ACLがない</td>
+        <td>変換層を設ける</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quiz" id="quiz-ddd-s10-1">
+    <h3>理解度チェック 1</h3>
+    <p><strong>Q: 境界づけられたコンテキストとマイクロサービスの関係は？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s10-1" value="a">
+        <span>全く関係がない別の概念</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="境界づけられたコンテキストは、マイクロサービスの分割指針として最適です。ビジネス的に意味のある境界でサービスを分けることができます。">
+        <input type="radio" name="q-ddd-s10-1" value="b">
+        <span>コンテキストの境界がサービス分割の指針になる</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s10-1" value="c">
+        <span>1つのコンテキストを複数サービスに分ける</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-s10-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-ddd-s10-2">
+    <h3>理解度チェック 2</h3>
+    <p><strong>Q: 戦略的設計で最も避けるべきことは？</strong></p>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s10-2" value="a">
+        <span>ドメインエキスパートと話し合うこと</span>
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="q-ddd-s10-2" value="b">
+        <span>コンテキストを複数に分けること</span>
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="技術的な観点（API層、DB層など）で分割すると、ビジネスの変更に対して複数のサービスを同時に修正する必要が生じます。ビジネス機能で分割するのが正解です。">
+        <input type="radio" name="q-ddd-s10-2" value="c">
+        <span>技術的な観点でサービスを分割すること</span>
+      </label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-ddd-s10-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ddd-s10')">
+    <span class="icon">&#10003;</span> このページを完了
+  </button>
+</section>

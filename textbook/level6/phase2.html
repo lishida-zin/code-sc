@@ -1,0 +1,1923 @@
+<!-- ============================================
+     Level 6 Phase 2: SOLID原則
+     ============================================ -->
+
+<section id="solid1">
+  <h1>SOLID概要</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>SOLID原則とは何か</li>
+      <li>なぜSOLIDが必要か</li>
+      <li>5つの原則の概要</li>
+    </ul>
+  </div>
+
+  <h2>SOLID原則とは</h2>
+
+  <p>
+    <strong>SOLID</strong>は、オブジェクト指向設計の<strong>5つの原則</strong>の頭文字です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：建築の法則
+    </div>
+    <p>
+      建築には「耐震基準」「採光基準」などの法則がある。<br>
+      これを守らないと、<strong>住みにくい・危険な家</strong>ができる。
+    </p>
+    <p style="margin:0;">
+      ソフトウェアにもSOLIDという「設計基準」がある。<br>
+      これを守らないと、<strong>保守しにくい・壊れやすいコード</strong>ができる。
+    </p>
+  </div>
+
+  <h2>5つの原則</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:10%;">頭文字</th>
+        <th style="width:30%;">原則</th>
+        <th>意味</th>
+      </tr>
+      <tr>
+        <td><strong>S</strong></td>
+        <td>Single Responsibility</td>
+        <td>1クラス1責務</td>
+      </tr>
+      <tr>
+        <td><strong>O</strong></td>
+        <td>Open/Closed</td>
+        <td>拡張に開き、修正に閉じる</td>
+      </tr>
+      <tr>
+        <td><strong>L</strong></td>
+        <td>Liskov Substitution</td>
+        <td>派生型は基底型と置換可能</td>
+      </tr>
+      <tr>
+        <td><strong>I</strong></td>
+        <td>Interface Segregation</td>
+        <td>インターフェースを小さく</td>
+      </tr>
+      <tr>
+        <td><strong>D</strong></td>
+        <td>Dependency Inversion</td>
+        <td>抽象に依存する</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>なぜSOLIDが必要か</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      SOLID違反のコードは...
+    </div>
+    <ul>
+      <li><strong>変更が難しい</strong>：1箇所を直すと他が壊れる</li>
+      <li><strong>テストが難しい</strong>：依存が多くてモックできない</li>
+      <li><strong>理解が難しい</strong>：1つのクラスがやることが多すぎる</li>
+      <li><strong>再利用が難しい</strong>：特定の状況に依存している</li>
+    </ul>
+  </div>
+
+  <h2>SOLIDの歴史</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📜</span>
+      知っておきたい歴史
+    </div>
+    <p>
+      SOLID原則は<strong>Robert C. Martin（Uncle Bob）</strong>が2000年代にまとめました。
+    </p>
+    <p style="margin:0;">
+      各原則自体は1980〜90年代から知られていましたが、<br>
+      「SOLID」という覚えやすい名前で広まりました。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-solid1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>SOLIDの「S」は何の原則？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-solid1" style="display:none;">
+      A. Single Responsibility（単一責任）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid1" style="display:none;">
+      B. Substitution（置換）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid1" style="display:none;">
+      C. Segregation（分離）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-solid1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('solid1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="solid2">
+  <h1>単一責任の原則（SRP）</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>SRP（Single Responsibility Principle）とは</li>
+      <li>「変更の理由」という考え方</li>
+      <li>責務の見つけ方</li>
+    </ul>
+  </div>
+
+  <h2>SRPとは</h2>
+
+  <p>
+    <strong>「クラスを変更する理由は1つであるべき」</strong>
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：専門店
+    </div>
+    <p>
+      <strong>良い店</strong>：寿司屋は寿司だけ。ラーメン屋はラーメンだけ。<br>
+      それぞれの専門に集中できる。
+    </p>
+    <p style="margin:0;">
+      <strong>悪い店</strong>：寿司もラーメンもピザもカレーも出す店。<br>
+      どれも中途半端になりがち。
+    </p>
+  </div>
+
+  <h2>「変更の理由」で考える</h2>
+
+  <p>
+    「このクラスを変更するのは、どんなときか？」を考えます。
+  </p>
+
+  <div class="card">
+<pre><code>// ❌ 複数の変更理由がある
+class UserService {
+  createUser(data: UserData): Promise&lt;User&gt; {
+    // 1. バリデーション → バリデーションルールが変わったら修正
+    if (!data.email.includes('@')) throw new Error('Invalid email');
+
+    // 2. 永続化 → DBスキーマが変わったら修正
+    const user = await db.users.create(data);
+
+    // 3. メール送信 → メールテンプレートが変わったら修正
+    await sendEmail(user.email, 'Welcome!');
+
+    // 4. ログ出力 → ログ形式が変わったら修正
+    console.log(`User created: ${user.id}`);
+
+    return user;
+  }
+}</code></pre>
+    <p style="margin:0;">
+      このクラスは<strong>4つの理由</strong>で変更される可能性がある。<br>
+      → SRP違反
+    </p>
+  </div>
+
+  <h2>責務を分離する</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">SRP違反</div>
+<pre><code>class UserService {
+  // バリデーション
+  // 永続化
+  // メール送信
+  // ログ出力
+  // 全部やる
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">SRP準拠</div>
+<pre><code>class UserValidator {
+  validate(data: UserData): Result {}
+}
+
+class UserRepository {
+  create(data: UserData): Promise&lt;User&gt; {}
+}
+
+class WelcomeEmailSender {
+  send(user: User): Promise&lt;void&gt; {}
+}
+
+class UserService {
+  // 各クラスを組み合わせるだけ
+  constructor(
+    private validator: UserValidator,
+    private repository: UserRepository,
+    private emailSender: WelcomeEmailSender,
+    private logger: Logger
+  ) {}
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>責務の見つけ方</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      責務を見つけるヒント
+    </div>
+    <ul>
+      <li><strong>「〜を担当」</strong>で説明できるか？（「ユーザーの永続化を担当」）</li>
+      <li><strong>「and」</strong>が入るなら分割すべき（「バリデーションと永続化を担当」→分割）</li>
+      <li><strong>異なるチーム</strong>が変更するなら分割（UI担当、DB担当、セキュリティ担当...）</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>SRP違反の兆候：</p>
+    <ul>
+      <li>クラスが<strong>500行以上</strong></li>
+      <li>メソッドが<strong>20個以上</strong></li>
+      <li>クラス名に<strong>「Manager」「Handler」「Processor」</strong></li>
+      <li><strong>複数のimport</strong>が必要（DB、メール、ログ、API...）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-solid2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>SRPの「変更の理由」の正しい解釈は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid2" style="display:none;">
+      A. コードを修正する回数
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-solid2" style="display:none;">
+      B. クラスを変更する必要が生じる要因の数
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid2" style="display:none;">
+      C. git commitの回数
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-solid2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('solid2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="solid3">
+  <h1>SRP実践</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>実際のリファクタリング手順</li>
+      <li>責務の境界を決める基準</li>
+      <li>分割しすぎの問題</li>
+    </ul>
+  </div>
+
+  <h2>リファクタリング例</h2>
+
+  <div class="card">
+<pre><code>// Before: SRP違反
+class OrderService {
+  async createOrder(data: OrderData): Promise&lt;Order&gt; {
+    // 1. バリデーション
+    if (!data.items.length) throw new Error('Empty order');
+    if (data.items.some(i => i.quantity <= 0)) throw new Error('Invalid quantity');
+
+    // 2. 在庫チェック
+    for (const item of data.items) {
+      const stock = await db.inventory.findOne({ productId: item.productId });
+      if (stock.quantity < item.quantity) throw new Error('Out of stock');
+    }
+
+    // 3. 価格計算
+    let total = 0;
+    for (const item of data.items) {
+      const product = await db.products.findOne({ id: item.productId });
+      total += product.price * item.quantity;
+    }
+    const tax = total * 0.1;
+    const grandTotal = total + tax;
+
+    // 4. 永続化
+    const order = await db.orders.create({
+      ...data,
+      total: grandTotal,
+      status: 'pending'
+    });
+
+    // 5. メール送信
+    await sendEmail(data.customerEmail, 'Order confirmed', `Total: ${grandTotal}`);
+
+    // 6. 分析イベント送信
+    await analytics.track('order_created', { orderId: order.id, total: grandTotal });
+
+    return order;
+  }
+}</code></pre>
+  </div>
+
+  <div class="card">
+<pre><code>// After: SRP準拠
+
+// 各責務を独立したクラスに
+class OrderValidator {
+  validate(data: OrderData): void {
+    if (!data.items.length) throw new Error('Empty order');
+    if (data.items.some(i => i.quantity <= 0)) throw new Error('Invalid quantity');
+  }
+}
+
+class InventoryChecker {
+  async checkAvailability(items: OrderItem[]): Promise&lt;void&gt; {
+    for (const item of items) {
+      const stock = await this.inventoryRepo.findByProductId(item.productId);
+      if (stock.quantity < item.quantity) throw new Error('Out of stock');
+    }
+  }
+}
+
+class PriceCalculator {
+  async calculate(items: OrderItem[]): Promise&lt;PriceBreakdown&gt; {
+    let subtotal = 0;
+    for (const item of items) {
+      const product = await this.productRepo.findById(item.productId);
+      subtotal += product.price * item.quantity;
+    }
+    const tax = subtotal * 0.1;
+    return { subtotal, tax, total: subtotal + tax };
+  }
+}
+
+class OrderRepository {
+  async create(data: OrderData, price: PriceBreakdown): Promise&lt;Order&gt; {
+    return await db.orders.create({ ...data, ...price, status: 'pending' });
+  }
+}
+
+class OrderConfirmationEmailSender {
+  async send(email: string, order: Order): Promise&lt;void&gt; {
+    await sendEmail(email, 'Order confirmed', `Total: ${order.total}`);
+  }
+}
+
+// オーケストレーション
+class OrderService {
+  constructor(
+    private validator: OrderValidator,
+    private inventoryChecker: InventoryChecker,
+    private priceCalculator: PriceCalculator,
+    private orderRepo: OrderRepository,
+    private emailSender: OrderConfirmationEmailSender,
+    private analytics: AnalyticsService
+  ) {}
+
+  async createOrder(data: OrderData): Promise&lt;Order&gt; {
+    this.validator.validate(data);
+    await this.inventoryChecker.checkAvailability(data.items);
+    const price = await this.priceCalculator.calculate(data.items);
+    const order = await this.orderRepo.create(data, price);
+    await this.emailSender.send(data.customerEmail, order);
+    await this.analytics.track('order_created', { orderId: order.id });
+    return order;
+  }
+}</code></pre>
+  </div>
+
+  <h2>分割しすぎの問題</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      過度な分割は逆効果
+    </div>
+<pre><code>// ❌ 過度な分割
+class EmailValidator {}
+class EmailLengthChecker {}
+class EmailDomainValidator {}
+class EmailAtSignChecker {}
+// 1つのバリデーションを4クラスに分割...
+
+// ⭕ 適度な粒度
+class EmailValidator {
+  validate(email: string): boolean {
+    return this.hasAtSign(email) &&
+           this.isValidDomain(email) &&
+           this.isValidLength(email);
+  }
+
+  private hasAtSign(email: string): boolean { ... }
+  private isValidDomain(email: string): boolean { ... }
+  private isValidLength(email: string): boolean { ... }
+}</code></pre>
+    <p style="margin:0;">
+      <strong>「メールバリデーション」</strong>は1つの責務。<br>
+      メソッドは分けても、クラスは分けすぎない。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-solid3-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>このクラスの責務は何個？</p>
+<pre><code>class ReportGenerator {
+  fetchData(): Data {}
+  processData(data: Data): Result {}
+  formatAsHTML(result: Result): string {}
+  sendByEmail(html: string): void {}
+}</code></pre>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid3-1" style="display:none;">
+      A. 1つ（レポート生成）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-solid3-1" style="display:none;">
+      B. 4つ（データ取得、加工、整形、送信）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid3-1" style="display:none;">
+      C. 2つ（生成と送信）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-solid3-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-solid3-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>SRP準拠のクラス分割として適切なのは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid3-2" style="display:none;">
+      A. 1メソッド = 1クラス
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-solid3-2" style="display:none;">
+      B. 1つの変更理由 = 1クラス
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid3-2" style="display:none;">
+      C. 100行ごとに1クラス
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-solid3-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('solid3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="solid4">
+  <h1>開放閉鎖の原則（OCP）</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>OCP（Open/Closed Principle）とは</li>
+      <li>「拡張に開き、修正に閉じる」の意味</li>
+      <li>なぜ既存コードの修正を避けるべきか</li>
+    </ul>
+  </div>
+
+  <h2>OCPとは</h2>
+
+  <p>
+    <strong>「拡張に対して開いていて、修正に対して閉じている」</strong>
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：コンセントと家電
+    </div>
+    <p>
+      コンセントの規格は<strong>変わらない</strong>（修正に閉じている）。<br>
+      でも新しい家電を<strong>いくらでも繋げる</strong>（拡張に開いている）。
+    </p>
+    <p style="margin:0;">
+      新しい家電が出るたびにコンセントの形を変えていたら大変！<br>
+      ソフトウェアも同じ。<strong>既存コードを変えずに機能追加</strong>できる設計が理想。
+    </p>
+  </div>
+
+  <h2>OCP違反の例</h2>
+
+  <div class="card card-danger">
+<pre><code>// ❌ 新しい支払い方法を追加するたびに修正が必要
+class PaymentProcessor {
+  process(payment: Payment): void {
+    if (payment.type === 'credit') {
+      // クレジットカード処理
+      this.processCreditCard(payment);
+    } else if (payment.type === 'paypal') {
+      // PayPal処理
+      this.processPayPal(payment);
+    } else if (payment.type === 'crypto') {
+      // 暗号通貨処理 ← 追加のたびにここを修正
+      this.processCrypto(payment);
+    }
+    // 新しい支払い方法が増えるたびに
+    // このファイルを修正 + テストやり直し
+  }
+}</code></pre>
+    <p style="margin:0;">
+      「Apple Pay対応して」と言われたら、<strong>既存コードを修正</strong>する必要がある。<br>
+      修正 = バグのリスク、テストのやり直し。
+    </p>
+  </div>
+
+  <h2>OCP準拠の設計</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">修正が必要</div>
+<pre><code>// 新機能 = 既存コード修正
+class PaymentProcessor {
+  process(payment: Payment): void {
+    if (payment.type === 'credit') { ... }
+    else if (payment.type === 'paypal') { ... }
+    // 新しい支払い方法を追加するには
+    // ここにelse ifを追加
+  }
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">拡張で対応</div>
+<pre><code>// 新機能 = 新クラス追加
+interface PaymentStrategy {
+  process(amount: number): Promise&lt;Result&gt;;
+}
+
+class CreditCardPayment implements PaymentStrategy {
+  async process(amount: number): Promise&lt;Result&gt; { ... }
+}
+
+class PayPalPayment implements PaymentStrategy {
+  async process(amount: number): Promise&lt;Result&gt; { ... }
+}
+
+// 新しい支払い方法は新クラスを追加するだけ
+class CryptoPayment implements PaymentStrategy {
+  async process(amount: number): Promise&lt;Result&gt; { ... }
+}
+
+// 既存コードは変更不要
+class PaymentProcessor {
+  constructor(private strategy: PaymentStrategy) {}
+
+  async process(amount: number): Promise&lt;Result&gt; {
+    return this.strategy.process(amount);
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>なぜ修正を避けるべきか</h2>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      既存コード修正のリスク
+    </div>
+    <ul>
+      <li><strong>バグの混入</strong>：動いていたコードを壊す可能性</li>
+      <li><strong>テストの再実行</strong>：変更箇所だけでなく全体のテストが必要</li>
+      <li><strong>レビューの負担</strong>：既存ロジックの理解が必要</li>
+      <li><strong>デプロイのリスク</strong>：変更が広範囲に影響</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-solid4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>OCPの「拡張に開いている」とは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-solid4" style="display:none;">
+      A. 新機能を追加するとき、新しいコードを追加するだけでよい
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid4" style="display:none;">
+      B. 誰でもコードを修正できる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid4" style="display:none;">
+      C. すべてのメソッドがpublicである
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-solid4')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('solid4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="solid5">
+  <h1>OCP実践</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Strategyパターンでの実現</li>
+      <li>Template Methodパターンでの実現</li>
+      <li>if文の追加を見つける方法</li>
+    </ul>
+  </div>
+
+  <h2>Strategyパターン</h2>
+
+  <p>
+    <strong>アルゴリズムをオブジェクトとして切り出す</strong>パターンです。
+  </p>
+
+  <div class="card">
+<pre><code>// 割引計算のStrategy
+interface DiscountStrategy {
+  calculate(price: number): number;
+}
+
+class NoDiscount implements DiscountStrategy {
+  calculate(price: number): number {
+    return price;
+  }
+}
+
+class PercentageDiscount implements DiscountStrategy {
+  constructor(private percent: number) {}
+
+  calculate(price: number): number {
+    return price * (1 - this.percent / 100);
+  }
+}
+
+class FixedDiscount implements DiscountStrategy {
+  constructor(private amount: number) {}
+
+  calculate(price: number): number {
+    return Math.max(0, price - this.amount);
+  }
+}
+
+// 新しい割引タイプは新クラスを追加するだけ
+class BuyOneGetOneFree implements DiscountStrategy {
+  calculate(price: number): number {
+    return price / 2;
+  }
+}
+
+// 利用側は変更不要
+class PriceCalculator {
+  constructor(private discount: DiscountStrategy) {}
+
+  calculate(basePrice: number): number {
+    return this.discount.calculate(basePrice);
+  }
+}</code></pre>
+  </div>
+
+  <h2>Template Methodパターン</h2>
+
+  <p>
+    <strong>処理の骨格を定義し、詳細をサブクラスに任せる</strong>パターンです。
+  </p>
+
+  <div class="card">
+<pre><code>// 処理の骨格を定義
+abstract class DataExporter {
+  // テンプレートメソッド（骨格）
+  export(data: Data[]): string {
+    const header = this.createHeader();
+    const body = this.formatData(data);
+    const footer = this.createFooter();
+    return header + body + footer;
+  }
+
+  // サブクラスで実装
+  protected abstract createHeader(): string;
+  protected abstract formatData(data: Data[]): string;
+  protected abstract createFooter(): string;
+}
+
+class CSVExporter extends DataExporter {
+  protected createHeader(): string {
+    return "id,name,value\n";
+  }
+
+  protected formatData(data: Data[]): string {
+    return data.map(d => `${d.id},${d.name},${d.value}`).join("\n");
+  }
+
+  protected createFooter(): string {
+    return "";
+  }
+}
+
+class XMLExporter extends DataExporter {
+  protected createHeader(): string {
+    return "&lt;?xml version=\"1.0\"?&gt;&lt;data&gt;";
+  }
+
+  protected formatData(data: Data[]): string {
+    return data.map(d => `&lt;item id="${d.id}"&gt;...&lt;/item&gt;`).join("");
+  }
+
+  protected createFooter(): string {
+    return "&lt;/data&gt;";
+  }
+}
+
+// 新しいフォーマットは新クラスを追加するだけ
+class JSONExporter extends DataExporter {
+  // ...
+}</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p><strong>OCP違反の兆候</strong>：</p>
+    <ul>
+      <li><strong>switch文/if-else文</strong>が型やカテゴリで分岐している</li>
+      <li>新機能追加のたびに<strong>同じファイル</strong>を修正している</li>
+      <li>PRで<strong>「〜の場合を追加」</strong>というコメントが多い</li>
+    </ul>
+<pre><code>// ❌ このパターンを見つけたら要注意
+if (type === 'A') { ... }
+else if (type === 'B') { ... }
+else if (type === 'C') { ... }  // また追加...</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-solid5-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>OCPを実現するためによく使われるパターンは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-solid5-1" style="display:none;">
+      A. StrategyパターンとTemplate Methodパターン
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid5-1" style="display:none;">
+      B. Singletonパターン
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid5-1" style="display:none;">
+      C. Facadeパターン
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-solid5-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-solid5-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>このコードの問題点は？</p>
+<pre><code>function getShippingCost(method: string): number {
+  if (method === 'standard') return 500;
+  if (method === 'express') return 1000;
+  if (method === 'overnight') return 2000;
+  throw new Error('Unknown method');
+}</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-solid5-2" style="display:none;">
+      A. 新しい配送方法を追加するたびにこの関数を修正する必要がある
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid5-2" style="display:none;">
+      B. 戻り値の型がないのが問題
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid5-2" style="display:none;">
+      C. 特に問題はない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-solid5-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('solid5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="solid6">
+  <h1>リスコフの置換原則（LSP）</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>LSP（Liskov Substitution Principle）とは</li>
+      <li>「置換可能」の意味</li>
+      <li>継承の正しい使い方</li>
+    </ul>
+  </div>
+
+  <h2>LSPとは</h2>
+
+  <p>
+    <strong>「派生型（子クラス）は基底型（親クラス）と置換可能でなければならない」</strong>
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：代打
+    </div>
+    <p>
+      野球で「代打」が出ても、<strong>打席に立ってバットを振る</strong>ことは同じ。<br>
+      代打が突然サッカーを始めたらルール違反。
+    </p>
+    <p style="margin:0;">
+      子クラスも同じ。親クラスの<strong>「契約」を守る</strong>必要がある。<br>
+      親クラスを使っていた場所に子クラスを入れても、<strong>正しく動く</strong>べき。
+    </p>
+  </div>
+
+  <h2>LSP違反の例：正方形と長方形</h2>
+
+  <div class="card card-danger">
+<pre><code>// ❌ 有名なLSP違反の例
+class Rectangle {
+  constructor(protected width: number, protected height: number) {}
+
+  setWidth(width: number): void { this.width = width; }
+  setHeight(height: number): void { this.height = height; }
+  getArea(): number { return this.width * this.height; }
+}
+
+class Square extends Rectangle {
+  // 正方形は幅と高さが同じ
+  setWidth(width: number): void {
+    this.width = width;
+    this.height = width;  // 予期しない副作用！
+  }
+  setHeight(height: number): void {
+    this.width = height;
+    this.height = height;  // 予期しない副作用！
+  }
+}
+
+// Rectangleを使うコード
+function testRectangle(rect: Rectangle): void {
+  rect.setWidth(5);
+  rect.setHeight(4);
+  console.assert(rect.getArea() === 20);  // 期待: 5 * 4 = 20
+}
+
+const rect = new Rectangle(0, 0);
+testRectangle(rect);  // OK: 20
+
+const square = new Square(0, 0);
+testRectangle(square);  // NG: 16（4 * 4）
+// 「長方形」のつもりで使ったら壊れた！</code></pre>
+  </div>
+
+  <h2>LSP準拠の設計</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">LSP違反</div>
+<pre><code>// 「正方形は長方形である」は
+// 数学的には正しいが
+// プログラム的には問題
+
+class Square extends Rectangle {
+  // setWidth/setHeightの契約を破る
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">LSP準拠</div>
+<pre><code>// 継承関係を見直す
+interface Shape {
+  getArea(): number;
+}
+
+class Rectangle implements Shape {
+  constructor(private width: number, private height: number) {}
+  getArea(): number { return this.width * this.height; }
+}
+
+class Square implements Shape {
+  constructor(private side: number) {}
+  getArea(): number { return this.side * this.side; }
+}
+
+// 共通インターフェースで扱える
+// でも「契約」は破らない</code></pre>
+    </div>
+  </div>
+
+  <h2>契約とは</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📝</span>
+      契約の要素
+    </div>
+    <ul>
+      <li><strong>事前条件</strong>：メソッド呼び出し前に満たすべき条件</li>
+      <li><strong>事後条件</strong>：メソッド呼び出し後に保証される条件</li>
+      <li><strong>不変条件</strong>：常に満たされるべき条件</li>
+    </ul>
+    <p style="margin:0;">
+      子クラスは：<br>
+      ・事前条件を<strong>緩める</strong>のはOK（より多くの入力を受け付ける）<br>
+      ・事後条件を<strong>厳しくする</strong>のはOK（より多くを保証する）<br>
+      ・逆は<strong>NG</strong>
+    </p>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>LSP違反の兆候：</p>
+    <ul>
+      <li>オーバーライドで<strong>例外をthrow</strong>する</li>
+      <li>オーバーライドで<strong>何もしない（空実装）</strong></li>
+      <li><strong>instanceof</strong>で型をチェックしてから処理</li>
+    </ul>
+<pre><code>// ❌ 危険なパターン
+class Bird {
+  fly(): void { ... }
+}
+
+class Penguin extends Bird {
+  fly(): void {
+    throw new Error("Penguins can't fly");  // 契約違反
+  }
+}</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-solid6-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>LSPの「置換可能」とは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-solid6-1" style="display:none;">
+      A. 親クラスを使っている場所に子クラスを入れても正しく動く
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid6-1" style="display:none;">
+      B. 子クラスを親クラスに変換できる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid6-1" style="display:none;">
+      C. インスタンスを入れ替えられる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-solid6-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-solid6-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>このコードの問題点は？</p>
+<pre><code>class FileReader {
+  read(path: string): string { ... }
+}
+
+class SecureFileReader extends FileReader {
+  read(path: string): string {
+    if (!this.hasPermission(path)) {
+      throw new Error("Permission denied");
+    }
+    return super.read(path);
+  }
+}</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-solid6-2" style="display:none;">
+      A. 事前条件が厳しくなっている（LSP違反）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid6-2" style="display:none;">
+      B. 戻り値の型が違う
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid6-2" style="display:none;">
+      C. 特に問題はない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-solid6-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('solid6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="solid7">
+  <h1>インターフェース分離の原則（ISP）</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ISP（Interface Segregation Principle）とは</li>
+      <li>「太った」インターフェースの問題</li>
+      <li>適切な分割の仕方</li>
+    </ul>
+  </div>
+
+  <h2>ISPとは</h2>
+
+  <p>
+    <strong>「クライアントは使わないメソッドに依存すべきでない」</strong>
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：多機能リモコン
+    </div>
+    <p>
+      テレビ、エアコン、照明、カーテン...全部操作できる<strong>万能リモコン</strong>。<br>
+      でもテレビだけ見たい人には<strong>ボタンが多すぎて使いづらい</strong>。
+    </p>
+    <p style="margin:0;">
+      インターフェースも同じ。<br>
+      <strong>使わない機能まで実装を強制</strong>されるのは問題。
+    </p>
+  </div>
+
+  <h2>ISP違反の例</h2>
+
+  <div class="card card-danger">
+<pre><code>// ❌ 肥大なインターフェース
+interface Worker {
+  work(): void;
+  eat(): void;
+  sleep(): void;
+  code(): void;
+  manage(): void;
+}
+
+// 人間は全部できる
+class Human implements Worker {
+  work(): void { console.log("働く"); }
+  eat(): void { console.log("食べる"); }
+  sleep(): void { console.log("寝る"); }
+  code(): void { console.log("コードを書く"); }
+  manage(): void { console.log("管理する"); }
+}
+
+// ロボットは食べたり寝たりできない
+class Robot implements Worker {
+  work(): void { console.log("働く"); }
+  eat(): void { throw new Error("Robots can't eat"); }  // 無意味
+  sleep(): void { throw new Error("Robots can't sleep"); }  // 無意味
+  code(): void { console.log("コードを書く"); }
+  manage(): void { throw new Error("Not applicable"); }  // 無意味
+}</code></pre>
+    <p style="margin:0;">
+      ロボットは<strong>使えないメソッドの実装を強制</strong>されている。<br>
+      → ISP違反
+    </p>
+  </div>
+
+  <h2>ISP準拠の設計</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">太いインターフェース</div>
+<pre><code>interface Worker {
+  work(): void;
+  eat(): void;
+  sleep(): void;
+  code(): void;
+  manage(): void;
+}
+
+// 全部実装が必要</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">分離されたインターフェース</div>
+<pre><code>interface Workable {
+  work(): void;
+}
+
+interface Eatable {
+  eat(): void;
+}
+
+interface Sleepable {
+  sleep(): void;
+}
+
+interface Codeable {
+  code(): void;
+}
+
+// 必要なものだけ実装
+class Human implements Workable, Eatable, Sleepable, Codeable {
+  work(): void { ... }
+  eat(): void { ... }
+  sleep(): void { ... }
+  code(): void { ... }
+}
+
+class Robot implements Workable, Codeable {
+  work(): void { ... }
+  code(): void { ... }
+  // eat, sleepは不要
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>分割の基準</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      インターフェース分割のヒント
+    </div>
+    <ul>
+      <li><strong>役割ごと</strong>に分ける（Reader, Writer, Validator...）</li>
+      <li><strong>クライアントの視点</strong>で考える（何を使いたいか？）</li>
+      <li><strong>「使わないメソッドがある」</strong>と感じたら分割を検討</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>ISP違反の兆候：</p>
+    <ul>
+      <li>インターフェースに<strong>メソッドが10個以上</strong></li>
+      <li>実装クラスで<strong>throw new Error("Not implemented")</strong></li>
+      <li>実装クラスで<strong>空のメソッド</strong>がある</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-solid7">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ISPの目的は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid7" style="display:none;">
+      A. インターフェースの数を減らす
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-solid7" style="display:none;">
+      B. クライアントが使わないメソッドに依存しないようにする
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid7" style="display:none;">
+      C. すべてのクラスにインターフェースを付ける
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-solid7')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('solid7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="solid8">
+  <h1>依存性逆転の原則（DIP）</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>DIP（Dependency Inversion Principle）とは</li>
+      <li>「抽象に依存する」の意味</li>
+      <li>なぜ具象への依存が問題か</li>
+    </ul>
+  </div>
+
+  <h2>DIPとは</h2>
+
+  <p>
+    <strong>「上位モジュールは下位モジュールに依存すべきでない。どちらも抽象に依存すべき」</strong>
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：電源コンセント
+    </div>
+    <p>
+      掃除機は<strong>コンセントの規格（抽象）</strong>に依存している。<br>
+      「東京電力の電気」とか「関西電力の電気」（具象）には依存していない。
+    </p>
+    <p style="margin:0;">
+      だから<strong>どこでも使える</strong>。<br>
+      電力会社を変えても、掃除機を買い替える必要はない。
+    </p>
+  </div>
+
+  <!-- 依存性逆転の原則 SVG図 -->
+  <svg viewBox="0 0 500 180" style="max-width: 500px; width: 100%; height: auto; display: block; margin: 1.5rem auto;" role="img" aria-label="依存性逆転の原則の図解">
+    <title>DIP - 依存の方向を逆転させる</title>
+
+    <!-- 左側：DIP違反（具象に依存） -->
+    <text x="120" y="20" text-anchor="middle" fill="#e74c3c" font-size="11" font-weight="bold">❌ DIP違反</text>
+
+    <rect x="60" y="35" width="120" height="35" rx="5" fill="#3498db" opacity="0.9"/>
+    <text x="120" y="57" text-anchor="middle" fill="white" font-size="10" font-weight="bold">OrderService</text>
+    <text x="120" y="68" text-anchor="middle" fill="white" font-size="8">(上位モジュール)</text>
+
+    <!-- 下向き矢印（依存） -->
+    <line x1="120" y1="70" x2="120" y2="100" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrowRed)"/>
+    <text x="145" y="88" fill="#e74c3c" font-size="8">依存</text>
+
+    <rect x="40" y="105" width="70" height="35" rx="4" fill="#95a5a6"/>
+    <text x="75" y="123" text-anchor="middle" fill="white" font-size="9">GmailSender</text>
+    <text x="75" y="135" text-anchor="middle" fill="white" font-size="7">(具象)</text>
+
+    <rect x="130" y="105" width="70" height="35" rx="4" fill="#95a5a6"/>
+    <text x="165" y="123" text-anchor="middle" fill="white" font-size="9">MySQLRepo</text>
+    <text x="165" y="135" text-anchor="middle" fill="white" font-size="7">(具象)</text>
+
+    <text x="120" y="160" text-anchor="middle" fill="#e74c3c" font-size="9">変更が波及 / テスト困難</text>
+
+    <!-- 中央の仕切り線 -->
+    <line x1="250" y1="10" x2="250" y2="170" stroke="#ccc" stroke-width="1" stroke-dasharray="4,4"/>
+
+    <!-- 右側：DIP準拠（抽象に依存） -->
+    <text x="380" y="20" text-anchor="middle" fill="#27ae60" font-size="11" font-weight="bold">✓ DIP準拠</text>
+
+    <rect x="320" y="35" width="120" height="35" rx="5" fill="#3498db" opacity="0.9"/>
+    <text x="380" y="57" text-anchor="middle" fill="white" font-size="10" font-weight="bold">OrderService</text>
+    <text x="380" y="68" text-anchor="middle" fill="white" font-size="8">(上位モジュール)</text>
+
+    <!-- 下向き矢印（抽象に依存） -->
+    <line x1="380" y1="70" x2="380" y2="100" stroke="#27ae60" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+    <!-- 抽象インターフェース -->
+    <rect x="300" y="105" width="75" height="30" rx="4" fill="#f39c12" stroke="#f39c12" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <text x="337" y="123" text-anchor="middle" fill="white" font-size="9">EmailSender</text>
+
+    <rect x="385" y="105" width="75" height="30" rx="4" fill="#f39c12" stroke="#f39c12" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <text x="422" y="123" text-anchor="middle" fill="white" font-size="9">Repository</text>
+
+    <!-- 上向き矢印（具象が抽象を実装） -->
+    <line x1="337" y1="165" x2="337" y2="140" stroke="#27ae60" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+    <line x1="422" y1="165" x2="422" y2="140" stroke="#27ae60" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+
+    <text x="290" y="173" fill="#666" font-size="7">GmailSender</text>
+    <text x="375" y="173" fill="#666" font-size="7">PostgresRepo</text>
+
+    <text x="380" y="160" text-anchor="middle" fill="#27ae60" font-size="9">両方が抽象に依存</text>
+
+    <!-- 矢印マーカー定義 -->
+    <defs>
+      <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L9,3 z" fill="#e74c3c"/>
+      </marker>
+      <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L9,3 z" fill="#27ae60"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <h2>DIP違反の例</h2>
+
+  <div class="card card-danger">
+<pre><code>// ❌ 具象クラスに直接依存
+class OrderService {
+  // 具体的なクラスをnewしている
+  private emailSender = new GmailSender();
+  private repository = new MySQLOrderRepository();
+
+  async createOrder(data: OrderData): Promise&lt;Order&gt; {
+    const order = await this.repository.save(data);
+    await this.emailSender.send(order.userEmail, 'Order confirmed');
+    return order;
+  }
+}
+
+// 問題点：
+// 1. GmailをSendGridに変えたい → OrderServiceを修正
+// 2. MySQLをPostgreSQLに変えたい → OrderServiceを修正
+// 3. テストでモックを使いたい → できない！</code></pre>
+  </div>
+
+  <h2>DIP準拠の設計</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">具象に依存</div>
+<pre><code>class OrderService {
+  // 具体的なクラスをnew
+  private email = new GmailSender();
+  private repo = new MySQLRepo();
+}
+
+// テスト困難
+// 変更が波及</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">抽象に依存</div>
+<pre><code>// インターフェース（抽象）を定義
+interface EmailSender {
+  send(to: string, msg: string): Promise&lt;void&gt;;
+}
+
+interface OrderRepository {
+  save(data: OrderData): Promise&lt;Order&gt;;
+}
+
+class OrderService {
+  // インターフェースに依存
+  constructor(
+    private emailSender: EmailSender,
+    private repository: OrderRepository
+  ) {}
+
+  async createOrder(data: OrderData): Promise&lt;Order&gt; {
+    const order = await this.repository.save(data);
+    await this.emailSender.send(order.userEmail, 'Order confirmed');
+    return order;
+  }
+}
+
+// 実装は外から注入
+const service = new OrderService(
+  new GmailSender(),  // または SendGridSender
+  new MySQLOrderRepository()  // または PostgreSQLRepo
+);</code></pre>
+    </div>
+  </div>
+
+  <h2>依存関係の「逆転」</h2>
+
+  <div class="card">
+<pre><code>// 従来の依存方向
+// OrderService → GmailSender（上位が下位に依存）
+
+// DIP適用後の依存方向
+// OrderService → EmailSender（インターフェース）← GmailSender
+// 上位モジュール → 抽象 ← 下位モジュール
+
+// 「依存の方向」が逆転している！
+// 下位モジュール（GmailSender）が抽象（EmailSender）に依存するようになった</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>DIP違反の兆候：</p>
+    <ul>
+      <li>クラス内で<strong>new 具象クラス()</strong>している</li>
+      <li><strong>import</strong>で具象クラスを直接読み込んでいる</li>
+      <li>テストで<strong>モックできない</strong>依存がある</li>
+    </ul>
+<pre><code>// ❌ 危険なパターン
+import { PrismaClient } from '@prisma/client';
+
+class UserService {
+  private prisma = new PrismaClient();  // 具象に依存
+}</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-solid8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>DIPの「抽象に依存する」とは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-solid8" style="display:none;">
+      A. 具体的なクラスではなくインターフェースに依存する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid8" style="display:none;">
+      B. 抽象クラスを継承する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid8" style="display:none;">
+      C. 依存関係を減らす
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-solid8')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('solid8')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="solid9">
+  <h1>DIP実践</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>依存性注入（DI）の実装方法</li>
+      <li>コンストラクタ注入</li>
+      <li>IoC（制御の逆転）</li>
+    </ul>
+  </div>
+
+  <h2>依存性注入（DI）</h2>
+
+  <p>
+    <strong>依存性注入</strong> = 依存するオブジェクトを外から渡すこと
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">自分でnewする</div>
+<pre><code>class UserService {
+  // 自分で依存を作る
+  private repo = new UserRepository();
+  private logger = new ConsoleLogger();
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">外から注入</div>
+<pre><code>class UserService {
+  // 外から渡してもらう
+  constructor(
+    private repo: UserRepository,
+    private logger: Logger
+  ) {}
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>コンストラクタ注入</h2>
+
+  <p>
+    最も一般的な注入方法です。
+  </p>
+
+  <div class="card">
+<pre><code>// インターフェース定義
+interface Logger {
+  log(message: string): void;
+}
+
+interface UserRepository {
+  findById(id: string): Promise&lt;User | null&gt;;
+  save(user: User): Promise&lt;void&gt;;
+}
+
+// 実装クラス
+class ConsoleLogger implements Logger {
+  log(message: string): void {
+    console.log(`[LOG] ${message}`);
+  }
+}
+
+class PostgresUserRepository implements UserRepository {
+  async findById(id: string): Promise&lt;User | null&gt; { ... }
+  async save(user: User): Promise&lt;void&gt; { ... }
+}
+
+// コンストラクタで注入
+class UserService {
+  constructor(
+    private repository: UserRepository,
+    private logger: Logger
+  ) {}
+
+  async getUser(id: string): Promise&lt;User&gt; {
+    this.logger.log(`Getting user: ${id}`);
+    const user = await this.repository.findById(id);
+    if (!user) throw new Error('User not found');
+    return user;
+  }
+}
+
+// 組み立て（本番）
+const userService = new UserService(
+  new PostgresUserRepository(),
+  new ConsoleLogger()
+);
+
+// 組み立て（テスト）
+const mockRepo: UserRepository = {
+  findById: jest.fn().mockResolvedValue({ id: '1', name: 'Test' }),
+  save: jest.fn()
+};
+const mockLogger: Logger = { log: jest.fn() };
+const testService = new UserService(mockRepo, mockLogger);</code></pre>
+  </div>
+
+  <h2>IoC（制御の逆転）</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">📝</span>
+      IoCとは
+    </div>
+    <p>
+      <strong>制御の逆転（Inversion of Control）</strong> = 制御フローを外部に委ねること
+    </p>
+    <ul>
+      <li><strong>従来</strong>：UserServiceが自分でUserRepositoryをnewする（制御している）</li>
+      <li><strong>IoC</strong>：外部（フレームワーク/コンテナ）がUserRepositoryを渡す（制御を委ねる）</li>
+    </ul>
+    <p style="margin:0;">
+      DIはIoCを実現する<strong>手段の1つ</strong>です。
+    </p>
+  </div>
+
+  <h2>DIコンテナ</h2>
+
+  <div class="card">
+<pre><code>// 実務ではDIコンテナを使うことが多い
+// 例: tsyringe, inversify, NestJS
+
+// NestJSの例
+@Injectable()
+class UserService {
+  constructor(
+    @Inject('UserRepository')
+    private repository: UserRepository,
+    private logger: Logger
+  ) {}
+}
+
+// モジュールで登録
+@Module({
+  providers: [
+    UserService,
+    { provide: 'UserRepository', useClass: PostgresUserRepository },
+    Logger
+  ]
+})
+class UserModule {}
+
+// フレームワークが自動で依存を解決して注入してくれる</code></pre>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      コードレビューの観点
+    </div>
+    <p>DIP違反パターンを探す：</p>
+<pre><code>// ❌ 危険なパターン1: クラス内でnew
+class Service {
+  private dep = new ConcreteDependency();
+}
+
+// ❌ 危険なパターン2: シングルトンの直接参照
+class Service {
+  doSomething() {
+    const config = ConfigManager.getInstance();  // 隠れた依存
+  }
+}
+
+// ⭕ コンストラクタで明示的に受け取る
+class Service {
+  constructor(private dep: Dependency, private config: Config) {}
+}</code></pre>
+  </div>
+
+  <div class="quiz" id="quiz-solid9-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>依存性注入（DI）の主な利点は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid9-1" style="display:none;">
+      A. 実行速度が上がる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-solid9-1" style="display:none;">
+      B. テスト時にモックを注入できる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid9-1" style="display:none;">
+      C. コード量が減る
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-solid9-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz-solid9-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>このコードをDIP準拠にする方法は？</p>
+<pre><code>class NotificationService {
+  private sender = new EmailSender();
+
+  notify(user: User, message: string): void {
+    this.sender.send(user.email, message);
+  }
+}</code></pre>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-solid9-2" style="display:none;">
+      A. EmailSenderをインターフェースにし、コンストラクタで注入する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid9-2" style="display:none;">
+      B. EmailSenderをpublicにする
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid9-2" style="display:none;">
+      C. staticメソッドにする
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-solid9-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('solid9')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="solid10">
+  <h1>SOLIDと関数型</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>SOLID原則の関数型プログラミングでの解釈</li>
+      <li>純粋関数とイミュータビリティ</li>
+      <li>現代的なアプローチ</li>
+    </ul>
+  </div>
+
+  <h2>SOLID原則の関数型での解釈</h2>
+
+  <p>
+    SOLID原則は<strong>OOPの文脈</strong>で生まれましたが、<br>
+    <strong>関数型プログラミング</strong>にも適用できます。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:10%;">原則</th>
+        <th style="width:40%;">OOPでの意味</th>
+        <th>関数型での解釈</th>
+      </tr>
+      <tr>
+        <td><strong>S</strong></td>
+        <td>1クラス1責務</td>
+        <td>1関数1責務、純粋関数</td>
+      </tr>
+      <tr>
+        <td><strong>O</strong></td>
+        <td>拡張に開き修正に閉じる</td>
+        <td>高階関数、関数合成</td>
+      </tr>
+      <tr>
+        <td><strong>L</strong></td>
+        <td>派生型は基底型と置換可能</td>
+        <td>型の置換性、ジェネリクス</td>
+      </tr>
+      <tr>
+        <td><strong>I</strong></td>
+        <td>インターフェースを小さく</td>
+        <td>小さな関数シグネチャ</td>
+      </tr>
+      <tr>
+        <td><strong>D</strong></td>
+        <td>抽象に依存</td>
+        <td>関数を引数で受け取る</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>SRP：純粋関数</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">複数の責務</div>
+<pre><code>// ❌ 1つの関数で複数のことをやる
+function processUser(user: User): void {
+  // バリデーション
+  if (!user.email) throw new Error('Invalid');
+
+  // 変換
+  user.name = user.name.toUpperCase();
+
+  // 保存
+  database.save(user);
+
+  // 通知
+  sendEmail(user.email, 'Welcome');
+}</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">単一責務の純粋関数</div>
+<pre><code>// ⭕ 各関数が1つのことだけをする
+const validate = (user: User): boolean =>
+  !!user.email;
+
+const normalizeUser = (user: User): User =>
+  ({ ...user, name: user.name.toUpperCase() });
+
+// 組み合わせて使う
+const processUser = async (user: User): Promise&lt;void&gt; => {
+  if (!validate(user)) throw new Error('Invalid');
+  const normalized = normalizeUser(user);
+  await saveUser(normalized);
+  await sendWelcomeEmail(normalized.email);
+};</code></pre>
+    </div>
+  </div>
+
+  <h2>OCP：高階関数</h2>
+
+  <div class="card">
+<pre><code>// 高階関数でOCPを実現
+type Middleware&lt;T&gt; = (data: T) => T;
+
+// 基本の処理（修正に閉じている）
+const process = &lt;T&gt;(data: T, middlewares: Middleware&lt;T&gt;[]): T =>
+  middlewares.reduce((acc, fn) => fn(acc), data);
+
+// 機能追加は新しい関数を追加するだけ（拡張に開いている）
+const addTimestamp: Middleware&lt;Request&gt; = (req) =>
+  ({ ...req, timestamp: Date.now() });
+
+const addUserId: Middleware&lt;Request&gt; = (req) =>
+  ({ ...req, userId: getCurrentUserId() });
+
+// 組み合わせ
+const result = process(request, [addTimestamp, addUserId]);</code></pre>
+  </div>
+
+  <h2>DIP：関数を引数で受け取る</h2>
+
+  <div class="card">
+<pre><code>// 具象に依存しない関数
+type Logger = (message: string) => void;
+type Repository&lt;T&gt; = {
+  save: (item: T) => Promise&lt;void&gt;;
+  findById: (id: string) => Promise&lt;T | null&gt;;
+};
+
+// 依存を引数で受け取る（関数版DI）
+const createUserService = (
+  repo: Repository&lt;User&gt;,
+  logger: Logger
+) => ({
+  getUser: async (id: string): Promise&lt;User&gt; => {
+    logger(`Getting user: ${id}`);
+    const user = await repo.findById(id);
+    if (!user) throw new Error('Not found');
+    return user;
+  },
+
+  saveUser: async (user: User): Promise&lt;void&gt; => {
+    logger(`Saving user: ${user.id}`);
+    await repo.save(user);
+  }
+});
+
+// 本番
+const userService = createUserService(
+  postgresRepo,
+  console.log
+);
+
+// テスト
+const testService = createUserService(
+  mockRepo,
+  () => {}  // ログ無効化
+);</code></pre>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">🎉</span>
+      Phase 2 完了！
+    </div>
+    <p>
+      SOLID原則を学びました。<br>
+      次のPhaseでは<strong>デザインパターン</strong>を学びます。
+    </p>
+    <p style="margin:0;">
+      SOLID原則は<strong>コードレビューの最重要チェックポイント</strong>です。<br>
+      常に意識して、違反を見つけられるようになりましょう。
+    </p>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📝</span>
+      SOLIDチェックリスト
+    </div>
+    <ul>
+      <li><strong>SRP</strong>: このクラス/関数は1つの理由でのみ変更されるか？</li>
+      <li><strong>OCP</strong>: 新機能追加で既存コードを修正していないか？</li>
+      <li><strong>LSP</strong>: サブクラスは親クラスの契約を守っているか？</li>
+      <li><strong>ISP</strong>: 使わないメソッドの実装を強制していないか？</li>
+      <li><strong>DIP</strong>: 具象クラスではなく抽象に依存しているか？</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-solid10">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>関数型プログラミングでDIPを実現する方法は？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-solid10" style="display:none;">
+      A. 依存する関数を引数で受け取る
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid10" style="display:none;">
+      B. グローバル関数を使う
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-solid10" style="display:none;">
+      C. クロージャを使わない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-solid10')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('solid10')">
+    <span class="icon">✓</span>
+    Phase 2を完了
+  </button>
+</section>
