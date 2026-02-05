@@ -1019,3 +1019,217 @@ export { calculateTotal, addToCart, applyCoupon, checkout };</code></pre>
     <span class="icon">✓</span> このページを完了
   </button>
 </section>
+
+<section id="ex-ai-16">
+  <h1>問題 16: AI生成コードのセキュリティ修正</h1>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">🤖</span> AI生成シナリオ</div>
+    <p>AIに「ユーザーのプロフィール更新機能を作って。入力されたHTMLも表示できるようにして」と依頼したら、以下のNode.js/Expressコードが生成されました。セキュリティ上の問題を見抜いてください。</p>
+  </div>
+
+  <h2>AIが生成したコード</h2>
+<pre><code>const express = require('express');
+const router = express.Router();
+
+// ユーザープロフィール更新API
+router.post('/api/profile/update', (req, res) =&gt; {
+  const { username, bio, website } = req.body;
+
+  // ユーザー名のバリデーション
+  if (username.length &lt; 3) {
+    return res.status(400).json({ error: 'Username too short' });
+  }
+
+  // bioをそのままHTMLとしてDBに保存
+  const sanitizedBio = bio; // そのまま保存
+
+  // SQLクエリの組み立て
+  const query = `UPDATE users SET
+    username = '${username}',
+    bio = '${sanitizedBio}',
+    website = '${website}'
+    WHERE id = ${req.query.userId}`;
+
+  db.execute(query);
+
+  // プロフィールページ生成
+  const profileHtml = `
+    &lt;div class="profile"&gt;
+      &lt;h1&gt;${username}&lt;/h1&gt;
+      &lt;div class="bio"&gt;${bio}&lt;/div&gt;
+      &lt;a href="${website}"&gt;Website&lt;/a&gt;
+    &lt;/div&gt;
+  `;
+
+  // 動的にスクリプトを実行して追加データを取得
+  const additionalData = eval('(' + req.body.preferences + ')');
+
+  res.json({
+    success: true,
+    html: profileHtml,
+    preferences: additionalData
+  });
+});</code></pre>
+
+  <div class="quiz" id="quiz-ex-ai-16">
+    <div class="quiz-question"><strong>問題：</strong>このコードに含まれるセキュリティ脆弱性として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-ai-16" value="a">
+        A. SQLインジェクションのみ。プリペアドステートメントを使えば全て解決する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-ai-16" value="b">
+        B. XSSのみ。DOMPurifyでサニタイズすれば問題ない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-ai-16" value="c">
+        C. evalの使用のみ。JSON.parseに置き換えれば安全
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="このコードには少なくとも4つの深刻なセキュリティ脆弱性があります。(1) SQLインジェクション: ユーザー入力を文字列連結でSQL文に埋め込んでおり、プリペアドステートメントを使用していない。(2) XSS（クロスサイトスクリプティング）: bioやusernameをエスケープせずにHTMLに直接埋め込み、さらにwebsiteもhrefにそのまま展開しているため javascript: スキームによるXSSも可能。(3) eval()によるRCE（リモートコード実行）: req.body.preferencesをevalで実行しており、任意のサーバーサイドコードが実行可能。(4) IDOR（安全でない直接オブジェクト参照）: req.query.userIdで認証チェックなしに任意ユーザーを更新可能。AIはセキュリティ対策よりも「動くこと」を優先しがちで、特にサニタイズ・パラメータバインド・認証チェックが欠落しやすいです。">
+        <input type="radio" name="quiz-ex-ai-16" value="d">
+        D. SQLインジェクション、XSS、eval()によるRCE、IDORの4つの脆弱性が複合的に存在する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-ai-16')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-ai-16')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-ai-17">
+  <h1>問題 17: AI生成コードのパフォーマンス問題修正</h1>
+
+  <div class="card card-warning">
+    <div class="card-title"><span class="icon">🤖</span> AI生成シナリオ</div>
+    <p>AIに「商品一覧とフィルタ機能を持つReactコンポーネントを作って」と依頼したら、以下のコードが生成されました。動作はしますが、商品数が増えるとUIが極端に遅くなります。</p>
+  </div>
+
+  <h2>AIが生成したコード</h2>
+<pre><code>import React, { useState, useEffect } from 'react';
+
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  category: string;
+  tags: string[];
+}
+
+// 商品カード（子コンポーネント）
+const ProductCard = ({ product, onAddToCart, formatPrice }) =&gt; {
+  console.log('ProductCard rendered:', product.id);
+  return (
+    &lt;div className="product-card"&gt;
+      &lt;h3&gt;{product.name}&lt;/h3&gt;
+      &lt;p&gt;{formatPrice(product.price)}&lt;/p&gt;
+      &lt;p&gt;Tags: {product.tags.join(', ')}&lt;/p&gt;
+      &lt;button onClick={() =&gt; onAddToCart(product)}&gt;
+        カートに追加
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+};
+
+// 商品一覧（親コンポーネント）
+const ProductList = () =&gt; {
+  const [products, setProducts] = useState&lt;Product[]&gt;([]);
+  const [filter, setFilter] = useState('');
+  const [sortBy, setSortBy] = useState('name');
+  const [cart, setCart] = useState&lt;Product[]&gt;([]);
+
+  useEffect(() =&gt; {
+    fetch('/api/products')
+      .then(res =&gt; res.json())
+      .then(data =&gt; setProducts(data));
+  }, []);
+
+  // フィルタリング: 毎回全件走査
+  const filteredProducts = products.filter(p =&gt;
+    p.name.toLowerCase().includes(filter.toLowerCase()) ||
+    p.category.toLowerCase().includes(filter.toLowerCase()) ||
+    p.tags.some(t =&gt; t.toLowerCase().includes(filter.toLowerCase()))
+  );
+
+  // ソート: フィルタ結果を毎回ソート
+  const sortedProducts = [...filteredProducts].sort((a, b) =&gt; {
+    if (sortBy === 'name') return a.name.localeCompare(b.name);
+    if (sortBy === 'price') return a.price - b.price;
+    return 0;
+  });
+
+  // 合計金額計算
+  const cartTotal = cart.reduce((sum, item) =&gt; sum + item.price, 0);
+
+  // 価格フォーマット関数（毎レンダリングで新しい関数を生成）
+  const formatPrice = (price: number) =&gt; {
+    return new Intl.NumberFormat('ja-JP', {
+      style: 'currency',
+      currency: 'JPY'
+    }).format(price);
+  };
+
+  // カート追加ハンドラ（毎レンダリングで新しい関数を生成）
+  const handleAddToCart = (product: Product) =&gt; {
+    setCart([...cart, product]);
+  };
+
+  return (
+    &lt;div&gt;
+      &lt;input
+        value={filter}
+        onChange={e =&gt; setFilter(e.target.value)}
+        placeholder="商品を検索..."
+      /&gt;
+      &lt;select value={sortBy} onChange={e =&gt; setSortBy(e.target.value)}&gt;
+        &lt;option value="name"&gt;名前順&lt;/option&gt;
+        &lt;option value="price"&gt;価格順&lt;/option&gt;
+      &lt;/select&gt;
+      &lt;p&gt;カート合計: {formatPrice(cartTotal)}&lt;/p&gt;
+      &lt;div className="product-grid"&gt;
+        {sortedProducts.map(product =&gt; (
+          &lt;ProductCard
+            key={product.id}
+            product={product}
+            onAddToCart={handleAddToCart}
+            formatPrice={formatPrice}
+            style={{ border: '1px solid #ccc', padding: '16px' }}
+          /&gt;
+        ))}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+};</code></pre>
+
+  <div class="quiz" id="quiz-ex-ai-17">
+    <div class="quiz-question"><strong>問題：</strong>このコードで不要な再レンダリングやパフォーマンス低下を引き起こしている主な原因はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-ai-17" value="a">
+        A. useEffectの依存配列が空であること
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="AIはReactコンポーネントを生成する際、useMemo・useCallback・React.memoといったパフォーマンス最適化を省略する傾向があります。このコードの問題は複数あります。(1) formatPriceとhandleAddToCartが毎レンダリングで新しい関数参照を生成し、子コンポーネントに渡すため全ProductCardが毎回再レンダリングされる（useCallbackで解決）。(2) filteredProductsとsortedProductsの計算が毎レンダリング実行される（useMemoで解決）。(3) ProductCardがReact.memoでラップされていないため、propsが変わらなくても親の再レンダリングで全子が再描画される。(4) styleプロップに毎回新しいオブジェクトリテラルを渡している。商品が1000件あれば、フィルタ入力のたびに1000個のProductCardが全て再レンダリングされます。">
+        <input type="radio" name="quiz-ex-ai-17" value="b">
+        B. formatPrice・handleAddToCartが毎レンダリング再生成され、ProductCardがReact.memoなし、フィルタ・ソート計算もuseMemoなし、styleに毎回新規オブジェクト
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-ai-17" value="c">
+        C. filterのstateをuseRefに変更すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-ai-17" value="d">
+        D. fetchの結果をグローバル変数にキャッシュすべき
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-ai-17')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-ai-17')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

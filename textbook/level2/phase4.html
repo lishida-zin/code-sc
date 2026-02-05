@@ -1824,6 +1824,797 @@ user.greet();</code></pre>
       </button>
     </section>
 
+    <!-- modern8: クロージャ深掘り -->
+    <section id="modern8">
+      <h1>クロージャ深掘り</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>このページで学ぶこと
+        </div>
+        <ul>
+          <li>クロージャのメモリモデルを視覚的に理解する</li>
+          <li>プライベート変数の実現方法</li>
+          <li>実践パターン：モジュールパターン、カリー化</li>
+        </ul>
+      </div>
+
+      <h2>クロージャとは（おさらい）</h2>
+
+      <p>
+        クロージャとは、関数が<strong>外側のスコープの変数を「覚えている」</strong>仕組みです。<br>
+        関数が定義された場所の変数環境への参照を保持し続けます。
+      </p>
+
+      <h2>メモリモデルの図解</h2>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">🧠</span>
+          クロージャのメモリモデル
+        </div>
+        <svg viewBox="0 0 500 300" style="width:100%;max-width:500px;display:block;margin:1rem auto;" role="img" aria-label="クロージャのメモリモデル。外側スコープ（Closure Scope）が変数を保持し、内側関数がそれを参照する様子を示す。">
+          <!-- 外側スコープ -->
+          <rect x="20" y="20" width="460" height="120" rx="12" fill="#DBEAFE" stroke="#3B82F6" stroke-width="2"/>
+          <text x="250" y="48" text-anchor="middle" font-size="16" font-weight="bold" fill="currentColor">Closure Scope（外側スコープ）</text>
+
+          <!-- 変数ボックス -->
+          <rect x="50" y="65" width="120" height="55" rx="8" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.5"/>
+          <text x="110" y="87" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">count = 0</text>
+          <text x="110" y="107" text-anchor="middle" font-size="11" fill="currentColor">（保持される）</text>
+
+          <rect x="200" y="65" width="120" height="55" rx="8" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.5"/>
+          <text x="260" y="87" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">name = '太郎'</text>
+          <text x="260" y="107" text-anchor="middle" font-size="11" fill="currentColor">（保持される）</text>
+
+          <rect x="350" y="65" width="110" height="55" rx="8" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.5"/>
+          <text x="405" y="87" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">limit = 10</text>
+          <text x="405" y="107" text-anchor="middle" font-size="11" fill="currentColor">（保持される）</text>
+
+          <!-- 内側関数 -->
+          <rect x="120" y="190" width="260" height="90" rx="12" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/>
+          <text x="250" y="220" text-anchor="middle" font-size="16" font-weight="bold" fill="currentColor">内側の関数</text>
+          <text x="250" y="245" text-anchor="middle" font-size="12" fill="currentColor">return function() { count++; }</text>
+          <text x="250" y="268" text-anchor="middle" font-size="11" fill="currentColor">外側の変数にアクセス可能</text>
+
+          <!-- 参照矢印 -->
+          <line x1="200" y1="190" x2="110" y2="120" stroke="#F59E0B" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arrowOrange)"/>
+          <line x1="250" y1="190" x2="260" y2="120" stroke="#F59E0B" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arrowOrange)"/>
+          <line x1="310" y1="190" x2="405" y2="120" stroke="#F59E0B" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arrowOrange)"/>
+
+          <text x="145" y="162" text-anchor="middle" font-size="10" fill="#F59E0B" font-weight="bold">参照</text>
+          <text x="260" y="162" text-anchor="middle" font-size="10" fill="#F59E0B" font-weight="bold">参照</text>
+          <text x="365" y="162" text-anchor="middle" font-size="10" fill="#F59E0B" font-weight="bold">参照</text>
+
+          <defs>
+            <marker id="arrowOrange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#F59E0B"/>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+
+      <h2>プライベート変数パターン</h2>
+
+      <p>
+        クロージャを使うと、外部からアクセスできない<br>
+        <strong>プライベート変数</strong>を実現できます。
+      </p>
+
+      <pre><code>function createCounter(initial = 0) {
+  let count = initial;  // プライベート変数
+
+  return {
+    increment() {
+      count++;
+      return count;
+    },
+    decrement() {
+      count--;
+      return count;
+    },
+    getCount() {
+      return count;
+    }
+  };
+}
+
+const counter = createCounter(10);
+counter.increment();  // 11
+counter.increment();  // 12
+counter.decrement();  // 11
+counter.getCount();   // 11
+counter.count;        // undefined（直接アクセス不可！）</code></pre>
+
+      <h2>実践パターン1：モジュールパターン</h2>
+
+      <pre><code>const Logger = (function() {
+  // プライベート変数
+  const logs = [];
+  let enabled = true;
+
+  // 公開するメソッド
+  return {
+    log(message) {
+      if (enabled) {
+        logs.push({ message, time: new Date() });
+      }
+    },
+    getLogs() {
+      return [...logs];  // コピーを返す
+    },
+    enable()  { enabled = true; },
+    disable() { enabled = false; }
+  };
+})();
+
+Logger.log('ユーザーがログイン');
+Logger.log('ページを閲覧');
+Logger.getLogs();  // [{message: '...', time: ...}, ...]
+Logger.logs;       // undefined（プライベート）</code></pre>
+
+      <h2>実践パターン2：カリー化</h2>
+
+      <pre><code>// 汎用的なフィルター関数を作る
+function filterBy(key) {
+  return function(value) {
+    return function(array) {
+      return array.filter(item =&gt; item[key] === value);
+    };
+  };
+}
+
+// 段階的に適用
+const filterByStatus = filterBy('status');
+const getActive = filterByStatus('active');
+const getInactive = filterByStatus('inactive');
+
+const users = [
+  { name: '太郎', status: 'active' },
+  { name: '花子', status: 'inactive' },
+  { name: '次郎', status: 'active' }
+];
+
+getActive(users);    // [{ name: '太郎', ... }, { name: '次郎', ... }]
+getInactive(users);  // [{ name: '花子', ... }]</code></pre>
+
+      <h2>ループ内クロージャの罠</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">❌</span>
+          ループ内クロージャの罠（var vs let）
+        </div>
+        <p style="margin:0;">
+          <code>var</code>はブロックスコープを持たないため、<br>
+          ループ内でクロージャを作ると<strong>全て同じ変数を参照</strong>してしまいます。
+        </p>
+      </div>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-title">間違った方法</div>
+          <pre><code>// var を使った場合
+const buttons = [];
+for (var i = 0; i &lt; 3; i++) {
+  buttons.push(function() {
+    return i;  // 全て同じ i を参照
+  });
+}
+
+buttons[0]();  // 3（期待は0）
+buttons[1]();  // 3（期待は1）
+buttons[2]();  // 3（期待は2）
+// 全部3！varは関数スコープなので
+// ループ終了後の i = 3 を全員が見る</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-title">正しい方法</div>
+          <pre><code>// let を使った場合
+const buttons = [];
+for (let i = 0; i &lt; 3; i++) {
+  buttons.push(function() {
+    return i;  // 各ループごとに別の i
+  });
+}
+
+buttons[0]();  // 0
+buttons[1]();  // 1
+buttons[2]();  // 2
+// letはブロックスコープなので
+// 各ループで別のiが作られる</code></pre>
+        </div>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-modern8">
+        <div class="quiz-title"><span class="icon">❓</span>確認クイズ</div>
+        <p>次のコードで<code>counter.getCount()</code>の結果は？</p>
+        <pre><code>function createCounter() {
+  let count = 0;
+  return {
+    increment() { count++; },
+    getCount() { return count; }
+  };
+}
+const counter = createCounter();
+counter.increment();
+counter.increment();
+counter.increment();</code></pre>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-modern8" style="display:none;">
+          0（countは関数終了時にリセットされる）
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-modern8" style="display:none;">
+          3（クロージャがcountを保持している）
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-modern8" style="display:none;">
+          undefined（外部からアクセスできない）
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-modern8')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('modern8')">
+        <span class="icon">✓</span> このページを完了
+      </button>
+    </section>
+
+    <!-- modern9: this完全ガイド -->
+    <section id="modern9">
+      <h1>this完全ガイド</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>このページで学ぶこと
+        </div>
+        <ul>
+          <li>4つのバインディングルールを完全に理解する</li>
+          <li>call / apply / bind の使い方</li>
+          <li>アロー関数のレキシカルthis</li>
+        </ul>
+      </div>
+
+      <h2>4つのバインディングルール</h2>
+
+      <p>
+        <code>this</code>の値は<strong>関数の呼び出し方</strong>で決まります。<br>
+        4つのルールを優先度順に覚えましょう。
+      </p>
+
+      <h3>1. デフォルトバインディング</h3>
+
+      <p>
+        関数を単独で呼び出した場合、<code>this</code>は<br>
+        <strong>グローバルオブジェクト</strong>（ブラウザではwindow）か<br>
+        <strong>undefined</strong>（strictモード）になります。
+      </p>
+
+      <pre><code>function showThis() {
+  console.log(this);
+}
+
+showThis();  // window（非strictモード）
+             // undefined（strictモード / モジュール内）</code></pre>
+
+      <h3>2. 暗黙のバインディング</h3>
+
+      <p>
+        オブジェクトのメソッドとして呼び出した場合、<br>
+        <code>this</code>はそのオブジェクトを指します。
+      </p>
+
+      <pre><code>const user = {
+  name: '太郎',
+  greet() {
+    console.log(this.name);
+  }
+};
+
+user.greet();  // '太郎'（this = user）</code></pre>
+
+      <h3>3. 明示的バインディング（call / apply / bind）</h3>
+
+      <p>
+        <code>call</code>、<code>apply</code>、<code>bind</code>で<br>
+        <code>this</code>を<strong>明示的に指定</strong>できます。
+      </p>
+
+      <pre><code>function greet(greeting) {
+  console.log(`${greeting}, ${this.name}`);
+}
+
+const user = { name: '太郎' };
+
+// call: thisを指定して即実行（引数をカンマ区切り）
+greet.call(user, 'こんにちは');     // 'こんにちは, 太郎'
+
+// apply: thisを指定して即実行（引数を配列で）
+greet.apply(user, ['こんにちは']);   // 'こんにちは, 太郎'
+
+// bind: thisを固定した新しい関数を返す（即実行しない）
+const boundGreet = greet.bind(user);
+boundGreet('こんにちは');            // 'こんにちは, 太郎'</code></pre>
+
+      <h3>4. newバインディング</h3>
+
+      <p>
+        <code>new</code>でコンストラクタを呼び出すと、<br>
+        <code>this</code>は新しく作られるインスタンスを指します。
+      </p>
+
+      <pre><code>function User(name) {
+  this.name = name;  // this = 新しいオブジェクト
+}
+
+const taro = new User('太郎');
+console.log(taro.name);  // '太郎'</code></pre>
+
+      <h2>まとめ表</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>コンテキスト</th>
+            <th>thisの値</th>
+            <th>優先度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>new Func()</code></td>
+            <td>新しいインスタンス</td>
+            <td>最高</td>
+          </tr>
+          <tr>
+            <td><code>func.call(obj)</code> / <code>bind(obj)</code></td>
+            <td>指定したobj</td>
+            <td>高</td>
+          </tr>
+          <tr>
+            <td><code>obj.method()</code></td>
+            <td>obj</td>
+            <td>中</td>
+          </tr>
+          <tr>
+            <td><code>func()</code>（単独呼び出し）</td>
+            <td>window / undefined</td>
+            <td>低</td>
+          </tr>
+          <tr>
+            <td><code>() =&gt; {}</code>（アロー関数）</td>
+            <td>外側スコープのthis（固定）</td>
+            <td>特殊</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>アロー関数のレキシカルthis</h2>
+
+      <p>
+        アロー関数は<strong>自分のthisを持ちません</strong>。<br>
+        定義された場所の外側のthisをそのまま使います。<br>
+        これを<strong>レキシカルthis</strong>と呼びます。
+      </p>
+
+      <pre><code>const user = {
+  name: '太郎',
+  friends: ['花子', '次郎'],
+
+  showFriends() {
+    // アロー関数はshowFriendsのthis（= user）を使う
+    this.friends.forEach(friend =&gt; {
+      console.log(`${this.name}の友達: ${friend}`);
+    });
+  }
+};
+
+user.showFriends();
+// '太郎の友達: 花子'
+// '太郎の友達: 次郎'</code></pre>
+
+      <h2>thisを見失うパターン</h2>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          thisを見失う典型的なパターン
+        </div>
+        <p style="margin:0;">
+          メソッドを変数に代入したり、コールバックに渡すと<br>
+          <strong>thisの暗黙バインディングが失われます</strong>。
+        </p>
+      </div>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-title">間違った方法</div>
+          <pre><code>class Timer {
+  constructor() {
+    this.seconds = 0;
+  }
+
+  start() {
+    // 通常関数のthisはTimerではない！
+    setInterval(function() {
+      this.seconds++;  // this = window
+      console.log(this.seconds);  // NaN
+    }, 1000);
+  }
+}
+
+const timer = new Timer();
+timer.start();  // NaN, NaN, NaN...</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-title">正しい方法</div>
+          <pre><code>class Timer {
+  constructor() {
+    this.seconds = 0;
+  }
+
+  start() {
+    // アロー関数はstartのthis（= Timer）を使う
+    setInterval(() =&gt; {
+      this.seconds++;  // this = Timerインスタンス
+      console.log(this.seconds);  // 1, 2, 3...
+    }, 1000);
+  }
+}
+
+const timer = new Timer();
+timer.start();  // 1, 2, 3...</code></pre>
+        </div>
+      </div>
+
+      <pre><code>// bindで解決する方法もある
+class Timer {
+  constructor() {
+    this.seconds = 0;
+    // コンストラクタでbindしておく
+    this.tick = this.tick.bind(this);
+  }
+
+  tick() {
+    this.seconds++;
+    console.log(this.seconds);
+  }
+
+  start() {
+    setInterval(this.tick, 1000);  // bindされているので安全
+  }
+}</code></pre>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-modern9">
+        <div class="quiz-title"><span class="icon">❓</span>確認クイズ</div>
+        <p>次のコードで<code>btn.onClick()</code>の出力は？</p>
+        <pre><code>const btn = {
+  label: '送信',
+  onClick() {
+    console.log(this.label);
+  }
+};
+
+const handler = btn.onClick;
+handler();</code></pre>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-modern9" style="display:none;">
+          '送信'
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-modern9" style="display:none;">
+          undefined（thisがbtnではなくなる）
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-modern9" style="display:none;">
+          エラーが発生する
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-modern9')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('modern9')">
+        <span class="icon">✓</span> このページを完了
+      </button>
+    </section>
+
+    <!-- modern10: 実践エラーハンドリング -->
+    <section id="modern10">
+      <h1>実践エラーハンドリング</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>このページで学ぶこと
+        </div>
+        <ul>
+          <li>カスタムErrorクラスの作り方</li>
+          <li>エラーの分類と適切な対処法</li>
+          <li>リトライパターン（exponential backoff）</li>
+        </ul>
+      </div>
+
+      <h2>Errorオブジェクトの基本</h2>
+
+      <p>
+        JavaScriptの<code>Error</code>オブジェクトには<br>
+        3つの重要なプロパティがあります。
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>プロパティ</th>
+            <th>内容</th>
+            <th>用途</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>message</code></td>
+            <td>エラーメッセージ</td>
+            <td>人間向けの説明</td>
+          </tr>
+          <tr>
+            <td><code>name</code></td>
+            <td>エラーの種類名</td>
+            <td>エラー分類</td>
+          </tr>
+          <tr>
+            <td><code>stack</code></td>
+            <td>スタックトレース</td>
+            <td>発生場所の特定</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <pre><code>try {
+  null.property;
+} catch (error) {
+  console.log(error.name);     // 'TypeError'
+  console.log(error.message);  // "Cannot read properties of null"
+  console.log(error.stack);    // エラー発生箇所の詳細
+}</code></pre>
+
+      <h2>カスタムErrorクラス</h2>
+
+      <p>
+        業務で使うエラーは<code>Error</code>を継承して<br>
+        <strong>カスタムErrorクラス</strong>を作るのがベストプラクティスです。
+      </p>
+
+      <pre><code>// カスタムErrorの定義
+class ValidationError extends Error {
+  constructor(field, message) {
+    super(message);
+    this.name = 'ValidationError';
+    this.field = field;
+  }
+}
+
+class NetworkError extends Error {
+  constructor(statusCode, message) {
+    super(message);
+    this.name = 'NetworkError';
+    this.statusCode = statusCode;
+  }
+}
+
+class BusinessError extends Error {
+  constructor(code, message) {
+    super(message);
+    this.name = 'BusinessError';
+    this.code = code;
+  }
+}
+
+// 使い方
+function validateAge(age) {
+  if (typeof age !== 'number') {
+    throw new ValidationError('age', '数値を入力してください');
+  }
+  if (age &lt; 0 || age &gt; 150) {
+    throw new ValidationError('age', '0-150の範囲で入力');
+  }
+}
+
+try {
+  validateAge('二十歳');
+} catch (error) {
+  if (error instanceof ValidationError) {
+    console.log(`${error.field}: ${error.message}`);
+    // 'age: 数値を入力してください'
+  }
+}</code></pre>
+
+      <h2>エラーの分類</h2>
+
+      <p>
+        エラーは対処法によって<strong>3つに分類</strong>できます。
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>分類</th>
+            <th>例</th>
+            <th>対処法</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>回復可能</strong></td>
+            <td>ネットワークエラー、タイムアウト</td>
+            <td>リトライ</td>
+          </tr>
+          <tr>
+            <td><strong>回復不能</strong></td>
+            <td>TypeError、ReferenceError</td>
+            <td>バグ修正（コード修正）</td>
+          </tr>
+          <tr>
+            <td><strong>ビジネスエラー</strong></td>
+            <td>バリデーション失敗、権限不足</td>
+            <td>ユーザーへ通知</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <pre><code>async function handleError(error) {
+  if (error instanceof NetworkError) {
+    // 回復可能 → リトライ
+    return await retryWithBackoff(() =&gt; fetchData());
+  }
+
+  if (error instanceof ValidationError) {
+    // ビジネスエラー → ユーザー通知
+    showErrorToUser(error.message);
+    return null;
+  }
+
+  // 回復不能 → ログ出力 &amp; 上位に伝播
+  console.error('予期しないエラー:', error);
+  throw error;
+}</code></pre>
+
+      <h2>リトライパターン（exponential backoff）</h2>
+
+      <p>
+        ネットワークエラーなどの一時的なエラーには、<br>
+        <strong>指数バックオフ</strong>でリトライするのが定番です。<br>
+        リトライ間隔を徐々に長くして、サーバーへの負荷を抑えます。
+      </p>
+
+      <pre><code>async function retryWithBackoff(fn, maxRetries = 3) {
+  for (let attempt = 0; attempt &lt; maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (attempt === maxRetries - 1) {
+        throw error;  // 最後のリトライも失敗
+      }
+
+      // 指数バックオフ: 1秒 → 2秒 → 4秒...
+      const delay = Math.pow(2, attempt) * 1000;
+      console.log(`リトライ ${attempt + 1}/${maxRetries}（${delay}ms後）`);
+      await new Promise(resolve =&gt; setTimeout(resolve, delay));
+    }
+  }
+}
+
+// 使い方
+async function fetchUserData(userId) {
+  return retryWithBackoff(async () =&gt; {
+    const response = await fetch(`/api/users/${userId}`);
+    if (!response.ok) {
+      throw new NetworkError(response.status, 'ユーザー取得失敗');
+    }
+    return response.json();
+  });
+}</code></pre>
+
+      <h2>try/catch/finallyのベストプラクティス</h2>
+
+      <pre><code>async function processOrder(orderId) {
+  let connection;
+
+  try {
+    // メイン処理
+    connection = await getConnection();
+    const order = await connection.getOrder(orderId);
+    await connection.updateStatus(orderId, 'processing');
+    return order;
+
+  } catch (error) {
+    // エラーの種類に応じた処理
+    if (error instanceof NetworkError) {
+      console.warn('通信エラー、リトライ推奨:', error.message);
+    } else {
+      console.error('予期しないエラー:', error);
+    }
+    throw error;  // 上位に伝播
+
+  } finally {
+    // 必ずリソースを解放
+    if (connection) {
+      await connection.release();
+    }
+  }
+}</code></pre>
+
+      <h2>空のcatchブロックの危険性</h2>
+
+      <div class="card card-danger">
+        <div class="card-title">
+          <span class="icon">❌</span>
+          絶対にやってはいけない：空のcatchブロック
+        </div>
+        <p style="margin:0;">
+          エラーを握り潰すと、バグの原因が<strong>完全に隠蔽</strong>されます。<br>
+          デバッグが極めて困難になるため、<strong>最も危険なアンチパターン</strong>です。
+        </p>
+      </div>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-title">間違った方法</div>
+          <pre><code>try {
+  const data = await fetchData();
+  processData(data);
+} catch (error) {
+  // 何もしない（最悪！）
+}
+
+// または
+try {
+  riskyOperation();
+} catch (e) {
+  // TODO: あとで直す（永遠に直されない）
+}</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-title">正しい方法</div>
+          <pre><code>try {
+  const data = await fetchData();
+  processData(data);
+} catch (error) {
+  // 最低限ログは出す
+  console.error('データ処理失敗:', error);
+  // ユーザーに通知
+  showErrorMessage('処理に失敗しました');
+  // 必要に応じて再スロー
+  throw error;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- クイズ -->
+      <div class="quiz" id="quiz-modern10">
+        <div class="quiz-title"><span class="icon">❓</span>確認クイズ</div>
+        <p>ネットワークエラーが発生した場合、最も適切な対処法は？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-modern10" style="display:none;">
+          catchブロックで何もせず無視する
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-modern10" style="display:none;">
+          アプリケーションを即座に終了する
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-modern10" style="display:none;">
+          exponential backoffでリトライし、失敗時はユーザーに通知する
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-modern10')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('modern10')">
+        <span class="icon">✓</span> このページを完了
+      </button>
+    </section>
+
     <!-- ============================================
          Level 3: React/TypeScript
          Phase 1: TypeScript基礎

@@ -1,0 +1,1685 @@
+<!-- ============================================
+     Level 9 Phase 4: プロジェクト管理
+     proj1-proj10
+     ============================================ -->
+
+<section id="proj1">
+  <h1>プロジェクト計画</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>プロジェクト計画の基本要素（スコープ・スケジュール・リソース）</li>
+      <li>WBS（Work Breakdown Structure）の作り方</li>
+      <li>計画を実行可能なレベルに分解する方法</li>
+    </ul>
+  </div>
+
+  <h2>プロジェクト計画の3本柱</h2>
+
+  <p>
+    プロジェクト計画とは、<strong>何を（スコープ）</strong>、<strong>いつまでに（スケジュール）</strong>、
+    <strong>誰が（リソース）</strong>やるのかを明確にすることです。
+    この3つのバランスが崩れると、プロジェクトは失敗します。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：家を建てる計画
+    </div>
+    <p>
+      家を建てるとき、設計図なしに着工する人はいません。
+      「どんな家を建てるか（スコープ）」「いつまでに完成させるか（スケジュール）」
+      「何人の職人が必要か（リソース）」を最初に決めます。
+    </p>
+    <p style="margin:0;">
+      ソフトウェアプロジェクトも同じです。計画なしに開発を始めると、
+      <strong>途中で何を作っているのか分からなくなります</strong>。
+    </p>
+  </div>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">要素</th>
+        <th style="width:35%;">内容</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>スコープ</strong></td>
+        <td>何を作るか・作らないか</td>
+        <td>ユーザー認証機能、管理画面は対象外</td>
+      </tr>
+      <tr>
+        <td><strong>スケジュール</strong></td>
+        <td>いつまでに完成させるか</td>
+        <td>3月末リリース、2週間スプリント</td>
+      </tr>
+      <tr>
+        <td><strong>リソース</strong></td>
+        <td>誰が何を担当するか</td>
+        <td>エンジニア3名、デザイナー1名</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>WBS（Work Breakdown Structure）</h2>
+
+  <p>
+    <strong>WBS</strong>とは、プロジェクトの作業を<strong>階層的に分解</strong>した構造図です。
+    大きなタスクを管理可能な小さなタスクに分解することで、
+    見積もりの精度が上がり、抜け漏れを防げます。
+  </p>
+
+  <pre><code>プロジェクト：ECサイトリニューアル
+├── 1. 要件定義
+│   ├── 1.1 ユーザーインタビュー（3日）
+│   ├── 1.2 要件ドキュメント作成（2日）
+│   └── 1.3 要件レビュー（1日）
+├── 2. 設計
+│   ├── 2.1 画面設計（5日）
+│   ├── 2.2 API設計（3日）
+│   └── 2.3 DB設計（2日）
+├── 3. 実装
+│   ├── 3.1 フロントエンド開発（10日）
+│   ├── 3.2 バックエンド開発（8日）
+│   └── 3.3 結合テスト（3日）
+└── 4. リリース
+    ├── 4.1 ステージング検証（2日）
+    ├── 4.2 本番デプロイ（1日）
+    └── 4.3 リリース後モニタリング（2日）</code></pre>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      良いWBSの条件
+    </div>
+    <ul>
+      <li><strong>MECE</strong>（漏れなく・ダブりなく）分解されている</li>
+      <li>最下位のタスクが<strong>1〜5日</strong>で完了できるサイズ</li>
+      <li>各タスクに<strong>担当者と期限</strong>が明確</li>
+      <li><strong>完了条件</strong>（Definition of Done）が定義されている</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      アンチパターン：計画なき開発
+    </div>
+    <ul>
+      <li>「とりあえず作り始めよう」で着手する</li>
+      <li>計画を作るが更新しない（計画と現実が乖離）</li>
+      <li>タスクが大きすぎて進捗が見えない（「実装中」が2週間続く）</li>
+      <li>スコープを決めずに「全部やる」と宣言する</li>
+    </ul>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">良い計画</div>
+      <ul>
+        <li>WBSで作業を分解</li>
+        <li>週次で計画を見直す</li>
+        <li>スコープに優先順位をつける</li>
+        <li>バッファを含めたスケジュール</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">悪い計画</div>
+      <ul>
+        <li>「開発」という1つの塊で管理</li>
+        <li>最初に作った計画を変えない</li>
+        <li>すべての要件が同じ優先度</li>
+        <li>バッファなしのギリギリ計画</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-proj1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>WBSの最下位タスクの理想的なサイズは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj1" style="display:none;">
+      A. 1〜2ヶ月で完了できるサイズ
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-proj1" style="display:none;">
+      B. 1〜5日で完了できるサイズ
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj1" style="display:none;">
+      C. 1時間以内で完了できるサイズ
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-proj1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('proj1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="proj2">
+  <h1>リスク管理</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>リスクの識別方法と分類</li>
+      <li>リスク評価（影響度×発生確率）のマトリクス</li>
+      <li>リスク対策の4つのアプローチ</li>
+    </ul>
+  </div>
+
+  <h2>リスクとは何か</h2>
+
+  <p>
+    プロジェクトにおける<strong>リスク</strong>とは、
+    「まだ発生していないが、発生した場合にプロジェクトに悪影響を与える事象」です。
+    リスクは<strong>事前に識別し、対策を準備しておく</strong>ことで被害を最小化できます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：旅行の準備
+    </div>
+    <p>
+      海外旅行に行くとき、「パスポートを忘れるかもしれない」「飛行機が遅延するかもしれない」
+      というリスクを考えます。パスポートは前日にカバンに入れ、
+      遅延に備えて乗り継ぎ時間に余裕を持たせます。
+    </p>
+    <p style="margin:0;">
+      プロジェクトも同じで、<strong>起きてから対処するのではなく、起きる前に備える</strong>のがリスク管理です。
+    </p>
+  </div>
+
+  <h2>リスクの識別</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">カテゴリ</th>
+        <th style="width:40%;">リスク例</th>
+        <th>影響</th>
+      </tr>
+      <tr>
+        <td><strong>技術リスク</strong></td>
+        <td>新技術の習熟不足</td>
+        <td>開発遅延</td>
+      </tr>
+      <tr>
+        <td><strong>人的リスク</strong></td>
+        <td>キーパーソンの離脱</td>
+        <td>知識喪失</td>
+      </tr>
+      <tr>
+        <td><strong>外部リスク</strong></td>
+        <td>外部APIの仕様変更</td>
+        <td>手戻り発生</td>
+      </tr>
+      <tr>
+        <td><strong>要件リスク</strong></td>
+        <td>要件の頻繁な変更</td>
+        <td>スコープ膨張</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>リスク評価マトリクス</h2>
+
+  <p>
+    リスクは<strong>影響度</strong>と<strong>発生確率</strong>の2軸で評価します。
+    両方が高いリスクを最優先で対策します。
+  </p>
+
+  <pre><code>リスク評価マトリクス（影響度 × 発生確率）
+
+             影響度：低    影響度：中    影響度：高
+確率：高    | 中リスク  |  高リスク  | 最高リスク |
+確率：中    | 低リスク  |  中リスク  |  高リスク  |
+確率：低    | 最低リスク|  低リスク  |  中リスク  |
+
+例：
+- キーパーソン離脱：確率 中 × 影響 高 → 高リスク
+- サーバー障害　　：確率 低 × 影響 高 → 中リスク
+- ライブラリ更新　：確率 高 × 影響 低 → 中リスク</code></pre>
+
+  <h2>リスク対策の4つのアプローチ</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">戦略</th>
+        <th style="width:35%;">説明</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>回避</strong></td>
+        <td>リスクの原因を取り除く</td>
+        <td>不安定な技術を使わない</td>
+      </tr>
+      <tr>
+        <td><strong>軽減</strong></td>
+        <td>影響や確率を下げる</td>
+        <td>キーパーソンの知識を共有</td>
+      </tr>
+      <tr>
+        <td><strong>転嫁</strong></td>
+        <td>第三者にリスクを移す</td>
+        <td>保険、外部委託</td>
+      </tr>
+      <tr>
+        <td><strong>受容</strong></td>
+        <td>リスクを受け入れる</td>
+        <td>発生時の対応計画を準備</td>
+      </tr>
+    </table>
+  </div>
+
+  <pre><code>リスク管理表テンプレート
+
+| No | リスク内容         | カテゴリ | 確率 | 影響 | 優先度 | 対策戦略 | 対策内容                   | 担当者 | 状況     |
+|----|-------------------|---------|------|------|--------|---------|---------------------------|--------|---------|
+| 1  | キーパーソン離脱    | 人的    | 中   | 高   | 高     | 軽減    | 知識共有・ペアプロ実施       | 田中   | 対策実施中|
+| 2  | 外部API仕様変更    | 外部    | 中   | 中   | 中     | 軽減    | アダプターパターンで疎結合化 | 鈴木   | 未着手   |
+| 3  | パフォーマンス不足  | 技術    | 低   | 高   | 中     | 受容    | 発生時にスケールアップ      | 佐藤   | 監視中   |</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      アンチパターン：リスクの放置
+    </div>
+    <ul>
+      <li>リスクを識別しても対策を立てない</li>
+      <li>「たぶん大丈夫」で済ませる</li>
+      <li>リスク管理表を作って更新しない</li>
+      <li>問題が起きてから初めて対策を検討する</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-proj2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>リスク対策で「キーパーソンの知識をチームで共有する」は何の戦略に当たるか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj2" style="display:none;">
+      A. 回避（リスクの原因を取り除く）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-proj2" style="display:none;">
+      B. 軽減（影響や確率を下げる）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj2" style="display:none;">
+      C. 転嫁（第三者にリスクを移す）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-proj2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('proj2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="proj3">
+  <h1>スコープ管理</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>スコープクリープとは何か、なぜ危険か</li>
+      <li>変更管理プロセスの重要性</li>
+      <li>スコープを守るための実践テクニック</li>
+    </ul>
+  </div>
+
+  <h2>スコープクリープとは</h2>
+
+  <p>
+    <strong>スコープクリープ</strong>とは、プロジェクトの範囲が
+    <strong>少しずつ無自覚に拡大していく</strong>現象です。
+    「ついでにこれも」「この機能もあった方がいいよね」が積み重なり、
+    気づいたときには当初の計画を大幅に超えています。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：リフォーム工事
+    </div>
+    <p>
+      キッチンだけリフォームする予定が、「ついでにリビングの壁紙も」「洗面台も古いから」
+      と追加していくうちに、予算も期間も2倍になってしまう。
+    </p>
+    <p style="margin:0;">
+      ソフトウェア開発でも同じことが起きます。1つ1つは小さな追加でも、
+      <strong>積み重なると致命的な遅延</strong>になります。
+    </p>
+  </div>
+
+  <h2>変更管理プロセス</h2>
+
+  <p>
+    スコープクリープを防ぐには、<strong>変更管理プロセス</strong>を設けることが重要です。
+    すべてのスコープ変更を「見える化」し、意思決定を行います。
+  </p>
+
+  <pre><code>変更管理フロー
+
+1. 変更リクエスト提出
+   └─ 誰が・何を・なぜ変更したいか
+
+2. 影響度分析
+   ├─ スケジュールへの影響（+何日？）
+   ├─ コストへの影響（追加リソース必要？）
+   └─ 品質への影響（テスト追加必要？）
+
+3. 承認/却下の判断
+   ├─ 承認 → スケジュール・リソース調整
+   └─ 却下 → 理由を記録、バックログへ
+
+4. 実施＆追跡
+   └─ 変更の実施状況をモニタリング</code></pre>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">判断基準</th>
+        <th style="width:40%;">確認ポイント</th>
+        <th>判断例</th>
+      </tr>
+      <tr>
+        <td><strong>ビジネス価値</strong></td>
+        <td>この変更は売上やユーザー体験にどう影響するか</td>
+        <td>高価値 → 承認検討</td>
+      </tr>
+      <tr>
+        <td><strong>影響範囲</strong></td>
+        <td>既存のスケジュールやリソースへの影響は</td>
+        <td>影響大 → 慎重に判断</td>
+      </tr>
+      <tr>
+        <td><strong>優先度</strong></td>
+        <td>既存タスクと比べて優先すべきか</td>
+        <td>低優先 → バックログへ</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">健全なスコープ管理</div>
+      <ul>
+        <li>変更リクエストを記録・管理する</li>
+        <li>影響度を分析してから判断する</li>
+        <li>追加するなら何かを削る（トレードオフ）</li>
+        <li>「やらないこと」を明文化する</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">スコープクリープ</div>
+      <ul>
+        <li>口頭で「これもお願い」と追加</li>
+        <li>影響を考えずに即承認</li>
+        <li>追加するが何も削らない</li>
+        <li>境界が曖昧で何でも対象になる</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      アンチパターン：「Yes」しか言わないPM
+    </div>
+    <p>
+      すべての要望に「はい、やりましょう」と答えるプロジェクトマネージャーは、
+      チームを疲弊させます。<strong>「No」または「今ではない」と言える</strong>ことも
+      プロジェクト管理の重要なスキルです。
+    </p>
+    <ul>
+      <li>スケジュールは変えないのに機能を追加する</li>
+      <li>チームのキャパシティを無視した約束をする</li>
+      <li>優先順位をつけずにすべてを「最優先」にする</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-proj3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>スコープクリープを防ぐために最も重要なことは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj3" style="display:none;">
+      A. すべての変更要望を即座に実装する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj3" style="display:none;">
+      B. 変更を一切受け付けない
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-proj3" style="display:none;">
+      C. 変更管理プロセスで影響を分析してから判断する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-proj3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('proj3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="proj4">
+  <h1>見積もり</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>3点見積もり（楽観・最頻・悲観）の方法</li>
+      <li>PERT（Program Evaluation and Review Technique）の計算</li>
+      <li>バッファ管理の考え方</li>
+    </ul>
+  </div>
+
+  <h2>なぜ見積もりは難しいのか</h2>
+
+  <p>
+    ソフトウェア開発の見積もりが外れるのは、
+    <strong>不確実性が高い</strong>からです。
+    経験の少ない技術、曖昧な要件、未知の依存関係など、
+    予測不能な要素が多く存在します。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：引っ越しの見積もり
+    </div>
+    <p>
+      引っ越しにかかる時間を聞かれたとき、「早ければ3時間、普通なら5時間、
+      最悪8時間」と答えるのが3点見積もりです。
+    </p>
+    <p style="margin:0;">
+      「5時間です」とピンポイントで答えるよりも、
+      <strong>幅を持たせることで不確実性を表現</strong>できます。
+    </p>
+  </div>
+
+  <h2>3点見積もり</h2>
+
+  <p>
+    3点見積もりでは、各タスクに対して<strong>3つの値</strong>を算出します。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">見積もり</th>
+        <th style="width:35%;">説明</th>
+        <th>例（認証機能）</th>
+      </tr>
+      <tr>
+        <td><strong>楽観値（O）</strong></td>
+        <td>すべてが順調な場合</td>
+        <td>3日</td>
+      </tr>
+      <tr>
+        <td><strong>最頻値（M）</strong></td>
+        <td>最もありそうな所要時間</td>
+        <td>5日</td>
+      </tr>
+      <tr>
+        <td><strong>悲観値（P）</strong></td>
+        <td>問題が発生した場合</td>
+        <td>12日</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>PERT見積もり</h2>
+
+  <p>
+    PERTでは3点見積もりの値を使って<strong>期待値</strong>と<strong>標準偏差</strong>を計算します。
+  </p>
+
+  <pre><code>PERT計算式
+
+期待値 E = (O + 4M + P) / 6
+標準偏差 σ = (P - O) / 6
+
+例：認証機能の見積もり
+  楽観値（O）= 3日
+  最頻値（M）= 5日
+  悲観値（P）= 12日
+
+  期待値 E = (3 + 4×5 + 12) / 6 = 35 / 6 ≒ 5.8日
+  標準偏差 σ = (12 - 3) / 6 = 1.5日
+
+  → 5.8日 ± 1.5日（4.3日〜7.3日の範囲に68%の確率で収まる）</code></pre>
+
+  <h2>バッファ管理</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">バッファ種類</th>
+        <th style="width:40%;">説明</th>
+        <th>目安</th>
+      </tr>
+      <tr>
+        <td><strong>タスクバッファ</strong></td>
+        <td>個別タスクの余裕時間</td>
+        <td>見積もりの20〜30%</td>
+      </tr>
+      <tr>
+        <td><strong>プロジェクトバッファ</strong></td>
+        <td>プロジェクト全体の予備期間</td>
+        <td>全体期間の10〜20%</td>
+      </tr>
+      <tr>
+        <td><strong>合流バッファ</strong></td>
+        <td>複数チームの成果物合流の余裕</td>
+        <td>依存タスクの前に配置</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      アンチパターン：見積もりの罠
+    </div>
+    <ul>
+      <li><strong>楽観バイアス</strong>：「できるだろう」で最短値を採用する</li>
+      <li><strong>パーキンソンの法則</strong>：与えられた時間いっぱいまで膨張する</li>
+      <li><strong>アンカリング</strong>：最初に聞いた数字に引きずられる</li>
+      <li><strong>バッファの消失</strong>：バッファを「余裕」と見なして追加作業に使う</li>
+    </ul>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">信頼できる見積もり</div>
+      <ul>
+        <li>3点見積もりで不確実性を表現</li>
+        <li>過去の実績データを参考にする</li>
+        <li>チームで見積もる（プランニングポーカー）</li>
+        <li>バッファを明示的に管理する</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">信頼できない見積もり</div>
+      <ul>
+        <li>1つの値だけで見積もる</li>
+        <li>経験者1人の勘に頼る</li>
+        <li>プレッシャーで短く見積もる</li>
+        <li>バッファを隠して積む</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-proj4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>PERT見積もりの期待値の計算式で、最頻値（M）にかかる係数は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj4" style="display:none;">
+      A. 2（楽観と悲観の中間重視）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj4" style="display:none;">
+      B. 6（最頻値を最重視）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-proj4" style="display:none;">
+      C. 4（最頻値に重みをつける）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-proj4')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('proj4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="proj5">
+  <h1>依存関係管理</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>チーム間依存・外部依存の識別と管理</li>
+      <li>クリティカルパスの考え方</li>
+      <li>依存関係によるボトルネックの解消法</li>
+    </ul>
+  </div>
+
+  <h2>依存関係とは</h2>
+
+  <p>
+    プロジェクトにおける<strong>依存関係</strong>とは、
+    あるタスクの開始・完了が別のタスクの状態に左右される関係のことです。
+    依存関係を把握していないと、<strong>思わぬブロッカー</strong>が発生します。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：料理の段取り
+    </div>
+    <p>
+      カレーを作るとき、「野菜を切る」と「肉を炒める」は並行してできますが、
+      「煮込む」は両方が終わってからでないと始められません。
+    </p>
+    <p style="margin:0;">
+      この「煮込む」が他のタスクに<strong>依存している</strong>状態です。
+      段取りを間違えると、待ち時間が無駄に発生します。
+    </p>
+  </div>
+
+  <h2>依存関係の種類</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">種類</th>
+        <th style="width:40%;">説明</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>チーム内依存</strong></td>
+        <td>同じチーム内のタスク間の依存</td>
+        <td>API設計 → API実装</td>
+      </tr>
+      <tr>
+        <td><strong>チーム間依存</strong></td>
+        <td>別チームの成果物に依存</td>
+        <td>バックエンドAPI → フロントエンド実装</td>
+      </tr>
+      <tr>
+        <td><strong>外部依存</strong></td>
+        <td>外部ベンダーやサービスに依存</td>
+        <td>決済API契約 → 決済機能開発</td>
+      </tr>
+      <tr>
+        <td><strong>技術依存</strong></td>
+        <td>技術的な前提条件</td>
+        <td>インフラ構築 → デプロイ</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>クリティカルパス</h2>
+
+  <p>
+    <strong>クリティカルパス</strong>とは、プロジェクト全体の最長経路です。
+    このパス上のタスクが遅延すると、プロジェクト全体が遅延します。
+  </p>
+
+  <pre><code>プロジェクトのタスク依存図
+
+  [API設計:3日] ─→ [API実装:5日] ─→ [結合テスト:3日] ─→ [リリース:1日]
+       │                                    ↑
+       └──→ [DB設計:2日] ─→ [DB構築:2日] ──┘
+
+  [UI設計:4日] ─→ [フロント実装:7日] ─→ [結合テスト] に合流
+
+クリティカルパス（最長経路）:
+  UI設計(4日) → フロント実装(7日) → 結合テスト(3日) → リリース(1日)
+  = 合計15日
+
+※ このパス上のタスクが1日遅れると、プロジェクト全体が1日遅れる</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      アンチパターン：依存関係の無視
+    </div>
+    <ul>
+      <li>依存関係を考えずに並行開発を計画する</li>
+      <li>外部チームの作業を「いつか終わるだろう」と楽観視する</li>
+      <li>ブロッカーが発生してから初めて依存関係に気づく</li>
+      <li>すべてのタスクを直列に並べて並行作業を活用しない</li>
+    </ul>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      依存関係を管理するコツ
+    </div>
+    <ul>
+      <li><strong>依存マップを可視化</strong>する（タスクボード、ガントチャート）</li>
+      <li>外部依存は<strong>早めにコミュニケーション</strong>を取る</li>
+      <li><strong>モック/スタブ</strong>で依存を一時的に解消し、並行開発を可能にする</li>
+      <li>クリティカルパス上のタスクに<strong>リソースを優先配置</strong>する</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-proj5">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>クリティカルパスについて正しい説明は？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj5" style="display:none;">
+      A. プロジェクトで最も短いタスクの経路
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-proj5" style="display:none;">
+      B. 遅延するとプロジェクト全体が遅延する最長経路
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj5" style="display:none;">
+      C. 最も多くの人が関わるタスクの経路
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-proj5')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('proj5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="proj6">
+  <h1>ステータスレポート</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>効果的な進捗報告の構成要素</li>
+      <li>ブロッカーの共有方法と解消プロセス</li>
+      <li>ダッシュボードによる可視化</li>
+    </ul>
+  </div>
+
+  <h2>なぜステータスレポートが重要か</h2>
+
+  <p>
+    プロジェクトの進捗を<strong>正確かつ簡潔に</strong>共有することで、
+    ステークホルダーの信頼を得られ、問題の早期発見につながります。
+    良いレポートは<strong>意思決定に必要な情報を過不足なく</strong>提供します。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：健康診断の結果
+    </div>
+    <p>
+      健康診断の結果は、数値と正常範囲が一目で分かるように表示されます。
+      異常値だけが赤く表示され、医師はそこに注目します。
+    </p>
+    <p style="margin:0;">
+      ステータスレポートも同じで、<strong>順調な部分は簡潔に、問題のある部分を目立たせる</strong>
+      のが効果的です。
+    </p>
+  </div>
+
+  <h2>ステータスレポートの構成</h2>
+
+  <pre><code>週次ステータスレポート テンプレート
+
+■ プロジェクト名：ECサイトリニューアル
+■ 報告日：2026-02-06
+■ 全体ステータス：🟡 注意（スケジュールにリスクあり）
+
+【サマリー】
+認証機能は完了。決済機能の外部API連携で1日遅延が発生。
+
+【進捗】
+✅ 完了：ユーザー認証機能（予定通り）
+🔄 進行中：決済機能（70%完了、1日遅延）
+📋 未着手：管理画面（来週開始予定）
+
+【ブロッカー】
+🚫 決済APIのテスト環境アクセス権が未取得
+   → 対応：ベンダーに連絡済み、2/7回答予定
+   → 影響：2日以上遅延するとマイルストーンに影響
+
+【来週の予定】
+- 決済機能の結合テスト完了
+- 管理画面の設計開始
+- パフォーマンステスト環境の構築
+
+【リスク/懸念】
+- 決済APIの本番キー発行が遅れる可能性あり</code></pre>
+
+  <h2>ステータスの色分け</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:15%;">色</th>
+        <th style="width:35%;">意味</th>
+        <th>アクション</th>
+      </tr>
+      <tr>
+        <td><strong>🟢 緑</strong></td>
+        <td>計画通り進行中</td>
+        <td>通常の報告のみ</td>
+      </tr>
+      <tr>
+        <td><strong>🟡 黄</strong></td>
+        <td>リスクあり・注意が必要</td>
+        <td>リスク対策を実施中</td>
+      </tr>
+      <tr>
+        <td><strong>🔴 赤</strong></td>
+        <td>重大な問題が発生</td>
+        <td>即座にエスカレーション</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">良いステータスレポート</div>
+      <ul>
+        <li>事実に基づいた客観的な報告</li>
+        <li>問題には必ず対策案を添える</li>
+        <li>定期的に同じフォーマットで報告</li>
+        <li>意思決定が必要な項目を明記</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">悪いステータスレポート</div>
+      <ul>
+        <li>「順調です」だけで具体性がない</li>
+        <li>問題を隠す・過小報告する</li>
+        <li>フォーマットが毎回バラバラ</li>
+        <li>情報過多で要点が分からない</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      アンチパターン：スイカレポート
+    </div>
+    <p>
+      <strong>スイカレポート</strong>とは、表面は緑（順調）だが中を切ると赤（深刻な問題）
+      という報告です。問題を隠して「順調です」と報告し続けると、
+      最終的にプロジェクトは炎上します。
+    </p>
+    <ul>
+      <li>担当者は問題を知っているが報告しない</li>
+      <li>マネージャーが「赤」を嫌がるので黄色にする</li>
+      <li>問題が顕在化してから初めて赤になる</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-proj6">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ステータスレポートで「スイカレポート」とは何か？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj6" style="display:none;">
+      A. 情報が多すぎて読めないレポート
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-proj6" style="display:none;">
+      B. 表面は緑（順調）だが実際は赤（問題あり）のレポート
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj6" style="display:none;">
+      C. 更新頻度が季節ごとにしかないレポート
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-proj6')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('proj6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="proj7">
+  <h1>技術的負債管理</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>技術的負債の可視化方法</li>
+      <li>負債の優先度付けの基準</li>
+      <li>技術的負債の返済計画の立て方</li>
+    </ul>
+  </div>
+
+  <h2>技術的負債とは</h2>
+
+  <p>
+    <strong>技術的負債</strong>とは、短期的な利益のために犠牲にした
+    コード品質・設計・テスト等の「ツケ」です。
+    金融の負債と同様、<strong>放置すると利子（メンテナンスコスト）が膨らみます</strong>。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：家のメンテナンス
+    </div>
+    <p>
+      外壁のヒビを放置すると、雨水が浸入して柱が腐り、
+      最終的に大規模修繕が必要になります。
+      小さいうちに補修すれば安く済んだのに、放置したせいで費用が10倍に。
+    </p>
+    <p style="margin:0;">
+      技術的負債も同じで、<strong>早期に対処すればコストは小さい</strong>が、
+      放置すると開発速度が著しく低下します。
+    </p>
+  </div>
+
+  <h2>技術的負債の分類</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">種類</th>
+        <th style="width:40%;">説明</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>意図的な負債</strong></td>
+        <td>承知の上でスピード優先</td>
+        <td>リリース優先でテスト省略</td>
+      </tr>
+      <tr>
+        <td><strong>無意識の負債</strong></td>
+        <td>知識不足による品質低下</td>
+        <td>設計パターンを知らず複雑化</td>
+      </tr>
+      <tr>
+        <td><strong>環境の変化</strong></td>
+        <td>技術の進歩で陳腐化</td>
+        <td>古いフレームワークの使用</td>
+      </tr>
+      <tr>
+        <td><strong>ビットロット</strong></td>
+        <td>時間経過で劣化</td>
+        <td>依存ライブラリの脆弱性</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>技術的負債の可視化と優先度付け</h2>
+
+  <pre><code>技術的負債バックログ テンプレート
+
+| No | 負債の内容              | 種類     | 影響度 | 返済コスト | 利子率 | 優先度 |
+|----|------------------------|---------|--------|-----------|--------|--------|
+| 1  | テストカバレッジ不足     | 意図的   | 高     | 中（2週間）| 高     | ★★★   |
+| 2  | モノリスのサービス分割   | 環境変化 | 高     | 大（2ヶ月）| 中     | ★★☆   |
+| 3  | 古いNode.jsバージョン   | ビットロット| 中   | 小（3日）  | 高     | ★★★   |
+| 4  | ドキュメント未整備       | 無意識   | 中     | 小（1週間）| 低     | ★☆☆   |
+
+優先度の決め方：
+  影響度（高い＝開発速度に直結）× 利子率（高い＝放置するほど悪化）
+  ÷ 返済コスト（低い＝すぐ対処できる）</code></pre>
+
+  <h2>返済計画</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      技術的負債を返済する戦略
+    </div>
+    <ul>
+      <li><strong>ボーイスカウトルール</strong>：触ったコードを少し良くして帰る</li>
+      <li><strong>20%ルール</strong>：各スプリントの20%を負債返済に充てる</li>
+      <li><strong>負債スプリント</strong>：定期的に負債返済専門のスプリントを設ける</li>
+      <li><strong>段階的置き換え</strong>：大きな負債は段階的にリファクタリング</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      アンチパターン：技術的負債の扱い方
+    </div>
+    <ul>
+      <li>「いつかリファクタリングする」と言って永遠に着手しない</li>
+      <li>ビジネス側に負債の影響を説明せず独断で返済作業をする</li>
+      <li>一度に全部書き直そうとする（ビッグバンリファクタリング）</li>
+      <li>負債を可視化せず、個人の頭の中だけで管理する</li>
+    </ul>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">健全な負債管理</div>
+      <ul>
+        <li>負債をバックログで可視化</li>
+        <li>定期的に返済時間を確保</li>
+        <li>ビジネス側と影響を共有</li>
+        <li>新規の負債発生を意識的に管理</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">不健全な負債管理</div>
+      <ul>
+        <li>負債の存在を認めない</li>
+        <li>常に機能開発を優先</li>
+        <li>技術的な問題を隠す</li>
+        <li>負債が溜まってから大掃除</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-proj7">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>技術的負債の返済戦略として適切なものは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj7" style="display:none;">
+      A. 一度にすべてのコードを書き直す（ビッグバンリファクタリング）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-proj7" style="display:none;">
+      B. 各スプリントの一定割合を負債返済に充てる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj7" style="display:none;">
+      C. 負債は放置して新機能開発に集中する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-proj7')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('proj7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="proj8">
+  <h1>リリース管理</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>リリース計画とリリースチェックリスト</li>
+      <li>Feature Flag（機能フラグ）による安全なリリース</li>
+      <li>段階的リリース（カナリアリリース、ブルーグリーンデプロイ）</li>
+    </ul>
+  </div>
+
+  <h2>リリース計画</h2>
+
+  <p>
+    リリースとは、開発した機能を本番環境に届けるプロセスです。
+    <strong>リリースの失敗はユーザーに直接影響する</strong>ため、
+    慎重な計画と実行が必要です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：新製品の発売日
+    </div>
+    <p>
+      新商品を店頭に並べるとき、在庫の確認、値札の準備、スタッフへの研修、
+      広告の手配など多くの準備が必要です。「作ったらすぐ並べる」では混乱が起きます。
+    </p>
+    <p style="margin:0;">
+      ソフトウェアのリリースも同じで、<strong>技術的な準備だけでなく、
+      関係者全員の準備が整っている</strong>ことが重要です。
+    </p>
+  </div>
+
+  <pre><code>リリースチェックリスト テンプレート
+
+■ リリース前
+  □ すべてのテストがパスしている
+  □ コードレビューが完了している
+  □ ステージング環境で検証済み
+  □ ロールバック手順が準備されている
+  □ モニタリング/アラートが設定されている
+  □ 関係者への周知が完了している
+  □ リリースノートが作成されている
+
+■ リリース中
+  □ デプロイの実行
+  □ ヘルスチェックの確認
+  □ 主要機能の動作確認（スモークテスト）
+  □ エラー率/レスポンスタイムの監視
+
+■ リリース後
+  □ 30分間のモニタリング
+  □ 問題なければリリース完了宣言
+  □ 問題があればロールバック実行
+  □ 振り返りの実施（問題があった場合）</code></pre>
+
+  <h2>Feature Flag（機能フラグ）</h2>
+
+  <p>
+    <strong>Feature Flag</strong>とは、コードをデプロイしても
+    <strong>フラグのON/OFFで機能の有効化を制御</strong>できる仕組みです。
+    リリースとデプロイを分離できます。
+  </p>
+
+  <pre><code>// Feature Flagの実装例
+if (featureFlags.isEnabled('new-checkout-flow', { userId })) {
+  // 新しいチェックアウトフロー
+  return renderNewCheckout();
+} else {
+  // 既存のチェックアウトフロー
+  return renderLegacyCheckout();
+}</code></pre>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:30%;">リリース戦略</th>
+        <th style="width:35%;">説明</th>
+        <th>リスク</th>
+      </tr>
+      <tr>
+        <td><strong>ビッグバンリリース</strong></td>
+        <td>全ユーザーに一斉リリース</td>
+        <td>高（問題が全員に影響）</td>
+      </tr>
+      <tr>
+        <td><strong>カナリアリリース</strong></td>
+        <td>1〜5%のユーザーに先行リリース</td>
+        <td>低（影響範囲が限定的）</td>
+      </tr>
+      <tr>
+        <td><strong>ブルーグリーン</strong></td>
+        <td>新旧2つの環境を切り替え</td>
+        <td>低（即座にロールバック可能）</td>
+      </tr>
+      <tr>
+        <td><strong>ローリング</strong></td>
+        <td>サーバーを順次更新</td>
+        <td>中（一時的に混在状態）</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      アンチパターン：リリースの罠
+    </div>
+    <ul>
+      <li><strong>金曜日リリース</strong>：問題発生時に対応できる人がいない</li>
+      <li><strong>ロールバック手順なし</strong>：問題が起きても戻せない</li>
+      <li><strong>Feature Flagの放置</strong>：不要になったフラグを削除しない</li>
+      <li><strong>リリース後の監視なし</strong>：問題の発見が遅れる</li>
+    </ul>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">安全なリリース</div>
+      <ul>
+        <li>段階的にリリースする</li>
+        <li>ロールバック手順を事前に準備</li>
+        <li>リリース後にモニタリング</li>
+        <li>Feature Flagで制御可能に</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">危険なリリース</div>
+      <ul>
+        <li>全ユーザーに一斉リリース</li>
+        <li>ロールバック方法が不明</li>
+        <li>リリースしたら放置</li>
+        <li>機能の切り戻しができない</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-proj8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>カナリアリリースの特徴として正しいものは？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-proj8" style="display:none;">
+      A. 少数のユーザーに先行リリースして問題を検知する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj8" style="display:none;">
+      B. 全ユーザーに一斉にリリースする
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj8" style="display:none;">
+      C. テスト環境でのみリリースして本番には出さない
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-proj8')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('proj8')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="proj9">
+  <h1>プロジェクト振り返り</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>KPT（Keep・Problem・Try）の振り返り手法</li>
+      <li>タイムラインを使った振り返り</li>
+      <li>アクションアイテムの設定と追跡</li>
+    </ul>
+  </div>
+
+  <h2>なぜ振り返りが必要か</h2>
+
+  <p>
+    プロジェクトの振り返り（レトロスペクティブ）は、
+    <strong>チームの継続的な改善</strong>のために行います。
+    同じ失敗を繰り返さないために、成功と失敗の両方から学びます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：スポーツチームの試合後ミーティング
+    </div>
+    <p>
+      サッカーチームは試合後に必ずビデオを見返し、
+      良かったプレーと改善点を話し合います。
+      次の試合で同じミスをしないための準備です。
+    </p>
+    <p style="margin:0;">
+      開発チームも同じで、<strong>振り返りなしに改善はありません</strong>。
+      「忙しいから振り返りは省略」は最も危険な判断です。
+    </p>
+  </div>
+
+  <h2>KPT（Keep・Problem・Try）</h2>
+
+  <p>
+    <strong>KPT</strong>は最もシンプルで効果的な振り返りフレームワークです。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">要素</th>
+        <th style="width:35%;">意味</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>Keep</strong></td>
+        <td>良かったこと、続けたいこと</td>
+        <td>毎日のスタンドアップが効果的だった</td>
+      </tr>
+      <tr>
+        <td><strong>Problem</strong></td>
+        <td>問題だったこと、困ったこと</td>
+        <td>コードレビューが溜まりがちだった</td>
+      </tr>
+      <tr>
+        <td><strong>Try</strong></td>
+        <td>次に試したいこと</td>
+        <td>レビューの24時間ルールを導入する</td>
+      </tr>
+    </table>
+  </div>
+
+  <pre><code>KPT振り返りテンプレート
+
+■ プロジェクト名：ECサイトリニューアル
+■ 期間：2026/01/06 - 2026/02/03
+■ 参加者：チーム全員
+
+【Keep（良かった・続けたい）】
+- デイリースタンドアップで問題の早期発見ができた
+- ペアプロにより知識共有が進んだ
+- Feature Flagを使った安全なリリースができた
+
+【Problem（問題・困った）】
+- コードレビューが2〜3日滞ることがあった
+- 外部API連携の見積もりが甘かった
+- ドキュメント更新が後回しになった
+
+【Try（次に試したい）】
+- コードレビューの24時間ルールを導入
+- 外部依存のあるタスクにバッファを多めに設定
+- PRテンプレートにドキュメント更新チェックリストを追加
+
+【アクションアイテム】
+| No | アクション                    | 担当 | 期限     |
+|----|------------------------------|------|---------|
+| 1  | レビュールール策定             | 田中 | 2/10    |
+| 2  | 見積もりガイドライン更新       | 鈴木 | 2/14    |
+| 3  | PRテンプレート改修             | 佐藤 | 2/7     |</code></pre>
+
+  <h2>タイムラインレトロスペクティブ</h2>
+
+  <p>
+    プロジェクトの<strong>時系列に沿って出来事を振り返る</strong>手法です。
+    特に長期プロジェクトの振り返りに効果的で、
+    「あの時何が起きて、どう対処したか」を全員で共有できます。
+  </p>
+
+  <pre><code>タイムライン振り返り例
+
+Week 1 (1/6)    Week 2 (1/13)   Week 3 (1/20)   Week 4 (1/27)
+    |               |               |               |
+    |  😊 設計完了    |  😰 API遅延    |  😊 遅延回復    |  😊 リリース成功
+    |  😊 チーム結束   |  😤 要件追加    |  😊 テスト充実   |  😊 ユーザー好評
+    |               |  😰 コンフリクト |               |
+
+感情の変化を可視化し、何がチームのモチベーションに影響したかを分析</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      アンチパターン：振り返りの失敗
+    </div>
+    <ul>
+      <li><strong>犯人捜し</strong>：「誰が悪い」ではなく「何が問題だったか」を議論する</li>
+      <li><strong>アクションなし</strong>：振り返って終わり、何も改善しない</li>
+      <li><strong>形骸化</strong>：毎回同じ問題が挙がるが解決されない</li>
+      <li><strong>省略</strong>：「忙しいから」と振り返りを飛ばす</li>
+    </ul>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      効果的な振り返りのコツ
+    </div>
+    <ul>
+      <li><strong>安全な場</strong>を作る：発言を否定しない、批判しない</li>
+      <li><strong>具体的なアクション</strong>に落とす：担当者と期限を決める</li>
+      <li>前回のアクションアイテムの<strong>進捗を確認</strong>してから始める</li>
+      <li><strong>定期的に実施</strong>する（スプリントごと、月次）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-proj9">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>KPTの「T」は何を意味するか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj9" style="display:none;">
+      A. Team（チームに関する振り返り）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj9" style="display:none;">
+      B. Time（時間に関する振り返り）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-proj9" style="display:none;">
+      C. Try（次に試したいこと）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-proj9')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('proj9')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="proj10">
+  <h1>複数プロジェクト管理</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>複数プロジェクトの優先度付け方法</li>
+      <li>リソース配分の考え方</li>
+      <li>ポートフォリオ管理の基礎</li>
+    </ul>
+  </div>
+
+  <h2>複数プロジェクトの課題</h2>
+
+  <p>
+    現実の組織では、<strong>複数のプロジェクトが同時に進行</strong>しています。
+    限られたリソース（人、時間、予算）をどう配分するかが
+    マネジメントの腕の見せ所です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：レストランの厨房
+    </div>
+    <p>
+      レストランでは複数のテーブルからオーダーが入ります。
+      限られたシェフとコンロで、すべての料理を適切なタイミングで提供する必要があります。
+    </p>
+    <p style="margin:0;">
+      すべてを同時に始めると、どの料理も中途半端になります。
+      <strong>優先順位をつけ、リソースを集中させる</strong>のが重要です。
+    </p>
+  </div>
+
+  <h2>優先度付けフレームワーク</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">フレームワーク</th>
+        <th style="width:40%;">評価基準</th>
+        <th>適用場面</th>
+      </tr>
+      <tr>
+        <td><strong>RICE</strong></td>
+        <td>Reach × Impact × Confidence ÷ Effort</td>
+        <td>プロダクト機能の優先順位</td>
+      </tr>
+      <tr>
+        <td><strong>MoSCoW</strong></td>
+        <td>Must / Should / Could / Won't</td>
+        <td>要件の優先度分類</td>
+      </tr>
+      <tr>
+        <td><strong>重要度×緊急度</strong></td>
+        <td>アイゼンハワーマトリクス</td>
+        <td>日々のタスク優先度</td>
+      </tr>
+      <tr>
+        <td><strong>WSJF</strong></td>
+        <td>Weighted Shortest Job First</td>
+        <td>SAFeでの優先順位付け</td>
+      </tr>
+    </table>
+  </div>
+
+  <pre><code>優先度評価マトリクス テンプレート
+
+| プロジェクト     | ビジネス価値 | 緊急度 | リスク | 工数  | RICEスコア | 優先度 |
+|----------------|------------|--------|-------|-------|-----------|--------|
+| A: 新規顧客獲得  | 高(9)      | 高(8)  | 中(5) | 大(8) | 45.0      | 1位    |
+| B: 内部ツール改善 | 中(5)      | 低(3)  | 低(2) | 小(2) | 37.5      | 2位    |
+| C: 技術移行      | 高(8)      | 中(5)  | 高(8) | 大(10)| 32.0      | 3位    |
+| D: UI刷新       | 中(6)      | 中(5)  | 低(3) | 中(5) | 30.0      | 4位    |</code></pre>
+
+  <h2>リソース配分の原則</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">原則</th>
+        <th style="width:40%;">説明</th>
+        <th>注意点</th>
+      </tr>
+      <tr>
+        <td><strong>コンテキストスイッチの最小化</strong></td>
+        <td>1人が同時に担当するプロジェクトは最大2つ</td>
+        <td>3つ以上は生産性が激減</td>
+      </tr>
+      <tr>
+        <td><strong>専任チーム</strong></td>
+        <td>可能な限りプロジェクト専任チームを組む</td>
+        <td>兼任はコミュニケーションコスト増</td>
+      </tr>
+      <tr>
+        <td><strong>WIP制限</strong></td>
+        <td>同時進行プロジェクト数を制限する</td>
+        <td>「やらない」決断が重要</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      コンテキストスイッチのコスト
+    </div>
+    <p>
+      複数プロジェクトを同時に担当すると、<strong>切り替え時に集中力がリセット</strong>されます。
+      研究によると、タスク切り替えのたびに<strong>20〜30分の集中力回復時間</strong>が必要です。
+    </p>
+    <ul>
+      <li>1プロジェクト専任：実効稼働率 <strong>100%</strong></li>
+      <li>2プロジェクト兼任：実効稼働率 <strong>80%</strong>（各40%）</li>
+      <li>3プロジェクト兼任：実効稼働率 <strong>60%</strong>（各20%）</li>
+      <li>5プロジェクト兼任：実効稼働率 <strong>25%</strong>（各5%）</li>
+    </ul>
+  </div>
+
+  <h2>ポートフォリオ管理</h2>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      ポートフォリオ管理のベストプラクティス
+    </div>
+    <ul>
+      <li><strong>定期的な優先度レビュー</strong>：月次でプロジェクトポートフォリオを見直す</li>
+      <li><strong>リソースキャパシティの可視化</strong>：誰がどのプロジェクトにどれだけ関わっているか</li>
+      <li><strong>戦略との整合性</strong>：各プロジェクトが組織の戦略目標に貢献しているか</li>
+      <li><strong>Go/No-Go判断</strong>：成果が見込めないプロジェクトを勇気を持って中止する</li>
+    </ul>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      アンチパターン：すべてが最優先
+    </div>
+    <p>
+      「すべてのプロジェクトが最優先」と言われることがありますが、
+      これは<strong>「何も優先していない」のと同じ</strong>です。
+    </p>
+    <ul>
+      <li>すべてのプロジェクトを並行して少しずつ進める</li>
+      <li>「ノー」と言えず新規プロジェクトを引き受け続ける</li>
+      <li>リソースの取り合いが発生し、チーム間の対立を生む</li>
+      <li>どのプロジェクトも中途半端に終わる</li>
+    </ul>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">効果的なポートフォリオ管理</div>
+      <ul>
+        <li>明確な優先順位をつける</li>
+        <li>リソース配分を可視化する</li>
+        <li>定期的にポートフォリオを見直す</li>
+        <li>完了・中止の判断を適時に行う</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">非効果的なポートフォリオ管理</div>
+      <ul>
+        <li>すべてが同じ優先度</li>
+        <li>誰が何をしているか不明</li>
+        <li>始めたプロジェクトは止められない</li>
+        <li>戦略との整合性を確認しない</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="quiz" id="quiz-proj10">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>コンテキストスイッチについて正しいものは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj10" style="display:none;">
+      A. 5つのプロジェクトを兼任すれば各20%ずつ進められる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-proj10" style="display:none;">
+      B. コンテキストスイッチにコストはほとんどない
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-proj10" style="display:none;">
+      C. プロジェクト兼任数が増えるほど実効稼働率は大幅に下がる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-proj10')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('proj10')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>

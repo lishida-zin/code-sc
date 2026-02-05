@@ -1335,3 +1335,169 @@ export default ProfileEditor;</code></pre>
     <span class="icon">✓</span> このページを完了
   </button>
 </section>
+
+<section id="ex-t4-16">
+  <h1>問題 16: React useStateの直接変更バグ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🔧</span> コード修正</div>
+    <p>同僚から「Todoリストにアイテムを追加しても画面に反映されない。コンソールでstateを見ると値は追加されてるのに…」と相談がありました。stateの更新方法に問題がありそうです。</p>
+  </div>
+
+  <h2>以下のコードにバグがあります</h2>
+  <pre><code>import React, { useState } from "react";
+
+function TodoList() {
+  const [todos, setTodos] = useState(["買い物", "掃除"]);
+  const [input, setInput] = useState("");
+
+  const handleAdd = () =&gt; {
+    if (input.trim() === "") return;
+    // 配列を直接変更してしまっている
+    todos.push(input);
+    setTodos(todos);
+    setInput("");
+  };
+
+  const handleRemove = (index) =&gt; {
+    // spliceで直接変更してしまっている
+    todos.splice(index, 1);
+    setTodos(todos);
+  };
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Todoリスト&lt;/h2&gt;
+      &lt;input
+        value={input}
+        onChange={(e) =&gt; setInput(e.target.value)}
+      /&gt;
+      &lt;button onClick={handleAdd}&gt;追加&lt;/button&gt;
+      &lt;ul&gt;
+        {todos.map((todo, i) =&gt; (
+          &lt;li key={i}&gt;
+            {todo}
+            &lt;button onClick={() =&gt; handleRemove(i)}&gt;削除&lt;/button&gt;
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t4-16">
+    <div class="quiz-question"><strong>問題：</strong>このコードの修正方法として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-16" value="a">
+        setTodos(todos) の後に forceUpdate() を呼び出して強制的に再描画する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-16" value="b">
+        useState の代わりに useRef を使ってtodosを管理する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-16" value="c">
+        handleAdd で todos.push(input) の代わりに todos.concat(input) を使い、setTodos は不要にする
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Reactはstateの変更を参照（reference）の比較で検知します。push()やsplice()は元の配列を直接変更するため、配列の参照は同じままです。setTodos(todos)に同じ参照を渡しても、Reactは「変更なし」と判断して再レンダリングしません。修正方法は、追加時は setTodos([...todos, input]) でスプレッド構文を使って新しい配列を作成し、削除時は setTodos(todos.filter((_, i) => i !== index)) で新しい配列を返すfilterメソッドを使います。Reactのstateは「イミュータブル（不変）に扱う」が鉄則で、これはuseStateだけでなくuseReducerやReduxでも同様です。">
+        <input type="radio" name="quiz-ex-t4-16" value="d">
+        handleAdd で setTodos([...todos, input]) に変更し、handleRemove で setTodos(todos.filter((_, i) =&gt; i !== index)) に変更する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-16')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t4-16')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t4-17">
+  <h1>問題 17: useEffectの依存配列バグ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🔧</span> コード修正</div>
+    <p>本番リリース後、「ユーザー検索ページを開くとブラウザが固まる」という緊急報告がありました。Network タブを確認すると、同じAPIリクエストが毎秒数百回送信されていました。</p>
+  </div>
+
+  <h2>以下のコードにバグがあります</h2>
+  <pre><code>import React, { useState, useEffect } from "react";
+
+function UserSearch() {
+  const [query, setQuery] = useState("");
+  const [users, setUsers] = useState([]);
+  const [filter, setFilter] = useState({ role: "all", active: true });
+
+  useEffect(() =&gt; {
+    const searchUsers = async () =&gt; {
+      const params = new URLSearchParams({
+        q: query,
+        role: filter.role,
+        active: String(filter.active),
+      });
+      const res = await fetch(`/api/users?${params}`);
+      const data = await res.json();
+      setUsers(data);
+    };
+
+    searchUsers();
+  }, [query, filter]);
+  // filterはオブジェクトなので、毎レンダリングで
+  // 新しい参照が作られ、無限ループが発生する
+
+  return (
+    &lt;div&gt;
+      &lt;input
+        value={query}
+        onChange={(e) =&gt; setQuery(e.target.value)}
+        placeholder="ユーザー名で検索"
+      /&gt;
+      &lt;select
+        value={filter.role}
+        onChange={(e) =&gt;
+          setFilter({ ...filter, role: e.target.value })
+        }
+      &gt;
+        &lt;option value="all"&gt;全て&lt;/option&gt;
+        &lt;option value="admin"&gt;管理者&lt;/option&gt;
+        &lt;option value="user"&gt;一般&lt;/option&gt;
+      &lt;/select&gt;
+      &lt;ul&gt;
+        {users.map((u) =&gt; (
+          &lt;li key={u.id}&gt;{u.name}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t4-17">
+    <div class="quiz-question"><strong>問題：</strong>このコードの修正方法として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-17" value="a">
+        useEffect の依存配列を空 [] にして、コンポーネントマウント時に1回だけ実行する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="原因はuseEffectの依存配列にオブジェクト（filter）を直接入れていることです。JavaScriptではオブジェクトは参照で比較されるため、{ role: 'all', active: true } と { role: 'all', active: true } は値が同じでも別の参照となり !== true になります。このコンポーネントではsetUsersによる再レンダリングが発生するたびにfilterオブジェクトが新たに生成され、useEffectが再実行され、さらにsetUsersが呼ばれて…という無限ループになります。修正方法として、依存配列にはオブジェクトではなくプリミティブ値（filter.roleとfilter.active）を個別に指定します。またはuseMemoでfilterをメモ化するか、filterのstateをroleとactiveに分離する方法もあります。">
+        <input type="radio" name="quiz-ex-t4-17" value="b">
+        依存配列を [query, filter.role, filter.active] に変更し、オブジェクト参照ではなくプリミティブ値で比較されるようにする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-17" value="c">
+        useEffect の中に if (users.length === 0) の条件を追加して、データ取得済みなら再実行しないようにする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-17" value="d">
+        fetchの前に AbortController を追加すればリクエストが重複しなくなるので、依存配列はそのままでよい
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-17')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t4-17')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

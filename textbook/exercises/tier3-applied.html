@@ -1114,3 +1114,128 @@ async function handleUserAction() {
     <span class="icon">✓</span> このページを完了
   </button>
 </section>
+
+<section id="ex-t3-16">
+  <h1>問題 16: async/awaitのエラーハンドリング不備</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🔧</span> コード修正</div>
+    <p>本番環境で「ダッシュボードが突然真っ白になる」という障害報告が上がりました。調査すると、3つのAPIから並行取得する処理で、1つのAPIがタイムアウトすると画面全体がクラッシュしていました。</p>
+  </div>
+
+  <h2>以下のコードにバグがあります</h2>
+  <pre><code>async function loadDashboard() {
+  const userPromise = fetch("/api/user").then(r =&gt; r.json());
+  const ordersPromise = fetch("/api/orders").then(r =&gt; r.json());
+  const statsPromise = fetch("/api/stats").then(r =&gt; r.json());
+
+  // 3つのAPIを並行取得
+  const [user, orders, stats] = await Promise.all([
+    userPromise,
+    ordersPromise,
+    statsPromise,
+  ]);
+
+  renderUserInfo(user);
+  renderOrders(orders);
+  renderStats(stats);
+}
+
+// ページ読み込み時に実行
+loadDashboard();</code></pre>
+
+  <div class="quiz" id="quiz-ex-t3-16">
+    <div class="quiz-question"><strong>問題：</strong>このコードの修正方法として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-16" value="a">
+        Promise.all を Promise.race に変更して、最も早く返ってきたデータだけを表示する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="2つの問題があります。(1) loadDashboard全体にtry-catchがないため、いずれかのfetchが失敗するとUnhandled Promise Rejectionとなり画面がクラッシュします。(2) Promise.allは1つでも失敗すると全体がrejectされるため、statsAPIのタイムアウトだけでuser・ordersの正常データも表示できません。Promise.allSettledを使うと、各Promiseの結果が{status: 'fulfilled', value}か{status: 'rejected', reason}として返るため、成功したデータだけ表示し、失敗した部分にはエラーメッセージを表示できます。さらに全体をtry-catchで囲むことで予期しないエラーにも対処できます。">
+        <input type="radio" name="quiz-ex-t3-16" value="b">
+        loadDashboard全体をtry-catchで囲み、Promise.all を Promise.allSettled に変更して各結果のstatusを確認してから描画する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-16" value="c">
+        各fetchの後に .catch(() =&gt; null) を追加するだけで十分。Promise.allはそのままでよい
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-16" value="d">
+        Promise.all をやめて3つのawaitを順番に書き、それぞれにtry-catchを付ける
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-16')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t3-16')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t3-17">
+  <h1>問題 17: TypeScript型定義の不整合修正</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🔧</span> コード修正</div>
+    <p>チームメイトが「TypeScriptなのに実行時にCannot read properties of undefinedが出る」と困っています。型定義があるのになぜエラーになるのか調査してください。</p>
+  </div>
+
+  <h2>以下のコードにバグがあります</h2>
+  <pre><code>interface User {
+  id: number;
+  name: string;
+  email: string;
+  address: {
+    prefecture: string;
+    city: string;
+    zipCode: string;
+  };
+}
+
+function formatUserAddress(user: User): string {
+  return `〒${user.address.zipCode} ${user.address.prefecture}${user.address.city}`;
+}
+
+// APIからのレスポンス（実際にはaddressがないケースがある）
+const apiResponse = {
+  id: 1,
+  name: "田中太郎",
+  email: "tanaka@example.com",
+  // addressフィールドが存在しない！
+};
+
+// as で型アサーションしてしまっている
+const user = apiResponse as User;
+
+// 実行時エラー: Cannot read properties of undefined
+console.log(formatUserAddress(user));</code></pre>
+
+  <div class="quiz" id="quiz-ex-t3-17">
+    <div class="quiz-question"><strong>問題：</strong>このコードの修正方法として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-17" value="a">
+        formatUserAddress内でオプショナルチェーン（user.address?.zipCode）を使うだけでよい
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-17" value="b">
+        User interfaceの全フィールドをoptional（?）にする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-17" value="c">
+        as User の代わりに as unknown as User にキャストすればエラーは起きない
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="根本的な問題は2つあります。(1) User interfaceのaddressが必須フィールドになっていますが、APIレスポンスではaddressが欠落するケースがあります。型定義を address?: { ... } | undefined とオプショナルにして実態に合わせるべきです。(2) as User という型アサーションは実行時の型チェックを一切行わないため、APIレスポンスが型定義に合致しなくても通ってしまいます。型ガード関数（例: function isUser(obj: unknown): obj is User）やZodなどのバリデーションライブラリで実行時に検証するのが正しい対処です。さらにformatUserAddress内でもaddressの存在チェックを行う防御的プログラミングを加えると堅牢になります。">
+        <input type="radio" name="quiz-ex-t3-17" value="d">
+        addressをoptional（address?:）に修正し、asキャストをやめて型ガード関数またはバリデーションで実行時検証を行い、formatUserAddress内でもaddressの存在確認を追加する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-17')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t3-17')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

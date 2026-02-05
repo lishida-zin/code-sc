@@ -1270,5 +1270,232 @@
     </section>
 
     <!-- ============================================
+         HTML 8: セマンティックHTMLとARIA
+         ============================================ -->
+    <section id="html8">
+      <h1>8. セマンティックHTMLとARIA</h1>
+
+      <div class="card card-info">
+        <div class="card-title">
+          <span class="icon">📚</span>
+          このページで学ぶこと
+        </div>
+        <ul>
+          <li>セマンティックHTMLとは</li>
+          <li>WAI-ARIA基礎</li>
+          <li>アクセシブルなマークアップ</li>
+        </ul>
+      </div>
+
+      <h2>セマンティックHTMLとは</h2>
+
+      <p>
+        セマンティックHTMLとは、<strong>「意味のあるHTML」</strong>のことです。
+      </p>
+
+      <p>
+        <code>&lt;div&gt;</code>で何でも囲むのではなく、<code>&lt;main&gt;</code>、<code>&lt;nav&gt;</code>、<code>&lt;article&gt;</code>、<code>&lt;section&gt;</code>、<code>&lt;aside&gt;</code>、<code>&lt;header&gt;</code>、<code>&lt;footer&gt;</code>など、<strong>役割を表すタグ</strong>を使います。
+      </p>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-label">
+            <span class="icon">❌</span> div地獄
+          </div>
+          <pre><code>&lt;div class="header"&gt;
+  &lt;div class="nav"&gt;...&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="main"&gt;
+  &lt;div class="article"&gt;...&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="footer"&gt;...&lt;/div&gt;</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-label">
+            <span class="icon">⭕</span> セマンティックHTML
+          </div>
+          <pre><code>&lt;header&gt;
+  &lt;nav&gt;...&lt;/nav&gt;
+&lt;/header&gt;
+&lt;main&gt;
+  &lt;article&gt;...&lt;/article&gt;
+&lt;/main&gt;
+&lt;footer&gt;...&lt;/footer&gt;</code></pre>
+        </div>
+      </div>
+
+      <h2>なぜセマンティックHTMLが重要か</h2>
+
+      <div class="card card-success">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          3つの理由
+        </div>
+        <ol>
+          <li><strong>スクリーンリーダーが構造を理解</strong>：目が見えない人もページの構造がわかる</li>
+          <li><strong>SEO向上</strong>：検索エンジンがコンテンツの意味を正しく理解できる</li>
+          <li><strong>コードの可読性</strong>：開発者がコードを見てすぐ構造を把握できる</li>
+        </ol>
+      </div>
+
+      <h2>主要セマンティック要素一覧</h2>
+
+      <table>
+        <tr>
+          <th>要素</th>
+          <th>役割</th>
+          <th>使用例</th>
+        </tr>
+        <tr>
+          <td><code>&lt;header&gt;</code></td>
+          <td>ページやセクションの導入部</td>
+          <td>ロゴ、サイトタイトル</td>
+        </tr>
+        <tr>
+          <td><code>&lt;nav&gt;</code></td>
+          <td>ナビゲーションリンク</td>
+          <td>メニュー、パンくずリスト</td>
+        </tr>
+        <tr>
+          <td><code>&lt;main&gt;</code></td>
+          <td>メインコンテンツ（1ページ1つ）</td>
+          <td>記事本文、商品一覧</td>
+        </tr>
+        <tr>
+          <td><code>&lt;article&gt;</code></td>
+          <td>独立したコンテンツ</td>
+          <td>ブログ記事、ニュース</td>
+        </tr>
+        <tr>
+          <td><code>&lt;section&gt;</code></td>
+          <td>テーマのまとまり</td>
+          <td>章、セクション</td>
+        </tr>
+        <tr>
+          <td><code>&lt;aside&gt;</code></td>
+          <td>補足・関連情報</td>
+          <td>サイドバー、関連リンク</td>
+        </tr>
+        <tr>
+          <td><code>&lt;footer&gt;</code></td>
+          <td>ページやセクションの末尾</td>
+          <td>著作権、連絡先</td>
+        </tr>
+      </table>
+
+      <h2>WAI-ARIAの基本</h2>
+
+      <p>
+        <strong>WAI-ARIA</strong>（Web Accessibility Initiative - Accessible Rich Internet Applications）は、HTMLだけでは伝えきれない情報を<strong>補足する仕組み</strong>です。
+      </p>
+
+      <h3>role属性：ランドマーク</h3>
+
+      <p>
+        ページの主要な領域に役割を付けます。
+      </p>
+
+      <table>
+        <tr>
+          <th>role</th>
+          <th>意味</th>
+          <th>対応するHTMLタグ</th>
+        </tr>
+        <tr>
+          <td><code>banner</code></td>
+          <td>サイト全体のヘッダー</td>
+          <td><code>&lt;header&gt;</code></td>
+        </tr>
+        <tr>
+          <td><code>navigation</code></td>
+          <td>ナビゲーション</td>
+          <td><code>&lt;nav&gt;</code></td>
+        </tr>
+        <tr>
+          <td><code>main</code></td>
+          <td>メインコンテンツ</td>
+          <td><code>&lt;main&gt;</code></td>
+        </tr>
+        <tr>
+          <td><code>contentinfo</code></td>
+          <td>サイト全体のフッター</td>
+          <td><code>&lt;footer&gt;</code></td>
+        </tr>
+      </table>
+
+      <h3>aria-label：要素にラベルを付ける</h3>
+
+      <pre><code>&lt;button aria-label="メニューを開く"&gt;
+  &lt;img src="menu-icon.svg" alt=""&gt;
+&lt;/button&gt;</code></pre>
+
+      <p>
+        アイコンだけのボタンなど、見た目ではわかるが<strong>テキストがない要素</strong>にラベルを付けます。
+      </p>
+
+      <h3>aria-hidden：装飾的要素を隠す</h3>
+
+      <pre><code>&lt;span aria-hidden="true"&gt;★&lt;/span&gt; お気に入り</code></pre>
+
+      <p>
+        装飾目的の要素をスクリーンリーダーから<strong>隠す</strong>ことで、不要な読み上げを防ぎます。
+      </p>
+
+      <div class="card card-warning">
+        <div class="card-title">
+          <span class="icon">⚠️</span>
+          ARIAの第一ルール
+        </div>
+        <p style="margin:0;">
+          <strong>ネイティブHTMLで足りるなら、ARIAは使わない。</strong>
+        </p>
+        <p style="margin:0;">
+          例えば <code>&lt;nav&gt;</code> があるのに <code>&lt;div role="navigation"&gt;</code> と書くのは冗長です。まずHTMLのセマンティックタグを正しく使いましょう。
+        </p>
+      </div>
+
+      <h2>コード例：アクセシブルなナビゲーション</h2>
+
+      <pre><code>&lt;nav aria-label="メインメニュー"&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href="/"&gt;ホーム&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="/about"&gt;会社概要&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="/contact"&gt;お問い合わせ&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;</code></pre>
+
+      <p>
+        <code>&lt;nav&gt;</code>タグを使い、<code>aria-label</code>で「何のナビゲーションか」を明示しています。
+      </p>
+
+      <div class="quiz" id="quiz-html8">
+        <div class="quiz-title">
+          <span class="icon">❓</span>
+          確認クイズ
+        </div>
+        <p>ARIAを使うべき場面として正しいのは？</p>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-html8" style="display:none;">
+          A. すべての要素にrole属性を付ける
+        </label>
+        <label class="quiz-option" data-correct="true">
+          <input type="radio" name="q-html8" style="display:none;">
+          B. ネイティブHTMLだけでは意味が伝わらないとき
+        </label>
+        <label class="quiz-option" data-correct="false">
+          <input type="radio" name="q-html8" style="display:none;">
+          C. CSSのスタイルを当てるため
+        </label>
+        <button class="quiz-btn" onclick="checkQuiz('quiz-html8')">答え合わせ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <button class="complete-btn" onclick="completeSection('html8')">
+        <span class="icon">✓</span>
+        このページを完了
+      </button>
+    </section>
+
+    <!-- ============================================
          CSS 1: CSSとは？
          ============================================ -->

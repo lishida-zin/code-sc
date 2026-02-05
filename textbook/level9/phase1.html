@@ -1,0 +1,1684 @@
+<!-- ============================================
+     Level 9 Phase 1: アジャイル開発
+     agile1-agile10
+     ============================================ -->
+
+<!-- agile1: アジャイルマニフェスト -->
+<section id="agile1">
+  <h1>アジャイルマニフェスト</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>アジャイルマニフェストの4つの価値</li>
+      <li>12の原則の本質的な意味</li>
+      <li>ウォーターフォールとの違いと使い分け</li>
+    </ul>
+  </div>
+
+  <h2>アジャイルマニフェストとは</h2>
+
+  <p>
+    2001年、17人のソフトウェア開発者が集まり「もっと良い開発の仕方があるはず」と議論して生まれたのが<strong>アジャイルソフトウェア開発宣言（Agile Manifesto）</strong>です。
+    これは「プロセスやツールよりも、人と対話を重視しよう」という考え方の原点です。
+  </p>
+
+  <h2>4つの価値</h2>
+
+  <table>
+    <tr>
+      <th>左側（より重視する）</th>
+      <th></th>
+      <th>右側（価値はあるが左を重視）</th>
+    </tr>
+    <tr>
+      <td><strong>個人と対話</strong></td>
+      <td>＞</td>
+      <td>プロセスとツール</td>
+    </tr>
+    <tr>
+      <td><strong>動くソフトウェア</strong></td>
+      <td>＞</td>
+      <td>包括的なドキュメント</td>
+    </tr>
+    <tr>
+      <td><strong>顧客との協調</strong></td>
+      <td>＞</td>
+      <td>契約交渉</td>
+    </tr>
+    <tr>
+      <td><strong>変化への対応</strong></td>
+      <td>＞</td>
+      <td>計画に従うこと</td>
+    </tr>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      よくある誤解
+    </div>
+    <p>
+      「右側に価値がない」のではありません。<strong>左側をより重視する</strong>という意味です。<br>
+      「ドキュメント不要」「計画不要」は完全な誤解です。
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：料理のレシピ
+    </div>
+    <p>
+      料理にレシピ（計画）は大事。でも実際に味見（フィードバック）しながら調整するほうが、おいしい料理ができます。<br>
+      レシピ通りに「塩10g」と決めても、素材の状態で味は変わる。<strong>計画は大事だが、現実に合わせて変える柔軟さがもっと大事</strong>ということです。
+    </p>
+  </div>
+
+  <h2>12の原則（重要なものを抜粋）</h2>
+
+  <table>
+    <tr>
+      <th>#</th>
+      <th>原則</th>
+      <th>現場での意味</th>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>顧客満足を最優先</td>
+      <td>価値のあるソフトウェアを早く頻繁に届ける</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>要求の変更を歓迎</td>
+      <td>「仕様変更＝敵」ではなく「学びの機会」</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>動くソフトウェアを頻繁に</td>
+      <td>2週間〜2ヶ月、短い間隔でリリース</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>持続可能なペース</td>
+      <td>残業や無理は長期的に生産性を下げる</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>定期的に振り返る</td>
+      <td>レトロスペクティブでプロセスを改善し続ける</td>
+    </tr>
+  </table>
+
+  <h2>ウォーターフォールとの違い</h2>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">アジャイル</div>
+      <ul>
+        <li>短い反復（イテレーション）で開発</li>
+        <li>要件変更に柔軟に対応</li>
+        <li>早期にフィードバックを得る</li>
+        <li>不確実性が高いプロジェクト向き</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">ウォーターフォール</div>
+      <ul>
+        <li>要件→設計→実装→テストの順番</li>
+        <li>後工程での変更コストが大きい</li>
+        <li>完成まで動くものが見えない</li>
+        <li>要件が明確で変わらないプロジェクト向き</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      原則の形骸化を見抜く
+    </div>
+    <ul>
+      <li>「アジャイルです」と言いつつ、スプリント内でウォーターフォールをやっている</li>
+      <li>「動くソフトウェア」を重視と言いつつ、大量のドキュメント作成を強要</li>
+      <li>「変化への対応」と言いつつ、スプリント途中の変更を一切許さない</li>
+      <li>「振り返り」をしているが、改善アクションが実行されない</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-agile1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>アジャイルマニフェストの正しい理解はどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile1" style="display:none;">
+      ドキュメントは一切不要で、動くソフトウェアだけが大事
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-agile1" style="display:none;">
+      右側にも価値はあるが、左側をより重視する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile1" style="display:none;">
+      計画は立てず、常にその場の判断で開発を進める
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-agile1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('agile1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- agile2: スクラムフレームワーク -->
+<section id="agile2">
+  <h1>スクラムフレームワーク</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>スクラムの3つのロール</li>
+      <li>5つのイベントの目的と流れ</li>
+      <li>3つの成果物とその関係性</li>
+    </ul>
+  </div>
+
+  <h2>スクラムとは</h2>
+
+  <p>
+    <strong>スクラム</strong>はアジャイル開発で最も広く使われるフレームワークです。
+    軽量でシンプルなルールセットですが、実践は奥が深い。
+    「スクラムガイド」（約13ページ）に全てが書かれています。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：ラグビーのスクラム
+    </div>
+    <p>
+      ラグビーのスクラムは、チーム全員が一丸となってボールを前に進めます。<br>
+      ソフトウェア開発のスクラムも同じ。<strong>全員が同じゴールに向かって協力する</strong>のが核心です。
+      一人がボールを持って走り続けるのではなく、チームで前進します。
+    </p>
+  </div>
+
+  <h2>3つのロール</h2>
+
+  <table>
+    <tr>
+      <th>ロール</th>
+      <th>責務</th>
+      <th>よくある間違い</th>
+    </tr>
+    <tr>
+      <td><strong>プロダクトオーナー（PO）</strong></td>
+      <td>プロダクトの価値を最大化する。バックログの優先順位を決める</td>
+      <td>POが不在、または権限がない</td>
+    </tr>
+    <tr>
+      <td><strong>スクラムマスター（SM）</strong></td>
+      <td>スクラムの理解と実践を支援。障害を除去する</td>
+      <td>「進捗管理する人」「PMの代替」と誤解</td>
+    </tr>
+    <tr>
+      <td><strong>開発者</strong></td>
+      <td>スプリントゴールを達成するためにプロダクトを開発する</td>
+      <td>「言われたことだけやる」受身姿勢</td>
+    </tr>
+  </table>
+
+  <h2>5つのイベント</h2>
+
+  <table>
+    <tr>
+      <th>イベント</th>
+      <th>目的</th>
+      <th>タイムボックス（2週間スプリント）</th>
+    </tr>
+    <tr>
+      <td><strong>スプリント</strong></td>
+      <td>他全てのイベントを含むコンテナ</td>
+      <td>1〜4週間（固定）</td>
+    </tr>
+    <tr>
+      <td><strong>スプリントプランニング</strong></td>
+      <td>スプリントゴールとバックログの選択</td>
+      <td>最大4時間</td>
+    </tr>
+    <tr>
+      <td><strong>デイリースクラム</strong></td>
+      <td>計画の検査と適応</td>
+      <td>15分</td>
+    </tr>
+    <tr>
+      <td><strong>スプリントレビュー</strong></td>
+      <td>成果物の検査とフィードバック</td>
+      <td>最大2時間</td>
+    </tr>
+    <tr>
+      <td><strong>スプリントレトロスペクティブ</strong></td>
+      <td>プロセスの改善</td>
+      <td>最大1.5時間</td>
+    </tr>
+  </table>
+
+  <h2>3つの成果物</h2>
+
+  <table>
+    <tr>
+      <th>成果物</th>
+      <th>内容</th>
+      <th>透明性のためのコミットメント</th>
+    </tr>
+    <tr>
+      <td><strong>プロダクトバックログ</strong></td>
+      <td>やるべきことの優先順位付きリスト</td>
+      <td>プロダクトゴール</td>
+    </tr>
+    <tr>
+      <td><strong>スプリントバックログ</strong></td>
+      <td>このスプリントで取り組むアイテム + 計画</td>
+      <td>スプリントゴール</td>
+    </tr>
+    <tr>
+      <td><strong>インクリメント</strong></td>
+      <td>スプリントで生み出された動くプロダクト</td>
+      <td>完成の定義（DoD）</td>
+    </tr>
+  </table>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      スクラムの部分的導入を見抜く
+    </div>
+    <ul>
+      <li>「デイリースクラムはやっているが、レトロはやっていない」→ 改善がない</li>
+      <li>「POがいない」→ 優先順位が決まらず、全部やろうとする</li>
+      <li>「SMがPM化」→ マイクロマネジメントが始まる</li>
+      <li>「完成の定義（DoD）がない」→ 「完成」の基準が人によって違う</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-agile2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>スクラムマスターの正しい役割はどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile2" style="display:none;">
+      チームの進捗を管理し、タスクを割り振る
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile2" style="display:none;">
+      プロダクトバックログの優先順位を決める
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-agile2" style="display:none;">
+      スクラムの理解と実践を支援し、障害を除去する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-agile2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('agile2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- agile3: スプリント計画 -->
+<section id="agile3">
+  <h1>スプリント計画</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>スプリントゴールの設定方法</li>
+      <li>バックログアイテムの選択基準</li>
+      <li>チームキャパシティの考え方</li>
+    </ul>
+  </div>
+
+  <h2>スプリントプランニングとは</h2>
+
+  <p>
+    スプリントプランニングは、<strong>次のスプリントで何を達成するか</strong>をチーム全体で決めるイベントです。
+    「なぜやるのか（ゴール）」「何をやるのか（バックログ選択）」「どうやるのか（計画）」の3つを議論します。
+  </p>
+
+  <h2>スプリントゴールの設定</h2>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">良いスプリントゴール</div>
+      <ul>
+        <li>「ユーザーが商品を検索して購入できるようにする」</li>
+        <li>ビジネス価値が明確</li>
+        <li>チームが判断の拠り所にできる</li>
+        <li>スプリント終了時に達成を判定できる</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">悪いスプリントゴール</div>
+      <ul>
+        <li>「バックログの上から5つを消化する」</li>
+        <li>ビジネス価値が不明</li>
+        <li>ただのタスクリスト</li>
+        <li>何のために開発しているかわからない</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>キャパシティの考え方</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：旅行のスーツケース
+    </div>
+    <p>
+      スーツケースに入る量には限りがあります。「あれもこれも」と詰めすぎると閉まらない。<br>
+      スプリントも同じ。<strong>チームの稼働可能時間（キャパシティ）を正しく見積もり</strong>、入りきる量だけバックログを選びます。
+    </p>
+  </div>
+
+  <p>キャパシティ計算の例：</p>
+
+  <pre><code>チーム5人 × 2週間 = 50人日（理論上の最大）
+
+実際のキャパシティ:
+- 休暇: Aさん2日休み = -2日
+- 会議・雑務: 1人あたり1日 = -5日
+- バッファ: 20% = -8.6日
+
+利用可能キャパシティ: 50 - 2 - 5 - 8.6 ≒ 34人日
+
+→ 過去のベロシティが30〜35ptなら、30pt分を選択</code></pre>
+
+  <h2>プランニングの3つの問い</h2>
+
+  <table>
+    <tr>
+      <th>問い</th>
+      <th>内容</th>
+      <th>参加者</th>
+    </tr>
+    <tr>
+      <td><strong>Why</strong></td>
+      <td>なぜこのスプリントが価値があるのか？→ スプリントゴール</td>
+      <td>PO主導、チーム全員</td>
+    </tr>
+    <tr>
+      <td><strong>What</strong></td>
+      <td>何を達成できるか？→ バックログアイテムの選択</td>
+      <td>PO + 開発者</td>
+    </tr>
+    <tr>
+      <td><strong>How</strong></td>
+      <td>どのように実現するか？→ タスク分解</td>
+      <td>開発者主導</td>
+    </tr>
+  </table>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      計画の形骸化を見抜く
+    </div>
+    <ul>
+      <li><strong>ゴールなきプランニング</strong>：「バックログの上から順に取るだけ」→ 目的意識がない</li>
+      <li><strong>キャパシティ無視</strong>：「前回35ptだから今回も35pt」→ 休暇や研修を考慮しない</li>
+      <li><strong>POが欠席</strong>：開発者だけで何を作るか決めている→ ビジネス価値とずれる</li>
+      <li><strong>時間切れで雑に決定</strong>：タイムボックスを守るために議論を省略→ 認識のずれが残る</li>
+    </ul>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      現場でよく見る罠
+    </div>
+    <p>
+      「とりあえず全部入れて、できなかったら次のスプリントへ」は計画の崩壊です。<br>
+      <strong>コミットした量を完了できないスプリントが続くと、チームの士気と信頼が低下します</strong>。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-agile3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>スプリントプランニングで最も重要なことはどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile3" style="display:none;">
+      バックログの上から順番にアイテムを取ること
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile3" style="display:none;">
+      前回と同じベロシティ分のアイテムを選ぶこと
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-agile3" style="display:none;">
+      スプリントゴールを設定し、チームのキャパシティに基づいてアイテムを選ぶこと
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-agile3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('agile3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- agile4: プロダクトバックログ -->
+<section id="agile4">
+  <h1>プロダクトバックログ</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ユーザーストーリーの書き方</li>
+      <li>受入基準の定義方法</li>
+      <li>INVEST原則によるストーリーの品質チェック</li>
+    </ul>
+  </div>
+
+  <h2>プロダクトバックログとは</h2>
+
+  <p>
+    プロダクトバックログは、<strong>プロダクトに必要な全てのことを優先順位付きでまとめたリスト</strong>です。
+    プロダクトオーナーが管理し、常にリファインメント（精緻化）を続けます。
+    「完成」するものではなく、プロダクトが存在する限り進化し続けます。
+  </p>
+
+  <h2>ユーザーストーリー</h2>
+
+  <p>バックログアイテムの書き方として最もポピュラーなのが<strong>ユーザーストーリー</strong>です。</p>
+
+  <pre><code>フォーマット:
+「[ユーザーの種類]として、
+ [機能/目的]したい。
+ なぜなら[ビジネス価値/理由]だからだ。」
+
+例:
+「ECサイトの購入者として、
+ 商品をカートに入れて後で購入したい。
+ なぜなら比較検討してから決済したいからだ。」</code></pre>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">良いユーザーストーリー</div>
+      <pre><code>購入者として、
+カートに入れた商品の数量を変更したい。
+なぜなら、間違えて2個入れた場合に
+修正できないと不便だからだ。
+
+受入基準:
+- 数量を1〜99の範囲で変更できる
+- 0にすると商品がカートから削除される
+- 数量変更後、合計金額が即座に更新される</code></pre>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">悪いユーザーストーリー</div>
+      <pre><code>カート機能を作る。
+
+（誰のため？何のため？
+完成基準は？何もわからない）</code></pre>
+    </div>
+  </div>
+
+  <h2>INVEST原則</h2>
+
+  <p>良いユーザーストーリーを書くための6つのチェック基準です。</p>
+
+  <table>
+    <tr>
+      <th>頭文字</th>
+      <th>英語</th>
+      <th>意味</th>
+      <th>チェック例</th>
+    </tr>
+    <tr>
+      <td><strong>I</strong></td>
+      <td>Independent</td>
+      <td>独立している</td>
+      <td>他のストーリーに依存せず開発できるか</td>
+    </tr>
+    <tr>
+      <td><strong>N</strong></td>
+      <td>Negotiable</td>
+      <td>交渉可能</td>
+      <td>実装方法を開発者が提案できるか</td>
+    </tr>
+    <tr>
+      <td><strong>V</strong></td>
+      <td>Valuable</td>
+      <td>価値がある</td>
+      <td>ユーザーやビジネスに価値を提供するか</td>
+    </tr>
+    <tr>
+      <td><strong>E</strong></td>
+      <td>Estimable</td>
+      <td>見積もり可能</td>
+      <td>チームが規模感を見積もれるか</td>
+    </tr>
+    <tr>
+      <td><strong>S</strong></td>
+      <td>Small</td>
+      <td>小さい</td>
+      <td>1スプリント内で完了できるサイズか</td>
+    </tr>
+    <tr>
+      <td><strong>T</strong></td>
+      <td>Testable</td>
+      <td>テスト可能</td>
+      <td>完了を客観的に確認できるか</td>
+    </tr>
+  </table>
+
+  <h2>受入基準（Acceptance Criteria）</h2>
+
+  <p>
+    受入基準は「このストーリーが完了と言えるための条件」です。
+    開発者とPOが<strong>共通認識</strong>を持つために不可欠です。
+  </p>
+
+  <pre><code>Given-When-Then形式（BDD）:
+
+Given（前提）: カートに商品が3つ入っている
+When（操作）:  数量を0に変更する
+Then（結果）:  その商品がカートから削除される
+And:          合計金額が再計算される
+And:          カート内商品数が2と表示される</code></pre>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      曖昧なストーリーを見抜く
+    </div>
+    <ul>
+      <li><strong>「〜機能を実装する」だけ</strong>：誰のため、なぜ必要かが不明</li>
+      <li><strong>受入基準がない</strong>：完了の判断が人によって異なる</li>
+      <li><strong>巨大すぎるストーリー</strong>：「ユーザー管理機能」のような括りは大きすぎる（エピックに分割すべき）</li>
+      <li><strong>技術タスクだけが並ぶ</strong>：「DBテーブル作成」「API実装」→ ビジネス価値が見えない</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-agile4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>INVEST原則の「S」は何を意味しますか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile4" style="display:none;">
+      Specific（具体的）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-agile4" style="display:none;">
+      Small（小さい）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile4" style="display:none;">
+      Stable（安定している）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-agile4')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('agile4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- agile5: 見積もり手法 -->
+<section id="agile5">
+  <h1>見積もり手法</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ストーリーポイントの考え方と使い方</li>
+      <li>プランニングポーカーの進め方</li>
+      <li>Tシャツサイズなど他の見積もり手法</li>
+    </ul>
+  </div>
+
+  <h2>なぜ「時間」ではなく「ポイント」で見積もるのか</h2>
+
+  <p>
+    アジャイルの見積もりでは<strong>ストーリーポイント</strong>（相対的な規模感）を使います。
+    「何時間かかるか」ではなく「他と比べてどのくらいの大きさか」を見積もります。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：山登りの難易度
+    </div>
+    <p>
+      「富士山は何時間で登れる？」は人によって答えが違います。体力、経験、天候で変わる。<br>
+      でも「高尾山と比べて富士山はどのくらい大変？」なら「10倍くらい」と合意しやすい。<br>
+      <strong>絶対値（時間）ではなく相対値（比較）で見積もる</strong>のがストーリーポイントの考え方です。
+    </p>
+  </div>
+
+  <h2>フィボナッチ数列を使う理由</h2>
+
+  <p>ストーリーポイントにはフィボナッチ数列（1, 2, 3, 5, 8, 13, 21...）をよく使います。</p>
+
+  <table>
+    <tr>
+      <th>ポイント</th>
+      <th>規模感の目安</th>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>非常に小さい。ほぼ自明な変更</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>小さい。影響範囲が限定的</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>普通。よくあるサイズの開発</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>やや大きい。複数のコンポーネントに影響</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>大きい。分割を検討すべきサイズ</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>かなり大きい。必ず分割する</td>
+    </tr>
+    <tr>
+      <td>21+</td>
+      <td>不確実性が高すぎる。リファインメントが必要</td>
+    </tr>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      大きい数字が意味すること
+    </div>
+    <p>
+      数字が大きくなるほど間隔が広がるのは、<strong>「大きいものほど精度が下がる」</strong>ことを反映しています。
+      8と9の違いを議論するのは無意味。だから8の次は13です。
+    </p>
+  </div>
+
+  <h2>プランニングポーカー</h2>
+
+  <p>チーム全員で見積もるための手法です。</p>
+
+  <pre><code>プランニングポーカーの進め方:
+
+1. POがストーリーを読み上げ、質疑応答
+2. 全員が同時にカード（ポイント数）を出す
+   → 同時に出すのが重要（他の人に影響されない）
+3. 最大と最小の人が理由を説明
+4. 議論後、再度見積もり
+5. 合意が得られるまで繰り返す（通常2-3回）
+
+ポイント: 合意が重要であり、正確さは二の次。
+議論のプロセスで認識を揃えることが真の目的。</code></pre>
+
+  <h2>Tシャツサイズ見積もり</h2>
+
+  <p>ストーリーポイントより粗い見積もりで、初期段階のロードマップ作成に便利です。</p>
+
+  <table>
+    <tr>
+      <th>サイズ</th>
+      <th>規模感</th>
+      <th>使いどころ</th>
+    </tr>
+    <tr>
+      <td>S</td>
+      <td>数日で完了</td>
+      <td>リファインメント前の初期見積もり</td>
+    </tr>
+    <tr>
+      <td>M</td>
+      <td>1スプリントで完了</td>
+      <td>四半期計画での概算</td>
+    </tr>
+    <tr>
+      <td>L</td>
+      <td>2-3スプリント</td>
+      <td>ロードマップ作成</td>
+    </tr>
+    <tr>
+      <td>XL</td>
+      <td>1ヶ月以上</td>
+      <td>エピックの規模感把握</td>
+    </tr>
+  </table>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      時間見積もりとの混同を見抜く
+    </div>
+    <ul>
+      <li><strong>「1ポイント = 1日」と定義</strong>：ストーリーポイントは相対値。時間に変換した瞬間に意味を失う</li>
+      <li><strong>個人ベースの見積もり</strong>：「Aさんなら3pt、Bさんなら5pt」→ チームの見積もりであるべき</li>
+      <li><strong>見積もりをコミットメントにする</strong>：「5ptと言ったんだから5pt以内で終わらせろ」→ 見積もりは予測であり約束ではない</li>
+      <li><strong>ポイントのインフレ</strong>：ベロシティを上げるために見積もりを膨らませる</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-agile5">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ストーリーポイントの正しい使い方はどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile5" style="display:none;">
+      1ポイントを8時間と定義して、工数を算出する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile5" style="display:none;">
+      見積もりが大きい人に理由を聞かず、最小値を採用する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-agile5" style="display:none;">
+      他のストーリーとの相対的な規模感をチームで合意する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-agile5')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('agile5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- agile6: デイリースクラム -->
+<section id="agile6">
+  <h1>デイリースクラム</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>デイリースクラムの本来の目的</li>
+      <li>よくあるアンチパターンとその対策</li>
+      <li>リモートチームでのデイリースクラム運用</li>
+    </ul>
+  </div>
+
+  <h2>デイリースクラムとは</h2>
+
+  <p>
+    デイリースクラムは、<strong>開発者がスプリントゴールに向けた計画を検査し適応する</strong>ための15分のイベントです。
+    毎日同じ時間・場所で行い、複雑さを減らします。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      最大の誤解
+    </div>
+    <p>
+      デイリースクラムは<strong>「進捗報告会」ではありません</strong>。<br>
+      スクラムマスターやPOへの報告が目的ではなく、<strong>開発者同士が計画を調整する場</strong>です。
+    </p>
+  </div>
+
+  <h2>効果的なデイリースクラム</h2>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">効果的なデイリースクラム</div>
+      <ul>
+        <li>「スプリントゴール達成のために今日何をするか」を議論</li>
+        <li>障害やブロッカーをすぐに共有</li>
+        <li>チームメンバー間の協力を調整</li>
+        <li>15分で終わり、詳細は後で話す</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">形骸化したデイリースクラム</div>
+      <ul>
+        <li>一人ずつ順番に「昨日やったこと」を報告</li>
+        <li>SMやマネージャーに向かって話す</li>
+        <li>30分以上かかる</li>
+        <li>問題が共有されても何も変わらない</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>3つの問い（参考として）</h2>
+
+  <p>
+    スクラムガイドでは「3つの問い」は必須ではなくなりましたが、構造化の参考になります。
+  </p>
+
+  <table>
+    <tr>
+      <th>問い</th>
+      <th>目的</th>
+      <th>注意点</th>
+    </tr>
+    <tr>
+      <td>昨日何をしたか？</td>
+      <td>状況の共有</td>
+      <td>報告ではなく、チームへの情報提供</td>
+    </tr>
+    <tr>
+      <td>今日何をするか？</td>
+      <td>計画の調整</td>
+      <td>ゴールに向かっているかの確認</td>
+    </tr>
+    <tr>
+      <td>障害はあるか？</td>
+      <td>早期の問題検出</td>
+      <td>「ありません」で終わらせない文化作り</td>
+    </tr>
+  </table>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：朝のハドル（サッカー）
+    </div>
+    <p>
+      サッカーの試合中、選手が集まって「次のプレー」を確認するハドル。<br>
+      監督への報告ではなく、<strong>選手同士が「次どう動くか」を素早く確認する場</strong>です。
+      デイリースクラムも同じで、チームの自己管理のための場です。
+    </p>
+  </div>
+
+  <h2>リモートでのデイリースクラム</h2>
+
+  <pre><code>リモートチームでの工夫:
+
+1. カメラON推奨（表情でニュアンスが伝わる）
+2. 非同期デイリーの併用（Slackで事前に書く）
+   - 同期の15分は「議論」に集中できる
+3. タイムゾーンが離れている場合
+   - 「重なる時間帯」で設定
+   - 交代で不便な時間帯を受け持つ
+4. ボードの画面共有
+   - Jira/Trelloのボードを映しながら話す
+   - 「どのカードがどの状態か」が視覚的にわかる</code></pre>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      デイリースクラムのアンチパターン
+    </div>
+    <ul>
+      <li><strong>報告会化</strong>：全員がSMに向かって話す→ チーム同士で話すべき</li>
+      <li><strong>問題解決の場になる</strong>：技術的な議論が始まり30分超え→ 「parking lot」に置いて後で議論</li>
+      <li><strong>毎回「特にありません」</strong>：障害が共有されない→ 心理的安全性の問題</li>
+      <li><strong>遅刻・欠席が常態化</strong>：デイリーの価値が伝わっていない</li>
+      <li><strong>スプリントゴールに触れない</strong>：タスクの報告だけで、ゴールとの関連が見えない</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-agile6">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>デイリースクラムの本来の目的はどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile6" style="display:none;">
+      チームの進捗をマネージャーに報告する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-agile6" style="display:none;">
+      開発者がスプリントゴールに向けた計画を検査し適応する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile6" style="display:none;">
+      技術的な問題を全員で議論して解決する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-agile6')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('agile6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- agile7: スプリントレビュー/レトロスペクティブ -->
+<section id="agile7">
+  <h1>スプリントレビューとレトロスペクティブ</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>スプリントレビューでのフィードバック収集</li>
+      <li>レトロスペクティブの進め方と改善の仕組み</li>
+      <li>レビューとレトロの形骸化を防ぐ方法</li>
+    </ul>
+  </div>
+
+  <h2>スプリントレビュー</h2>
+
+  <p>
+    スプリントレビューは、<strong>スプリントの成果物を検査し、今後の方向性を判断する</strong>イベントです。
+    ステークホルダーを招き、実際に動くソフトウェアをデモして、フィードバックを得ます。
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">効果的なスプリントレビュー</div>
+      <ul>
+        <li>実際に動くソフトウェアをデモ</li>
+        <li>ステークホルダーが参加し質問</li>
+        <li>フィードバックをバックログに反映</li>
+        <li>次のスプリントの方向性を議論</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">形骸化したスプリントレビュー</div>
+      <ul>
+        <li>PowerPointで「やったこと」を報告</li>
+        <li>開発チームだけで実施</li>
+        <li>フィードバックがあっても反映されない</li>
+        <li>「完了しました」の報告会になっている</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      レビューはデモであり報告ではない
+    </div>
+    <p>
+      スライドで「〜を実装しました」と報告するのはレビューではありません。<br>
+      <strong>実際に動くプロダクトを見せて、触ってもらう</strong>ことで初めて意味のあるフィードバックが得られます。
+    </p>
+  </div>
+
+  <h2>スプリントレトロスペクティブ</h2>
+
+  <p>
+    レトロスペクティブ（略称：レトロ）は、<strong>チームの働き方そのものを改善する</strong>イベントです。
+    「プロダクト」ではなく「プロセス」に焦点を当てます。
+  </p>
+
+  <h2>レトロの代表的な手法</h2>
+
+  <table>
+    <tr>
+      <th>手法</th>
+      <th>内容</th>
+      <th>向いている場面</th>
+    </tr>
+    <tr>
+      <td><strong>KPT</strong></td>
+      <td>Keep（続ける）/ Problem（問題）/ Try（試す）</td>
+      <td>チーム初期、シンプルに始めたいとき</td>
+    </tr>
+    <tr>
+      <td><strong>Start/Stop/Continue</strong></td>
+      <td>始める/やめる/続ける</td>
+      <td>具体的なアクションに落としやすい</td>
+    </tr>
+    <tr>
+      <td><strong>4Ls</strong></td>
+      <td>Liked/Learned/Lacked/Longed for</td>
+      <td>感情面も含めて振り返りたいとき</td>
+    </tr>
+    <tr>
+      <td><strong>Mad/Sad/Glad</strong></td>
+      <td>怒り/悲しみ/喜び</td>
+      <td>チームの感情を表面化させたいとき</td>
+    </tr>
+  </table>
+
+  <pre><code>KPTの例:
+
+【Keep】（良かったので続ける）
+- ペアプロを導入して知識共有が進んだ
+- PRのサイズを小さくしてレビューが早くなった
+
+【Problem】（問題点）
+- デイリースクラムが報告会になっている
+- テストのカバレッジが下がっている
+
+【Try】（次に試すこと）
+- デイリーでスプリントゴールへの進捗を最初に確認
+- PRマージ前にカバレッジチェックをCIに追加
+
+重要: Tryは「具体的で測定可能」にすること。
+❌ 「テストをもっと書く」（曖昧）
+✅ 「新規機能のPRにはテストを1つ以上含める」（具体的）</code></pre>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：スポーツの試合後ミーティング
+    </div>
+    <p>
+      スポーツチームは試合後に必ず振り返りをします。「良かったプレー」「改善点」「次の試合の作戦」。<br>
+      レトロも同じ。<strong>毎スプリント改善し続ける</strong>ことで、チームは着実に良くなっていきます。
+      大事なのは「次の1つの改善」を確実に実行すること。
+    </p>
+  </div>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      レトロの形骸化を見抜く
+    </div>
+    <ul>
+      <li><strong>Tryが実行されない</strong>：毎回同じProblemが挙がる→ アクションが放置されている</li>
+      <li><strong>本音が出ない</strong>：「特に問題ありません」→ 心理的安全性の問題</li>
+      <li><strong>犯人探し</strong>：「〇〇さんがバグを出した」→ ブレームレスでない</li>
+      <li><strong>マネージャーが仕切る</strong>：チームメンバーが受身→ 自己管理の阻害</li>
+      <li><strong>同じ手法の繰り返し</strong>：毎回KPTで飽きている→ 手法を変えてみる</li>
+    </ul>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      改善が機能しているサイン
+    </div>
+    <ul>
+      <li>前回のTryの結果を最初に確認している</li>
+      <li>Tryが1〜2個に絞られ、確実に実行されている</li>
+      <li>スプリントを重ねるごとにProblemの内容が変わっている（改善が進んでいる）</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-agile7">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>レトロスペクティブが形骸化しているサインはどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile7" style="display:none;">
+      毎スプリントで異なるProblemが挙がる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-agile7" style="display:none;">
+      Tryが毎回設定されるが、実行されずに同じ問題が繰り返される
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile7" style="display:none;">
+      手法をKPTから4Lsに変えてみた
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-agile7')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('agile7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- agile8: カンバン -->
+<section id="agile8">
+  <h1>カンバン</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>カンバンの基本原則とWIP制限</li>
+      <li>リードタイムとフロー効率の改善</li>
+      <li>スクラムとカンバンの使い分け</li>
+    </ul>
+  </div>
+
+  <h2>カンバンとは</h2>
+
+  <p>
+    <strong>カンバン</strong>はトヨタ生産方式に由来する手法で、<strong>「仕掛り作業（WIP）を制限し、流れ（フロー）を最適化する」</strong>ことに焦点を当てます。
+    スクラムのようなスプリントは必須ではなく、継続的な流れで作業を進めます。
+  </p>
+
+  <h2>カンバンボードの基本</h2>
+
+  <pre><code>カンバンボードの例:
+
+| Backlog | To Do | In Progress(WIP:3) | Review(WIP:2) | Done |
+|---------|-------|---------------------|---------------|------|
+| 機能E   | 機能D  | 機能A               | 機能C          |      |
+| 機能F   |       | 機能B               |               |      |
+| 機能G   |       |                     |               |      |
+
+ポイント:
+- 各列にWIP制限を設定
+- In Progressは最大3つまで
+- Reviewは最大2つまで
+- WIP制限を超えたら新しい作業を始めない</code></pre>
+
+  <h2>WIP制限が重要な理由</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：高速道路の渋滞
+    </div>
+    <p>
+      高速道路は車が多すぎると渋滞します。「車の流入を制限」すれば流れがスムーズに。<br>
+      開発も同じ。<strong>同時にやることを減らすと、一つ一つが早く完了する</strong>。
+      10個の作業を並行するより、3個に集中したほうが結果的にスループットが上がります。
+    </p>
+  </div>
+
+  <table>
+    <tr>
+      <th>指標</th>
+      <th>意味</th>
+      <th>改善方法</th>
+    </tr>
+    <tr>
+      <td><strong>リードタイム</strong></td>
+      <td>依頼が来てから完了するまでの時間</td>
+      <td>WIP制限、ボトルネック解消</td>
+    </tr>
+    <tr>
+      <td><strong>サイクルタイム</strong></td>
+      <td>作業を開始してから完了するまでの時間</td>
+      <td>作業の分割、スキル向上</td>
+    </tr>
+    <tr>
+      <td><strong>スループット</strong></td>
+      <td>一定期間に完了するアイテム数</td>
+      <td>フローの安定化</td>
+    </tr>
+    <tr>
+      <td><strong>フロー効率</strong></td>
+      <td>実作業時間 / リードタイム × 100</td>
+      <td>待ち時間の削減</td>
+    </tr>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      フロー効率の現実
+    </div>
+    <p>
+      多くの組織でフロー効率は<strong>15%以下</strong>。つまりリードタイムの85%は「待ち時間」です。<br>
+      レビュー待ち、デプロイ待ち、確認待ち...これらの<strong>「待ち」を減らす</strong>のがカンバンの真髄です。
+    </p>
+  </div>
+
+  <h2>スクラムとカンバンの比較</h2>
+
+  <table>
+    <tr>
+      <th>観点</th>
+      <th>スクラム</th>
+      <th>カンバン</th>
+    </tr>
+    <tr>
+      <td>反復</td>
+      <td>スプリント（固定期間）</td>
+      <td>継続的なフロー</td>
+    </tr>
+    <tr>
+      <td>ロール</td>
+      <td>PO、SM、開発者（必須）</td>
+      <td>特に規定なし</td>
+    </tr>
+    <tr>
+      <td>計画</td>
+      <td>スプリントプランニング</td>
+      <td>必要に応じて</td>
+    </tr>
+    <tr>
+      <td>制限</td>
+      <td>スプリント内の作業量</td>
+      <td>WIP制限</td>
+    </tr>
+    <tr>
+      <td>向いている場面</td>
+      <td>新規開発、機能追加</td>
+      <td>保守運用、サポート、割り込みが多い</td>
+    </tr>
+  </table>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      WIP制限なしの危険性を見抜く
+    </div>
+    <ul>
+      <li><strong>「カンバンやってます」+WIP制限なし</strong>：ただのタスクボードにすぎない</li>
+      <li><strong>全員が別々のタスクを並行</strong>：助け合いがなく、完了が遅い</li>
+      <li><strong>「In Progress」が溢れている</strong>：どれも中途半端で、何も完了しない</li>
+      <li><strong>ボトルネックを放置</strong>：Review列に溜まっているのに、新しい作業を始める</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-agile8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>カンバンでWIP制限を設けるのはなぜですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile8" style="display:none;">
+      チームメンバーの作業量を均等にするため
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-agile8" style="display:none;">
+      仕掛り作業を制限し、フロー（流れ）を最適化するため
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile8" style="display:none;">
+      スプリントに入りきるタスク数を計算するため
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-agile8')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('agile8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- agile9: ベロシティとメトリクス -->
+<section id="agile9">
+  <h1>ベロシティとメトリクス</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ベロシティの正しい計測と使い方</li>
+      <li>アジャイルチームで追跡すべきメトリクス</li>
+      <li>メトリクスの誤用（ノルマ化）の防止</li>
+    </ul>
+  </div>
+
+  <h2>ベロシティとは</h2>
+
+  <p>
+    <strong>ベロシティ</strong>とは、チームが1スプリントで完了させたストーリーポイントの合計です。
+    これは<strong>予測のためのツール</strong>であり、パフォーマンス評価の指標ではありません。
+  </p>
+
+  <pre><code>ベロシティの例:
+
+スプリント1: 25pt完了
+スプリント2: 30pt完了
+スプリント3: 28pt完了
+スプリント4: 32pt完了
+スプリント5: 27pt完了
+
+平均ベロシティ: (25+30+28+32+27) / 5 = 28.4pt
+
+→ 次のスプリントも「28pt前後」を計画するのが妥当
+→ 残り85ptのバックログなら、約3スプリントで完了見込み</code></pre>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：車の燃費
+    </div>
+    <p>
+      車の燃費は「次の給油までどこまで走れるか」を予測するための数値です。<br>
+      「燃費が低い＝悪い車」ではなく、車種や走行条件で変わります。<br>
+      ベロシティも同じ。<strong>「予測」に使うもので、「評価」に使うものではありません</strong>。
+      他のチームとの比較も無意味です。
+    </p>
+  </div>
+
+  <h2>追跡すべきメトリクス</h2>
+
+  <table>
+    <tr>
+      <th>メトリクス</th>
+      <th>何がわかるか</th>
+      <th>注意点</th>
+    </tr>
+    <tr>
+      <td><strong>ベロシティ</strong></td>
+      <td>チームの予測可能性</td>
+      <td>上げることを目標にしない</td>
+    </tr>
+    <tr>
+      <td><strong>スプリントバーンダウン</strong></td>
+      <td>スプリント内の進捗</td>
+      <td>最終日に急落するパターンに注意</td>
+    </tr>
+    <tr>
+      <td><strong>リリースバーンアップ</strong></td>
+      <td>リリースに向けた進捗と完了予測</td>
+      <td>スコープの増減も可視化する</td>
+    </tr>
+    <tr>
+      <td><strong>リードタイム</strong></td>
+      <td>アイデアからデリバリーまでの時間</td>
+      <td>短縮を目指す</td>
+    </tr>
+    <tr>
+      <td><strong>持ち越しアイテム数</strong></td>
+      <td>計画の精度</td>
+      <td>毎スプリント持ち越しが多いなら計画を見直す</td>
+    </tr>
+  </table>
+
+  <h2>トレンド分析</h2>
+
+  <pre><code>ベロシティのトレンドを読む:
+
+安定: 25, 28, 26, 30, 27 → 健全。予測に使える
+上昇: 20, 25, 30, 35, 40 → ポイントインフレの可能性を確認
+下降: 35, 30, 25, 20, 15 → チームに何か問題が起きているサイン
+不安定: 15, 40, 10, 45, 20 → 見積もりの精度が低い or 外部要因が大きい
+
+重要: 「なぜそのトレンドなのか」を理解すること。
+数字だけ見ても意味がない。</code></pre>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      ベロシティのノルマ化を見抜く
+    </div>
+    <ul>
+      <li><strong>「ベロシティを上げろ」</strong>：見積もりを膨らませるか品質を下げるかの二択になる</li>
+      <li><strong>チーム間でベロシティを比較</strong>：ポイントの基準が違うので比較は無意味</li>
+      <li><strong>個人のベロシティを測定</strong>：チームの指標を個人に使うと協力が阻害される</li>
+      <li><strong>ベロシティが下がると怒られる</strong>：チームが正直に見積もれなくなる</li>
+    </ul>
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-good">
+      <div class="compare-title">正しいベロシティの使い方</div>
+      <ul>
+        <li>「過去5スプリントの平均で次の計画を立てよう」</li>
+        <li>「リリース日は○月頃になりそうだ」</li>
+        <li>「不安定だから見積もりの精度を改善しよう」</li>
+      </ul>
+    </div>
+    <div class="compare-bad">
+      <div class="compare-title">誤ったベロシティの使い方</div>
+      <ul>
+        <li>「今スプリントは30pt必達」</li>
+        <li>「AチームはBチームよりベロシティが低い」</li>
+        <li>「田中さんの今スプリントのベロシティは8pt」</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      グッドハートの法則
+    </div>
+    <p>
+      <strong>「計測されたものが目標になると、良い計測指標ではなくなる」</strong><br>
+      ベロシティを「目標」にした瞬間、チームは数字を操作し始めます。
+      メトリクスは常に「改善のための情報」として扱いましょう。
+    </p>
+  </div>
+
+  <div class="quiz" id="quiz-agile9">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ベロシティの正しい使い方はどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile9" style="display:none;">
+      チーム間の生産性を比較するための指標として使う
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile9" style="display:none;">
+      毎スプリントの達成ノルマとして設定する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-agile9" style="display:none;">
+      過去の実績を基に、将来のスプリントの計画を予測する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-agile9')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('agile9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<!-- agile10: スケーリングアジャイル -->
+<section id="agile10">
+  <h1>スケーリングアジャイル</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>SAFe、LeSS、Nexusの概要と違い</li>
+      <li>スケーリングが必要になる場面</li>
+      <li>過剰なフレームワーク導入の危険性</li>
+    </ul>
+  </div>
+
+  <h2>なぜスケーリングが必要になるのか</h2>
+
+  <p>
+    スクラムは1チーム（5〜10人程度）で機能するように設計されています。
+    しかしプロダクトが大きくなると<strong>複数のチームが協調して開発する</strong>必要が出てきます。
+    このときの課題を解決するのがスケーリングフレームワークです。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：1台の車 vs 車列
+    </div>
+    <p>
+      1台の車なら自由に走れます。でも10台の車列が一緒に目的地に行くには、ルートの共有、速度の調整、合図の決め事が必要です。<br>
+      <strong>チームが増えるほど「連携のコスト」が増える</strong>。フレームワークはその連携のルールです。
+    </p>
+  </div>
+
+  <h2>主要なスケーリングフレームワーク</h2>
+
+  <table>
+    <tr>
+      <th>フレームワーク</th>
+      <th>概要</th>
+      <th>チーム数の目安</th>
+      <th>特徴</th>
+    </tr>
+    <tr>
+      <td><strong>SAFe</strong></td>
+      <td>Scaled Agile Framework。最も包括的で企業向け</td>
+      <td>10〜100+チーム</td>
+      <td>構造化が強い。ロール/イベント/成果物が多い</td>
+    </tr>
+    <tr>
+      <td><strong>LeSS</strong></td>
+      <td>Large-Scale Scrum。スクラムを最小限の拡張で適用</td>
+      <td>2〜8チーム</td>
+      <td>シンプルさを重視。追加ルールが少ない</td>
+    </tr>
+    <tr>
+      <td><strong>Nexus</strong></td>
+      <td>Scrum.orgが定義。スクラムの公式スケーリング</td>
+      <td>3〜9チーム</td>
+      <td>統合の問題に焦点。Nexus Integration Teamを設置</td>
+    </tr>
+    <tr>
+      <td><strong>Spotify Model</strong></td>
+      <td>Spotifyの組織構造（Squad/Tribe/Chapter/Guild）</td>
+      <td>組織全体</td>
+      <td>自律性を重視。ただし「Spotifyでも完全には機能しなかった」</td>
+    </tr>
+  </table>
+
+  <h2>SAFe の概要</h2>
+
+  <pre><code>SAFeの構造（簡略版）:
+
+Portfolio Level: 戦略テーマ、ポートフォリオバックログ
+     ↓
+Large Solution Level: 複数のARTの調整
+     ↓
+Program Level: Agile Release Train (ART)
+  - 50〜125人の「列車」
+  - PI Planning（Program Increment計画）で全チーム同期
+  - 8〜12週のPI（Program Increment）で開発
+     ↓
+Team Level: 個々のスクラム/カンバンチーム
+
+主要イベント:
+- PI Planning: 2日間のビッグルームプランニング
+- System Demo: PI内で定期的に統合デモ
+- Inspect &amp; Adapt: PI終了時の振り返り</code></pre>
+
+  <h2>LeSS の概要</h2>
+
+  <pre><code>LeSSの原則:
+
+1. 「More with LeSS」（少ないルールで多くを実現）
+2. 1つのプロダクトバックログ、1人のPO
+3. 全チームが同じスプリントで動く
+4. 共同のスプリントプランニング
+5. 共同のスプリントレビュー
+6. 各チームが個別にレトロスペクティブ + 全体レトロ
+
+LeSS vs LeSS Huge:
+- LeSS: 2〜8チーム
+- LeSS Huge: 8チーム以上（Area Product Ownerを配置）</code></pre>
+
+  <h2>導入判断のフレームワーク</h2>
+
+  <table>
+    <tr>
+      <th>状況</th>
+      <th>推奨アプローチ</th>
+    </tr>
+    <tr>
+      <td>1チームで十分</td>
+      <td>スクラムまたはカンバン。スケーリング不要</td>
+    </tr>
+    <tr>
+      <td>2〜3チーム</td>
+      <td>Scrum of Scrums（非公式な調整）で十分な場合が多い</td>
+    </tr>
+    <tr>
+      <td>3〜8チーム</td>
+      <td>LeSS、Nexusを検討</td>
+    </tr>
+    <tr>
+      <td>10チーム以上</td>
+      <td>SAFe、LeSS Hugeを検討</td>
+    </tr>
+    <tr>
+      <td>組織全体の変革</td>
+      <td>SAFe（ポートフォリオレベルが必要な場合）</td>
+    </tr>
+  </table>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      過剰なフレームワーク導入を見抜く
+    </div>
+    <ul>
+      <li><strong>3チームなのにSAFe導入</strong>：過剰なプロセスでチームが疲弊</li>
+      <li><strong>「SAFe = アジャイル」と誤解</strong>：フレームワークを入れれば自動的にアジャイルになるわけではない</li>
+      <li><strong>1チームの問題をスケーリングで解決しようとする</strong>：まず1チームのスクラムを機能させることが先</li>
+      <li><strong>フレームワークの儀式だけ導入</strong>：PI Planningはやるが、その結果が活用されない</li>
+      <li><strong>コンサルの言いなり</strong>：自社の文脈を無視してフレームワークを丸呑みする</li>
+    </ul>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      スケーリングの本質
+    </div>
+    <p>
+      スケーリングフレームワークはあくまで<strong>「手段」</strong>です。<br>
+      本当に大事なのは「チーム間の依存関係をどう管理するか」「統合をどう行うか」という問題を解くこと。<br>
+      <strong>まず1チームのスクラムを成功させてから</strong>スケーリングを考えましょう。
+    </p>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      スケーリング成功のサイン
+    </div>
+    <ul>
+      <li>各チームが自律的に動きつつ、プロダクト全体の方向性が揃っている</li>
+      <li>チーム間の依存関係が可視化され、管理されている</li>
+      <li>統合（インテグレーション）が頻繁に行われ、問題が早期発見される</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-agile10">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>スケーリングアジャイルについて正しい考え方はどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile10" style="display:none;">
+      チーム数に関係なく、SAFeを導入すればアジャイルになる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-agile10" style="display:none;">
+      1チームのスクラムがうまくいっていなくても、スケーリングで解決できる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-agile10" style="display:none;">
+      まず1チームのスクラムを成功させ、チーム数に応じた適切なフレームワークを選ぶ
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-agile10')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('agile10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

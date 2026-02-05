@@ -1,0 +1,1830 @@
+<!-- ============================================
+     Level 9 Phase 6: オブザーバビリティ応用
+     obs9-1 ~ obs9-10
+     ============================================ -->
+
+<section id="obs9-1">
+  <h1>オブザーバビリティとは</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>オブザーバビリティ（可観測性）と従来の監視の違い</li>
+      <li>オブザーバビリティの3本柱（ログ・メトリクス・トレース）</li>
+      <li>なぜ現代のシステムにオブザーバビリティが必要なのか</li>
+    </ul>
+  </div>
+
+  <h2>監視（Monitoring）とオブザーバビリティの違い</h2>
+
+  <p>
+    <strong>監視（Monitoring）</strong>は「既知の問題を検知する」仕組みです。
+    CPUが90%を超えたらアラート、ディスクが満杯になったらアラート——
+    <strong>あらかじめ何を見るか決めておく</strong>必要があります。
+  </p>
+
+  <p>
+    一方、<strong>オブザーバビリティ（Observability）</strong>は
+    「<strong>未知の問題を調査・解明できる能力</strong>」です。
+    システムの外部出力（ログ・メトリクス・トレース）から、
+    内部状態を推測し、<strong>今まで見たことのない問題</strong>にも対処できます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：車のダッシュボード
+    </div>
+    <p>
+      <strong>監視</strong>は「エンジン警告灯が点灯したら異常」というアプローチ。
+      <strong>オブザーバビリティ</strong>は「速度計・回転数・燃料計・油温計など
+      あらゆる計器を見て、<strong>なぜエンジンの調子が悪いのか</strong>を
+      自分で分析できる」アプローチです。
+    </p>
+  </div>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">観点</th>
+        <th style="width:40%;">監視（Monitoring）</th>
+        <th style="width:40%;">オブザーバビリティ</th>
+      </tr>
+      <tr>
+        <td><strong>目的</strong></td>
+        <td>既知の問題を検知する</td>
+        <td>未知の問題も調査・解明できる</td>
+      </tr>
+      <tr>
+        <td><strong>アプローチ</strong></td>
+        <td>何を見るか事前に決める</td>
+        <td>任意の質問をデータに投げられる</td>
+      </tr>
+      <tr>
+        <td><strong>データ</strong></td>
+        <td>定義済みのメトリクス</td>
+        <td>ログ・メトリクス・トレースの組合せ</td>
+      </tr>
+      <tr>
+        <td><strong>対象</strong></td>
+        <td>単一サービス向き</td>
+        <td>分散システム・マイクロサービス向き</td>
+      </tr>
+      <tr>
+        <td><strong>問いかけ</strong></td>
+        <td>「この値は正常か？」</td>
+        <td>「なぜこの問題が起きたのか？」</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>オブザーバビリティの3本柱</h2>
+
+  <p>
+    オブザーバビリティは<strong>3種類のテレメトリデータ</strong>で構成されます。
+    これらを組み合わせることで、システムの内部状態を包括的に把握できます。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">柱</th>
+        <th style="width:35%;">内容</th>
+        <th>具体例</th>
+      </tr>
+      <tr>
+        <td><strong>ログ（Logs）</strong></td>
+        <td>個別のイベント記録。いつ何が起きたか</td>
+        <td>エラーメッセージ、リクエスト内容、処理結果</td>
+      </tr>
+      <tr>
+        <td><strong>メトリクス（Metrics）</strong></td>
+        <td>数値の時系列データ。傾向を把握</td>
+        <td>レスポンスタイム、エラー率、CPU使用率</td>
+      </tr>
+      <tr>
+        <td><strong>トレース（Traces）</strong></td>
+        <td>リクエストの処理経路。どこで時間がかかったか</td>
+        <td>API→DB→キャッシュの処理フロー</td>
+      </tr>
+    </table>
+  </div>
+
+  <pre><code>// 3本柱の活用例：「APIが遅い」という問題の調査
+
+// 1. メトリクスで傾向を確認
+//    → レスポンスタイムのp99が3秒を超えている
+
+// 2. トレースで遅い箇所を特定
+//    → データベースクエリに2.5秒かかっている
+
+// 3. ログで根本原因を調査
+//    → 「Full table scan on users table」が記録されている
+//    → インデックスが欠落していた！</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      アンチパターン：1つの柱だけに頼る
+    </div>
+    <ul>
+      <li>ログだけ → 全体の傾向やパフォーマンスの変化が見えない</li>
+      <li>メトリクスだけ → 「何が起きたか」の詳細がわからない</li>
+      <li>トレースだけ → 全リクエストを記録するとコストが膨大に</li>
+      <li><strong>3つを組み合わせて初めて</strong>オブザーバビリティが実現する</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-obs9-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>オブザーバビリティと従来の監視の最大の違いは何ですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-1" style="display:none;">
+      A. オブザーバビリティはアラートを出さない
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-obs9-1" style="display:none;">
+      B. オブザーバビリティは未知の問題も調査・解明できる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-1" style="display:none;">
+      C. オブザーバビリティはメトリクスだけで実現できる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs9-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs9-1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="obs9-2">
+  <h1>構造化ログ</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>構造化ログとテキストログの違い</li>
+      <li>ログレベルの適切な使い分け</li>
+      <li>コンテキスト情報の付与によるデバッグ効率向上</li>
+    </ul>
+  </div>
+
+  <h2>テキストログの限界</h2>
+
+  <p>
+    従来のテキストログは人間が読むには便利ですが、
+    <strong>機械的な解析やフィルタリングが困難</strong>です。
+    構造化ログはJSON形式でデータを記録し、検索・集計を容易にします。
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">テキストログ</div>
+<pre><code>2024-01-15 10:30:45 ERROR
+  Failed to process order
+  #12345 for user john_doe:
+  payment timeout</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">構造化ログ（JSON）</div>
+<pre><code>{
+  "timestamp": "2024-01-15T10:30:45Z",
+  "level": "error",
+  "message": "Failed to process order",
+  "order_id": "12345",
+  "user_id": "john_doe",
+  "error_type": "payment_timeout",
+  "duration_ms": 30000,
+  "service": "order-service"
+}</code></pre>
+    </div>
+  </div>
+
+  <h2>ログレベルの使い分け</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:15%;">レベル</th>
+        <th style="width:45%;">用途</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>FATAL</strong></td>
+        <td>アプリケーションが停止するレベルの致命的エラー</td>
+        <td>データベース接続不能で起動失敗</td>
+      </tr>
+      <tr>
+        <td><strong>ERROR</strong></td>
+        <td>処理が失敗した。対応が必要</td>
+        <td>決済処理のタイムアウト</td>
+      </tr>
+      <tr>
+        <td><strong>WARN</strong></td>
+        <td>想定外だが処理は継続できる</td>
+        <td>リトライで成功、非推奨APIの利用</td>
+      </tr>
+      <tr>
+        <td><strong>INFO</strong></td>
+        <td>正常な処理の記録</td>
+        <td>ユーザーログイン、注文完了</td>
+      </tr>
+      <tr>
+        <td><strong>DEBUG</strong></td>
+        <td>開発・調査時の詳細情報</td>
+        <td>SQLクエリの内容、変数の値</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>コンテキスト付与のベストプラクティス</h2>
+
+  <pre><code>// Node.js + pino による構造化ログの実装例
+const pino = require('pino');
+const logger = pino({
+  level: process.env.LOG_LEVEL || 'info',
+  formatters: {
+    level: (label) => ({ level: label }),
+  },
+  timestamp: pino.stdTimeFunctions.isoTime,
+});
+
+// リクエストごとにコンテキストを付与
+function createRequestLogger(req) {
+  return logger.child({
+    request_id: req.headers['x-request-id'],
+    user_id: req.user?.id,
+    method: req.method,
+    path: req.url,
+    ip: req.ip,
+  });
+}
+
+// 使用例
+app.post('/orders', (req, res) => {
+  const log = createRequestLogger(req);
+
+  log.info({ order_data: req.body }, 'Order creation started');
+
+  try {
+    const order = createOrder(req.body);
+    log.info({ order_id: order.id }, 'Order created successfully');
+    res.json(order);
+  } catch (err) {
+    log.error({
+      error_type: err.constructor.name,
+      error_message: err.message,
+      stack: err.stack,
+    }, 'Order creation failed');
+    res.status(500).json({ error: 'Internal error' });
+  }
+});</code></pre>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      アンチパターン：ログの落とし穴
+    </div>
+    <ul>
+      <li><strong>個人情報をログに出力</strong>：パスワード、クレジットカード番号をそのまま記録</li>
+      <li><strong>ログレベルが全部INFO</strong>：重要度が分からず、エラーが埋もれる</li>
+      <li><strong>メッセージだけで文脈なし</strong>：「エラーが発生しました」だけでは調査不能</li>
+      <li><strong>大量のDEBUGログを本番で有効化</strong>：パフォーマンス低下とコスト増大</li>
+    </ul>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      良い構造化ログの条件
+    </div>
+    <ul>
+      <li><strong>一貫したフィールド名</strong>：userId vs user_id のばらつきをなくす</li>
+      <li><strong>リクエストIDの伝播</strong>：分散システム全体で同一リクエストを追跡</li>
+      <li><strong>機密情報のマスキング</strong>：個人情報は自動的に除去・マスク</li>
+      <li><strong>適切な粒度</strong>：必要な情報を過不足なく記録</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-obs9-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>構造化ログの最大のメリットは何ですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-2" style="display:none;">
+      A. ファイルサイズが小さくなる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-2" style="display:none;">
+      B. 人間が読みやすくなる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-obs9-2" style="display:none;">
+      C. 機械的な検索・集計・フィルタリングが容易になる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs9-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs9-2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="obs9-3">
+  <h1>メトリクス設計</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>RED/USEメソッドによるメトリクス設計の考え方</li>
+      <li>Prometheusのメトリクスタイプと設定方法</li>
+      <li>時系列データの基本とカーディナリティの管理</li>
+    </ul>
+  </div>
+
+  <h2>REDメソッドとUSEメソッド</h2>
+
+  <p>
+    メトリクスを「何でも計測する」のではなく、
+    <strong>フレームワークに従って設計</strong>することで、
+    重要な指標を漏れなくカバーできます。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:15%;">メソッド</th>
+        <th style="width:25%;">対象</th>
+        <th style="width:30%;">指標</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td rowspan="3"><strong>RED</strong></td>
+        <td rowspan="3">サービス（リクエスト駆動型）</td>
+        <td>Rate（レート）</td>
+        <td>1秒あたりのリクエスト数</td>
+      </tr>
+      <tr>
+        <td>Errors（エラー）</td>
+        <td>失敗したリクエストの割合</td>
+      </tr>
+      <tr>
+        <td>Duration（所要時間）</td>
+        <td>リクエストの処理にかかった時間</td>
+      </tr>
+      <tr>
+        <td rowspan="3"><strong>USE</strong></td>
+        <td rowspan="3">リソース（CPU、メモリ、ディスク等）</td>
+        <td>Utilization（使用率）</td>
+        <td>リソースがどの程度使用されているか</td>
+      </tr>
+      <tr>
+        <td>Saturation（飽和度）</td>
+        <td>リソースがどの程度逼迫しているか</td>
+      </tr>
+      <tr>
+        <td>Errors（エラー）</td>
+        <td>リソース関連のエラー数</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>Prometheusのメトリクスタイプ</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">タイプ</th>
+        <th style="width:35%;">用途</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>Counter</strong></td>
+        <td>単調増加する累積値</td>
+        <td>リクエスト総数、エラー総数</td>
+      </tr>
+      <tr>
+        <td><strong>Gauge</strong></td>
+        <td>増減する現在値</td>
+        <td>CPU使用率、メモリ使用量、接続数</td>
+      </tr>
+      <tr>
+        <td><strong>Histogram</strong></td>
+        <td>値の分布（バケット）</td>
+        <td>レスポンスタイムの分布</td>
+      </tr>
+      <tr>
+        <td><strong>Summary</strong></td>
+        <td>値の分布（分位数）</td>
+        <td>p50, p90, p99レスポンスタイム</td>
+      </tr>
+    </table>
+  </div>
+
+  <pre><code># Prometheus メトリクス定義の例（prometheus.yml + アプリケーション側）
+
+# --- prometheus.yml ---
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'api-server'
+    static_configs:
+      - targets: ['api-server:9090']
+    metrics_path: '/metrics'
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+# --- アプリケーション側（Node.js + prom-client）---
+const client = require('prom-client');
+
+// REDメソッドに基づくメトリクス定義
+
+// Rate: リクエスト数（Counter）
+const httpRequestsTotal = new client.Counter({
+  name: 'http_requests_total',
+  help: 'Total number of HTTP requests',
+  labelNames: ['method', 'path', 'status_code'],
+});
+
+// Errors: エラー数（Counter）
+const httpErrorsTotal = new client.Counter({
+  name: 'http_errors_total',
+  help: 'Total number of HTTP errors',
+  labelNames: ['method', 'path', 'error_type'],
+});
+
+// Duration: レスポンス時間（Histogram）
+const httpRequestDuration = new client.Histogram({
+  name: 'http_request_duration_seconds',
+  help: 'HTTP request duration in seconds',
+  labelNames: ['method', 'path'],
+  buckets: [0.01, 0.05, 0.1, 0.5, 1, 2, 5, 10],
+});</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      アンチパターン：カーディナリティ爆発
+    </div>
+    <p>
+      ラベルに<strong>ユーザーIDやリクエストID</strong>のような高カーディナリティ値を
+      使うと、時系列データが爆発的に増加し、ストレージとクエリ性能に深刻な影響を与えます。
+    </p>
+    <ul>
+      <li><strong>悪い例</strong>：<code>labelNames: ['user_id']</code>（ユーザー数だけ時系列が増える）</li>
+      <li><strong>良い例</strong>：<code>labelNames: ['method', 'status_code']</code>（有限な組み合わせ）</li>
+      <li>ラベルの組み合わせが<strong>1000を超えないか</strong>を常に意識する</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-obs9-3">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>REDメソッドの3つの指標は何ですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-3" style="display:none;">
+      A. Reliability, Efficiency, Durability
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-obs9-3" style="display:none;">
+      B. Rate, Errors, Duration
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-3" style="display:none;">
+      C. Request, Event, Data
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs9-3')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs9-3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="obs9-4">
+  <h1>分散トレーシング</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>分散トレーシングの仕組み（トレース・スパン・コンテキスト伝播）</li>
+      <li>OpenTelemetryの基本的な設定方法</li>
+      <li>トレースデータを使った問題調査の手法</li>
+    </ul>
+  </div>
+
+  <h2>なぜ分散トレーシングが必要か</h2>
+
+  <p>
+    マイクロサービスアーキテクチャでは、1つのリクエストが
+    <strong>複数のサービスをまたいで処理</strong>されます。
+    問題が発生したとき、どのサービスのどの処理で遅延やエラーが起きたのかを
+    追跡するのが分散トレーシングの役割です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：宅配便の追跡番号
+    </div>
+    <p>
+      荷物を送るとき、追跡番号を使えば「今どこにあるか」「どの中継地点を通ったか」が分かります。
+      分散トレーシングの<strong>トレースID</strong>はまさにこの追跡番号。
+      リクエストがどのサービスを通り、各地点でどれだけ時間がかかったかを記録します。
+    </p>
+  </div>
+
+  <h2>トレースの構成要素</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">用語</th>
+        <th style="width:35%;">説明</th>
+        <th>例</th>
+      </tr>
+      <tr>
+        <td><strong>Trace</strong></td>
+        <td>1つのリクエストの全体的な処理の流れ</td>
+        <td>ユーザーが注文を完了するまでの一連の処理</td>
+      </tr>
+      <tr>
+        <td><strong>Span</strong></td>
+        <td>Trace内の1つの処理単位</td>
+        <td>API呼び出し、DBクエリ、キャッシュ参照</td>
+      </tr>
+      <tr>
+        <td><strong>Trace ID</strong></td>
+        <td>Trace全体を一意に識別するID</td>
+        <td>abc123def456</td>
+      </tr>
+      <tr>
+        <td><strong>Span ID</strong></td>
+        <td>個別のSpanを識別するID</td>
+        <td>span-001, span-002</td>
+      </tr>
+      <tr>
+        <td><strong>Parent Span</strong></td>
+        <td>あるSpanの呼び出し元のSpan</td>
+        <td>APIハンドラ → DBクエリの親子関係</td>
+      </tr>
+    </table>
+  </div>
+
+  <pre><code>// トレースの視覚的なイメージ
+// Trace ID: abc-123
+//
+// [API Gateway]──────────────────────────── 250ms
+//   └─[Order Service]────────────────────── 200ms
+//       ├─[User Service]─────── 30ms
+//       ├─[Inventory Service]── 50ms
+//       └─[Payment Service]──────────────── 120ms
+//           └─[DB Query]──────── 80ms  ← ボトルネック！</code></pre>
+
+  <h2>OpenTelemetryの設定</h2>
+
+  <pre><code>// OpenTelemetry SDK の設定例（Node.js）
+// tracing.js - アプリケーション起動前にロードする
+
+const { NodeTracerProvider } = require('@opentelemetry/sdk-trace-node');
+const { SimpleSpanProcessor } = require('@opentelemetry/sdk-trace-base');
+const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-http');
+const { Resource } = require('@opentelemetry/resources');
+const { SemanticResourceAttributes }
+  = require('@opentelemetry/semantic-conventions');
+const { HttpInstrumentation }
+  = require('@opentelemetry/instrumentation-http');
+const { ExpressInstrumentation }
+  = require('@opentelemetry/instrumentation-express');
+const { registerInstrumentations }
+  = require('@opentelemetry/instrumentation');
+
+// プロバイダー設定
+const provider = new NodeTracerProvider({
+  resource: new Resource({
+    [SemanticResourceAttributes.SERVICE_NAME]: 'order-service',
+    [SemanticResourceAttributes.SERVICE_VERSION]: '1.0.0',
+    environment: process.env.NODE_ENV,
+  }),
+});
+
+// エクスポーター設定（Jaeger/Zipkin/OTLPコレクターへ送信）
+const exporter = new OTLPTraceExporter({
+  url: 'http://otel-collector:4318/v1/traces',
+});
+
+provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+provider.register();
+
+// 自動計装の有効化
+registerInstrumentations({
+  instrumentations: [
+    new HttpInstrumentation(),
+    new ExpressInstrumentation(),
+  ],
+});</code></pre>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      アンチパターン：トレーシングの落とし穴
+    </div>
+    <ul>
+      <li><strong>全リクエストをトレース</strong>：サンプリングなしだとコストとパフォーマンスに影響</li>
+      <li><strong>コンテキスト伝播の漏れ</strong>：非同期処理やメッセージキューでトレースが途切れる</li>
+      <li><strong>Spanの粒度が粗すぎる</strong>：サービス単位だけでは問題箇所が特定できない</li>
+      <li><strong>トレースデータの保持期間が短すぎる</strong>：過去の問題を調査できない</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-obs9-4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>分散トレーシングにおいて、1つのリクエストの全体的な処理の流れを何と呼びますか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-4" style="display:none;">
+      A. Span
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-obs9-4" style="display:none;">
+      B. Trace
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-4" style="display:none;">
+      C. Context
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs9-4')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs9-4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="obs9-5">
+  <h1>アラート設計</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>効果的なアラートの設計原則（症状ベース vs 原因ベース）</li>
+      <li>アラート疲れ（Alert Fatigue）の原因と対策</li>
+      <li>閾値設定とエスカレーションの考え方</li>
+    </ul>
+  </div>
+
+  <h2>症状ベース vs 原因ベース</h2>
+
+  <p>
+    アラートの設計で最も重要なのは、<strong>「何に対してアラートを出すか」</strong>です。
+    Google SREの原則では、<strong>症状ベース（Symptom-based）</strong>のアラートが推奨されています。
+  </p>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">原因ベース（非推奨）</div>
+      <ul>
+        <li>CPU使用率が90%超えたら</li>
+        <li>メモリ使用量が80%超えたら</li>
+        <li>特定のプロセスが停止したら</li>
+        <li>→ ユーザーに影響がない場合でも通知される</li>
+      </ul>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">症状ベース（推奨）</div>
+      <ul>
+        <li>エラー率が1%を超えたら</li>
+        <li>レスポンスタイムp99が2秒超えたら</li>
+        <li>注文成功率が99%を下回ったら</li>
+        <li>→ ユーザーに影響がある問題だけ通知</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>アラート疲れ（Alert Fatigue）</h2>
+
+  <p>
+    <strong>アラート疲れ</strong>とは、アラートが多すぎて重要な通知が埋もれてしまう状態です。
+    「オオカミ少年」効果で、本当に重要なアラートも無視されるようになります。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:30%;">原因</th>
+        <th style="width:35%;">問題</th>
+        <th>対策</th>
+      </tr>
+      <tr>
+        <td>閾値が低すぎる</td>
+        <td>正常な変動でもアラート発生</td>
+        <td>過去データに基づく適切な閾値設定</td>
+      </tr>
+      <tr>
+        <td>同一障害で複数アラート</td>
+        <td>1つの問題で大量通知</td>
+        <td>アラートのグルーピング・抑制</td>
+      </tr>
+      <tr>
+        <td>対処不要なアラート</td>
+        <td>自動復旧する問題でも通知</td>
+        <td>アクション不要ならアラートにしない</td>
+      </tr>
+      <tr>
+        <td>未分類のアラート</td>
+        <td>重要度が不明で全部同じに見える</td>
+        <td>重要度レベルの分類（P1〜P4）</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>良いアラートの条件</h2>
+
+  <pre><code># Prometheus Alerting Rules の設定例
+
+groups:
+  - name: api-alerts
+    rules:
+      # 症状ベース：エラー率が高い
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(http_requests_total{status_code=~"5.."}[5m]))
+          /
+          sum(rate(http_requests_total[5m]))
+          > 0.01
+        for: 5m  # 5分間持続した場合のみ発火
+        labels:
+          severity: critical
+        annotations:
+          summary: "API error rate is above 1%"
+          description: "Error rate: {{ $value | humanizePercentage }}"
+          runbook_url: "https://wiki.example.com/runbooks/high-error-rate"
+
+      # 症状ベース：レスポンスが遅い
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.99,
+            rate(http_request_duration_seconds_bucket[5m])
+          ) > 2
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "API p99 latency is above 2 seconds"
+          runbook_url: "https://wiki.example.com/runbooks/high-latency"</code></pre>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      良いアラートのチェックリスト
+    </div>
+    <ul>
+      <li><strong>アクション可能</strong>：受け取った人が何をすべきか明確</li>
+      <li><strong>Runbook付き</strong>：対処手順のドキュメントへのリンクがある</li>
+      <li><strong>適切な宛先</strong>：対処できるチームに通知される</li>
+      <li><strong>重複排除</strong>：同じ問題で何度もアラートを出さない</li>
+      <li><strong>持続条件あり</strong>：一瞬のスパイクでは発火しない（for句）</li>
+    </ul>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      アンチパターン：アラート設計のNG
+    </div>
+    <ul>
+      <li>「とりあえず全部アラート」→ 対処すべきものが分からない</li>
+      <li>Runbook（対処手順書）がない → 夜中に起こされても何もできない</li>
+      <li>アラートの見直しをしない → 誰も見ないアラートが放置される</li>
+      <li>重要度の区別がない → 全部がcriticalで本当の緊急事態が埋もれる</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-obs9-5">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Google SREが推奨するアラートの設計アプローチはどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-5" style="display:none;">
+      A. 原因ベース（CPU使用率やメモリ使用量に基づく）
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-obs9-5" style="display:none;">
+      B. 症状ベース（エラー率やレスポンスタイムに基づく）
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-5" style="display:none;">
+      C. 時間ベース（定期的にすべてのメトリクスをチェック）
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs9-5')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs9-5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="obs9-6">
+  <h1>ダッシュボード設計</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>4つのゴールデンシグナルを中心としたダッシュボード設計</li>
+      <li>ダッシュボードのレイアウトとターゲットユーザーの考え方</li>
+      <li>効果的なダッシュボードの構成パターン</li>
+    </ul>
+  </div>
+
+  <h2>4つのゴールデンシグナル</h2>
+
+  <p>
+    Google SREが提唱する<strong>4つのゴールデンシグナル</strong>は、
+    あらゆるサービスの健全性を測る基本的な指標です。
+    ダッシュボードは、まずこの4つを表示することから始めましょう。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">シグナル</th>
+        <th style="width:35%;">内容</th>
+        <th>表示例</th>
+      </tr>
+      <tr>
+        <td><strong>レイテンシ</strong></td>
+        <td>リクエストの処理にかかる時間</td>
+        <td>p50/p90/p99のレスポンスタイム推移グラフ</td>
+      </tr>
+      <tr>
+        <td><strong>トラフィック</strong></td>
+        <td>システムへの需要量</td>
+        <td>RPM（リクエスト/分）の時系列グラフ</td>
+      </tr>
+      <tr>
+        <td><strong>エラー</strong></td>
+        <td>失敗したリクエストの割合</td>
+        <td>HTTP 5xxの割合、ステータスコード分布</td>
+      </tr>
+      <tr>
+        <td><strong>サチュレーション</strong></td>
+        <td>リソースの逼迫度合い</td>
+        <td>CPU/メモリ/ディスク使用率、キュー長</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>ダッシュボードのターゲットと構成</h2>
+
+  <p>
+    ダッシュボードは<strong>見る人によって最適なデザインが異なります</strong>。
+    1つのダッシュボードにすべてを詰め込むのではなく、
+    用途別に分けることが重要です。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">種類</th>
+        <th style="width:25%;">対象者</th>
+        <th style="width:25%;">目的</th>
+        <th>表示内容</th>
+      </tr>
+      <tr>
+        <td><strong>概要</strong></td>
+        <td>マネージャー、ステークホルダー</td>
+        <td>全体の健全性を一目で把握</td>
+        <td>SLI/SLO、全体エラー率、可用性</td>
+      </tr>
+      <tr>
+        <td><strong>サービス別</strong></td>
+        <td>開発チーム</td>
+        <td>担当サービスの詳細状態</td>
+        <td>4ゴールデンシグナル、デプロイ履歴</td>
+      </tr>
+      <tr>
+        <td><strong>インフラ</strong></td>
+        <td>SRE / インフラチーム</td>
+        <td>基盤リソースの監視</td>
+        <td>CPU/メモリ/ディスク/ネットワーク</td>
+      </tr>
+      <tr>
+        <td><strong>障害対応</strong></td>
+        <td>オンコール担当</td>
+        <td>問題の迅速な特定</td>
+        <td>直近のエラー、異常メトリクス、関連ログ</td>
+      </tr>
+    </table>
+  </div>
+
+  <pre><code>// Grafana ダッシュボード定義の概念（JSON Model 抜粋）
+{
+  "dashboard": {
+    "title": "Order Service - Overview",
+    "tags": ["production", "order-service"],
+    "panels": [
+      {
+        "title": "Request Rate (RPM)",
+        "type": "graph",
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+        "targets": [{
+          "expr": "sum(rate(http_requests_total{service='order'}[5m])) * 60"
+        }]
+      },
+      {
+        "title": "Error Rate (%)",
+        "type": "graph",
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+        "targets": [{
+          "expr": "sum(rate(http_requests_total{service='order',status=~'5..'}[5m])) / sum(rate(http_requests_total{service='order'}[5m])) * 100"
+        }],
+        "thresholds": [
+          { "value": 1, "color": "yellow" },
+          { "value": 5, "color": "red" }
+        ]
+      },
+      {
+        "title": "Latency (p50 / p90 / p99)",
+        "type": "graph",
+        "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+        "targets": [
+          { "expr": "histogram_quantile(0.50, rate(http_request_duration_seconds_bucket{service='order'}[5m]))", "legendFormat": "p50" },
+          { "expr": "histogram_quantile(0.90, rate(http_request_duration_seconds_bucket{service='order'}[5m]))", "legendFormat": "p90" },
+          { "expr": "histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{service='order'}[5m]))", "legendFormat": "p99" }
+        ]
+      },
+      {
+        "title": "CPU / Memory Usage",
+        "type": "graph",
+        "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 }
+      }
+    ]
+  }
+}</code></pre>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      アンチパターン：ダッシュボード設計のNG
+    </div>
+    <ul>
+      <li><strong>情報過多</strong>：1画面に50個のグラフを詰め込んで何も読み取れない</li>
+      <li><strong>文脈なしの数値</strong>：「85%」が良いのか悪いのか判断できない（閾値の明示が必要）</li>
+      <li><strong>作って放置</strong>：古いメトリクスが残り、現状と合わないダッシュボード</li>
+      <li><strong>誰向けか不明</strong>：技術者用と経営層用を同一ダッシュボードに混在</li>
+    </ul>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      良いダッシュボードの原則
+    </div>
+    <ul>
+      <li><strong>5秒ルール</strong>：5秒で「正常か異常か」が判断できる</li>
+      <li><strong>ドリルダウン可能</strong>：概要→詳細へ掘り下げられる構造</li>
+      <li><strong>アノテーション</strong>：デプロイや障害のタイムスタンプを表示</li>
+      <li><strong>閾値の可視化</strong>：正常範囲と異常範囲を色分け</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-obs9-6">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>Google SREが提唱する4つのゴールデンシグナルに含まれないのはどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-6" style="display:none;">
+      A. レイテンシ
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-6" style="display:none;">
+      B. エラー
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-obs9-6" style="display:none;">
+      C. コスト
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs9-6')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs9-6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="obs9-7">
+  <h1>APM（Application Performance Management）</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>APMの役割と主要な機能</li>
+      <li>Datadog / New Relic などの主要APMツールの特徴</li>
+      <li>APMを使ったパフォーマンス問題の特定と改善</li>
+    </ul>
+  </div>
+
+  <h2>APMとは何か</h2>
+
+  <p>
+    <strong>APM（Application Performance Management）</strong>は、
+    アプリケーションのパフォーマンスをリアルタイムで監視・分析するツールです。
+    ログ・メトリクス・トレースを統合的に扱い、
+    <strong>コード レベルでのボトルネック</strong>を特定できます。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：人間ドック
+    </div>
+    <p>
+      健康診断が「血圧・体重・血液検査」など複数の検査を組み合わせて
+      健康状態を総合的に判断するように、APMはアプリケーションの
+      「レスポンスタイム・エラー率・リソース使用量・依存関係」など
+      を総合的に分析します。
+    </p>
+  </div>
+
+  <h2>APMの主要機能</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">機能</th>
+        <th style="width:35%;">説明</th>
+        <th>活用場面</th>
+      </tr>
+      <tr>
+        <td><strong>サービスマップ</strong></td>
+        <td>サービス間の依存関係と通信状態を可視化</td>
+        <td>影響範囲の把握、依存関係の整理</td>
+      </tr>
+      <tr>
+        <td><strong>トランザクション分析</strong></td>
+        <td>個別リクエストの処理内容を詳細に表示</td>
+        <td>遅いAPIの原因調査</td>
+      </tr>
+      <tr>
+        <td><strong>エラー追跡</strong></td>
+        <td>エラーの発生パターン、スタックトレースを集約</td>
+        <td>バグの優先順位付け</td>
+      </tr>
+      <tr>
+        <td><strong>データベース分析</strong></td>
+        <td>遅いクエリ、N+1問題の検出</td>
+        <td>DB起因のパフォーマンス改善</td>
+      </tr>
+      <tr>
+        <td><strong>デプロイ追跡</strong></td>
+        <td>デプロイ前後のパフォーマンス比較</td>
+        <td>リグレッションの早期発見</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>主要APMツールの比較</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">ツール</th>
+        <th style="width:30%;">強み</th>
+        <th style="width:25%;">価格帯</th>
+        <th>特徴</th>
+      </tr>
+      <tr>
+        <td><strong>Datadog</strong></td>
+        <td>統合プラットフォーム、豊富なインテグレーション</td>
+        <td>ホストあたり月額課金</td>
+        <td>ログ・メトリクス・トレース統合</td>
+      </tr>
+      <tr>
+        <td><strong>New Relic</strong></td>
+        <td>使いやすいUI、フルスタック可視化</td>
+        <td>ユーザーあたり＋データ量課金</td>
+        <td>無料枠あり、初心者に親切</td>
+      </tr>
+      <tr>
+        <td><strong>Grafana + Tempo</strong></td>
+        <td>OSS、カスタマイズ自由</td>
+        <td>インフラ費のみ（セルフホスト）</td>
+        <td>Prometheus/Lokiと統合</td>
+      </tr>
+      <tr>
+        <td><strong>Jaeger</strong></td>
+        <td>分散トレーシング特化、OSS</td>
+        <td>インフラ費のみ</td>
+        <td>CNCF graduated project</td>
+      </tr>
+    </table>
+  </div>
+
+  <pre><code>// Datadog APM の設定例（Node.js）
+// dd-trace パッケージを使用
+
+// tracer.js（アプリケーション起動前にインポート）
+const tracer = require('dd-trace').init({
+  service: 'order-service',
+  env: process.env.NODE_ENV,
+  version: process.env.APP_VERSION,
+  logInjection: true,  // ログにトレースIDを自動付与
+  runtimeMetrics: true, // Node.jsランタイムメトリクス
+  profiling: true,      // プロファイリング有効化
+});
+
+// カスタムスパンの作成
+app.post('/orders', async (req, res) => {
+  const span = tracer.startSpan('order.create', {
+    tags: {
+      'order.type': req.body.type,
+      'customer.tier': req.user.tier,
+    },
+  });
+
+  try {
+    // ビジネスロジック
+    const order = await createOrder(req.body);
+    span.setTag('order.id', order.id);
+    span.setTag('order.total', order.total);
+    res.json(order);
+  } catch (err) {
+    span.setTag('error', true);
+    span.setTag('error.message', err.message);
+    res.status(500).json({ error: 'Failed' });
+  } finally {
+    span.finish();
+  }
+});</code></pre>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      アンチパターン：APM導入の失敗
+    </div>
+    <ul>
+      <li><strong>ツールを入れただけで満足</strong>：データを見て改善アクションに繋げないと意味がない</li>
+      <li><strong>全環境で同じ設定</strong>：開発環境でフルトレースは不要、本番はサンプリング必須</li>
+      <li><strong>コスト管理なし</strong>：APMのデータ量がどんどん増えて費用が膨張</li>
+      <li><strong>チームがAPMを見ない</strong>：導入しても日常的に使う文化がなければ宝の持ち腐れ</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-obs9-7">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>APMの主な目的は何ですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-7" style="display:none;">
+      A. ソースコードのバージョン管理
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-7" style="display:none;">
+      B. インフラのプロビジョニング自動化
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-obs9-7" style="display:none;">
+      C. アプリケーションのパフォーマンスをリアルタイムで監視・分析する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs9-7')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs9-7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="obs9-8">
+  <h1>ログ集約</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>ログ集約の必要性と中央集中管理のメリット</li>
+      <li>ELK Stack（Elasticsearch + Logstash + Kibana）の構成と役割</li>
+      <li>Fluentd / Fluent Bit によるログ収集パイプライン</li>
+    </ul>
+  </div>
+
+  <h2>なぜログ集約が必要か</h2>
+
+  <p>
+    複数のサーバーやコンテナで動くシステムでは、
+    ログが<strong>各ノードに分散</strong>しています。
+    問題が発生したとき、各サーバーにSSHしてログを確認するのは非効率で不可能に近い。
+    <strong>ログ集約</strong>は、すべてのログを1箇所に集めて検索・分析できるようにします。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：図書館の蔵書管理
+    </div>
+    <p>
+      本が教室ごとにバラバラに置かれていたら、特定の本を探すのは大変です。
+      図書館のように1箇所に集め、分類・索引を付ければすぐに見つかります。
+      ログ集約は<strong>「ログの図書館」</strong>を作ることです。
+    </p>
+  </div>
+
+  <h2>ELK Stackの構成</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">コンポーネント</th>
+        <th style="width:35%;">役割</th>
+        <th>特徴</th>
+      </tr>
+      <tr>
+        <td><strong>Elasticsearch</strong></td>
+        <td>ログの保存・検索エンジン</td>
+        <td>全文検索、高速クエリ、スケーラブル</td>
+      </tr>
+      <tr>
+        <td><strong>Logstash</strong></td>
+        <td>ログの収集・変換・転送</td>
+        <td>フィルタリング、パース、エンリッチメント</td>
+      </tr>
+      <tr>
+        <td><strong>Kibana</strong></td>
+        <td>ログの可視化・ダッシュボード</td>
+        <td>検索UI、グラフ、アラート</td>
+      </tr>
+      <tr>
+        <td><strong>Beats</strong></td>
+        <td>軽量なデータ収集エージェント</td>
+        <td>Filebeat（ログ）、Metricbeat（メトリクス）</td>
+      </tr>
+    </table>
+  </div>
+
+  <pre><code>// ログ集約パイプラインの構成図
+//
+// [App Server 1] ─┐
+// [App Server 2] ─┤──→ [Fluentd/Logstash] ──→ [Elasticsearch] ──→ [Kibana]
+// [App Server 3] ─┘         (収集・変換)          (保存・検索)      (可視化)</code></pre>
+
+  <h2>Fluentdの設定例</h2>
+
+  <pre><code># Fluentd 設定ファイル（fluent.conf）
+
+# ログの入力元（アプリケーションログ）
+<source>
+  @type tail
+  path /var/log/app/*.log
+  pos_file /var/log/fluentd/app.log.pos
+  tag app.log
+  <parse>
+    @type json
+    time_key timestamp
+    time_format %Y-%m-%dT%H:%M:%S%z
+  </parse>
+</source>
+
+# ログのフィルタリング（不要なフィールドを除去）
+<filter app.log>
+  @type record_transformer
+  enable_ruby true
+  <record>
+    hostname "#{Socket.gethostname}"
+    environment "#{ENV['NODE_ENV']}"
+  </record>
+  remove_keys password, credit_card  # 機密情報を除去
+</filter>
+
+# エラーログだけ別途アラート用に転送
+<match app.log>
+  @type copy
+
+  # Elasticsearch への転送
+  <store>
+    @type elasticsearch
+    host elasticsearch.example.com
+    port 9200
+    index_name app-logs
+    type_name _doc
+    <buffer>
+      @type file
+      path /var/log/fluentd/buffer/es
+      flush_interval 5s
+      retry_max_times 3
+    </buffer>
+  </store>
+
+  # エラーログだけ Slack 通知
+  <store>
+    @type slack
+    webhook_url https://hooks.slack.com/services/xxx
+    channel #alerts
+    <filter>
+      @type grep
+      <regexp>
+        key level
+        pattern /error|fatal/
+      </regexp>
+    </filter>
+  </store>
+</match></code></pre>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      アンチパターン：ログ集約の失敗
+    </div>
+    <ul>
+      <li><strong>ログの欠損</strong>：バッファ設定が不適切で高負荷時にログが消失</li>
+      <li><strong>パースエラー放置</strong>：フォーマット不一致で構造化できないログが大量発生</li>
+      <li><strong>インデックス肥大化</strong>：保持期間やライフサイクル管理なしでストレージ枯渇</li>
+      <li><strong>全ログを転送</strong>：DEBUGレベルまで集約してコストが爆発</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-obs9-8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ELK Stackにおいて、ログの保存と検索を担当するコンポーネントはどれですか？</p>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-obs9-8" style="display:none;">
+      A. Elasticsearch
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-8" style="display:none;">
+      B. Logstash
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-8" style="display:none;">
+      C. Kibana
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs9-8')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs9-8')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="obs9-9">
+  <h1>監視コスト管理</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>オブザーバビリティにかかるコストの構造と要因</li>
+      <li>ログ量削減・サンプリング・保持期間の最適化手法</li>
+      <li>コストと可観測性のバランスの取り方</li>
+    </ul>
+  </div>
+
+  <h2>監視コストが膨らむ理由</h2>
+
+  <p>
+    オブザーバビリティツールの費用は、主に<strong>データ量</strong>に比例します。
+    マイクロサービス化・トラフィック増加に伴い、
+    ログ・メトリクス・トレースのデータ量は爆発的に増加しがちです。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">コスト要因</th>
+        <th style="width:35%;">内容</th>
+        <th>対策</th>
+      </tr>
+      <tr>
+        <td><strong>ログ量</strong></td>
+        <td>DEBUGログ、冗長なアクセスログ</td>
+        <td>ログレベル管理、不要ログの除外</td>
+      </tr>
+      <tr>
+        <td><strong>メトリクスの カーディナリティ</strong></td>
+        <td>ラベルの組み合わせが多すぎる</td>
+        <td>高カーディナリティラベルの排除</td>
+      </tr>
+      <tr>
+        <td><strong>トレースの全量収集</strong></td>
+        <td>全リクエストのトレースを保存</td>
+        <td>サンプリング戦略の導入</td>
+      </tr>
+      <tr>
+        <td><strong>保持期間</strong></td>
+        <td>古いデータを無期限に保持</td>
+        <td>段階的な保持ポリシー設定</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>サンプリング戦略</h2>
+
+  <p>
+    全データを収集・保存する必要はありません。
+    <strong>サンプリング</strong>を使って、コストを管理しながら必要な可観測性を維持します。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">戦略</th>
+        <th style="width:35%;">内容</th>
+        <th>適用場面</th>
+      </tr>
+      <tr>
+        <td><strong>ヘッドサンプリング</strong></td>
+        <td>リクエストの開始時に収集するか決定（例：10%）</td>
+        <td>シンプルなコスト削減</td>
+      </tr>
+      <tr>
+        <td><strong>テールサンプリング</strong></td>
+        <td>処理完了後に結果を見て収集するか決定</td>
+        <td>エラーや遅いリクエストは100%収集したい場合</td>
+      </tr>
+      <tr>
+        <td><strong>優先度サンプリング</strong></td>
+        <td>重要なエンドポイントは高い率で収集</td>
+        <td>決済系は100%、ヘルスチェックは0%</td>
+      </tr>
+    </table>
+  </div>
+
+  <pre><code># OpenTelemetry Collector のサンプリング設定例
+
+# otel-collector-config.yaml
+processors:
+  # テールサンプリング：エラーや遅いリクエストは必ず収集
+  tail_sampling:
+    decision_wait: 10s
+    policies:
+      # エラーは100%収集
+      - name: errors-policy
+        type: status_code
+        status_code:
+          status_codes: [ERROR]
+
+      # 2秒以上かかったリクエストは100%収集
+      - name: latency-policy
+        type: latency
+        latency:
+          threshold_ms: 2000
+
+      # それ以外は10%サンプリング
+      - name: default-policy
+        type: probabilistic
+        probabilistic:
+          sampling_percentage: 10
+
+  # ログのフィルタリング
+  filter:
+    logs:
+      exclude:
+        match_type: strict
+        bodies:
+          - "health check"  # ヘルスチェックログを除外
+
+service:
+  pipelines:
+    traces:
+      processors: [tail_sampling]
+    logs:
+      processors: [filter]</code></pre>
+
+  <h2>保持期間の設計</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:20%;">データ種別</th>
+        <th style="width:20%;">ホット（高速）</th>
+        <th style="width:20%;">ウォーム（通常）</th>
+        <th style="width:20%;">コールド（低速）</th>
+        <th>削除</th>
+      </tr>
+      <tr>
+        <td><strong>ログ</strong></td>
+        <td>7日</td>
+        <td>30日</td>
+        <td>90日</td>
+        <td>90日超</td>
+      </tr>
+      <tr>
+        <td><strong>メトリクス</strong></td>
+        <td>30日（生データ）</td>
+        <td>90日（1分集約）</td>
+        <td>1年（1時間集約）</td>
+        <td>1年超</td>
+      </tr>
+      <tr>
+        <td><strong>トレース</strong></td>
+        <td>7日</td>
+        <td>30日</td>
+        <td>-</td>
+        <td>30日超</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      アンチパターン：コスト管理の失敗
+    </div>
+    <ul>
+      <li><strong>「全部取っておけばいい」思考</strong>：データ量に比例してコストが増大し続ける</li>
+      <li><strong>コスト可視化をしない</strong>：月末の請求書で初めてコスト増に気づく</li>
+      <li><strong>サンプリングなしの全量収集</strong>：トラフィック増加でコストが線形に増加</li>
+      <li><strong>コスト削減で必要なデータまで削除</strong>：障害時に調査できなくなる</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-obs9-9">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>テールサンプリングの特徴として正しいのはどれですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-9" style="display:none;">
+      A. リクエストの開始時にサンプリングするか決定する
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-obs9-9" style="display:none;">
+      B. 処理完了後に結果を見てサンプリングするか決定する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-9" style="display:none;">
+      C. ランダムに一定割合のデータだけ保存する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs9-9')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs9-9')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<section id="obs9-10">
+  <h1>可観測性文化</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>チーム全体でオブザーバビリティを実践する文化の構築</li>
+      <li>SRE（Site Reliability Engineering）との連携方法</li>
+      <li>オブザーバビリティ成熟度モデルと段階的な導入</li>
+    </ul>
+  </div>
+
+  <h2>ツールだけでは不十分</h2>
+
+  <p>
+    最先端のAPMやログ集約基盤を導入しても、
+    <strong>チームがそれを日常的に活用しなければ意味がありません</strong>。
+    オブザーバビリティは「ツール」ではなく「文化」です。
+  </p>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🏠</span>
+      たとえ話：健康管理の習慣
+    </div>
+    <p>
+      高性能な体組成計を買っても、毎日乗って記録し、
+      食事や運動を見直さなければ健康にはなりません。
+      オブザーバビリティも同じで、ツールを入れるだけでなく、
+      <strong>データを見て行動を変える習慣</strong>がなければ効果は出ません。
+    </p>
+  </div>
+
+  <h2>オブザーバビリティ成熟度モデル</h2>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:15%;">レベル</th>
+        <th style="width:20%;">段階</th>
+        <th style="width:35%;">状態</th>
+        <th>次のステップ</th>
+      </tr>
+      <tr>
+        <td><strong>Level 1</strong></td>
+        <td>反応型</td>
+        <td>問題が起きてからサーバーにSSHしてログを見る</td>
+        <td>ログ集約基盤の導入</td>
+      </tr>
+      <tr>
+        <td><strong>Level 2</strong></td>
+        <td>基本監視</td>
+        <td>基本的なメトリクス監視とアラートがある</td>
+        <td>構造化ログ、ダッシュボード整備</td>
+      </tr>
+      <tr>
+        <td><strong>Level 3</strong></td>
+        <td>統合型</td>
+        <td>ログ・メトリクス・トレースが統合されている</td>
+        <td>SLI/SLO定義、チーム横断の活用</td>
+      </tr>
+      <tr>
+        <td><strong>Level 4</strong></td>
+        <td>予測型</td>
+        <td>データに基づいて問題を予防できる</td>
+        <td>自動対応、カオスエンジニアリング</td>
+      </tr>
+      <tr>
+        <td><strong>Level 5</strong></td>
+        <td>最適化型</td>
+        <td>全チームが自律的にオブザーバビリティを活用</td>
+        <td>継続的な改善と文化の深化</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>SRE連携のベストプラクティス</h2>
+
+  <p>
+    <strong>SRE（Site Reliability Engineering）</strong>チームは
+    オブザーバビリティの推進役として重要な役割を果たします。
+    開発チームとSREが協力することで、信頼性の高いサービスを実現できます。
+  </p>
+
+  <div class="card">
+    <table style="width:100%;">
+      <tr>
+        <th style="width:25%;">プラクティス</th>
+        <th style="width:35%;">内容</th>
+        <th>効果</th>
+      </tr>
+      <tr>
+        <td><strong>SLI/SLO の共同定義</strong></td>
+        <td>開発チームとSREが一緒にサービスレベル目標を決める</td>
+        <td>品質基準の共通認識</td>
+      </tr>
+      <tr>
+        <td><strong>ポストモーテム</strong></td>
+        <td>障害後に全員で振り返り、再発防止策を立てる</td>
+        <td>組織学習、blame-free 文化</td>
+      </tr>
+      <tr>
+        <td><strong>On-call ローテーション</strong></td>
+        <td>開発者もオンコールに参加する</td>
+        <td>運用の理解促進、品質意識向上</td>
+      </tr>
+      <tr>
+        <td><strong>エラーバジェット</strong></td>
+        <td>SLO未達時は新機能開発を止めて改善に集中</td>
+        <td>信頼性と開発速度のバランス</td>
+      </tr>
+      <tr>
+        <td><strong>トイル削減</strong></td>
+        <td>手作業の運用を自動化する</td>
+        <td>創造的な作業への時間確保</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>チームへの定着方法</h2>
+
+  <pre><code>// オブザーバビリティ文化を定着させるための具体的なアクション
+
+// 1. 開発プロセスへの組み込み
+//    - PR レビューにオブザーバビリティ観点を含める
+//    - 新機能のDesign Docに「どう監視するか」のセクションを追加
+//    - Definition of Done に「ダッシュボード更新」を含める
+
+// 2. チーム習慣の確立
+//    - 毎朝のスタンドアップでダッシュボードを確認
+//    - 週次でSLI/SLOレビューを実施
+//    - 月次でアラートの棚卸し（不要アラートの削除）
+
+// 3. 知識共有
+//    - 障害対応のRunbookを整備・更新
+//    - ポストモーテムを全社に共有
+//    - 新メンバーのオンボーディングに監視ツール研修を含める
+
+// 4. 計測と改善
+//    - MTTD（検知までの時間）を計測
+//    - MTTR（復旧までの時間）を計測
+//    - アラートの精度（偽陽性率）を追跡</code></pre>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">❌</span>
+      アンチパターン：文化構築の失敗
+    </div>
+    <ul>
+      <li><strong>「SREチームの仕事」と丸投げ</strong>：開発者が自分のサービスの監視に関心を持たない</li>
+      <li><strong>ポストモーテムが犯人探し</strong>：blame-free でないと次回からインシデントが隠蔽される</li>
+      <li><strong>トップダウンの押し付け</strong>：現場の課題に合わないツールや方針を強制する</li>
+      <li><strong>一度きりの取り組み</strong>：最初だけ盛り上がってすぐに形骸化する</li>
+    </ul>
+  </div>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">✓</span>
+      オブザーバビリティ文化の成功指標
+    </div>
+    <ul>
+      <li><strong>開発者がダッシュボードを日常的に見ている</strong>（「使われるダッシュボード」が存在する）</li>
+      <li><strong>新機能リリース時にログ・メトリクス・アラートがセットで実装される</strong></li>
+      <li><strong>障害時にデータから問題を特定できる</strong>（「ログを見て分かりました」）</li>
+      <li><strong>MTTD/MTTRが継続的に改善されている</strong></li>
+      <li><strong>チーム全員がSLI/SLOを理解し、説明できる</strong></li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-obs9-10">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ポストモーテムで最も重要な原則は何ですか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-10" style="display:none;">
+      A. 障害の原因を作った人を特定して責任を取らせる
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-obs9-10" style="display:none;">
+      B. できるだけ短時間で終わらせる
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-obs9-10" style="display:none;">
+      C. blame-free（個人を責めない）で再発防止に集中する
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-obs9-10')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('obs9-10')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>

@@ -193,17 +193,144 @@
       CAP定理の制約
     </div>
     <p>
-      分散システムでは<strong>Consistency（一貫性）</strong>、<strong>Availability（可用性）</strong>、<strong>Partition Tolerance（分断耐性）</strong>の3つを同時に満たせない。
+      分散システムでは<strong>Consistency（一貫性）</strong>、<strong>Availability（可用性）</strong>、<strong>Partition Tolerance（分断耐性）</strong>の3つを同時に満たすことはできません。
+    </p>
+    <p>
+      ここで重要なのは、<strong>ネットワーク分断（Partition）は現実の分散システムでは避けられない</strong>という点です。
+      ノード間の通信は遅延・切断・パケットロスが必ず発生します。
+      したがって<strong>Partition Toleranceは前提条件</strong>であり、実質的な選択は<strong>CP（一貫性優先）か AP（可用性優先）か</strong>の二択になります。
     </p>
     <ul>
-      <li><strong>CA</strong>：単一リージョン（分断に弱い）</li>
-      <li><strong>CP</strong>：一貫性重視（可用性を犠牲）</li>
-      <li><strong>AP</strong>：可用性重視（結果整合性を許容）</li>
+      <li><strong>CA</strong>：単一ノードの従来型RDBMS。ネットワーク分断が起きない前提であり、分散システムとは言えない</li>
+      <li><strong>CP</strong>：分断が発生した際に<strong>一貫性を優先</strong>し、可用性を犠牲にする。分断中は書き込みを拒否してでもデータの整合性を保つ（例：ZooKeeper, HBase, MongoDB strong read）</li>
+      <li><strong>AP</strong>：分断が発生した際に<strong>可用性を優先</strong>し、結果整合性を許容する。分断中もリクエストに応答し、分断解消後にデータを同期する（例：Cassandra, DynamoDB, CouchDB）</li>
     </ul>
     <p style="margin:0;">
-      マルチリージョンでは通常<strong>AP</strong>を選択し、<br>
-      <strong>結果整合性（Eventual Consistency）</strong>を受け入れます。
+      マルチリージョン構成では通常<strong>AP</strong>を選択し、<strong>結果整合性（Eventual Consistency）</strong>を受け入れます。
     </p>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      CAP定理：各組み合わせの具体例
+    </div>
+    <table style="width:100%;">
+      <thead>
+        <tr>
+          <th>選択</th>
+          <th>システム例</th>
+          <th>特徴</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>CA</strong></td>
+          <td>従来のRDBMS（単一ノード PostgreSQL, MySQL）</td>
+          <td>ネットワーク分断がない環境が前提。単一障害点になりやすい</td>
+        </tr>
+        <tr>
+          <td><strong>CP</strong></td>
+          <td>ZooKeeper, HBase, MongoDB（strong read）</td>
+          <td>分断時に書き込みを拒否して一貫性を保持。金融取引・在庫管理など整合性が最優先の用途</td>
+        </tr>
+        <tr>
+          <td><strong>AP</strong></td>
+          <td>Cassandra, DynamoDB, CouchDB</td>
+          <td>分断時もリクエストに応答し、後で同期。SNSフィード・ショッピングカートなど可用性が重要な用途</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      マイクロサービスの耐障害パターン
+    </div>
+    <h4>Circuit Breaker（サーキットブレーカー）パターン</h4>
+    <p>
+      障害が発生したサービスへのリクエストを「遮断機」のように止め、<strong>障害の連鎖（カスケード障害）</strong>を防ぎます。
+      状態は3つ遷移します：
+    </p>
+    <ul>
+      <li><strong>Closed</strong>（通常稼働）：リクエストをそのまま転送。失敗がしきい値を超えるとOpenへ</li>
+      <li><strong>Open</strong>（遮断中）：リクエストを即座にエラーで返す。一定時間後にHalf-Openへ</li>
+      <li><strong>Half-Open</strong>（試行中）：少数のリクエストだけ通して回復を確認。成功すればClosed、失敗すればOpenに戻る</li>
+    </ul>
+<pre><code>// Circuit Breaker 疑似コード
+class CircuitBreaker {
+  state = "CLOSED"       // CLOSED | OPEN | HALF_OPEN
+  failureCount = 0
+  threshold = 5
+  resetTimeout = 30000   // 30秒
+
+  async call(request) {
+    if (this.state === "OPEN") {
+      if (now() - this.lastFailureTime &gt; this.resetTimeout) {
+        this.state = "HALF_OPEN"
+      } else {
+        throw new Error("Circuit is OPEN - request blocked")
+      }
+    }
+
+    try {
+      const result = await request()
+      this.onSuccess()
+      return result
+    } catch (error) {
+      this.onFailure()
+      throw error
+    }
+  }
+
+  onSuccess() {
+    this.failureCount = 0
+    this.state = "CLOSED"
+  }
+
+  onFailure() {
+    this.failureCount++
+    this.lastFailureTime = now()
+    if (this.failureCount &gt;= this.threshold) {
+      this.state = "OPEN"
+    }
+  }
+}</code></pre>
+
+    <h4>Saga パターン</h4>
+    <p>
+      分散トランザクションを<strong>補償トランザクション（Compensation）のチェーン</strong>で管理します。
+      各サービスがローカルトランザクションを実行し、途中で失敗した場合は完了済みのステップを逆順に取り消します。
+    </p>
+<pre><code>// Saga パターン 疑似コード（オーケストレーション方式）
+class OrderSaga {
+  async execute(orderData) {
+    const steps = []
+
+    try {
+      // Step 1: 在庫を予約
+      const reservation = await inventoryService.reserve(orderData.items)
+      steps.push({ compensate: () =&gt; inventoryService.cancelReserve(reservation.id) })
+
+      // Step 2: 決済を実行
+      const payment = await paymentService.charge(orderData.payment)
+      steps.push({ compensate: () =&gt; paymentService.refund(payment.id) })
+
+      // Step 3: 配送を手配
+      const shipment = await shippingService.schedule(orderData.address)
+      steps.push({ compensate: () =&gt; shippingService.cancel(shipment.id) })
+
+      return { status: "completed" }
+    } catch (error) {
+      // 失敗時：完了済みステップを逆順に補償
+      for (const step of steps.reverse()) {
+        await step.compensate()
+      }
+      return { status: "rolled_back", error: error.message }
+    }
+  }
+}</code></pre>
   </div>
 
   <div class="card card-danger">

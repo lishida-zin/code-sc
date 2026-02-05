@@ -1122,3 +1122,127 @@ function loadTodos() {
     <span class="icon">✓</span> このページを完了
   </button>
 </section>
+
+<section id="ex-t2-16">
+  <h1>問題 16: varスコープのバグ修正</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🔧</span> コード修正</div>
+    <p>先輩エンジニアから「ボタンをクリックするとすべて同じ番号が表示されるんだけど、原因わかる？」と質問されました。3つのボタンを生成して、それぞれクリックしたら「ボタン0」「ボタン1」「ボタン2」と表示したいそうです。</p>
+  </div>
+
+  <h2>以下のコードにバグがあります</h2>
+  <pre><code>function createButtons() {
+  const container = document.getElementById("container");
+
+  for (var i = 0; i &lt; 3; i++) {
+    const button = document.createElement("button");
+    button.textContent = "ボタン " + i;
+
+    button.addEventListener("click", function() {
+      alert("クリックされたのはボタン " + i);
+    });
+
+    container.appendChild(button);
+  }
+}
+
+createButtons();
+// ボタン0を押すと → "クリックされたのはボタン 3"
+// ボタン1を押すと → "クリックされたのはボタン 3"
+// ボタン2を押すと → "クリックされたのはボタン 3"</code></pre>
+
+  <div class="quiz" id="quiz-ex-t2-16">
+    <div class="quiz-question"><strong>問題：</strong>このコードの修正方法として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-16" value="a">
+        alert の中の i を this.textContent に変更する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-16" value="b">
+        addEventListener の第3引数に { capture: true } を追加する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="varは関数スコープなので、forループ全体で同じ変数iを共有します。ループ終了時にi=3になっているため、どのボタンのクリックハンドラもi=3を参照します。var を let に変更すると、letはブロックスコープを持つため、各ループ反復ごとに新しいiが作られ、クロージャがその反復時点の値を正しく保持します。これはJavaScript初学者が最も頻繁に遭遇するクロージャとスコープの問題で、ES6以降は let/const を使うことが推奨されます。">
+        <input type="radio" name="quiz-ex-t2-16" value="c">
+        for文の var i を let i に変更する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-16" value="d">
+        button.addEventListener の function を arrow function に変更する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t2-16')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t2-16')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t2-17">
+  <h1>問題 17: Array.mapの戻り値未使用バグ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">🔧</span> コード修正</div>
+    <p>後輩のコードレビューで「商品価格を税込みに変換する処理が動かない」というPRが来ました。コンソールで確認すると、変換後の配列が空配列になっているそうです。</p>
+  </div>
+
+  <h2>以下のコードにバグがあります</h2>
+  <pre><code>const products = [
+  { name: "ノートPC", price: 80000 },
+  { name: "マウス", price: 3000 },
+  { name: "キーボード", price: 12000 },
+  { name: "モニター", price: 45000 },
+];
+
+// 税込み価格に変換したい（税率10%）
+const taxIncluded = [];
+
+products.map(product =&gt; {
+  taxIncluded.push({
+    name: product.name,
+    price: Math.floor(product.price * 1.1),
+  });
+});
+
+console.log("税込み商品一覧:", taxIncluded);
+// 動くが、mapの戻り値を捨てて副作用でpushしているのは問題
+
+// 別の箇所ではこんなコードも…
+const names = products.map(product =&gt; {
+  product.name;  // returnを忘れている
+});
+
+console.log("商品名一覧:", names);
+// → [undefined, undefined, undefined, undefined]</code></pre>
+
+  <div class="quiz" id="quiz-ex-t2-17">
+    <div class="quiz-question"><strong>問題：</strong>このコードの修正方法として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-17" value="a">
+        taxIncluded への push は問題ない。names の方は product.name の前に console.log を追加すれば表示される
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-17" value="b">
+        map を forEach に変更してどちらも外部配列に push する形に統一する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="2つの問題があります。(1) 最初のmapは戻り値を使わず副作用（push）で外部配列に追加しています。mapは新しい配列を返すメソッドなので、const taxIncluded = products.map(product => ({ name: product.name, price: Math.floor(product.price * 1.1) })) と戻り値を受け取るのが正しい使い方です。副作用だけが目的ならforEachを使うべきです。(2) namesの方はアロー関数の中括弧ブロック内でreturnを書き忘れています。中括弧を使う場合は明示的にreturnが必要です。product.name → return product.name、または中括弧を外して暗黙のreturn（product => product.name）にします。">
+        <input type="radio" name="quiz-ex-t2-17" value="c">
+        税込み変換は const taxIncluded = products.map(...) で戻り値を直接受け取り、商品名取得は return product.name を追加するか product =&gt; product.name に修正する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-17" value="d">
+        map の代わりに reduce を使えばどちらの問題も解決する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t2-17')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t2-17')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
