@@ -3,7 +3,14 @@
 // ============================================
 const sectionMapping = {
   // Level 0
-  'level0-intro': 'level0/intro.html',
+  'l0-1': 'level0/intro.html',
+  'l0-2': 'level0/intro.html',
+  'l0-3': 'level0/intro.html',
+  'l0-4': 'level0/intro.html',
+  'l0-5': 'level0/intro.html',
+  'l0-6': 'level0/intro.html',
+  'l0-7': 'level0/intro.html',
+  'l0-8': 'level0/intro.html',
 
   // Level 1 - Phase 1: HTML基礎
   'html1': 'level1/phase1.html',
@@ -858,7 +865,8 @@ function updateProgress() {
   const completed = JSON.parse(localStorage.getItem('completedSections') || '[]');
 
   // Level 0
-  const level0Count = completed.filter(s => s.startsWith('level0')).length;
+  const level0Sections = ['l0-1','l0-2','l0-3','l0-4','l0-5','l0-6','l0-7','l0-8'];
+  const level0Count = completed.filter(s => level0Sections.includes(s)).length;
   const level0Progress = document.getElementById('level0-progress');
   if (level0Progress) level0Progress.value = level0Count;
 

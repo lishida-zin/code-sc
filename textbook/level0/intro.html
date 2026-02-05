@@ -1,295 +1,1094 @@
-<section id="level0-intro">
-      <h1>AI時代のエンジニアとして</h1>
+<!-- ============================================
+     Level 0: AI時代のエンジニアとして
+     セクション: l0-1 〜 l0-8
+     ============================================ -->
 
-      <div class="card card-info">
-        <div class="card-title">
-          <span class="icon">📚</span>
-          このページで学ぶこと
-        </div>
-        <ul>
-          <li>2026年、エンジニアの仕事はどう変わったか</li>
-          <li>なぜ「読む力」が大事なのか</li>
-          <li>AI時代に必要な考え方</li>
-        </ul>
+<!-- ============================================
+     l0-1: エンジニアの役割の変化
+     ============================================ -->
+<section id="l0-1">
+  <h1>エンジニアの役割の変化</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>2026年、エンジニアの仕事はどう変わったか</li>
+      <li>「コードを書く人」から「問題を解決する人」への変化</li>
+    </ul>
+  </div>
+
+  <h2>2026年、エンジニアの仕事が変わった</h2>
+
+  <p>
+    2026年、エンジニアの仕事は大きく変わりました。
+  </p>
+
+  <p>
+    昔は「自分でコードを書く」のが仕事でした。
+    今は「AIが書いたコードをチェックする」のが仕事です。
+  </p>
+
+  <!-- 役割変化の図解 -->
+  <div class="diagram-container">
+    <svg class="diagram" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- 2020年 -->
+      <rect x="20" y="30" width="180" height="140" rx="10" fill="#FEF2F2" stroke="#DC2626" stroke-width="2"/>
+      <text x="110" y="60" text-anchor="middle" font-size="16" font-weight="bold" fill="#DC2626">2020年まで</text>
+      <text x="110" y="95" text-anchor="middle" font-size="14" fill="#333">エンジニア</text>
+      <text x="110" y="115" text-anchor="middle" font-size="14" fill="#333">↓</text>
+      <text x="110" y="135" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">コードを書く</text>
+
+      <!-- 矢印 -->
+      <polygon points="220,100 250,85 250,95 280,95 280,105 250,105 250,115" fill="#2563EB"/>
+
+      <!-- 2026年 -->
+      <rect x="300" y="30" width="180" height="140" rx="10" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+      <text x="390" y="60" text-anchor="middle" font-size="16" font-weight="bold" fill="#16A34A">2026年</text>
+      <text x="390" y="95" text-anchor="middle" font-size="14" fill="#333">エンジニア</text>
+      <text x="390" y="115" text-anchor="middle" font-size="14" fill="#333">↓</text>
+      <text x="390" y="135" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">コードをチェック</text>
+    </svg>
+    <p class="diagram-caption">エンジニアの役割の変化</p>
+  </div>
+
+  <h2>役割のシフト</h2>
+
+  <p>
+    エンジニアの仕事の<strong>中心</strong>が変わりました。
+  </p>
+
+  <table>
+    <tr>
+      <th>以前（Before）</th>
+      <th>現在（After）</th>
+    </tr>
+    <tr>
+      <td>How（どう実装するか）</td>
+      <td>Why（なぜ作るのか）/ What（何を作るのか）</td>
+    </tr>
+    <tr>
+      <td>コードを書く</td>
+      <td>AIが書いたコードをレビューする</td>
+    </tr>
+    <tr>
+      <td>作業する</td>
+      <td>評価・検証・環境整備する</td>
+    </tr>
+  </table>
+
+  <p>
+    たとえ話で言うと、昔のエンジニアは「料理人」でした。自分の手で料理を作っていた。
+    今のエンジニアは「料理長（シェフ）」です。AIという優秀な助手に指示を出し、
+    出来上がった料理の<strong>味見と品質チェック</strong>をするのが仕事です。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      用語の意味
+    </div>
+    <p style="margin-bottom:0;">
+      <strong>「レビュー」</strong>とは「見直し・確認」のこと。英語の "review"（re=再び + view=見る）が語源です。
+      コードレビューは「他の人が書いたコードを読んで、問題がないか確認すること」を意味します。
+    </p>
+  </div>
+
+  <!-- クイズ -->
+  <div class="quiz" id="quiz-l0-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>2026年のエンジニアの仕事の「中心」はどれ？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-1" style="display:none;">
+      A. できるだけ多くのコードを速く書くこと
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="AIがコードを書ける時代、人間の仕事は「なぜ作るのか」を考え、AIの出力を評価・検証することにシフトしました。">
+      <input type="radio" name="q-l0-1" style="display:none;">
+      B. AIの出力を評価・検証し、問題を解決すること
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-1" style="display:none;">
+      C. 新しいプログラミング言語をたくさん覚えること
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-l0-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('l0-1')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- ============================================
+     l0-2: なぜ「読む力」が最優先か
+     ============================================ -->
+<section id="l0-2">
+  <h1>なぜ「読む力」が最優先か</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>AIが得意なこと・苦手なこと</li>
+      <li>「読む力」がなぜ最も大事か</li>
+      <li>身につけるべき3つの力</li>
+    </ul>
+  </div>
+
+  <h2>AIはコードを「書く」のが得意</h2>
+
+  <p>
+    AIはコードを「書く」ことが得意です。1秒で何十行ものコードを生成できます。
+  </p>
+
+  <p>
+    でも、AIには<strong>苦手なこと</strong>があります。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      AIが苦手なこと
+    </div>
+    <ul>
+      <li><strong>ビジネス要件との整合性判断</strong> — 「このコードで本当にお客さんの要望を満たせるか？」</li>
+      <li><strong>セキュリティリスクの文脈理解</strong> — 「このコードに危険な穴はないか？」</li>
+      <li><strong>パフォーマンスのトレードオフ判断</strong> — 「速さと正確さ、どちらを優先すべきか？」</li>
+      <li><strong>「本当にこれでいいのか？」という問い</strong> — 自分のコードを疑う力がない</li>
+    </ul>
+  </div>
+
+  <h2>だから「読む力」が最優先</h2>
+
+  <p>
+    AIがコードを書けるからこそ、人間が「読んで・判断する」必要があります。
+  </p>
+
+  <p>
+    <strong>読む力がないと、AIのミスに気づけません。</strong>
+  </p>
+
+  <!-- 読む力の図解 -->
+  <div class="diagram-container">
+    <svg class="diagram" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
+      <!-- AIがコード生成 -->
+      <rect x="30" y="20" width="120" height="80" rx="10" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+      <text x="90" y="55" text-anchor="middle" font-size="24">🤖</text>
+      <text x="90" y="80" text-anchor="middle" font-size="14" fill="#333">AIがコード生成</text>
+
+      <!-- 矢印1 -->
+      <line x1="150" y1="60" x2="190" y2="60" stroke="#333" stroke-width="2" marker-end="url(#arrow-l0)"/>
+
+      <!-- 人間がチェック -->
+      <rect x="190" y="20" width="120" height="80" rx="10" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+      <text x="250" y="55" text-anchor="middle" font-size="24">👤</text>
+      <text x="250" y="80" text-anchor="middle" font-size="14" fill="#333">人間がチェック</text>
+
+      <!-- 矢印2 -->
+      <line x1="310" y1="60" x2="350" y2="60" stroke="#333" stroke-width="2" marker-end="url(#arrow-l0)"/>
+
+      <!-- 安全なコード -->
+      <rect x="350" y="20" width="120" height="80" rx="10" fill="#FAF5FF" stroke="#7C3AED" stroke-width="2"/>
+      <text x="410" y="55" text-anchor="middle" font-size="24">✅</text>
+      <text x="410" y="80" text-anchor="middle" font-size="14" fill="#333">安全なコード</text>
+
+      <!-- 矢印の定義 -->
+      <defs>
+        <marker id="arrow-l0" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L0,6 L9,3 z" fill="#333"/>
+        </marker>
+      </defs>
+
+      <!-- 説明 -->
+      <text x="250" y="140" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">身につけるべき3つの力</text>
+
+      <rect x="50" y="160" width="100" height="60" rx="8" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+      <text x="100" y="185" text-anchor="middle" font-size="14" font-weight="bold" fill="#2563EB">読む力</text>
+      <text x="100" y="205" text-anchor="middle" font-size="12" fill="#333">問題を発見する</text>
+
+      <rect x="200" y="160" width="100" height="60" rx="8" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+      <text x="250" y="185" text-anchor="middle" font-size="14" font-weight="bold" fill="#16A34A">判断する力</text>
+      <text x="250" y="205" text-anchor="middle" font-size="12" fill="#333">正しいか決める</text>
+
+      <rect x="350" y="160" width="100" height="60" rx="8" fill="#FFF7ED" stroke="#EA580C" stroke-width="2"/>
+      <text x="400" y="185" text-anchor="middle" font-size="14" font-weight="bold" fill="#EA580C">説明する力</text>
+      <text x="400" y="205" text-anchor="middle" font-size="12" fill="#333">なぜダメか伝える</text>
+    </svg>
+    <p class="diagram-caption">AI時代に必要な3つの力</p>
+  </div>
+
+  <p>
+    たとえ話で言うと、AIは「超高速で文章を書ける秘書」です。
+    でもその文章に<em>事実の間違い</em>や<em>不適切な表現</em>があるかもしれない。
+    だから上司であるあなたが<strong>必ず目を通して確認する</strong>必要があります。
+  </p>
+
+  <!-- クイズ -->
+  <div class="quiz" id="quiz-l0-2">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>AIが書いたコードに対して、人間が最も発揮すべき力はどれ？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-2" style="display:none;">
+      A. コードをもっと速く書き直す力
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-2" style="display:none;">
+      B. コードを暗記する力
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="AIは自分のコードの正しさを保証できません。だから人間が「読んで・判断して・なぜダメか説明できる」力が最も重要です。">
+      <input type="radio" name="q-l0-2" style="display:none;">
+      C. コードを読んで問題を見抜き、判断する力
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-l0-2')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('l0-2')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- ============================================
+     l0-3: AI時代のマインドセット
+     ============================================ -->
+<section id="l0-3">
+  <h1>AI時代のマインドセット</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>「書ける」より「見抜ける」が大事な理由</li>
+      <li>基礎知識がむしろ重要になる理由</li>
+      <li>「AIを使う人」が生き残る理由</li>
+    </ul>
+  </div>
+
+  <h2>1. 「書ける」より「見抜ける」</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-label">
+        <span class="icon">❌</span> 古い考え方
       </div>
-
-      <h2>エンジニアの仕事が変わった</h2>
-
-      <p>
-        2026年、エンジニアの仕事は大きく変わりました。
-      </p>
-
-      <p>
-        昔は「自分でコードを書く」のが仕事でした。
-      </p>
-
-      <p>
-        今は「AIが書いたコードをチェックする」のが仕事です。
-      </p>
-
-      <!-- 役割変化の図解 -->
-      <div class="diagram-container">
-        <svg class="diagram" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
-          <!-- 2020年 -->
-          <rect x="20" y="30" width="180" height="140" rx="10" fill="#FEF2F2" stroke="#DC2626" stroke-width="2"/>
-          <text x="110" y="60" text-anchor="middle" font-size="16" font-weight="bold" fill="#DC2626">2020年まで</text>
-          <text x="110" y="95" text-anchor="middle" font-size="14" fill="#333">エンジニア</text>
-          <text x="110" y="115" text-anchor="middle" font-size="14" fill="#333">↓</text>
-          <text x="110" y="135" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">コードを書く</text>
-
-          <!-- 矢印 -->
-          <polygon points="220,100 250,85 250,95 280,95 280,105 250,105 250,115" fill="#2563EB"/>
-
-          <!-- 2026年 -->
-          <rect x="300" y="30" width="180" height="140" rx="10" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
-          <text x="390" y="60" text-anchor="middle" font-size="16" font-weight="bold" fill="#16A34A">2026年</text>
-          <text x="390" y="95" text-anchor="middle" font-size="14" fill="#333">エンジニア</text>
-          <text x="390" y="115" text-anchor="middle" font-size="14" fill="#333">↓</text>
-          <text x="390" y="135" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">コードをチェック</text>
-        </svg>
-        <p class="diagram-caption">エンジニアの役割の変化</p>
+      <p style="margin:0;">「自分でコードを書けます！」</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-label">
+        <span class="icon">⭕</span> 新しい考え方
       </div>
+      <p style="margin:0;">「AIのコードの問題を指摘できます！」</p>
+    </div>
+  </div>
 
-      <h2>なぜ「読む力」が大事なの？</h2>
+  <p>
+    AIは1秒でコードを書けます。でも、そのコードには<em>バグ</em>や<em>セキュリティの穴</em>があるかもしれません。
+  </p>
 
-      <p>
-        AIはコードを「書く」ことが得意です。
-      </p>
+  <p>
+    AIが犯す典型的なミス:
+  </p>
 
-      <p>
-        でも、AIには<strong>苦手なこと</strong>があります。
-      </p>
+  <ul>
+    <li><strong>論理エラー</strong> — 一見正しそうだが、特定の条件で間違った結果を返す</li>
+    <li><strong>セキュリティ脆弱性</strong> — ユーザーの入力をチェックせずに使ってしまう</li>
+    <li><strong>パフォーマンス問題</strong> — 動くけど遅い、メモリを無駄に使うコード</li>
+  </ul>
 
-      <div class="card card-warning">
-        <div class="card-title">
-          <span class="icon">⚠️</span>
-          AIが苦手なこと
-        </div>
-        <ul>
-          <li>「このコードで本当にいいの？」と判断すること</li>
-          <li>セキュリティの問題を見つけること</li>
-          <li>ビジネスの要件に合っているか確認すること</li>
-        </ul>
+  <p>
+    これを見抜けるのが<strong>「シニアエンジニア」</strong>です。
+  </p>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      用語の意味
+    </div>
+    <p style="margin-bottom:0;">
+      <strong>「シニアエンジニア」</strong>とは「経験豊富な上級エンジニア」のこと。
+      ただ長く働いているだけでなく、<em>問題を見抜き、適切な判断ができる人</em>を指します。
+    </p>
+  </div>
+
+  <h2>2. 基礎は変わらない、むしろ重要になる</h2>
+
+  <p>
+    AIが発達しても、<strong>基礎知識は今まで以上に大事</strong>です。
+  </p>
+
+  <p>
+    なぜなら、基礎がわからないとAIのミスに気づけないからです。
+  </p>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">📖</span>
+      変わらない基礎知識
+    </div>
+    <ul>
+      <li>アルゴリズムとデータ構造</li>
+      <li>システム設計の原則</li>
+      <li>セキュリティの基本</li>
+      <li>ネットワークの仕組み</li>
+    </ul>
+  </div>
+
+  <p>
+    たとえ話で言うと、電卓が発明されても<strong>算数の知識は必要</strong>です。
+    電卓に正しい数字を入力するには、まず自分が「何を計算すべきか」を理解していないといけない。
+    AIも同じで、基礎がなければAIの出力が正しいかどうか判断できません。
+  </p>
+
+  <h2>3. 「AIを使う人」が勝つ</h2>
+
+  <p>
+    「AIに仕事を奪われる」と心配する人がいます。でも実際は違います。
+  </p>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">💬</span>
+      名言
+    </div>
+    <p style="margin-bottom:0;">
+      "AI probably isn't taking your job. But another engineer who knows how to use it properly might."
+    </p>
+    <p style="margin-bottom:0; font-size: 0.9em; color: #666;">
+      （AIがあなたの仕事を奪うわけではない。でも、AIを正しく使いこなすエンジニアには敵わないかもしれない。）
+    </p>
+  </div>
+
+  <p>
+    AIを恐れる必要はありません。<strong>AIを使えない人が淘汰される</strong>のです。
+  </p>
+
+  <p>
+    AI活用に必要なスキル:
+  </p>
+
+  <ul>
+    <li><strong>プロンプトエンジニアリング</strong> — AIに適切な指示を出す技術</li>
+    <li><strong>AIの出力を評価する目</strong> — 生成されたコードの品質を判断する力</li>
+    <li><strong>AIと協働するワークフロー設計</strong> — AIを業務にどう組み込むか考える力</li>
+  </ul>
+
+  <!-- クイズ1 -->
+  <div class="quiz" id="quiz-l0-3a">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>AIが書いたコードに論理エラーがあった場合、なぜ気づけないことがあるのか？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-3a" style="display:none;">
+      A. AIが意図的にエラーを隠しているから
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="AIのコードは一見正しそうに見えるため、基礎知識がないと「正しいのか間違いなのか」を判断する基準がありません。">
+      <input type="radio" name="q-l0-3a" style="display:none;">
+      B. 基礎知識がないと、何が正しいか判断する基準がないから
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-3a" style="display:none;">
+      C. エラーが出ないコードには問題がないから
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-l0-3a')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <!-- クイズ2 -->
+  <div class="quiz" id="quiz-l0-3b">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>次のうち、AI時代のエンジニアに最も不要な考え方はどれ？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-3b" style="display:none;">
+      A. AIの出力を評価する目を持つ
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-3b" style="display:none;">
+      B. 基礎知識を深く理解する
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="AIがコードを高速に書ける時代に、人間がタイピング速度を競うのは的外れです。重要なのは「速く書くこと」ではなく「正しく判断すること」です。">
+      <input type="radio" name="q-l0-3b" style="display:none;">
+      C. 誰よりも速くコードをタイピングする
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-l0-3b')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('l0-3')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- ============================================
+     l0-4: 2026年に求められる4つの役割
+     ============================================ -->
+<section id="l0-4">
+  <h1>2026年に求められる4つの役割</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>エンジニアに求められる4つの役割</li>
+      <li>それぞれの役割に必要なスキル</li>
+    </ul>
+  </div>
+
+  <h2>エンジニアの4つの役割</h2>
+
+  <p>
+    2026年のエンジニアには、4つの役割が求められています。
+    1人で全部をやる必要はありませんが、<strong>すべてを理解していること</strong>が重要です。
+  </p>
+
+  <table>
+    <tr>
+      <th>役割</th>
+      <th>説明</th>
+      <th>必要なスキル</th>
+    </tr>
+    <tr>
+      <td><strong>コーディング</strong></td>
+      <td>AI開発ツールを使いこなし実装を進める</td>
+      <td>AIツール活用、基礎文法理解</td>
+    </tr>
+    <tr>
+      <td><strong>設計</strong></td>
+      <td>要件を構造化し、AIに適切に指示できる</td>
+      <td>要件定義、システム設計</td>
+    </tr>
+    <tr>
+      <td><strong>コードレビュー</strong></td>
+      <td>生成コードの品質を判断して修正できる</td>
+      <td>読解力、問題発見力</td>
+    </tr>
+    <tr>
+      <td><strong>オーケストレーション</strong></td>
+      <td>全体を統括・調整する</td>
+      <td>PM力、コミュニケーション</td>
+    </tr>
+  </table>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      用語の意味
+    </div>
+    <p style="margin-bottom:0;">
+      <strong>「オーケストレーション」</strong>はオーケストラの指揮者（conductor）のイメージです。
+      楽器（=各技術やチームメンバー）を適切に組み合わせて、1つの美しい音楽（=プロダクト）を作り上げる役割です。
+    </p>
+  </div>
+
+  <p>
+    この教科書では特に<strong>「コードレビュー」</strong>の力を重点的に鍛えます。
+    読む力は、設計やオーケストレーションの土台にもなるからです。
+  </p>
+
+  <!-- クイズ -->
+  <div class="quiz" id="quiz-l0-4">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>4つの役割のうち、「AIが書いたコードの品質を判断して修正する」のはどの役割？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-4" style="display:none;">
+      A. コーディング
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-4" style="display:none;">
+      B. 設計
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="コードレビューは、生成されたコードの品質を判断し、必要に応じて修正する役割です。読解力と問題発見力が求められます。">
+      <input type="radio" name="q-l0-4" style="display:none;">
+      C. コードレビュー
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-4" style="display:none;">
+      D. オーケストレーション
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-l0-4')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('l0-4')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- ============================================
+     l0-5: このカリキュラムで身につける力
+     ============================================ -->
+<section id="l0-5">
+  <h1>このカリキュラムで身につける力</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>Level 0〜8で身につく技術力</li>
+      <li>全Levelを通して鍛える思考力</li>
+    </ul>
+  </div>
+
+  <h2>技術力（縦軸）— 各Levelで身につく力</h2>
+
+  <table>
+    <tr>
+      <th>Level</th>
+      <th>学ぶこと</th>
+      <th>身につく力</th>
+    </tr>
+    <tr>
+      <td>0</td>
+      <td>AI時代の心がまえ</td>
+      <td>正しい学習姿勢</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>HTML/CSS</td>
+      <td>Webページの構造を読める</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>JavaScript</td>
+      <td>動きのコードを読める</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>React/TypeScript</td>
+      <td>モダンな書き方を読める</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>API/データベース</td>
+      <td>サーバー側を読める</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>インフラ/DevOps</td>
+      <td>環境設定を読める</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>設計原則とパターン</td>
+      <td>全体構造を読める</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>実践設計とAI活用</td>
+      <td>設計判断ができる</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>テスト戦略・品質保証</td>
+      <td>品質を評価できる</td>
+    </tr>
+  </table>
+
+  <h2>思考力（横軸）— 全Levelで鍛える力</h2>
+
+  <table>
+    <tr>
+      <th>力</th>
+      <th>説明</th>
+      <th>たとえ</th>
+    </tr>
+    <tr>
+      <td><strong>俯瞰する力</strong></td>
+      <td>全体構造を把握し、部分の位置づけを理解</td>
+      <td>地図を見て、今いる場所と目的地の関係を把握する力</td>
+    </tr>
+    <tr>
+      <td><strong>構造化する力</strong></td>
+      <td>複雑な問題を整理し、適切に分割</td>
+      <td>散らかった部屋を「衣類」「本」「書類」に分けて片づける力</td>
+    </tr>
+    <tr>
+      <td><strong>判断する力</strong></td>
+      <td>トレードオフを理解し、最適解を選ぶ</td>
+      <td>「安いけど遅い」と「高いけど速い」のどちらを選ぶか決める力</td>
+    </tr>
+    <tr>
+      <td><strong>説明する力</strong></td>
+      <td>技術的判断を非エンジニアにも伝える</td>
+      <td>専門用語を使わずに、家族にスマホの仕組みを説明する力</td>
+    </tr>
+  </table>
+
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">🎯</span>
+      最終ゴール
+    </div>
+    <p style="margin-bottom:0;">
+      すべてのLevelを終えると、<strong>AIが書いたコードの問題を見抜き、改善提案ができる</strong>エンジニアになれます。
+      これが2026年の「シニアエンジニア」です。
+    </p>
+  </div>
+
+  <!-- クイズ -->
+  <div class="quiz" id="quiz-l0-5">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>この教科書が全Levelを通して最も重視している力はどれ？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-5" style="display:none;">
+      A. コードを速く書く力
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="各Levelで技術を学びつつ、「読む力」を常に鍛えます。コードを読んで問題を見抜くことが、AI時代のエンジニアの核心です。">
+      <input type="radio" name="q-l0-5" style="display:none;">
+      B. コードを読んで問題を見抜く力
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-5" style="display:none;">
+      C. 最新のフレームワークを使いこなす力
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-l0-5')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('l0-5')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- ============================================
+     l0-6: AI時代の落とし穴
+     ============================================ -->
+<section id="l0-6">
+  <h1>AI時代の落とし穴</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>やってはいけない3つのこと</li>
+      <li>ハルシネーション（AIの嘘）とは何か</li>
+      <li>正しいAI活用のフロー</li>
+    </ul>
+  </div>
+
+  <h2>やってはいけないこと 1: 「動いたからOK」</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-label">
+        <span class="icon">❌</span> 危険なフロー
       </div>
-
-      <p>
-        だから、人間が「読んで・判断する」必要があります。
-      </p>
-
-      <p>
-        <strong>読む力がないと、AIのミスに気づけません。</strong>
-      </p>
-
-      <!-- 読む力の図解 -->
-      <div class="diagram-container">
-        <svg class="diagram" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
-          <!-- AIがコード生成 -->
-          <rect x="30" y="20" width="120" height="80" rx="10" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
-          <text x="90" y="55" text-anchor="middle" font-size="24">🤖</text>
-          <text x="90" y="80" text-anchor="middle" font-size="14" fill="#333">AIがコード生成</text>
-
-          <!-- 矢印1 -->
-          <line x1="150" y1="60" x2="190" y2="60" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
-
-          <!-- 人間がチェック -->
-          <rect x="190" y="20" width="120" height="80" rx="10" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
-          <text x="250" y="55" text-anchor="middle" font-size="24">👤</text>
-          <text x="250" y="80" text-anchor="middle" font-size="14" fill="#333">人間がチェック</text>
-
-          <!-- 矢印2 -->
-          <line x1="310" y1="60" x2="350" y2="60" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
-
-          <!-- 安全なコード -->
-          <rect x="350" y="20" width="120" height="80" rx="10" fill="#FAF5FF" stroke="#7C3AED" stroke-width="2"/>
-          <text x="410" y="55" text-anchor="middle" font-size="24">✅</text>
-          <text x="410" y="80" text-anchor="middle" font-size="14" fill="#333">安全なコード</text>
-
-          <!-- 矢印の定義 -->
-          <defs>
-            <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-              <path d="M0,0 L0,6 L9,3 z" fill="#333"/>
-            </marker>
-          </defs>
-
-          <!-- 説明 -->
-          <text x="250" y="140" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">必要な3つの力</text>
-
-          <rect x="50" y="160" width="100" height="60" rx="8" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
-          <text x="100" y="185" text-anchor="middle" font-size="14" font-weight="bold" fill="#2563EB">読む力</text>
-          <text x="100" y="205" text-anchor="middle" font-size="14" fill="#333">問題を発見</text>
-
-          <rect x="200" y="160" width="100" height="60" rx="8" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
-          <text x="250" y="185" text-anchor="middle" font-size="14" font-weight="bold" fill="#16A34A">判断する力</text>
-          <text x="250" y="205" text-anchor="middle" font-size="14" fill="#333">正しいか決める</text>
-
-          <rect x="350" y="160" width="100" height="60" rx="8" fill="#FFF7ED" stroke="#EA580C" stroke-width="2"/>
-          <text x="400" y="185" text-anchor="middle" font-size="14" font-weight="bold" fill="#EA580C">説明する力</text>
-          <text x="400" y="205" text-anchor="middle" font-size="14" fill="#333">なぜダメか伝える</text>
-        </svg>
-        <p class="diagram-caption">AI時代に必要な3つの力</p>
+      <p style="margin:0;">AI生成 → 動作確認 → デプロイ</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-label">
+        <span class="icon">⭕</span> 正しいフロー
       </div>
+      <p style="margin:0;">AI生成 → レビュー → 理解 → 修正 → テスト → デプロイ</p>
+    </div>
+  </div>
 
-      <h2>AI時代の3つの心がまえ</h2>
+  <p>
+    「動いた」は「正しい」とは限りません。
+    テストが通っても、セキュリティの穴が開いていたり、特定の条件でバグが出たりすることがあります。
+  </p>
 
-      <h3>1. 「書ける」より「見抜ける」</h3>
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">💡</span>
+      用語の意味
+    </div>
+    <p style="margin-bottom:0;">
+      <strong>「デプロイ」</strong>は英語の "deploy"（配備する）が語源。
+      作ったソフトウェアを実際のサーバーに置いて、ユーザーが使える状態にすることです。
+      「公開する」「本番環境に反映する」とも言います。
+    </p>
+  </div>
 
-      <div class="compare-box">
-        <div class="compare-bad">
-          <div class="compare-label">
-            <span class="icon">❌</span> 古い考え方
-          </div>
-          <p style="margin:0;">「自分でコードを書けます！」</p>
-        </div>
-        <div class="compare-good">
-          <div class="compare-label">
-            <span class="icon">⭕</span> 新しい考え方
-          </div>
-          <p style="margin:0;">「AIのコードの問題を指摘できます！」</p>
-        </div>
+  <h2>やってはいけないこと 2: 基礎をスキップ</h2>
+
+  <p>
+    「Reactを使えればいい」「フレームワークだけ覚えればいい」という考え方は危険です。
+  </p>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">⚡</span>
+      実例
+    </div>
+    <p style="margin-bottom:0;">
+      JavaScriptの「クロージャ」や「非同期処理」を理解せずにReactを学んだ開発者は、
+      問題が起きたとき<strong>なぜバグが発生するのか理解できず、立ち往生する</strong>ことが報告されています。
+    </p>
+  </div>
+
+  <p>
+    基礎は「急がば回れ」です。最初は遠回りに見えても、結局いちばん速い道です。
+  </p>
+
+  <h2>やってはいけないこと 3: AIの出力を鵜呑みにする</h2>
+
+  <p>
+    AIは<strong>自信満々に間違えます</strong>。
+  </p>
+
+  <p>
+    これを<strong>ハルシネーション</strong>（hallucination = 幻覚）と呼びます。
+    AIが存在しない関数名やライブラリ名を「もっともらしく」出力することがあります。
+  </p>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">🔍</span>
+      ハルシネーションの例
+    </div>
+    <ul>
+      <li>存在しないAPIメソッドを提案する</li>
+      <li>古いバージョンの書き方を最新と偽る</li>
+      <li>実在しないライブラリ名を自信満々に書く</li>
+      <li>間違ったロジックを「これが正しい方法です」と断言する</li>
+    </ul>
+  </div>
+
+  <p>
+    だから常に<strong>「本当か？」</strong>と疑う姿勢が必要です。
+    公式ドキュメントで確認する習慣をつけましょう。
+  </p>
+
+  <!-- クイズ1 -->
+  <div class="quiz" id="quiz-l0-6a">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 1
+    </div>
+    <p>AIが書いたコードが動作確認でうまく動いた。次にすべきことは？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-6a" style="display:none;">
+      A. すぐにデプロイする
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="「動く」と「正しい」は別です。レビューして内容を理解し、セキュリティやエッジケースを確認してからデプロイすべきです。">
+      <input type="radio" name="q-l0-6a" style="display:none;">
+      B. コードレビューして内容を理解し、テストを追加する
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-6a" style="display:none;">
+      C. AIに「これで大丈夫？」と聞く
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-l0-6a')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <!-- クイズ2 -->
+  <div class="quiz" id="quiz-l0-6b">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ 2
+    </div>
+    <p>「ハルシネーション」とは何のこと？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-6b" style="display:none;">
+      A. AIの処理速度が遅くなること
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-6b" style="display:none;">
+      B. AIがエラーメッセージを表示すること
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="ハルシネーション（hallucination=幻覚）は、AIが存在しない情報をもっともらしく出力する現象です。常に公式ドキュメントで裏取りする習慣が重要です。">
+      <input type="radio" name="q-l0-6b" style="display:none;">
+      C. AIがもっともらしい嘘を自信満々に出力すること
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-l0-6b')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('l0-6')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- ============================================
+     l0-7: キャリアの方向性
+     ============================================ -->
+<section id="l0-7">
+  <h1>キャリアの方向性</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>AI時代に生き残るためのスキルセット</li>
+      <li>「1人 + AI = 小チーム」という考え方</li>
+    </ul>
+  </div>
+
+  <h2>π型スキルセット</h2>
+
+  <p>
+    AI時代のエンジニアには、<strong>π型（パイがた）のスキルセット</strong>が求められます。
+    「π」の形のように、2本の深い専門性の柱と、それをつなぐ幅広い知識を持つことです。
+  </p>
+
+  <!-- π型の図解 -->
+  <div class="diagram-container">
+    <svg class="diagram" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
+      <!-- 横棒（幅広い知識） -->
+      <rect x="50" y="40" width="400" height="40" rx="5" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+      <text x="250" y="65" text-anchor="middle" font-size="14" font-weight="bold" fill="#2563EB">幅広い知識（ビジネス理解・コミュニケーション）</text>
+
+      <!-- 左の柱（技術的専門性） -->
+      <rect x="100" y="80" width="80" height="140" rx="5" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+      <text x="140" y="140" text-anchor="middle" font-size="12" font-weight="bold" fill="#16A34A">技術的</text>
+      <text x="140" y="160" text-anchor="middle" font-size="12" font-weight="bold" fill="#16A34A">専門性</text>
+
+      <!-- 右の柱（AIマネジメント） -->
+      <rect x="320" y="80" width="80" height="140" rx="5" fill="#FAF5FF" stroke="#7C3AED" stroke-width="2"/>
+      <text x="360" y="140" text-anchor="middle" font-size="12" font-weight="bold" fill="#7C3AED">AI</text>
+      <text x="360" y="160" text-anchor="middle" font-size="12" font-weight="bold" fill="#7C3AED">マネジメント</text>
+
+      <!-- πの形の説明 -->
+      <text x="250" y="240" text-anchor="middle" font-size="14" fill="#666">← 「π」の形 →</text>
+    </svg>
+    <p class="diagram-caption">π型スキルセット</p>
+  </div>
+
+  <p>
+    生き残る鍵は:
+  </p>
+
+  <ul>
+    <li><strong>技術だけでなくビジネスを理解</strong> — なぜこの機能が必要か、を語れる</li>
+    <li><strong>AIを使いこなすスキル</strong> — 効率的にAIと協働できる</li>
+    <li><strong>専門性を深く持つ</strong> — 「何でもちょっとだけ」より「1つを深く」</li>
+  </ul>
+
+  <h2>1人 + AI = 小チームの生産性</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">💬</span>
+      名言
+    </div>
+    <p style="margin-bottom:0;">
+      "Don't be 'just another new grad who needs training'; be an immediately useful engineer who learns quickly."
+    </p>
+    <p style="margin-bottom:0; font-size: 0.9em; color: #666;">
+      （「教育が必要な新人」ではなく、「すぐに戦力になり、素早く学ぶエンジニア」を目指せ。）
+    </p>
+  </div>
+
+  <p>
+    AIを上手に使えれば、<strong>1人で3〜5人分の生産性</strong>を出せます。
+    これを証明できれば、あなたの市場価値は高くなります。
+  </p>
+
+  <p>
+    ただし注意: 量を出せることと、<strong>品質を保てること</strong>は別です。
+    AIで速く書いて、自分でしっかりレビューできる人が最も価値があります。
+  </p>
+
+  <!-- クイズ -->
+  <div class="quiz" id="quiz-l0-7">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>「π型スキルセット」で重要なのはどれ？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-7" style="display:none;">
+      A. できるだけ多くの技術を広く浅く知ること
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-7" style="display:none;">
+      B. 1つの技術だけを深く極めること
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="π型は「深い専門性の柱を2本持ちつつ、幅広い知識でつなぐ」形です。技術的専門性とAIマネジメントの両方を深く、ビジネス理解で横をつなぎます。">
+      <input type="radio" name="q-l0-7" style="display:none;">
+      C. 深い専門性を持ちつつ、幅広い知識でつなぐこと
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-l0-7')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('l0-7')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
+<!-- ============================================
+     l0-8: 学習の心構え
+     ============================================ -->
+<section id="l0-8">
+  <h1>学習の心構え</h1>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">📚</span>
+      このページで学ぶこと
+    </div>
+    <ul>
+      <li>学習を進める上で大切な4つの心構え</li>
+      <li>「他者に教えられるレベル」を目指す意味</li>
+    </ul>
+  </div>
+
+  <h2>心構え 1: 「なぜ」を常に問う</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-label">
+        <span class="icon">❌</span> 表面的な理解
       </div>
-
-      <p>
-        AIは1秒でコードを書けます。
-      </p>
-
-      <p>
-        でも、そのコードには<em>バグ</em>や<em>セキュリティの穴</em>があるかもしれません。
-      </p>
-
-      <p>
-        それを見つけられるのが「シニアエンジニア」です。
-      </p>
-
-      <h3>2. 基礎は変わらない</h3>
-
-      <p>
-        AIが発達しても、<strong>基礎知識は今まで以上に大事</strong>です。
-      </p>
-
-      <p>
-        なぜなら、基礎がわからないとAIのミスに気づけないからです。
-      </p>
-
-      <div class="card card-success">
-        <div class="card-title">
-          <span class="icon">📖</span>
-          変わらない基礎知識
-        </div>
-        <ul>
-          <li>HTML/CSSの構造</li>
-          <li>JavaScriptの動き方</li>
-          <li>セキュリティの基本</li>
-          <li>データベースの仕組み</li>
-        </ul>
+      <p style="margin:0;">「こう書けばいい」で止まる</p>
+    </div>
+    <div class="compare-good">
+      <div class="compare-label">
+        <span class="icon">⭕</span> 深い理解
       </div>
+      <p style="margin:0;">「なぜこう書くべきか」まで理解する</p>
+    </div>
+  </div>
 
-      <h3>3. AIは「道具」、判断は「人間」</h3>
+  <p>
+    「なぜ？」を問い続けることで、<strong>応用力</strong>がつきます。
+    「なぜ」を知っている人は、初めて見る問題にも対処できます。
+  </p>
 
-      <p>
-        AIは便利な道具です。
-      </p>
+  <h2>心構え 2: 失敗を恐れない</h2>
 
-      <p>
-        でも、最終的な<strong>判断と責任は人間</strong>が持ちます。
-      </p>
+  <p>
+    バグやエラーは<strong>学習の宝庫</strong>です。
+  </p>
 
-      <div class="card card-danger">
-        <div class="card-title">
-          <span class="icon">⚡</span>
-          やってはいけないこと
-        </div>
-        <ul>
-          <li>AIの出力を確認せずに使う</li>
-          <li>「動いたからOK」で終わらせる</li>
-          <li>基礎をスキップしてフレームワークだけ学ぶ</li>
-        </ul>
-      </div>
+  <ul>
+    <li>バグを経験 → 次から見抜ける</li>
+    <li>エラーを経験 → 原因を理解できる</li>
+    <li>失敗を経験 → 同じ過ちを繰り返さない</li>
+  </ul>
 
-      <h2>この教科書で身につく力</h2>
+  <p>
+    大事なのは「失敗しないこと」ではなく、<strong>「失敗から学ぶこと」</strong>です。
+  </p>
 
-      <table>
-        <tr>
-          <th>Level</th>
-          <th>学ぶこと</th>
-          <th>身につく力</th>
-        </tr>
-        <tr>
-          <td>0</td>
-          <td>AI時代の心がまえ</td>
-          <td>正しい学習姿勢</td>
-        </tr>
-        <tr>
-          <td>1</td>
-          <td>HTML/CSS</td>
-          <td>Webページの構造を読める</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>JavaScript</td>
-          <td>動きのコードを読める</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>React/TypeScript</td>
-          <td>モダンな書き方を読める</td>
-        </tr>
-        <tr>
-          <td>4</td>
-          <td>API/データベース</td>
-          <td>サーバー側を読める</td>
-        </tr>
-        <tr>
-          <td>5</td>
-          <td>インフラ</td>
-          <td>環境設定を読める</td>
-        </tr>
-        <tr>
-          <td>6</td>
-          <td>設計</td>
-          <td>全体構造を読める</td>
-        </tr>
-      </table>
+  <h2>心構え 3: アウトプットを続ける</h2>
 
-      <h2>まとめ</h2>
+  <p>
+    理解度は「他の人に教えられるか」で測ります。
+  </p>
 
-      <div class="card card-info">
-        <div class="card-title">
-          <span class="icon">✨</span>
-          覚えておこう
-        </div>
-        <ol>
-          <li>AIがコードを書く時代、人間は<strong>「チェックする人」</strong>になった</li>
-          <li>「書ける」より<strong>「読んで・見抜ける」</strong>が大事</li>
-          <li>基礎知識は<strong>今まで以上に重要</strong></li>
-          <li>AIは道具、<strong>判断は人間</strong></li>
-        </ol>
-      </div>
+  <div class="card card-success">
+    <div class="card-title">
+      <span class="icon">📈</span>
+      学習のステップ
+    </div>
+    <ol style="margin-bottom:0;">
+      <li><strong>読む</strong> — まずインプットする</li>
+      <li><strong>書く</strong> — 自分の手でアウトプットする</li>
+      <li><strong>教える</strong> — 他の人に説明する（最も深い理解）</li>
+    </ol>
+  </div>
 
-      <!-- クイズ -->
-      <div class="quiz" id="quiz-level0">
-        <div class="quiz-title">
-          <span class="icon">❓</span>
-          確認クイズ
-        </div>
-        <p>2026年のエンジニアに最も求められる力は？</p>
-        <label class="quiz-option" data-correct="false">
-          <input type="radio" name="q-level0" style="display:none;">
-          A. たくさんのコードを速く書く力
-        </label>
-        <label class="quiz-option" data-correct="true">
-          <input type="radio" name="q-level0" style="display:none;">
-          B. AIが書いたコードの問題を見抜く力
-        </label>
-        <label class="quiz-option" data-correct="false">
-          <input type="radio" name="q-level0" style="display:none;">
-          C. 最新のフレームワークを使いこなす力
-        </label>
-        <button class="quiz-btn" onclick="checkQuiz('quiz-level0')">答え合わせ</button>
-        <div class="quiz-feedback"></div>
-      </div>
+  <p>
+    PC初心者の家族にも説明できるレベルが理想です。
+    専門用語を噛み砕いて、日常の言葉で伝えられるなら、本当に理解しています。
+  </p>
 
-      <button class="complete-btn" onclick="completeSection('level0-intro')">
-        <span class="icon">✓</span>
-        このページを完了
-      </button>
-    </section>
+  <h2>心構え 4: AIは道具、判断は人間</h2>
+
+  <p>
+    AIは便利な道具です。でも、最終的な<strong>判断と責任は人間</strong>が持ちます。
+  </p>
+
+  <div class="card card-danger">
+    <div class="card-title">
+      <span class="icon">⚡</span>
+      忘れてはいけないこと
+    </div>
+    <ul>
+      <li>AIに書かせる → <strong>自分がレビュー</strong> → 責任は自分</li>
+      <li>AIの出力を確認せずに使うのは、白紙の契約書にサインするのと同じ</li>
+      <li>問題が起きたとき「AIが書いたので」は言い訳にならない</li>
+    </ul>
+  </div>
+
+  <h2>まとめ: Level 0で覚えておくこと</h2>
+
+  <div class="card card-info">
+    <div class="card-title">
+      <span class="icon">✨</span>
+      覚えておこう
+    </div>
+    <ol>
+      <li>AIがコードを書く時代、人間は<strong>「チェックする人」</strong>になった</li>
+      <li>「書ける」より<strong>「読んで・見抜ける」</strong>が大事</li>
+      <li>基礎知識は<strong>今まで以上に重要</strong></li>
+      <li>AIは道具、<strong>判断は人間</strong></li>
+      <li>「なぜ」を常に問い、<strong>教えられるレベル</strong>を目指す</li>
+    </ol>
+  </div>
+
+  <h2>参考リソース</h2>
+  <ul>
+    <li><a href="https://roadmap.sh/" target="_blank" rel="noopener">roadmap.sh</a> — 業界標準ロードマップ</li>
+    <li><a href="https://developer.mozilla.org/" target="_blank" rel="noopener">MDN Web Docs</a> — Web技術の権威</li>
+  </ul>
+
+  <!-- クイズ -->
+  <div class="quiz" id="quiz-l0-8">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>AIが書いたコードで問題が起きた場合、責任は誰にある？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-8" style="display:none;">
+      A. AIの開発元
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-l0-8" style="display:none;">
+      B. 誰にも責任はない
+    </label>
+    <label class="quiz-option" data-correct="true" data-explanation="AIはあくまで道具です。AIの出力をレビューし、採用した判断をしたのはあなた自身。だから責任もあなたにあります。これがプロのエンジニアの姿勢です。">
+      <input type="radio" name="q-l0-8" style="display:none;">
+      C. コードを採用した自分自身
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-l0-8')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('l0-8')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
