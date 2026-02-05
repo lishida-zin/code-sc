@@ -1,0 +1,1305 @@
+<!-- ============================================
+     Tier 7: 設計（SOLID / デザインパターン / アーキテクチャ）
+     コーディング演習 15問
+     ============================================ -->
+
+<section id="ex-t7-1">
+  <h1>問題 1: SRP違反 ― 1クラスに複数責務が混在</h1>
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>あなたのチームで、ユーザー管理クラスが肥大化しています。新メンバーが「このクラスどこを直せばいいか分からない」と困っています。以下のコードをレビューしてください。</p>
+  </div>
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>class UserService {
+  private db: Database;
+  private mailer: Mailer;
+  private logger: Logger;
+
+  constructor(db: Database, mailer: Mailer, logger: Logger) {
+    this.db = db;
+    this.mailer = mailer;
+    this.logger = logger;
+  }
+
+  async createUser(name: string, email: string): Promise&lt;User&gt; {
+    // バリデーション
+    if (!email.includes("@")) throw new Error("Invalid email");
+    if (name.length &lt; 2) throw new Error("Name too short");
+
+    // DBへ保存
+    const user = await this.db.query(
+      "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *",
+      [name, email]
+    );
+
+    // ウェルカムメール送信
+    const html = `&lt;h1&gt;ようこそ ${name} さん&lt;/h1&gt;
+                  &lt;p&gt;登録が完了しました。&lt;/p&gt;`;
+    await this.mailer.send({ to: email, subject: "登録完了", html });
+
+    // 監査ログ記録
+    this.logger.info(`User created: ${email}`);
+    await this.db.query(
+      "INSERT INTO audit_logs (action, detail) VALUES ($1, $2)",
+      ["USER_CREATED", JSON.stringify({ name, email })]
+    );
+
+    // レポート用の統計更新
+    await this.db.query(
+      "UPDATE stats SET total_users = total_users + 1"
+    );
+
+    return user;
+  }
+}</code></pre>
+  <div class="quiz" id="quiz-ex-t7-1">
+    <div class="quiz-question"><strong>問題：</strong>このクラスが違反しているSOLID原則と、最も適切なリファクタリング方針はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-1" value="a">
+        OCP違反。createUser を abstract にして継承で拡張可能にする
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="UserService は「バリデーション」「DB永続化」「メール送信」「監査ログ」「統計更新」の5つの責務を持っています。SRP（単一責任原則）は『クラスが変更される理由は1つであるべき』という原則です。UserValidator, UserRepository, WelcomeMailer, AuditLogger, StatsUpdater のように責務ごとにクラスを分離し、UserService はそれらを組み合わせるだけの薄いオーケストレーターにすべきです。">
+        <input type="radio" name="quiz-ex-t7-1" value="b">
+        SRP違反。バリデーション・メール・監査ログ・統計を別クラスに分離し、UserServiceはオーケストレーターにする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-1" value="c">
+        DIP違反。Database を interface にするだけで解決する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-1" value="d">
+        ISP違反。UserService のメソッドを複数のインターフェースに分割する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <button class="complete-btn" onclick="completeSection('ex-t7-1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t7-2">
+  <h1>問題 2: OCP違反 ― 新機能追加でif-elseが増殖する設計</h1>
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>決済システムに新しい決済方法を追加するたびに、既存コードを修正する必要があり、毎回デグレが発生しています。以下のコードをレビューしてください。</p>
+  </div>
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>class PaymentProcessor {
+  async processPayment(
+    method: string,
+    amount: number,
+    details: Record&lt;string, unknown&gt;
+  ): Promise&lt;PaymentResult&gt; {
+    if (method === "credit_card") {
+      const card = details as CreditCardDetails;
+      await this.validateCard(card.number, card.expiry);
+      const result = await StripeAPI.charge(card.number, amount);
+      await this.saveTransaction("credit_card", amount, result.id);
+      return { success: true, transactionId: result.id };
+
+    } else if (method === "bank_transfer") {
+      const bank = details as BankTransferDetails;
+      const ref = await BankAPI.initTransfer(bank.accountNo, amount);
+      await this.saveTransaction("bank_transfer", amount, ref);
+      return { success: true, transactionId: ref };
+
+    } else if (method === "convenience_store") {
+      const cvs = details as ConvenienceStoreDetails;
+      const code = await CvsAPI.issuePaymentCode(cvs.store, amount);
+      await this.saveTransaction("convenience_store", amount, code);
+      return { success: true, transactionId: code };
+
+    } else if (method === "paypay") {
+      // 先月追加された新決済
+      const pp = details as PayPayDetails;
+      const res = await PayPayAPI.createPayment(pp.userId, amount);
+      await this.saveTransaction("paypay", amount, res.paymentId);
+      return { success: true, transactionId: res.paymentId };
+    }
+    // 来月「LINE Pay」追加予定... またここにelse if追加？
+
+    throw new Error(`Unknown payment method: ${method}`);
+  }
+
+  private async validateCard(num: string, exp: string) { /* ... */ }
+  private async saveTransaction(type: string, amount: number, id: string) { /* ... */ }
+}</code></pre>
+  <div class="quiz" id="quiz-ex-t7-2">
+    <div class="quiz-question"><strong>問題：</strong>OCP（開放閉鎖原則）に従ったリファクタリングとして最も適切なものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-2" value="a">
+        各決済ごとに PaymentProcessor を継承した子クラスを作り、processPayment を override する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-2" value="b">
+        switch文に変えて default ケースを追加する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="OCP（開放閉鎖原則）は『拡張に対して開き、修正に対して閉じる』という原則です。PaymentStrategy インターフェースを定義し、各決済方法を独立したクラスとして実装します。新決済追加時は新クラスを追加するだけで、既存の PaymentProcessor を一切変更する必要がなくなります。Registry（Map）で method 名 → Strategy を管理すれば、動的な追加も可能になります。">
+        <input type="radio" name="quiz-ex-t7-2" value="c">
+        PaymentStrategy インターフェースを定義し、各決済をクラスとして実装。Registryで管理し、新決済は新クラス追加のみで対応
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-2" value="d">
+        method を enum にして型安全にするだけで十分
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <button class="complete-btn" onclick="completeSection('ex-t7-2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t7-3">
+  <h1>問題 3: LSP違反 ― サブクラスが親の契約を破る</h1>
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ファイルストレージの抽象クラスを使って、ローカルストレージとReadOnlyアーカイブストレージを実装しました。しかし、テストで予期しないエラーが発生しています。以下のコードをレビューしてください。</p>
+  </div>
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>abstract class FileStorage {
+  abstract read(path: string): Promise&lt;Buffer&gt;;
+  abstract write(path: string, data: Buffer): Promise&lt;void&gt;;
+  abstract delete(path: string): Promise&lt;void&gt;;
+  abstract list(directory: string): Promise&lt;string[]&gt;;
+}
+
+class LocalFileStorage extends FileStorage {
+  async read(path: string): Promise&lt;Buffer&gt; {
+    return fs.readFile(path);
+  }
+  async write(path: string, data: Buffer): Promise&lt;void&gt; {
+    await fs.writeFile(path, data);
+  }
+  async delete(path: string): Promise&lt;void&gt; {
+    await fs.unlink(path);
+  }
+  async list(directory: string): Promise&lt;string[]&gt; {
+    return fs.readdir(directory);
+  }
+}
+
+class ArchiveStorage extends FileStorage {
+  async read(path: string): Promise&lt;Buffer&gt; {
+    return this.archiveClient.retrieve(path);
+  }
+  async write(path: string, data: Buffer): Promise&lt;void&gt; {
+    throw new Error("Archive storage is read-only");
+  }
+  async delete(path: string): Promise&lt;void&gt; {
+    throw new Error("Archive storage is read-only");
+  }
+  async list(directory: string): Promise&lt;string[]&gt; {
+    return this.archiveClient.listArchived(directory);
+  }
+}
+
+// 利用側
+async function backupFiles(storage: FileStorage, files: FileData[]) {
+  for (const file of files) {
+    await storage.write(file.path, file.data); // ArchiveStorage で爆発！
+  }
+}</code></pre>
+  <div class="quiz" id="quiz-ex-t7-3">
+    <div class="quiz-question"><strong>問題：</strong>このコードのLSP（リスコフの置換原則）違反を解消する最も適切な方法はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-3" value="a">
+        ArchiveStorage の write/delete で例外の代わりに何もしない（空実装にする）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-3" value="b">
+        利用側で instanceof チェックを追加して ArchiveStorage なら write をスキップする
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="LSP（リスコフの置換原則）は『親クラスの場所にサブクラスを置いても正しく動作すべき』という原則です。ArchiveStorage は write/delete で例外を投げるため、FileStorage を期待するコードで壊れます。解決策は ReadableStorage（read, list）と WritableStorage（write, delete）にインターフェースを分離することです。ArchiveStorage は ReadableStorage だけを実装し、backupFiles は WritableStorage を要求するように型を変更します。これにより、コンパイル時に不正な使用を検出できます。">
+        <input type="radio" name="quiz-ex-t7-3" value="c">
+        ReadableStorage と WritableStorage にインターフェースを分離し、ArchiveStorage は ReadableStorage のみ実装する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-3" value="d">
+        FileStorage に isReadOnly プロパティを追加して利用側で判定する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <button class="complete-btn" onclick="completeSection('ex-t7-3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t7-4">
+  <h1>問題 4: ISP違反 ― 巨大インターフェースの強制実装</h1>
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>チームで共通のリポジトリインターフェースを定義しましたが、読み取り専用のレポート用サービスでも全メソッドの実装を強制されています。以下のコードをレビューしてください。</p>
+  </div>
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>interface IUserRepository {
+  findById(id: string): Promise&lt;User | null&gt;;
+  findByEmail(email: string): Promise&lt;User | null&gt;;
+  findAll(filter: UserFilter): Promise&lt;User[]&gt;;
+  create(data: CreateUserDTO): Promise&lt;User&gt;;
+  update(id: string, data: UpdateUserDTO): Promise&lt;User&gt;;
+  delete(id: string): Promise&lt;void&gt;;
+  softDelete(id: string): Promise&lt;void&gt;;
+  restore(id: string): Promise&lt;void&gt;;
+  bulkCreate(data: CreateUserDTO[]): Promise&lt;User[]&gt;;
+  bulkDelete(ids: string[]): Promise&lt;void&gt;;
+  count(filter: UserFilter): Promise&lt;number&gt;;
+  exists(id: string): Promise&lt;boolean&gt;;
+}
+
+// レポート用サービス（読み取りしかしない）
+class ReportUserRepository implements IUserRepository {
+  async findById(id: string) { return this.db.users.findUnique({ where: { id } }); }
+  async findByEmail(email: string) { return this.db.users.findFirst({ where: { email } }); }
+  async findAll(filter: UserFilter) { return this.db.users.findMany({ where: filter }); }
+  async count(filter: UserFilter) { return this.db.users.count({ where: filter }); }
+  async exists(id: string) { return !!(await this.findById(id)); }
+
+  // レポートには不要だが、インターフェースが要求するので仕方なく実装
+  async create(_data: CreateUserDTO): Promise&lt;User&gt; {
+    throw new Error("Not supported in report context");
+  }
+  async update(_id: string, _data: UpdateUserDTO): Promise&lt;User&gt; {
+    throw new Error("Not supported in report context");
+  }
+  async delete(_id: string): Promise&lt;void&gt; {
+    throw new Error("Not supported in report context");
+  }
+  async softDelete(_id: string): Promise&lt;void&gt; {
+    throw new Error("Not supported in report context");
+  }
+  async restore(_id: string): Promise&lt;void&gt; {
+    throw new Error("Not supported in report context");
+  }
+  async bulkCreate(_data: CreateUserDTO[]): Promise&lt;User[]&gt; {
+    throw new Error("Not supported in report context");
+  }
+  async bulkDelete(_ids: string[]): Promise&lt;void&gt; {
+    throw new Error("Not supported in report context");
+  }
+}</code></pre>
+  <div class="quiz" id="quiz-ex-t7-4">
+    <div class="quiz-question"><strong>問題：</strong>ISP（インターフェース分離原則）に従った最適なリファクタリングはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-4" value="a">
+        未実装メソッドは throw ではなく null / undefined を返すようにする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-4" value="b">
+        IUserRepository に optional メソッド（?マーク）を追加する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-4" value="c">
+        Abstract クラスにしてデフォルト実装を提供する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ISP（インターフェース分離原則）は『クライアントが使わないメソッドへの依存を強制しない』という原則です。巨大な IUserRepository を IReadableUserRepo（findById, findByEmail, findAll, count, exists）、IWritableUserRepo（create, update, delete）、IBulkUserRepo（bulkCreate, bulkDelete）のように役割ごとに分離します。ReportUserRepository は IReadableUserRepo のみを実装すれば良くなり、不要なメソッドの空実装が不要になります。完全なリポジトリが必要な場合は IReadableUserRepo &amp; IWritableUserRepo &amp; IBulkUserRepo の交差型を使います。">
+        <input type="radio" name="quiz-ex-t7-4" value="d">
+        IReadableUserRepo, IWritableUserRepo, IBulkUserRepo に分離し、ReportUserRepository は IReadableUserRepo のみ実装する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <button class="complete-btn" onclick="completeSection('ex-t7-4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t7-5">
+  <h1>問題 5: DIP違反 ― 上位モジュールが下位の具象に直接依存</h1>
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>通知サービスのテストを書こうとしましたが、実際のSMTPサーバーとSlack APIに接続しないとテストできません。モックに差し替えられない構造になっています。以下のコードをレビューしてください。</p>
+  </div>
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>import { SmtpClient } from "./infrastructure/SmtpClient";
+import { SlackWebhook } from "./infrastructure/SlackWebhook";
+import { PushNotificationService } from "./infrastructure/PushNotificationService";
+import { UserRepository } from "./infrastructure/UserRepository";
+
+class NotificationService {
+  private smtpClient = new SmtpClient({
+    host: "smtp.company.com",
+    port: 587,
+    user: process.env.SMTP_USER!,
+    pass: process.env.SMTP_PASS!,
+  });
+
+  private slackWebhook = new SlackWebhook(
+    process.env.SLACK_WEBHOOK_URL!
+  );
+
+  private pushService = new PushNotificationService(
+    process.env.FIREBASE_KEY!
+  );
+
+  private userRepo = new UserRepository();
+
+  async notifyUser(userId: string, message: string): Promise&lt;void&gt; {
+    const user = await this.userRepo.findById(userId);
+    if (!user) throw new Error("User not found");
+
+    const prefs = user.notificationPreferences;
+
+    if (prefs.email) {
+      await this.smtpClient.sendMail({
+        to: user.email,
+        subject: "通知",
+        body: message,
+      });
+    }
+    if (prefs.slack) {
+      await this.slackWebhook.post({
+        channel: user.slackChannel,
+        text: message,
+      });
+    }
+    if (prefs.push) {
+      await this.pushService.send(user.deviceToken, message);
+    }
+  }
+}</code></pre>
+  <div class="quiz" id="quiz-ex-t7-5">
+    <div class="quiz-question"><strong>問題：</strong>DIP（依存性逆転の原則）に基づいた最も適切な改善策はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-5" value="a">
+        環境変数をテスト用に差し替えてテストする
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="DIP（依存性逆転の原則）は『上位モジュールは下位モジュールに依存すべきでなく、どちらも抽象に依存すべき』という原則です。現在のコードは上位の NotificationService が下位の SmtpClient, SlackWebhook 等の具象クラスを直接 new しています。IMailSender, IMessageSender, IPushSender, IUserRepository などのインターフェースを定義し、コンストラクタインジェクションで受け取るようにします。テスト時はモック実装を注入でき、本番環境ではDIコンテナで具象を解決します。">
+        <input type="radio" name="quiz-ex-t7-5" value="b">
+        IMailSender, IMessageSender 等のインターフェースを定義し、コンストラクタインジェクションで具象を受け取るように変更する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-5" value="c">
+        jest.mock() で各モジュールをモック化すれば解決する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-5" value="d">
+        各通知手段を static メソッドにして直接呼び出す
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <button class="complete-btn" onclick="completeSection('ex-t7-5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t7-6">
+  <h1>問題 6: Singletonの乱用によるテスト困難なコード</h1>
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>アプリケーション全体で設定管理とDB接続をSingletonで共有しています。テスト時にデータベースの状態がテスト間でリークし、テストが不安定になっています。以下のコードをレビューしてください。</p>
+  </div>
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>class AppConfig {
+  private static instance: AppConfig;
+  private config: Record&lt;string, string&gt; = {};
+
+  private constructor() {
+    this.config = {
+      DB_HOST: process.env.DB_HOST || "localhost",
+      DB_PORT: process.env.DB_PORT || "5432",
+      API_KEY: process.env.API_KEY || "default-key",
+    };
+  }
+
+  static getInstance(): AppConfig {
+    if (!AppConfig.instance) {
+      AppConfig.instance = new AppConfig();
+    }
+    return AppConfig.instance;
+  }
+
+  get(key: string): string {
+    return this.config[key];
+  }
+}
+
+class DatabaseConnection {
+  private static instance: DatabaseConnection;
+  private pool: Pool;
+
+  private constructor() {
+    const config = AppConfig.getInstance();
+    this.pool = new Pool({
+      host: config.get("DB_HOST"),
+      port: parseInt(config.get("DB_PORT")),
+    });
+  }
+
+  static getInstance(): DatabaseConnection {
+    if (!DatabaseConnection.instance) {
+      DatabaseConnection.instance = new DatabaseConnection();
+    }
+    return DatabaseConnection.instance;
+  }
+
+  async query(sql: string, params?: unknown[]): Promise&lt;QueryResult&gt; {
+    return this.pool.query(sql, params);
+  }
+}
+
+// 利用側：Singletonを直接参照
+class OrderService {
+  async getOrders(): Promise&lt;Order[]&gt; {
+    const db = DatabaseConnection.getInstance();
+    const result = await db.query("SELECT * FROM orders");
+    return result.rows;
+  }
+}</code></pre>
+  <div class="quiz" id="quiz-ex-t7-6">
+    <div class="quiz-question"><strong>問題：</strong>Singletonパターンの乱用が引き起こす問題と、最も適切な改善策はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-6" value="a">
+        テスト時に private static instance を null にリセットするヘルパーを作る
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-6" value="b">
+        Singletonは正しいパターンなので、テストの書き方を工夫すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-6" value="c">
+        グローバル変数にすれば Singleton のボイラープレートが不要になる
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Singletonの問題点は、(1)グローバル状態のためテスト間で状態がリークする、(2)具象に直接依存するためモック差し替えが困難、(3)依存関係が隠蔽されるため影響範囲が読めない、という3点です。改善策はDIコンテナ（tsyringe, inversify等）を導入し、ライフサイクル管理をコンテナに委譲することです。アプリ全体で1インスタンスが必要なら、コンテナのスコープで『singleton』を指定します。テスト時はコンテナにモック実装を登録するだけで差し替え可能になります。">
+        <input type="radio" name="quiz-ex-t7-6" value="d">
+        DIコンテナでライフサイクルを管理し、インターフェース経由の注入に変更。テスト時はモック実装をコンテナに登録する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <button class="complete-btn" onclick="completeSection('ex-t7-6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t7-7">
+  <h1>問題 7: Strategyパターン適用すべきswitch文の巨大化</h1>
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>配送料金の計算ロジックが巨大なswitch文になっています。配送業者が増えるたびにこの関数が膨張し、すでに300行を超えています。以下のコードをレビューしてください。</p>
+  </div>
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>class ShippingCalculator {
+  calculateFee(
+    carrier: string,
+    weight: number,
+    destination: string,
+    options: ShippingOptions
+  ): number {
+    switch (carrier) {
+      case "yamato": {
+        let base = weight &lt;= 2 ? 800 : weight &lt;= 5 ? 1200 : 1800;
+        if (destination.startsWith("沖縄") || destination.startsWith("北海道")) {
+          base += 500;
+        }
+        if (options.coolDelivery) base += 300;
+        if (options.timeSpecified) base += 200;
+        if (options.cashOnDelivery) base += 330;
+        return base;
+      }
+      case "sagawa": {
+        let base = weight &lt;= 3 ? 770 : weight &lt;= 10 ? 1100 : 1650;
+        if (destination.startsWith("離島")) base += 800;
+        if (options.expressDelivery) base += 500;
+        if (options.insurance &amp;&amp; options.insuranceAmount) {
+          base += Math.ceil(options.insuranceAmount / 10000) * 50;
+        }
+        return base;
+      }
+      case "japan_post": {
+        let base = weight &lt;= 1 ? 510 : weight &lt;= 4 ? 730 : 1050;
+        if (options.registered) base += 320;
+        if (options.express) base += 290;
+        return base;
+      }
+      case "fedex": {
+        let base = weight * 250;
+        if (destination === "international") base *= 3;
+        if (options.priority) base *= 1.5;
+        return Math.ceil(base);
+      }
+      // case "dhl": 来月追加予定...
+      // case "ups": 来月追加予定...
+      default:
+        throw new Error(`Unknown carrier: ${carrier}`);
+    }
+  }
+}</code></pre>
+  <div class="quiz" id="quiz-ex-t7-7">
+    <div class="quiz-question"><strong>問題：</strong>Strategyパターンを適用する際、最も適切な設計はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-7" value="a">
+        各 carrier のロジックを private メソッドに分離するだけで十分
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-7" value="b">
+        料金テーブルをJSON設定ファイルにして、データ駆動にする
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Strategyパターンは、アルゴリズムをインターフェースで抽象化し、具体的なアルゴリズムを個別のクラスに分離するパターンです。IShippingStrategy インターフェースに calculate(weight, destination, options) を定義し、YamatoStrategy, SagawaStrategy 等を個別クラスとして実装します。ShippingCalculator は Map&lt;string, IShippingStrategy&gt; で戦略を管理し、carrier 名から適切な戦略を取得して委譲します。新業者追加は新 Strategy クラスの追加と Map への登録のみで完了し、既存コードの変更は不要です。テストも各 Strategy を独立してテストできます。">
+        <input type="radio" name="quiz-ex-t7-7" value="c">
+        IShippingStrategy インターフェースを定義し、各業者を独立クラスとして実装。Mapで管理してCalculatorは委譲するだけにする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-7" value="d">
+        各 carrier を継承で実装し、Template Method パターンで共通処理を親に置く
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <button class="complete-btn" onclick="completeSection('ex-t7-7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t7-8">
+  <h1>問題 8: Observer未使用の密結合イベント処理</h1>
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ECサイトで注文完了後に複数の後続処理が必要です。現在、OrderServiceが全ての後続処理を直接呼び出しており、新しい処理を追加するたびにOrderServiceを変更する必要があります。以下のコードをレビューしてください。</p>
+  </div>
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>class OrderService {
+  private inventoryService: InventoryService;
+  private paymentService: PaymentService;
+  private emailService: EmailService;
+  private analyticsService: AnalyticsService;
+  private loyaltyService: LoyaltyService;
+  private slackNotifier: SlackNotifier;
+  private invoiceService: InvoiceService;
+
+  constructor(
+    inventory: InventoryService, payment: PaymentService,
+    email: EmailService, analytics: AnalyticsService,
+    loyalty: LoyaltyService, slack: SlackNotifier,
+    invoice: InvoiceService
+  ) {
+    this.inventoryService = inventory;
+    this.paymentService = payment;
+    this.emailService = email;
+    this.analyticsService = analytics;
+    this.loyaltyService = loyalty;
+    this.slackNotifier = slack;
+    this.invoiceService = invoice;
+  }
+
+  async completeOrder(order: Order): Promise&lt;void&gt; {
+    // 在庫減算
+    await this.inventoryService.decrementStock(order.items);
+    // 決済確定
+    await this.paymentService.capture(order.paymentId);
+    // 確認メール送信
+    await this.emailService.sendOrderConfirmation(order);
+    // 分析データ送信
+    await this.analyticsService.trackPurchase(order);
+    // ポイント付与
+    await this.loyaltyService.addPoints(order.userId, order.total);
+    // Slack通知
+    await this.slackNotifier.notifyNewOrder(order);
+    // 請求書生成
+    await this.invoiceService.generate(order);
+    // 来月追加: 配送手配サービス、レコメンドエンジン更新...
+  }
+}</code></pre>
+  <div class="quiz" id="quiz-ex-t7-8">
+    <div class="quiz-question"><strong>問題：</strong>この密結合を解消するために最も適切なパターンはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-8" value="a">
+        各サービスの呼び出しを try-catch で囲み、1つが失敗しても他は続行するようにする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-8" value="b">
+        Mediator パターンで OrderMediator を作り、そこに全サービスへの依存を集約する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Observer（Pub/Sub）パターンでは、OrderService は OrderCompleted イベントを発行するだけの責務に縮小します。各後続処理（メール、在庫、分析等）はリスナーとして独立して登録されます。新しい処理の追加は新しいリスナーを登録するだけで、OrderService の変更は一切不要になります。EventEmitter や専用のイベントバスを使い、event.on('orderCompleted', handler) の形で疎結合を実現します。さらに、必須処理（在庫・決済）と非必須処理（通知・分析）を優先度やエラーハンドリングで分離できるメリットもあります。">
+        <input type="radio" name="quiz-ex-t7-8" value="c">
+        EventEmitterを導入し、OrderServiceは「OrderCompleted」イベントを発行するだけにする。各サービスは独立したリスナーとして登録する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-8" value="d">
+        Chain of Responsibility パターンで各サービスを連鎖的に呼び出す
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-8')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <button class="complete-btn" onclick="completeSection('ex-t7-8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t7-9">
+  <h1>問題 9: レイヤードアーキテクチャのレイヤー貫通</h1>
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>チームで「Controller → Service → Repository」のレイヤードアーキテクチャを採用していますが、あるControllerがServiceを飛ばしてDBに直接アクセスしています。コードレビューで発見しました。以下のコードをレビューしてください。</p>
+  </div>
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// Controller層
+import { Pool } from "pg";
+import { Request, Response } from "express";
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+class ProductController {
+  // レイヤー貫通: ControllerがDBに直接アクセス
+  async getProducts(req: Request, res: Response) {
+    const { category, minPrice, maxPrice, sort } = req.query;
+
+    let sql = "SELECT * FROM products WHERE 1=1";
+    const params: unknown[] = [];
+
+    if (category) {
+      params.push(category);
+      sql += ` AND category = $${params.length}`;
+    }
+    if (minPrice) {
+      params.push(Number(minPrice));
+      sql += ` AND price &gt;= $${params.length}`;
+    }
+    if (maxPrice) {
+      params.push(Number(maxPrice));
+      sql += ` AND price &lt;= $${params.length}`;
+    }
+    if (sort === "price_asc") sql += " ORDER BY price ASC";
+    if (sort === "price_desc") sql += " ORDER BY price DESC";
+
+    const result = await pool.query(sql, params);
+
+    // Controllerでビジネスロジックまでやっている
+    const products = result.rows.map((row: any) => ({
+      ...row,
+      displayPrice: `¥${row.price.toLocaleString()}`,
+      isOnSale: row.discount_rate &gt; 0,
+      salePrice: row.discount_rate &gt; 0
+        ? Math.floor(row.price * (1 - row.discount_rate))
+        : null,
+    }));
+
+    res.json({ products, total: products.length });
+  }
+}</code></pre>
+  <div class="quiz" id="quiz-ex-t7-9">
+    <div class="quiz-question"><strong>問題：</strong>このコードのレイヤードアーキテクチャ違反について、問題点と改善策の組み合わせとして最も正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="レイヤードアーキテクチャでは、各層は直下の層のみに依存すべきです。Controller → Service → Repository の流れを守ることで、(1)SQLがControllerに露出しないためセキュリティが向上、(2)ビジネスロジックがServiceに集約されるため再利用可能、(3)各層を独立してテスト可能、(4)DB変更時の影響がRepository層に限定されます。ProductRepository がSQLを担当し、ProductService がビジネスロジック（価格計算等）を担当し、Controller はリクエスト/レスポンス変換のみを行うべきです。">
+        <input type="radio" name="quiz-ex-t7-9" value="a">
+        Controller→DB直接アクセスとController内ビジネスロジックの2つが問題。Repository層にSQL、Service層に価格計算ロジックを分離する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-9" value="b">
+        SQL組み立てだけが問題。ORMを使えばControllerでDBアクセスしても良い
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-9" value="c">
+        パフォーマンスのためにControllerからDB直接アクセスは許容される。ビジネスロジックだけServiceに移す
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-9" value="d">
+        SQLインジェクションのリスクだけが問題。パラメータ化クエリにすれば構造はこのままで良い
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <button class="complete-btn" onclick="completeSection('ex-t7-9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t7-10">
+  <h1>問題 10: 合成vs継承 ― 継承の多段化で破綻したクラス階層</h1>
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>UIコンポーネントライブラリで、継承を使ってコンポーネントのバリエーションを増やしてきましたが、クラス階層が深くなりすぎて新しいバリエーション追加が困難になっています。以下のコードをレビューしてください。</p>
+  </div>
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>class BaseComponent {
+  render(): string { return ""; }
+  validate(): boolean { return true; }
+  getStyles(): Record&lt;string, string&gt; { return {}; }
+}
+
+class InputComponent extends BaseComponent {
+  protected value: string = "";
+  render(): string { return `&lt;input value="${this.value}" /&gt;`; }
+}
+
+class ValidatedInput extends InputComponent {
+  protected rules: ValidationRule[] = [];
+  validate(): boolean {
+    return this.rules.every(rule =&gt; rule.check(this.value));
+  }
+}
+
+class StyledValidatedInput extends ValidatedInput {
+  protected theme: Theme;
+  getStyles() { return this.theme.getInputStyles(); }
+}
+
+class AnimatedStyledValidatedInput extends StyledValidatedInput {
+  protected animation: AnimationConfig;
+  render(): string {
+    return `&lt;div class="animated"&gt;${super.render()}&lt;/div&gt;`;
+  }
+}
+
+// さらに派生が必要に...
+// ・DisabledAnimatedStyledValidatedInput？
+// ・SearchableAnimatedStyledValidatedInput？
+// ・SearchableDisabledStyledInput（アニメ不要だけどスタイルは欲しい）？
+
+// 「スタイル付き＋バリデーション付き」だけど「アニメーション不要」が作れない！
+// 組み合わせ爆発で継承では対応不可能に...
+
+class SearchInput extends AnimatedStyledValidatedInput {
+  // 本当はアニメーション不要だが、スタイルとバリデーションが
+  // 必要なので仕方なく AnimatedStyledValidatedInput を継承
+  private suggestions: string[] = [];
+
+  render(): string {
+    // 親のアニメーションを打ち消すハック...
+    const base = super.render().replace('class="animated"', '');
+    return `${base}&lt;ul class="suggestions"&gt;...&lt;/ul&gt;`;
+  }
+}</code></pre>
+  <div class="quiz" id="quiz-ex-t7-10">
+    <div class="quiz-question"><strong>問題：</strong>「合成（コンポジション）over 継承」の原則に従って、最も適切なリファクタリングはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-10" value="a">
+        Mixin パターンで各機能を混ぜ合わせる
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-10" value="b">
+        多重継承が使える言語に切り替える
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="合成（コンポジション）は『has-a』の関係で機能を組み合わせる手法です。各機能をインターフェース（IValidatable, IStyleable, IAnimatable）として定義し、それぞれの実装クラス（Validator, StyleManager, Animator）を作ります。InputComponent はコンストラクタで必要な機能だけを受け取り、内部で委譲します。SearchInput は new InputComponent({ validator, styleManager }) のように、アニメーション不要なら渡さないだけです。これにより組み合わせ爆発が解消され、機能の追加・削除が自由になります。">
+        <input type="radio" name="quiz-ex-t7-10" value="c">
+        各機能（バリデーション、スタイル、アニメーション）をインターフェースと独立実装に分離し、InputComponentがコンストラクタで必要な機能だけ受け取って委譲する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-10" value="d">
+        深い継承を2階層までに制限するルールをlintで強制する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-10')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <button class="complete-btn" onclick="completeSection('ex-t7-10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t7-11">
+  <h1>問題 11: Fat Controller ― Controllerにビジネスロジックが集中</h1>
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ECサイトのクーポン適用APIのControllerが肥大化しています。同じロジックが管理画面APIでも必要ですが、コピペで対応しようとしているメンバーがいます。以下のコードをレビューしてください。</p>
+  </div>
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>class CouponController {
+  async applyCoupon(req: Request, res: Response) {
+    try {
+      const { cartId, couponCode } = req.body;
+
+      // バリデーション
+      if (!cartId || !couponCode) {
+        return res.status(400).json({ error: "必須項目が不足しています" });
+      }
+
+      // クーポン取得
+      const coupon = await db.query(
+        "SELECT * FROM coupons WHERE code = $1", [couponCode]
+      );
+      if (!coupon.rows[0]) {
+        return res.status(404).json({ error: "クーポンが見つかりません" });
+      }
+
+      const c = coupon.rows[0];
+
+      // 有効期限チェック
+      if (new Date(c.expires_at) &lt; new Date()) {
+        return res.status(400).json({ error: "クーポンの有効期限切れです" });
+      }
+
+      // 使用回数チェック
+      if (c.used_count &gt;= c.max_uses) {
+        return res.status(400).json({ error: "クーポンの使用上限に達しています" });
+      }
+
+      // カート取得
+      const cart = await db.query(
+        "SELECT * FROM carts WHERE id = $1", [cartId]
+      );
+      const cartData = cart.rows[0];
+
+      // 最低購入金額チェック
+      if (cartData.total &lt; c.min_purchase) {
+        return res.status(400).json({
+          error: `${c.min_purchase}円以上のお買い物が必要です`
+        });
+      }
+
+      // 割引計算
+      let discount = 0;
+      if (c.type === "percentage") {
+        discount = Math.floor(cartData.total * (c.value / 100));
+        if (c.max_discount) discount = Math.min(discount, c.max_discount);
+      } else if (c.type === "fixed") {
+        discount = c.value;
+      }
+
+      // カート更新
+      await db.query(
+        "UPDATE carts SET discount = $1, coupon_id = $2 WHERE id = $3",
+        [discount, c.id, cartId]
+      );
+
+      // クーポン使用回数更新
+      await db.query(
+        "UPDATE coupons SET used_count = used_count + 1 WHERE id = $1",
+        [c.id]
+      );
+
+      res.json({ discount, newTotal: cartData.total - discount });
+    } catch (err) {
+      res.status(500).json({ error: "サーバーエラー" });
+    }
+  }
+}</code></pre>
+  <div class="quiz" id="quiz-ex-t7-11">
+    <div class="quiz-question"><strong>問題：</strong>このFat Controllerの問題を解消するために最も適切なリファクタリングはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-11" value="a">
+        private メソッドに分割してController内で整理する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Fat Controllerの問題は、HTTP層（リクエスト/レスポンス処理）とビジネスロジック（クーポン検証・割引計算）とデータアクセス（SQL）が混在していることです。CouponService にビジネスロジック（有効期限チェック、割引計算等）を、CouponRepository と CartRepository にデータアクセスを分離します。Controller は (1)リクエストからデータ抽出、(2)Service呼び出し、(3)レスポンス整形 のみを担当する薄い層になります。これにより管理画面APIからも CouponService を再利用でき、ロジックのテストも容易になります。">
+        <input type="radio" name="quiz-ex-t7-11" value="b">
+        CouponService（ビジネスロジック）とCouponRepository/CartRepository（データアクセス）に分離し、Controllerはリクエスト/レスポンス変換のみにする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-11" value="c">
+        Express の middleware としてバリデーションを切り出すだけで十分
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-11" value="d">
+        GraphQL に移行すれば Controller が不要になる
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-11')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <button class="complete-btn" onclick="completeSection('ex-t7-11')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t7-12">
+  <h1>問題 12: 分散モノリス ― マイクロサービスのアンチパターン</h1>
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>チームがモノリスをマイクロサービスに分割しましたが、サービス間の同期的な直接呼び出しが多すぎて、1つのサービスが落ちるとシステム全体が停止します。結果として「分散モノリス」になっています。以下のコードをレビューしてください。</p>
+  </div>
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// OrderService（注文サービス）
+class OrderService {
+  async createOrder(userId: string, items: CartItem[]): Promise&lt;Order&gt; {
+    // UserService に同期的にHTTPリクエスト
+    const user = await fetch(
+      `http://user-service:3001/users/${userId}`
+    ).then(r =&gt; r.json());
+
+    // InventoryService に同期的にHTTPリクエスト
+    for (const item of items) {
+      const stock = await fetch(
+        `http://inventory-service:3002/stock/${item.productId}`
+      ).then(r =&gt; r.json());
+      if (stock.quantity &lt; item.quantity) {
+        throw new Error(`在庫不足: ${item.productId}`);
+      }
+    }
+
+    // PricingService に同期的にHTTPリクエスト
+    const pricing = await fetch("http://pricing-service:3003/calculate", {
+      method: "POST",
+      body: JSON.stringify({ items, userId }),
+    }).then(r =&gt; r.json());
+
+    // PaymentService に同期的にHTTPリクエスト
+    const payment = await fetch("http://payment-service:3004/charge", {
+      method: "POST",
+      body: JSON.stringify({
+        userId,
+        amount: pricing.total,
+        items,
+      }),
+    }).then(r =&gt; r.json());
+
+    // ShippingService に同期的にHTTPリクエスト
+    const shipping = await fetch("http://shipping-service:3005/arrange", {
+      method: "POST",
+      body: JSON.stringify({
+        userId,
+        address: user.address,
+        items,
+      }),
+    }).then(r =&gt; r.json());
+
+    // NotificationService に同期的にHTTPリクエスト
+    await fetch("http://notification-service:3006/send", {
+      method: "POST",
+      body: JSON.stringify({
+        userId,
+        type: "order_confirmed",
+        orderId: payment.orderId,
+      }),
+    });
+
+    return { orderId: payment.orderId, status: "confirmed" };
+  }
+}</code></pre>
+  <div class="quiz" id="quiz-ex-t7-12">
+    <div class="quiz-question"><strong>問題：</strong>この「分散モノリス」の最大の問題点と、最も適切な改善策はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-12" value="a">
+        サービス間の通信をgRPCに変えてパフォーマンスを改善する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-12" value="b">
+        全サービスの前にAPI Gatewayを置いてリトライを自動化する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-12" value="c">
+        Circuit Breakerを各呼び出しに追加するだけで解決する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="分散モノリスの問題は、全サービスが同期的に連鎖しているため、1つのサービスの障害がカスケード的にシステム全体を止めることです。改善策は (1)非同期メッセージング（Kafka, RabbitMQ等）を導入し、必須処理（在庫確認・決済）は同期Sagaパターンで、非必須処理（通知・配送手配）は非同期イベントで処理する (2)各サービスが必要なデータをローカルにキャッシュ/複製（CQRSパターン）し、依存を減らす (3)同期が必要な箇所にはCircuit Breaker + フォールバックを組み合わせます。">
+        <input type="radio" name="quiz-ex-t7-12" value="d">
+        必須処理は同期Sagaパターン、非必須処理は非同期メッセージキュー（Kafka等）に分離し、各サービスの独立性を確保する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-12')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <button class="complete-btn" onclick="completeSection('ex-t7-12')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t7-13">
+  <h1>問題 13: Facadeパターンで隠蔽すべき複雑なサブシステム</h1>
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>外部の決済API、不正検知API、為替APIを使う処理を、複数の箇所から直接呼び出しています。呼び出し順序やエラーハンドリングがバラバラで、バグが頻発しています。以下のコードをレビューしてください。</p>
+  </div>
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// 呼び出し側A: Webアプリの決済画面
+async function processWebPayment(order: Order) {
+  // 為替レート取得
+  const rate = await ExchangeRateAPI.getRate(order.currency, "JPY");
+  const jpyAmount = Math.round(order.amount * rate.value);
+
+  // 不正検知チェック
+  const fraudCheck = await FraudDetectionAPI.analyze({
+    userId: order.userId,
+    amount: jpyAmount,
+    ip: order.clientIp,
+    deviceFingerprint: order.fingerprint,
+  });
+  if (fraudCheck.riskScore &gt; 80) throw new Error("不正な取引の可能性");
+
+  // 3Dセキュア認証
+  const auth = await PaymentGateway.authenticate3DS(
+    order.cardToken, jpyAmount
+  );
+  if (!auth.success) throw new Error("認証失敗");
+
+  // 決済実行
+  const result = await PaymentGateway.charge(
+    order.cardToken, jpyAmount, auth.transactionId
+  );
+  return result;
+}
+
+// 呼び出し側B: モバイルAPIの決済
+async function processMobilePayment(order: MobileOrder) {
+  // 為替レート取得（同じ処理だが微妙に違う実装...）
+  const rate = await ExchangeRateAPI.getRate(order.currency, "JPY");
+  const jpyAmount = order.amount * rate.value; // 丸めが漏れている！
+
+  // 不正検知チェック（パラメータが足りない...）
+  const fraudCheck = await FraudDetectionAPI.analyze({
+    userId: order.userId,
+    amount: jpyAmount,
+    // ip と deviceFingerprint が欠落！
+  });
+  // riskScore のチェック閾値が違う！
+  if (fraudCheck.riskScore &gt; 90) throw new Error("不正な取引");
+
+  // 3Dセキュアを飛ばしている！（モバイルだから不要と勘違い）
+  const result = await PaymentGateway.charge(
+    order.cardToken, jpyAmount
+  );
+  return result;
+}
+
+// 呼び出し側C: バッチ処理の定期決済
+async function processSubscription(sub: Subscription) {
+  // エラーハンドリングが全く異なる実装...
+  const result = await PaymentGateway.charge(
+    sub.cardToken, sub.amount
+    // 為替変換も不正検知もなし！
+  );
+  return result;
+}</code></pre>
+  <div class="quiz" id="quiz-ex-t7-13">
+    <div class="quiz-question"><strong>問題：</strong>Facadeパターンを適用してこの問題を解消する最も適切な方法はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-13" value="a">
+        共通ユーティリティ関数としてヘルパーを作成する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Facadeパターンは、複雑なサブシステム群に対して統一された簡単なインターフェースを提供するパターンです。PaymentFacade クラスを作り、processPayment(options) メソッド1つで「為替変換 → 不正検知 → 3DS認証 → 決済」の正しい順序・パラメータ・エラーハンドリングを保証します。呼び出し側はFacadeを通すだけで、サブシステムの詳細を知る必要がなくなります。Web/モバイル/バッチの違いはオプションで吸収し、不正検知の閾値や3DS認証の要否もFacade内で一元管理します。これにより実装のバラつきやバグの混入を防げます。">
+        <input type="radio" name="quiz-ex-t7-13" value="b">
+        PaymentFacade クラスに為替変換・不正検知・3DS認証・決済の正しい手順を集約し、呼び出し側はFacadeの単一メソッドだけを呼ぶ
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-13" value="c">
+        各APIをラップしたSDKクラスを個別に作る
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-13" value="d">
+        共通の基底クラスを作って継承する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-13')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <button class="complete-btn" onclick="completeSection('ex-t7-13')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t7-14">
+  <h1>問題 14: イベント駆動で順序保証が必要なのに未対応</h1>
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>銀行口座の残高更新をイベント駆動で処理していますが、入金と出金のイベントが順序通りに処理されず、残高がマイナスになる不整合が発生しています。以下のコードをレビューしてください。</p>
+  </div>
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// イベントプロデューサー（送信側）
+class TransactionProducer {
+  private kafka: KafkaProducer;
+
+  async publishTransaction(event: TransactionEvent): Promise&lt;void&gt; {
+    // パーティションキーなしで送信 → ランダムパーティションに分散
+    await this.kafka.send({
+      topic: "account-transactions",
+      messages: [{
+        value: JSON.stringify(event),
+        // key が未指定！
+      }],
+    });
+  }
+}
+
+// イベントコンシューマー（受信側）
+class TransactionConsumer {
+  async handleEvent(event: TransactionEvent): Promise&lt;void&gt; {
+    const account = await this.accountRepo.findById(event.accountId);
+
+    if (event.type === "deposit") {
+      account.balance += event.amount;
+    } else if (event.type === "withdrawal") {
+      // 残高チェックなし！（イベント到着順序が保証されないため）
+      account.balance -= event.amount;
+    }
+
+    // 楽観的ロックもなし
+    await this.accountRepo.save(account);
+  }
+}
+
+// 問題のシナリオ:
+// 1. 入金 10,000円 イベント → パーティション0に配信
+// 2. 出金 8,000円 イベント → パーティション2に配信
+// 3. 出金が先に処理される → 残高: 0 - 8,000 = -8,000（不整合！）
+// 4. 入金が後で処理される → 残高: -8,000 + 10,000 = 2,000
+// 結果: 一時的に残高がマイナスになり、他の出金が通ってしまう可能性
+
+// さらに並行処理の問題:
+// Consumer A: balance = 10,000 を読み取り
+// Consumer B: balance = 10,000 を読み取り（同じ値）
+// Consumer A: balance = 10,000 + 5,000 = 15,000 で保存
+// Consumer B: balance = 10,000 - 3,000 = 7,000 で上書き保存
+// 入金5,000円が消失！（Lost Update）</code></pre>
+  <div class="quiz" id="quiz-ex-t7-14">
+    <div class="quiz-question"><strong>問題：</strong>このイベント駆動アーキテクチャの順序保証問題を解決する最も適切な組み合わせはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-14" value="a">
+        イベントにタイムスタンプを付与して、コンシューマー側でソートしてから処理する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-14" value="b">
+        パーティションを1つにして全てのイベントを順序通り処理する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Kafkaでは同一パーティション内のメッセージのみ順序が保証されます。accountId をパーティションキーに指定することで、同一口座の全イベントが同じパーティションに配信され、順序通り処理されます。加えて、楽観的ロック（バージョン番号）でLost Updateを防ぎ、残高チェック後の出金処理で不整合を防止します。パーティションを1つにする方法はスケーラビリティを犠牲にするため不適切です。">
+        <input type="radio" name="quiz-ex-t7-14" value="c">
+        accountId をパーティションキーに指定して同一口座のイベントを同一パーティションに集約し、楽観的ロックで並行書き込みを防止する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-14" value="d">
+        イベント駆動をやめて同期的なAPIコールに戻す
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-14')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <button class="complete-btn" onclick="completeSection('ex-t7-14')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t7-15">
+  <h1>問題 15: 総合 ― ECサイトの注文処理サービス設計レビュー</h1>
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>あなたはシニアエンジニアとして、新メンバーが書いたECサイトの注文処理サービスのコードレビューを担当しています。SOLID原則、デザインパターン、アーキテクチャの観点から、最も重大な設計上の問題を特定してください。</p>
+  </div>
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// 注文処理サービス（全体像）
+class OrderProcessor {
+  private static instance: OrderProcessor;
+  private db = new MySQLConnection(process.env.DB_URL!);
+
+  private constructor() {}
+
+  static getInstance(): OrderProcessor {
+    if (!OrderProcessor.instance) {
+      OrderProcessor.instance = new OrderProcessor();
+    }
+    return OrderProcessor.instance;
+  }
+
+  async processOrder(req: Request, res: Response): Promise&lt;void&gt; {
+    const { userId, items, couponCode, paymentMethod } = req.body;
+
+    // 1. ユーザー検証
+    const user = await this.db.query(
+      `SELECT * FROM users WHERE id = '${userId}'`  // SQLインジェクション！
+    );
+    if (!user[0]) { res.status(404).json({ error: "User not found" }); return; }
+
+    // 2. 在庫チェック &amp; 価格計算
+    let total = 0;
+    for (const item of items) {
+      const product = await this.db.query(
+        `SELECT * FROM products WHERE id = '${item.productId}'`
+      );
+      if (product[0].stock &lt; item.quantity) {
+        res.status(400).json({ error: `在庫不足: ${item.productId}` });
+        return;
+      }
+      total += product[0].price * item.quantity;
+    }
+
+    // 3. クーポン適用
+    if (couponCode) {
+      const coupon = await this.db.query(
+        `SELECT * FROM coupons WHERE code = '${couponCode}'`
+      );
+      if (coupon[0]) {
+        if (coupon[0].type === "percentage") {
+          total = total * (1 - coupon[0].value / 100);
+        } else if (coupon[0].type === "fixed") {
+          total = total - coupon[0].value;
+        }
+        // 新タイプ追加時ここに else if... (OCP違反)
+      }
+    }
+
+    // 4. 決済処理
+    let paymentResult;
+    if (paymentMethod === "credit_card") {
+      paymentResult = await StripeAPI.charge(user[0].cardToken, total);
+    } else if (paymentMethod === "bank_transfer") {
+      paymentResult = await BankAPI.transfer(user[0].bankAccount, total);
+    } else if (paymentMethod === "convenience") {
+      paymentResult = await CvsAPI.createPayment(total);
+    }
+    // 新決済追加時ここに else if... (OCP違反)
+
+    // 5. 在庫減算
+    for (const item of items) {
+      await this.db.query(
+        `UPDATE products SET stock = stock - ${item.quantity}
+         WHERE id = '${item.productId}'`
+      );
+    }
+
+    // 6. 注文レコード作成
+    const orderId = crypto.randomUUID();
+    await this.db.query(
+      `INSERT INTO orders (id, user_id, total, status)
+       VALUES ('${orderId}', '${userId}', ${total}, 'confirmed')`
+    );
+
+    // 7. メール送信
+    const html = `&lt;h1&gt;ご注文ありがとうございます&lt;/h1&gt;
+                  &lt;p&gt;注文ID: ${orderId}&lt;/p&gt;
+                  &lt;p&gt;合計: ¥${total}&lt;/p&gt;`;
+    await SmtpClient.send({ to: user[0].email, subject: "注文確認", html });
+
+    // 8. Slack通知
+    await SlackWebhook.post(`新規注文: ${orderId} / ¥${total}`);
+
+    res.json({ orderId, total, status: "confirmed" });
+  }
+}</code></pre>
+  <div class="quiz" id="quiz-ex-t7-15">
+    <div class="quiz-question"><strong>問題：</strong>シニアエンジニアの視点で、このコードに含まれるSOLID違反・設計問題を全て選んだとき、「含まれない」ものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-15" value="a">
+        SRP違反（検証・計算・決済・通知が1クラスに混在）、OCP違反（if-elseチェーンで拡張が困難）、DIP違反（具象クラスに直接依存）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-15" value="b">
+        Singletonの乱用（テスト困難）、レイヤー貫通（Controller相当がDB直接操作）、SQLインジェクション脆弱性
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="このコードには SRP違反（1クラスに8つの責務）、OCP違反（if-elseチェーンでクーポンと決済の拡張が困難）、DIP違反（StripeAPI, BankAPI等の具象に直接依存）、Singleton乱用（テスト困難）、レイヤー貫通（HTTPハンドラがDB直接操作）、SQLインジェクション（文字列連結でSQL構築）、トランザクション未使用（決済成功→在庫減算失敗でデータ不整合）、Fat Controller（ビジネスロジック集中）など多数の問題があります。しかし『LSP違反（サブクラスが親の契約を破る）』は、このコードに継承関係が存在しないため該当しません。">
+        <input type="radio" name="quiz-ex-t7-15" value="c">
+        LSP違反（サブクラスが親クラスの契約を破っている）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t7-15" value="d">
+        トランザクション未使用（決済成功→在庫減算失敗でデータ不整合の可能性）、Fat Controller（ビジネスロジックがHTTPハンドラに集中）
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-15')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <button class="complete-btn" onclick="completeSection('ex-t7-15')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

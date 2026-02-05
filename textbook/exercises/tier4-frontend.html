@@ -1,0 +1,1337 @@
+<!-- ============================================
+     Tier 4: React 実践初級 コーディング演習
+     15問: よくあるReactの落とし穴と実務パターン
+     ============================================ -->
+
+<section id="ex-t4-1">
+  <h1>問題 1: JSXの属性名ミス（class / for）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>新人エンジニアがHTMLからReactへ移行する際に、ログインフォームのコンポーネントを作成しました。しかし、ブラウザのコンソールに警告が表示されています。コードを確認してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>import React from "react";
+
+function LoginForm() {
+  return (
+    &lt;form class="login-form"&gt;
+      &lt;div class="form-group"&gt;
+        &lt;label for="email"&gt;メールアドレス&lt;/label&gt;
+        &lt;input
+          type="email"
+          id="email"
+          class="form-input"
+          placeholder="example@mail.com"
+        /&gt;
+      &lt;/div&gt;
+      &lt;div class="form-group"&gt;
+        &lt;label for="password"&gt;パスワード&lt;/label&gt;
+        &lt;input
+          type="password"
+          id="password"
+          class="form-input"
+        /&gt;
+      &lt;/div&gt;
+      &lt;button type="submit" class="btn-primary"&gt;
+        ログイン
+      &lt;/button&gt;
+    &lt;/form&gt;
+  );
+}
+
+export default LoginForm;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t4-1">
+    <div class="quiz-question"><strong>問題：</strong>このコンポーネントの問題点はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-1" value="a">
+        inputタグにname属性がないため、フォーム送信時にデータが送られない
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="JSXではHTMLの class は className に、for は htmlFor に置き換える必要があります。classとforはJavaScriptの予約語（classはクラス定義、forはループ）であるため、JSXでは別名が必要です。動作はしますが、コンソールに警告が出て、将来的に予期しない動作を引き起こす可能性があります。">
+        <input type="radio" name="quiz-ex-t4-1" value="b">
+        JSXではclassをclassNameに、forをhtmlForに書き換える必要がある
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-1" value="c">
+        formタグにonSubmitイベントハンドラがないため、送信できない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-1" value="d">
+        inputタグにvalue属性がないため、制御コンポーネントとして機能しない
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t4-1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t4-2">
+  <h1>問題 2: Stateの直接変更（ミュータブル操作）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>タスク管理アプリで、新しいタスクを追加する機能を実装しました。追加ボタンを押してもUIが更新されないというバグ報告がありました。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>import React, { useState } from "react";
+
+function TodoList() {
+  const [todos, setTodos] = useState&lt;string[]&gt;([
+    "買い物に行く",
+    "レポートを書く",
+  ]);
+  const [input, setInput] = useState("");
+
+  const handleAdd = () =&gt; {
+    if (input.trim() === "") return;
+    todos.push(input);  // 配列に直接追加
+    setTodos(todos);     // 同じ参照をセット
+    setInput("");
+  };
+
+  const handleDelete = (index: number) =&gt; {
+    todos.splice(index, 1);  // 配列を直接変更
+    setTodos(todos);
+  };
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;タスク一覧&lt;/h2&gt;
+      &lt;input
+        value={input}
+        onChange={(e) =&gt; setInput(e.target.value)}
+        placeholder="新しいタスクを入力"
+      /&gt;
+      &lt;button onClick={handleAdd}&gt;追加&lt;/button&gt;
+      &lt;ul&gt;
+        {todos.map((todo, i) =&gt; (
+          &lt;li key={i}&gt;
+            {todo}
+            &lt;button onClick={() =&gt; handleDelete(i)}&gt;削除&lt;/button&gt;
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default TodoList;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t4-2">
+    <div class="quiz-question"><strong>問題：</strong>UIが更新されない根本原因はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-2" value="a">
+        setInputで空文字をセットしているため、再レンダリングが止まっている
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-2" value="b">
+        useStateの初期値が文字列配列のため、型チェックでエラーが発生している
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Reactは state の変更を Object.is() で比較します。push() や splice() は元の配列を変更するだけで、新しい配列を作りません。setTodos(todos) は同じ参照を渡しているため、Reactは「変更なし」と判断して再レンダリングをスキップします。正しくは setTodos([...todos, input]) や setTodos(todos.filter((_, i) => i !== index)) のように新しい配列を作ります。">
+        <input type="radio" name="quiz-ex-t4-2" value="c">
+        push/spliceは元の配列を変更するだけで新しい参照を作らないため、Reactが変更を検知できない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-2" value="d">
+        keyにindexを使っているため、Reactの差分検出が正しく動作しない
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t4-2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t4-3">
+  <h1>問題 3: useEffectの依存配列漏れ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>リアルタイム検索機能を実装しました。ユーザーが入力するたびにAPIを呼び出してフィルター結果を更新する仕様です。しかし、検索結果が常に最初の入力値に基づいた結果しか返ってきません。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>import React, { useState, useEffect } from "react";
+
+type Product = {
+  id: number;
+  name: string;
+  price: number;
+};
+
+function ProductSearch() {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState&lt;Product[]&gt;([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() =&gt; {
+    if (query.length === 0) {
+      setResults([]);
+      return;
+    }
+
+    setIsLoading(true);
+
+    const timer = setTimeout(async () =&gt; {
+      const res = await fetch(`/api/products?q=${query}`);
+      const data = await res.json();
+      setResults(data);
+      setIsLoading(false);
+    }, 300);
+
+    return () =&gt; clearTimeout(timer);
+  }, []); // ← 依存配列が空
+
+  return (
+    &lt;div&gt;
+      &lt;input
+        value={query}
+        onChange={(e) =&gt; setQuery(e.target.value)}
+        placeholder="商品を検索..."
+      /&gt;
+      {isLoading &amp;&amp; &lt;p&gt;検索中...&lt;/p&gt;}
+      &lt;ul&gt;
+        {results.map((p) =&gt; (
+          &lt;li key={p.id}&gt;{p.name} - ¥{p.price}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default ProductSearch;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t4-3">
+    <div class="quiz-question"><strong>問題：</strong>検索結果が更新されない原因と正しい修正方法はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-3" value="a">
+        fetchがasync/awaitで呼ばれているのが問題。Promiseチェーンに変更する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-3" value="b">
+        setTimeoutのクリーンアップが毎回実行されてAPIが呼ばれない。クリーンアップを削除する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="useEffectの依存配列が空 [] のため、マウント時に1回だけ実行されます。その時点で query は初期値の空文字列です。query が変更されても Effect は再実行されません。依存配列に [query] を追加することで、query が変わるたびにEffectが再実行され、最新の検索クエリでAPIが呼ばれます。">
+        <input type="radio" name="quiz-ex-t4-3" value="c">
+        依存配列が空のためマウント時のみ実行される。依存配列に query を追加する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-3" value="d">
+        setResultsが非同期コールバック内にあるため、stateが更新されない。useRefを使う
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t4-3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t4-4">
+  <h1>問題 4: useEffectのクリーンアップ関数なし</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>チャットアプリでWebSocket接続を使ってリアルタイムメッセージを受信する機能を実装しました。ページを行き来すると、アプリがどんどん重くなり、同じメッセージが複数回表示されるバグが報告されました。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>import React, { useState, useEffect } from "react";
+
+type Message = {
+  id: string;
+  user: string;
+  text: string;
+  timestamp: number;
+};
+
+function ChatRoom({ roomId }: { roomId: string }) {
+  const [messages, setMessages] = useState&lt;Message[]&gt;([]);
+
+  useEffect(() =&gt; {
+    const ws = new WebSocket(
+      `wss://chat.example.com/rooms/${roomId}`
+    );
+
+    ws.onmessage = (event) =&gt; {
+      const msg: Message = JSON.parse(event.data);
+      setMessages((prev) =&gt; [...prev, msg]);
+    };
+
+    ws.onerror = (error) =&gt; {
+      console.error("WebSocket error:", error);
+    };
+
+    // クリーンアップ関数がない！
+  }, [roomId]);
+
+  return (
+    &lt;div className="chat-room"&gt;
+      &lt;h2&gt;ルーム: {roomId}&lt;/h2&gt;
+      &lt;div className="message-list"&gt;
+        {messages.map((msg) =&gt; (
+          &lt;div key={msg.id} className="message"&gt;
+            &lt;strong&gt;{msg.user}&lt;/strong&gt;: {msg.text}
+          &lt;/div&gt;
+        ))}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default ChatRoom;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t4-4">
+    <div class="quiz-question"><strong>問題：</strong>アプリが重くなる原因と正しい対処法はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-4" value="a">
+        setMessagesでスプレッド演算子を使っているため、メッセージが増えるたびにメモリを消費する。useReducerに変更する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="useEffect内でWebSocket接続を開いていますが、クリーンアップ関数（return () => ws.close()）がありません。roomIdが変わるたびに新しいWebSocket接続が開かれますが、古い接続は閉じられません。結果として、接続が蓄積し、同じメッセージが複数の接続から届き、メモリリークが発生します。">
+        <input type="radio" name="quiz-ex-t4-4" value="b">
+        クリーンアップ関数でWebSocket接続を閉じていないため、接続が蓄積する。return () => ws.close() を追加する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-4" value="c">
+        WebSocketの接続をuseEffect外で行うべき。コンポーネントのトップレベルに移動する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-4" value="d">
+        messagesのstateが毎回新しい配列を作成しているのが原因。useRefでメッセージを管理する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t4-4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t4-5">
+  <h1>問題 5: 毎レンダリングでのオブジェクト/関数再生成</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>商品一覧ページで、親コンポーネントのカウンターを更新するたびに、子コンポーネントの ProductCard が全て再レンダリングされ、パフォーマンスが低下しています。ProductCard は React.memo でラップ済みなのに、なぜ再レンダリングされるのでしょうか？</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>import React, { useState, memo } from "react";
+
+type Product = {
+  id: number;
+  name: string;
+  price: number;
+};
+
+const ProductCard = memo(function ProductCard({
+  product,
+  style,
+  onAddToCart,
+}: {
+  product: Product;
+  style: React.CSSProperties;
+  onAddToCart: (id: number) =&gt; void;
+}) {
+  console.log(`Rendering: ${product.name}`);
+  return (
+    &lt;div style={style}&gt;
+      &lt;h3&gt;{product.name}&lt;/h3&gt;
+      &lt;p&gt;¥{product.price.toLocaleString()}&lt;/p&gt;
+      &lt;button onClick={() =&gt; onAddToCart(product.id)}&gt;
+        カートに追加
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+});
+
+function ProductList({ products }: { products: Product[] }) {
+  const [viewCount, setViewCount] = useState(0);
+
+  const cardStyle = { border: "1px solid #ccc", padding: "16px" };
+
+  const handleAddToCart = (id: number) =&gt; {
+    console.log(`Added product ${id} to cart`);
+  };
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;閲覧回数: {viewCount}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setViewCount((c) =&gt; c + 1)}&gt;
+        カウントアップ
+      &lt;/button&gt;
+      {products.map((p) =&gt; (
+        &lt;ProductCard
+          key={p.id}
+          product={p}
+          style={cardStyle}
+          onAddToCart={handleAddToCart}
+        /&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}
+
+export default ProductList;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t4-5">
+    <div class="quiz-question"><strong>問題：</strong>React.memoでラップしているのに子コンポーネントが再レンダリングされる原因はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-5" value="a">
+        React.memoはfunction宣言には使えない。アロー関数に変更する必要がある
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-5" value="b">
+        products配列が親から渡されているため、毎回新しい参照になっている
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="React.memoは props を浅い比較（shallow comparison）で判定します。cardStyle オブジェクトと handleAddToCart 関数は、レンダリングのたびに新しいインスタンスが作られます。{} === {} は false なので、React.memoは「変更あり」と判断します。useMemo で cardStyle を、useCallback で handleAddToCart をメモ化すれば解決します。">
+        <input type="radio" name="quiz-ex-t4-5" value="c">
+        cardStyleオブジェクトとhandleAddToCart関数が毎レンダリングで新しく生成されるため、浅い比較で「変更あり」と判定される
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-5" value="d">
+        key属性にp.idを使っているため、Reactが毎回新しい要素として認識している
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t4-5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t4-6">
+  <h1>問題 6: リストのkeyにindexを使う問題</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ドラッグ&amp;ドロップで並び替え可能なタスクリストを実装しました。並び替えを行うと、チェックボックスの状態が別のタスクに移ってしまうバグが報告されました。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>import React, { useState } from "react";
+
+type Task = {
+  id: string;
+  title: string;
+};
+
+function SortableTaskList() {
+  const [tasks, setTasks] = useState&lt;Task[]&gt;([
+    { id: "a1", title: "設計書を書く" },
+    { id: "b2", title: "コードレビュー" },
+    { id: "c3", title: "テストを実行" },
+    { id: "d4", title: "デプロイ準備" },
+  ]);
+
+  const moveToTop = (index: number) =&gt; {
+    const newTasks = [...tasks];
+    const [moved] = newTasks.splice(index, 1);
+    newTasks.unshift(moved);
+    setTasks(newTasks);
+  };
+
+  return (
+    &lt;ul&gt;
+      {tasks.map((task, index) =&gt; (
+        &lt;li key={index}&gt;
+          &lt;input type="checkbox" /&gt;
+          &lt;span&gt;{task.title}&lt;/span&gt;
+          &lt;button onClick={() =&gt; moveToTop(index)}&gt;
+            先頭へ移動
+          &lt;/button&gt;
+        &lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+
+export default SortableTaskList;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t4-6">
+    <div class="quiz-question"><strong>問題：</strong>チェックボックスの状態がずれるバグの原因と修正方法はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-6" value="a">
+        チェックボックスの状態をstateで管理していないため。checkedとonChangeを追加する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="key に index を使うと、並び替え後も同じインデックスの要素は「同じ要素」と見なされます。例えば、2番目の要素を先頭に移動しても、key=0 の DOM 要素はそのまま再利用されます。結果、チェックボックスの内部状態が元のインデックスの要素に紐づいたままになります。key={task.id} のように一意で安定したIDを使えば、Reactは正しく要素を追跡できます。">
+        <input type="radio" name="quiz-ex-t4-6" value="b">
+        keyにindexを使っているため、並び替え後にReactがDOM要素を正しく追跡できない。key={task.id}に変更する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-6" value="c">
+        spliceとunshiftの組み合わせが問題。配列をソートするsort()を使うべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-6" value="d">
+        スプレッド演算子でコピーが浅いため、オブジェクトの参照が共有されている
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t4-6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t4-7">
+  <h1>問題 7: 条件付きレンダリングで0が表示される</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>通知バッジコンポーネントを実装しました。通知がない場合は何も表示しない仕様ですが、通知が0件のときに画面に「0」が表示されてしまうバグが報告されました。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>import React from "react";
+
+type Notification = {
+  id: string;
+  message: string;
+  isRead: boolean;
+};
+
+function NotificationBell({
+  notifications,
+}: {
+  notifications: Notification[];
+}) {
+  const unreadCount = notifications.filter(
+    (n) =&gt; !n.isRead
+  ).length;
+
+  return (
+    &lt;div className="notification-bell"&gt;
+      &lt;span className="bell-icon"&gt;🔔&lt;/span&gt;
+
+      {unreadCount &amp;&amp; (
+        &lt;span className="badge"&gt;
+          {unreadCount}件の未読
+        &lt;/span&gt;
+      )}
+
+      {unreadCount &amp;&amp; (
+        &lt;div className="dropdown"&gt;
+          {notifications
+            .filter((n) =&gt; !n.isRead)
+            .map((n) =&gt; (
+              &lt;div key={n.id} className="notif-item"&gt;
+                {n.message}
+              &lt;/div&gt;
+            ))}
+        &lt;/div&gt;
+      )}
+    &lt;/div&gt;
+  );
+}
+
+export default NotificationBell;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t4-7">
+    <div class="quiz-question"><strong>問題：</strong>通知が0件のときに「0」が表示される原因と修正方法はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-7" value="a">
+        filterの条件が間違っている。!n.isRead ではなく n.isRead === false にすべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-7" value="b">
+        notificationsが空配列のとき、filterがエラーを出すためtry-catchで囲む
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="JavaScriptでは 0 はfalsyな値ですが、&&演算子は左辺がfalsyなとき左辺の値そのものを返します。つまり 0 && <JSX> は 0 を返し、Reactは数値の 0 をそのままDOMにレンダリングします。修正方法は unreadCount > 0 && <JSX> とするか、三項演算子 unreadCount ? <JSX> : null を使います。falseやnullはレンダリングされません。">
+        <input type="radio" name="quiz-ex-t4-7" value="c">
+        0はfalsyだが&&演算子は左辺の値(0)をそのまま返すため、Reactが0を描画する。unreadCount &gt; 0 に変更する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-7" value="d">
+        Reactのバグで、数値型のstateは条件付きレンダリングに使えない。Boolean()で変換する必要がある
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t4-7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t4-8">
+  <h1>問題 8: useRefの値変更がレンダリングをトリガーしない</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ストップウォッチコンポーネントを実装しました。経過時間を画面に表示する仕様ですが、スタートボタンを押しても画面上の秒数が変わりません。コンソールには正しい値がログ出力されています。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>import React, { useRef } from "react";
+
+function Stopwatch() {
+  const seconds = useRef(0);
+  const intervalRef = useRef&lt;NodeJS.Timeout | null&gt;(null);
+
+  const handleStart = () =&gt; {
+    if (intervalRef.current) return;
+
+    intervalRef.current = setInterval(() =&gt; {
+      seconds.current += 1;
+      console.log("経過:", seconds.current);
+    }, 1000);
+  };
+
+  const handleStop = () =&gt; {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+
+  const handleReset = () =&gt; {
+    handleStop();
+    seconds.current = 0;
+  };
+
+  return (
+    &lt;div className="stopwatch"&gt;
+      &lt;h2&gt;経過時間: {seconds.current}秒&lt;/h2&gt;
+      &lt;button onClick={handleStart}&gt;スタート&lt;/button&gt;
+      &lt;button onClick={handleStop}&gt;ストップ&lt;/button&gt;
+      &lt;button onClick={handleReset}&gt;リセット&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default Stopwatch;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t4-8">
+    <div class="quiz-question"><strong>問題：</strong>画面に経過時間が反映されない原因はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="true" data-explanation="useRefの.currentプロパティを変更しても再レンダリングは発生しません。useRefは「レンダリングをトリガーしない値の保持」に使うものです。画面に表示する値には useState を使い、intervalRef（タイマーID）のように画面表示に関係ない値には useRef を使うのが正しい使い分けです。seconds を useState に変更し、setSeconds(s => s + 1) とすれば画面が更新されます。">
+        <input type="radio" name="quiz-ex-t4-8" value="a">
+        useRefの値(.current)を変更しても再レンダリングが発生しない。画面に表示する値にはuseStateを使うべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-8" value="b">
+        setIntervalのコールバック内でReactのstateにアクセスできないため、useEffectで囲む必要がある
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-8" value="c">
+        NodeJS.Timeout型がブラウザ環境で動作しないため、number型に変更する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-8" value="d">
+        seconds.current += 1 は不正な操作。useRefは読み取り専用なのでエラーが発生している
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-8')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t4-8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t4-9">
+  <h1>問題 9: Props Drilling vs Contextの判断</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ECサイトのヘッダーにログインユーザー名を表示する機能を実装中です。現在、Appから5階層下のコンポーネントまでpropsでユーザー情報をバケツリレーしています。コードレビューで改善を求められました。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>import React from "react";
+
+type User = { name: string; email: string; avatar: string };
+
+// 5階層のバケツリレー
+function App() {
+  const user: User = {
+    name: "田中太郎",
+    email: "tanaka@example.com",
+    avatar: "/img/tanaka.png",
+  };
+  return &lt;Layout user={user} /&gt;;
+}
+
+function Layout({ user }: { user: User }) {
+  return (
+    &lt;div className="layout"&gt;
+      &lt;Header user={user} /&gt;
+      &lt;main&gt;コンテンツ&lt;/main&gt;
+    &lt;/div&gt;
+  );
+}
+
+function Header({ user }: { user: User }) {
+  return (
+    &lt;header&gt;
+      &lt;nav&gt;
+        &lt;Logo /&gt;
+        &lt;Navigation user={user} /&gt;
+      &lt;/nav&gt;
+    &lt;/header&gt;
+  );
+}
+
+function Navigation({ user }: { user: User }) {
+  return (
+    &lt;ul&gt;
+      &lt;li&gt;ホーム&lt;/li&gt;
+      &lt;li&gt;商品一覧&lt;/li&gt;
+      &lt;li&gt;&lt;UserMenu user={user} /&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  );
+}
+
+function UserMenu({ user }: { user: User }) {
+  return (
+    &lt;div className="user-menu"&gt;
+      &lt;img src={user.avatar} alt={user.name} /&gt;
+      &lt;span&gt;{user.name}&lt;/span&gt;
+    &lt;/div&gt;
+  );
+}
+
+function Logo() {
+  return &lt;span&gt;ECサイト&lt;/span&gt;;
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t4-9">
+    <div class="quiz-question"><strong>問題：</strong>このコードの最も適切な改善方法はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-9" value="a">
+        グローバル変数にユーザー情報を保持して、各コンポーネントから直接参照する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-9" value="b">
+        localStorageにユーザー情報を保存して、必要なコンポーネントで読み出す
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="React Contextは、コンポーネントツリーの深い階層にデータを渡す「Props Drilling（バケツリレー）」の問題を解決します。createContextでコンテキストを作成し、Providerでデータを提供、useContextで消費します。中間のLayout・Header・Navigationはuserプロパティが不要になり、実際にデータを使うUserMenuだけがコンテキストを参照します。ただし、Contextの値が変わると全てのconsumerが再レンダリングされるため、頻繁に更新される値には注意が必要です。">
+        <input type="radio" name="quiz-ex-t4-9" value="c">
+        React Contextを使い、useContextで必要なコンポーネントだけがユーザー情報を取得する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-9" value="d">
+        各コンポーネント内でfetch APIを呼び出してユーザー情報を個別に取得する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t4-9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t4-10">
+  <h1>問題 10: useReducerのイミュータブル更新ミス</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ショッピングカートの状態管理を useReducer で実装しました。商品をカートに追加しても数量が増えない、または他の商品の情報が消えるバグが発生しています。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>import React, { useReducer } from "react";
+
+type CartItem = {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+};
+
+type CartState = {
+  items: CartItem[];
+  totalPrice: number;
+};
+
+type CartAction =
+  | { type: "ADD_ITEM"; payload: CartItem }
+  | { type: "REMOVE_ITEM"; payload: string }
+  | { type: "UPDATE_QTY"; payload: { id: string; qty: number } };
+
+function cartReducer(
+  state: CartState,
+  action: CartAction
+): CartState {
+  switch (action.type) {
+    case "ADD_ITEM": {
+      const existing = state.items.find(
+        (item) =&gt; item.id === action.payload.id
+      );
+      if (existing) {
+        existing.quantity += 1; // 直接変更！
+        return state;           // 同じ参照を返す！
+      }
+      state.items.push(action.payload); // 直接push！
+      return state;
+    }
+    case "REMOVE_ITEM":
+      return {
+        ...state,
+        items: state.items.filter(
+          (item) =&gt; item.id !== action.payload
+        ),
+      };
+    case "UPDATE_QTY": {
+      const item = state.items.find(
+        (i) =&gt; i.id === action.payload.id
+      );
+      if (item) {
+        item.quantity = action.payload.qty; // 直接変更！
+      }
+      return { ...state };
+    }
+    default:
+      return state;
+  }
+}
+
+const initialState: CartState = { items: [], totalPrice: 0 };</code></pre>
+
+  <div class="quiz" id="quiz-ex-t4-10">
+    <div class="quiz-question"><strong>問題：</strong>ADD_ITEMアクションのreducerで最も問題のある箇所はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-10" value="a">
+        findで見つかったitemがundefinedの場合のnullチェックがない
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Reducerは純粋関数であるべきで、引数のstateを直接変更してはいけません。existing.quantity += 1 はstateオブジェクト内の値を直接変更するミューテーションです。さらに return state は同じ参照を返すため、Reactは変更を検知できません。正しくは items.map() で新しい配列を作り、該当アイテムのquantityだけ更新した新しいオブジェクトを返す必要があります。">
+        <input type="radio" name="quiz-ex-t4-10" value="b">
+        existing.quantityを直接変更し、同じstate参照を返しているため、Reactが変更を検知できない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-10" value="c">
+        totalPriceが更新されていないため、合計金額の計算がずれている
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-10" value="d">
+        switch文にbreak文がないため、次のcaseにフォールスルーしている
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-10')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t4-10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t4-11">
+  <h1>問題 11: useMemo/useCallbackの不必要な使用</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>チームメンバーがパフォーマンス最適化のため、すべての値と関数を useMemo と useCallback で囲みました。コードレビューで「過剰な最適化」と指摘されましたが、どの部分が不必要でしょうか？</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>import React, { useState, useMemo, useCallback } from "react";
+
+function UserProfile() {
+  const [name, setName] = useState("田中太郎");
+  const [age, setAge] = useState(25);
+
+  // 不要な useMemo: 単純な文字列結合
+  const greeting = useMemo(
+    () =&gt; `こんにちは、${name}さん`,
+    [name]
+  );
+
+  // 不要な useMemo: プリミティブ値
+  const isAdult = useMemo(() =&gt; age &gt;= 18, [age]);
+
+  // 不要な useCallback: 子に渡さない関数
+  const handleNameChange = useCallback(
+    (e: React.ChangeEvent&lt;HTMLInputElement&gt;) =&gt; {
+      setName(e.target.value);
+    },
+    []
+  );
+
+  // 不要な useMemo: 静的スタイルオブジェクト
+  const containerStyle = useMemo(
+    () =&gt; ({
+      padding: "20px",
+      border: "1px solid #ddd",
+    }),
+    []
+  );
+
+  return (
+    &lt;div style={containerStyle}&gt;
+      &lt;h2&gt;{greeting}&lt;/h2&gt;
+      &lt;p&gt;成人: {isAdult ? "はい" : "いいえ"}&lt;/p&gt;
+      &lt;input value={name} onChange={handleNameChange} /&gt;
+      &lt;p&gt;年齢: {age}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setAge((a) =&gt; a + 1)}&gt;
+        +1歳
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t4-11">
+    <div class="quiz-question"><strong>問題：</strong>このコードの useMemo / useCallback の使用について正しい評価はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-11" value="a">
+        全ての useMemo/useCallback は適切。パフォーマンス最適化は常に良い習慣である
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="useMemo/useCallbackにはフック自体のオーバーヘッド（依存配列の比較、メモリ上のキャッシュ保持）があります。単純な文字列結合やプリミティブ値の計算はそのまま実行する方が速いです。useCallbackはReact.memoされた子コンポーネントに渡す関数や、useEffectの依存配列に含まれる関数に使うのが効果的です。このコードでは全て不要で、かえってコードの可読性を下げ、わずかなオーバーヘッドを増やしています。">
+        <input type="radio" name="quiz-ex-t4-11" value="b">
+        全て不必要。単純な計算のメモ化はオーバーヘッドの方が大きく、React.memoされた子に渡さないuseCallbackも無意味
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-11" value="c">
+        greeting と isAdult の useMemo は適切だが、containerStyle と handleNameChange だけ不要
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-11" value="d">
+        containerStyle の useMemo だけ適切。オブジェクトは毎回新しい参照になるため常にメモ化すべき
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-11')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t4-11')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t4-12">
+  <h1>問題 12: 条件分岐内でのHook呼び出し</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>データ取得のカスタムHookを作成しました。ユーザーがログインしているかどうかで異なるデータを取得する仕様です。しかし、実行するとReactがエラーを出力します。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>import { useState, useEffect } from "react";
+
+type User = { id: string; name: string };
+type Post = { id: string; title: string; body: string };
+
+// カスタムHook
+function useUserData(isLoggedIn: boolean) {
+  if (!isLoggedIn) {
+    return { user: null, posts: [] }; // 早期リターン！
+  }
+
+  // ↓ 条件分岐の後にHookがある
+  const [user, setUser] = useState&lt;User | null&gt;(null);
+  const [posts, setPosts] = useState&lt;Post[]&gt;([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() =&gt; {
+    async function fetchData() {
+      setLoading(true);
+      const userRes = await fetch("/api/me");
+      const userData = await userRes.json();
+      setUser(userData);
+
+      const postsRes = await fetch(
+        `/api/users/${userData.id}/posts`
+      );
+      const postsData = await postsRes.json();
+      setPosts(postsData);
+      setLoading(false);
+    }
+
+    fetchData();
+  }, []);
+
+  return { user, posts, loading };
+}
+
+function Dashboard({ isLoggedIn }: { isLoggedIn: boolean }) {
+  const { user, posts } = useUserData(isLoggedIn);
+
+  if (!user) return &lt;p&gt;ログインしてください&lt;/p&gt;;
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;{user.name}のダッシュボード&lt;/h1&gt;
+      &lt;ul&gt;
+        {posts.map((p) =&gt; (
+          &lt;li key={p.id}&gt;{p.title}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t4-12">
+    <div class="quiz-question"><strong>問題：</strong>Reactがエラーを出す原因はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-12" value="a">
+        async関数をuseEffect内で直接定義しているため。useEffectのコールバック自体をasyncにすべき
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Reactの「Hooksのルール」により、Hookはコンポーネント/カスタムHookのトップレベルでのみ呼び出す必要があります。条件分岐・ループ・早期リターンの後にHookがあると、レンダリングごとにHookの呼び出し順序が変わる可能性があり、Reactの内部状態管理が壊れます。正しくは、Hookを全てトップレベルで呼び出し、条件分岐はuseEffect内やreturn文で行います。">
+        <input type="radio" name="quiz-ex-t4-12" value="b">
+        条件分岐による早期リターンの後にHookが配置されている。Hookは常にトップレベルで同じ順序で呼び出す必要がある
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-12" value="c">
+        カスタムHookの名前が use で始まっているが、大文字が続いていないため認識されない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-12" value="d">
+        fetchの戻り値をawaitせずにjson()を呼んでいるため、Promiseの処理順が壊れている
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-12')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t4-12')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t4-13">
+  <h1>問題 13: Server ComponentとClient Componentの混在</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>Next.js（App Router）で商品詳細ページを実装しています。Server Componentでデータを取得し、Client Componentで「お気に入りボタン」のインタラクションを追加しようとしたところ、ビルドエラーが発生しました。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// app/products/[id]/page.tsx
+// ※ "use client" ディレクティブなし = Server Component
+
+import { useState } from "react"; // ← エラー！
+
+async function getProduct(id: string) {
+  const res = await fetch(
+    `https://api.example.com/products/${id}`,
+    { cache: "no-store" }
+  );
+  return res.json();
+}
+
+export default async function ProductPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const product = await getProduct(params.id);
+
+  // Server Component内でuseStateを使おうとしている
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  return (
+    &lt;div className="product-detail"&gt;
+      &lt;h1&gt;{product.name}&lt;/h1&gt;
+      &lt;p&gt;価格: ¥{product.price.toLocaleString()}&lt;/p&gt;
+      &lt;p&gt;{product.description}&lt;/p&gt;
+      &lt;button
+        onClick={() =&gt; setIsFavorite(!isFavorite)}
+        className={isFavorite ? "favorite active" : "favorite"}
+      &gt;
+        {isFavorite ? "★ お気に入り済み" : "☆ お気に入り"}
+      &lt;/button&gt;
+      &lt;div className="reviews"&gt;
+        &lt;h2&gt;レビュー ({product.reviews.length}件)&lt;/h2&gt;
+        {product.reviews.map((r: any) =&gt; (
+          &lt;div key={r.id}&gt;{r.comment}&lt;/div&gt;
+        ))}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t4-13">
+    <div class="quiz-question"><strong>問題：</strong>このコードのビルドエラーを解決する最も適切な方法はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-13" value="a">
+        ファイルの先頭に "use client" を追加すれば全て解決する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Server Componentでは useState, useEffect などのHookやイベントハンドラ（onClick等）は使えません。ファイル全体を 'use client' にすると、async/awaitでのサーバーサイドデータ取得の利点を失います。正しいアプローチは、お気に入りボタンを別の Client Component として切り出し（'use client' を指定）、Server Component の ProductPage からそのコンポーネントを呼び出す「コンポジションパターン」を使います。">
+        <input type="radio" name="quiz-ex-t4-13" value="b">
+        お気に入りボタンを "use client" 付きの別コンポーネントに切り出し、Server Componentから呼び出す
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-13" value="c">
+        getProduct関数を "use server" ディレクティブ付きのServer Actionに変更する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-13" value="d">
+        useStateの代わりにcookiesを使ってお気に入り状態を管理する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-13')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t4-13')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t4-14">
+  <h1>問題 14: dangerouslySetInnerHTMLのXSSリスク</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ブログサービスで、ユーザーが投稿したリッチテキストコンテンツを表示する機能を実装しました。セキュリティレビューで「重大な脆弱性がある」と指摘されました。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>import React, { useState, useEffect } from "react";
+
+type BlogPost = {
+  id: string;
+  title: string;
+  content: string; // ユーザーが入力したHTML
+  author: string;
+  createdAt: string;
+};
+
+function BlogArticle({ postId }: { postId: string }) {
+  const [post, setPost] = useState&lt;BlogPost | null&gt;(null);
+
+  useEffect(() =&gt; {
+    fetch(`/api/posts/${postId}`)
+      .then((res) =&gt; res.json())
+      .then((data) =&gt; setPost(data));
+  }, [postId]);
+
+  if (!post) return &lt;p&gt;読み込み中...&lt;/p&gt;;
+
+  return (
+    &lt;article className="blog-post"&gt;
+      &lt;h1&gt;{post.title}&lt;/h1&gt;
+      &lt;div className="meta"&gt;
+        &lt;span&gt;著者: {post.author}&lt;/span&gt;
+        &lt;span&gt;投稿日: {post.createdAt}&lt;/span&gt;
+      &lt;/div&gt;
+
+      {/* ユーザー入力をそのままHTMLとして描画 */}
+      &lt;div
+        className="content"
+        dangerouslySetInnerHTML={{ __html: post.content }}
+      /&gt;
+
+      {/* コメント欄もサニタイズなし */}
+      &lt;div className="comments"&gt;
+        &lt;CommentSection postId={postId} /&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+  );
+}
+
+function CommentSection({ postId }: { postId: string }) {
+  const [comments, setComments] = useState&lt;string[]&gt;([]);
+  const [input, setInput] = useState("");
+
+  const handleSubmit = () =&gt; {
+    setComments([...comments, input]);
+    setInput("");
+  };
+
+  return (
+    &lt;div&gt;
+      &lt;h3&gt;コメント&lt;/h3&gt;
+      {comments.map((c, i) =&gt; (
+        &lt;div
+          key={i}
+          dangerouslySetInnerHTML={{ __html: c }}
+        /&gt;
+      ))}
+      &lt;textarea
+        value={input}
+        onChange={(e) =&gt; setInput(e.target.value)}
+      /&gt;
+      &lt;button onClick={handleSubmit}&gt;投稿&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default BlogArticle;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t4-14">
+    <div class="quiz-question"><strong>問題：</strong>このコードの最も深刻なセキュリティ問題はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-14" value="a">
+        fetchでCSRFトークンを送信していないため、不正なリクエストが送られる可能性がある
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-14" value="b">
+        useEffectでエラーハンドリングがないため、APIエラー時にアプリがクラッシュする
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="dangerouslySetInnerHTML はHTMLをそのままDOMに挿入します。ユーザー入力をサニタイズ（無害化）せずに渡すと、XSS（クロスサイトスクリプティング）攻撃が可能になります。例えば、コメントに &lt;script&gt;document.cookie を外部に送信&lt;/script&gt; と入力されると、他のユーザーのCookieが盗まれます。対策として、DOMPurify等のサニタイズライブラリで不正なHTMLタグを除去するか、そもそもdangerouslySetInnerHTMLを使わずにマークダウンパーサーを使うべきです。">
+        <input type="radio" name="quiz-ex-t4-14" value="c">
+        ユーザー入力をサニタイズせずにdangerouslySetInnerHTMLで描画しており、XSS攻撃でスクリプトが実行される
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-14" value="d">
+        コメントのstateがクライアント側のみで管理されているため、ページリロードでデータが消える
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-14')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t4-14')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t4-15">
+  <h1>問題 15: 総合 - ユーザープロフィール編集フォーム</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ユーザープロフィール編集ページのコードレビューを担当しています。このコンポーネントには複数の問題が潜んでいます。最も深刻な問題を特定してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>import React, { useState, useEffect } from "react";
+
+type Profile = {
+  name: string;
+  email: string;
+  bio: string;
+  avatarUrl: string;
+};
+
+function ProfileEditor({ userId }: { userId: string }) {
+  const [profile, setProfile] = useState&lt;Profile&gt;({
+    name: "",
+    email: "",
+    bio: "",
+    avatarUrl: "",
+  });
+  const [message, setMessage] = useState("");
+
+  // 問題1: 依存配列にuserIdがない
+  useEffect(() =&gt; {
+    fetch(`/api/users/${userId}`)
+      .then((res) =&gt; res.json())
+      .then((data) =&gt; setProfile(data));
+  }, []);
+
+  // 問題2: stateを直接変更している
+  const handleChange = (field: keyof Profile, value: string) =&gt; {
+    profile[field] = value;
+    setProfile(profile);
+  };
+
+  // 問題3: サニタイズなしでHTMLを描画
+  const handleSave = async () =&gt; {
+    const res = await fetch(`/api/users/${userId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(profile),
+    });
+    if (res.ok) {
+      setMessage("保存しました！");
+    }
+  };
+
+  return (
+    &lt;div class="profile-editor"&gt;
+      &lt;h1&gt;プロフィール編集&lt;/h1&gt;
+
+      &lt;label for="name"&gt;名前&lt;/label&gt;
+      &lt;input
+        id="name"
+        value={profile.name}
+        onChange={(e) =&gt; handleChange("name", e.target.value)}
+      /&gt;
+
+      &lt;label for="email"&gt;メールアドレス&lt;/label&gt;
+      &lt;input
+        id="email"
+        type="email"
+        value={profile.email}
+        onChange={(e) =&gt; handleChange("email", e.target.value)}
+      /&gt;
+
+      &lt;label for="bio"&gt;自己紹介&lt;/label&gt;
+      &lt;textarea
+        id="bio"
+        value={profile.bio}
+        onChange={(e) =&gt; handleChange("bio", e.target.value)}
+      /&gt;
+
+      &lt;div
+        class="bio-preview"
+        dangerouslySetInnerHTML={{ __html: profile.bio }}
+      /&gt;
+
+      &lt;button onClick={handleSave}&gt;保存&lt;/button&gt;
+
+      {message &amp;&amp; &lt;p class="success"&gt;{message}&lt;/p&gt;}
+    &lt;/div&gt;
+  );
+}
+
+export default ProfileEditor;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t4-15">
+    <div class="quiz-question"><strong>問題：</strong>このコンポーネントに含まれる問題の数と、最も深刻な問題はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-15" value="a">
+        2つの問題（class→className、for→htmlFor）。JSX属性名の修正だけで十分
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-15" value="b">
+        3つの問題。最も深刻なのはuseEffectの依存配列が空であること
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="このコンポーネントには少なくとも4つの問題があります: (1) class→className、for→htmlFor のJSX属性ミス (2) useEffectの依存配列にuserIdがない (3) handleChangeでstateオブジェクトを直接変更し同じ参照を返している (4) dangerouslySetInnerHTMLでユーザー入力のbioをサニタイズせず描画しておりXSS脆弱性がある。最も深刻なのはXSSで、攻撃者が自己紹介欄にスクリプトを埋め込み、他のユーザーのセッション情報を盗む可能性があります。">
+        <input type="radio" name="quiz-ex-t4-15" value="c">
+        4つ以上の問題。最も深刻なのはdangerouslySetInnerHTMLによるXSS脆弱性
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t4-15" value="d">
+        3つの問題。最も深刻なのはstateの直接変更によりUIが更新されないこと
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-15')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t4-15')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

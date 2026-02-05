@@ -520,7 +520,160 @@ const sectionMapping = {
   'qa7': 'level8/phase8.html',
   'qa8': 'level8/phase8.html',
   'qa9': 'level8/phase8.html',
-  'qa10': 'level8/phase8.html'
+  'qa10': 'level8/phase8.html',
+
+  // 実践問題集 - Tier 1: 入門（HTML/CSS）
+  'ex-t1-1': 'exercises/tier1-intro.html',
+  'ex-t1-2': 'exercises/tier1-intro.html',
+  'ex-t1-3': 'exercises/tier1-intro.html',
+  'ex-t1-4': 'exercises/tier1-intro.html',
+  'ex-t1-5': 'exercises/tier1-intro.html',
+  'ex-t1-6': 'exercises/tier1-intro.html',
+  'ex-t1-7': 'exercises/tier1-intro.html',
+  'ex-t1-8': 'exercises/tier1-intro.html',
+  'ex-t1-9': 'exercises/tier1-intro.html',
+  'ex-t1-10': 'exercises/tier1-intro.html',
+  'ex-t1-11': 'exercises/tier1-intro.html',
+  'ex-t1-12': 'exercises/tier1-intro.html',
+  'ex-t1-13': 'exercises/tier1-intro.html',
+  'ex-t1-14': 'exercises/tier1-intro.html',
+  'ex-t1-15': 'exercises/tier1-intro.html',
+
+  // 実践問題集 - Tier 2: 基礎（JavaScript）
+  'ex-t2-1': 'exercises/tier2-basic.html',
+  'ex-t2-2': 'exercises/tier2-basic.html',
+  'ex-t2-3': 'exercises/tier2-basic.html',
+  'ex-t2-4': 'exercises/tier2-basic.html',
+  'ex-t2-5': 'exercises/tier2-basic.html',
+  'ex-t2-6': 'exercises/tier2-basic.html',
+  'ex-t2-7': 'exercises/tier2-basic.html',
+  'ex-t2-8': 'exercises/tier2-basic.html',
+  'ex-t2-9': 'exercises/tier2-basic.html',
+  'ex-t2-10': 'exercises/tier2-basic.html',
+  'ex-t2-11': 'exercises/tier2-basic.html',
+  'ex-t2-12': 'exercises/tier2-basic.html',
+  'ex-t2-13': 'exercises/tier2-basic.html',
+  'ex-t2-14': 'exercises/tier2-basic.html',
+  'ex-t2-15': 'exercises/tier2-basic.html',
+
+  // 実践問題集 - Tier 3: 応用基礎（非同期/TS）
+  'ex-t3-1': 'exercises/tier3-applied.html',
+  'ex-t3-2': 'exercises/tier3-applied.html',
+  'ex-t3-3': 'exercises/tier3-applied.html',
+  'ex-t3-4': 'exercises/tier3-applied.html',
+  'ex-t3-5': 'exercises/tier3-applied.html',
+  'ex-t3-6': 'exercises/tier3-applied.html',
+  'ex-t3-7': 'exercises/tier3-applied.html',
+  'ex-t3-8': 'exercises/tier3-applied.html',
+  'ex-t3-9': 'exercises/tier3-applied.html',
+  'ex-t3-10': 'exercises/tier3-applied.html',
+  'ex-t3-11': 'exercises/tier3-applied.html',
+  'ex-t3-12': 'exercises/tier3-applied.html',
+  'ex-t3-13': 'exercises/tier3-applied.html',
+  'ex-t3-14': 'exercises/tier3-applied.html',
+  'ex-t3-15': 'exercises/tier3-applied.html',
+
+  // 実践問題集 - Tier 4: 実践初級（React）
+  'ex-t4-1': 'exercises/tier4-frontend.html',
+  'ex-t4-2': 'exercises/tier4-frontend.html',
+  'ex-t4-3': 'exercises/tier4-frontend.html',
+  'ex-t4-4': 'exercises/tier4-frontend.html',
+  'ex-t4-5': 'exercises/tier4-frontend.html',
+  'ex-t4-6': 'exercises/tier4-frontend.html',
+  'ex-t4-7': 'exercises/tier4-frontend.html',
+  'ex-t4-8': 'exercises/tier4-frontend.html',
+  'ex-t4-9': 'exercises/tier4-frontend.html',
+  'ex-t4-10': 'exercises/tier4-frontend.html',
+  'ex-t4-11': 'exercises/tier4-frontend.html',
+  'ex-t4-12': 'exercises/tier4-frontend.html',
+  'ex-t4-13': 'exercises/tier4-frontend.html',
+  'ex-t4-14': 'exercises/tier4-frontend.html',
+  'ex-t4-15': 'exercises/tier4-frontend.html',
+
+  // 実践問題集 - Tier 5: 実践中級（API/DB/セキュリティ）
+  'ex-t5-1': 'exercises/tier5-backend.html',
+  'ex-t5-2': 'exercises/tier5-backend.html',
+  'ex-t5-3': 'exercises/tier5-backend.html',
+  'ex-t5-4': 'exercises/tier5-backend.html',
+  'ex-t5-5': 'exercises/tier5-backend.html',
+  'ex-t5-6': 'exercises/tier5-backend.html',
+  'ex-t5-7': 'exercises/tier5-backend.html',
+  'ex-t5-8': 'exercises/tier5-backend.html',
+  'ex-t5-9': 'exercises/tier5-backend.html',
+  'ex-t5-10': 'exercises/tier5-backend.html',
+  'ex-t5-11': 'exercises/tier5-backend.html',
+  'ex-t5-12': 'exercises/tier5-backend.html',
+  'ex-t5-13': 'exercises/tier5-backend.html',
+  'ex-t5-14': 'exercises/tier5-backend.html',
+  'ex-t5-15': 'exercises/tier5-backend.html',
+
+  // 実践問題集 - Tier 6: 実践上級（インフラ）
+  'ex-t6-1': 'exercises/tier6-infra.html',
+  'ex-t6-2': 'exercises/tier6-infra.html',
+  'ex-t6-3': 'exercises/tier6-infra.html',
+  'ex-t6-4': 'exercises/tier6-infra.html',
+  'ex-t6-5': 'exercises/tier6-infra.html',
+  'ex-t6-6': 'exercises/tier6-infra.html',
+  'ex-t6-7': 'exercises/tier6-infra.html',
+  'ex-t6-8': 'exercises/tier6-infra.html',
+  'ex-t6-9': 'exercises/tier6-infra.html',
+  'ex-t6-10': 'exercises/tier6-infra.html',
+  'ex-t6-11': 'exercises/tier6-infra.html',
+  'ex-t6-12': 'exercises/tier6-infra.html',
+  'ex-t6-13': 'exercises/tier6-infra.html',
+  'ex-t6-14': 'exercises/tier6-infra.html',
+  'ex-t6-15': 'exercises/tier6-infra.html',
+
+  // 実践問題集 - Tier 7: 設計（SOLID/パターン/アーキテクチャ）
+  'ex-t7-1': 'exercises/tier7-design.html',
+  'ex-t7-2': 'exercises/tier7-design.html',
+  'ex-t7-3': 'exercises/tier7-design.html',
+  'ex-t7-4': 'exercises/tier7-design.html',
+  'ex-t7-5': 'exercises/tier7-design.html',
+  'ex-t7-6': 'exercises/tier7-design.html',
+  'ex-t7-7': 'exercises/tier7-design.html',
+  'ex-t7-8': 'exercises/tier7-design.html',
+  'ex-t7-9': 'exercises/tier7-design.html',
+  'ex-t7-10': 'exercises/tier7-design.html',
+  'ex-t7-11': 'exercises/tier7-design.html',
+  'ex-t7-12': 'exercises/tier7-design.html',
+  'ex-t7-13': 'exercises/tier7-design.html',
+  'ex-t7-14': 'exercises/tier7-design.html',
+  'ex-t7-15': 'exercises/tier7-design.html',
+
+  // 実践問題集 - Tier 8: シニア（DDD/総合）
+  'ex-t8-1': 'exercises/tier8-senior.html',
+  'ex-t8-2': 'exercises/tier8-senior.html',
+  'ex-t8-3': 'exercises/tier8-senior.html',
+  'ex-t8-4': 'exercises/tier8-senior.html',
+  'ex-t8-5': 'exercises/tier8-senior.html',
+  'ex-t8-6': 'exercises/tier8-senior.html',
+  'ex-t8-7': 'exercises/tier8-senior.html',
+  'ex-t8-8': 'exercises/tier8-senior.html',
+  'ex-t8-9': 'exercises/tier8-senior.html',
+  'ex-t8-10': 'exercises/tier8-senior.html',
+  'ex-t8-11': 'exercises/tier8-senior.html',
+  'ex-t8-12': 'exercises/tier8-senior.html',
+  'ex-t8-13': 'exercises/tier8-senior.html',
+  'ex-t8-14': 'exercises/tier8-senior.html',
+  'ex-t8-15': 'exercises/tier8-senior.html',
+
+  // 実践問題集 - AI生成コードの罠
+  'ex-ai-1': 'exercises/ai-mistakes.html',
+  'ex-ai-2': 'exercises/ai-mistakes.html',
+  'ex-ai-3': 'exercises/ai-mistakes.html',
+  'ex-ai-4': 'exercises/ai-mistakes.html',
+  'ex-ai-5': 'exercises/ai-mistakes.html',
+  'ex-ai-6': 'exercises/ai-mistakes.html',
+  'ex-ai-7': 'exercises/ai-mistakes.html',
+  'ex-ai-8': 'exercises/ai-mistakes.html',
+  'ex-ai-9': 'exercises/ai-mistakes.html',
+  'ex-ai-10': 'exercises/ai-mistakes.html',
+  'ex-ai-11': 'exercises/ai-mistakes.html',
+  'ex-ai-12': 'exercises/ai-mistakes.html',
+  'ex-ai-13': 'exercises/ai-mistakes.html',
+  'ex-ai-14': 'exercises/ai-mistakes.html',
+  'ex-ai-15': 'exercises/ai-mistakes.html'
 };
 
 // 読み込み済みファイルを追跡
@@ -1019,6 +1172,42 @@ function updateProgress() {
   const level8Progress = document.getElementById('level8-progress');
   if (level8Progress) level8Progress.value = level8Count;
   updateProgressText('level8', level8Count, level8Sections.length);
+
+  // 実践問題集
+  const exercisesSections = [
+    'ex-t1-1','ex-t1-2','ex-t1-3','ex-t1-4','ex-t1-5','ex-t1-6','ex-t1-7','ex-t1-8','ex-t1-9','ex-t1-10','ex-t1-11','ex-t1-12','ex-t1-13','ex-t1-14','ex-t1-15',
+    'ex-t2-1','ex-t2-2','ex-t2-3','ex-t2-4','ex-t2-5','ex-t2-6','ex-t2-7','ex-t2-8','ex-t2-9','ex-t2-10','ex-t2-11','ex-t2-12','ex-t2-13','ex-t2-14','ex-t2-15',
+    'ex-t3-1','ex-t3-2','ex-t3-3','ex-t3-4','ex-t3-5','ex-t3-6','ex-t3-7','ex-t3-8','ex-t3-9','ex-t3-10','ex-t3-11','ex-t3-12','ex-t3-13','ex-t3-14','ex-t3-15',
+    'ex-t4-1','ex-t4-2','ex-t4-3','ex-t4-4','ex-t4-5','ex-t4-6','ex-t4-7','ex-t4-8','ex-t4-9','ex-t4-10','ex-t4-11','ex-t4-12','ex-t4-13','ex-t4-14','ex-t4-15',
+    'ex-t5-1','ex-t5-2','ex-t5-3','ex-t5-4','ex-t5-5','ex-t5-6','ex-t5-7','ex-t5-8','ex-t5-9','ex-t5-10','ex-t5-11','ex-t5-12','ex-t5-13','ex-t5-14','ex-t5-15',
+    'ex-t6-1','ex-t6-2','ex-t6-3','ex-t6-4','ex-t6-5','ex-t6-6','ex-t6-7','ex-t6-8','ex-t6-9','ex-t6-10','ex-t6-11','ex-t6-12','ex-t6-13','ex-t6-14','ex-t6-15',
+    'ex-t7-1','ex-t7-2','ex-t7-3','ex-t7-4','ex-t7-5','ex-t7-6','ex-t7-7','ex-t7-8','ex-t7-9','ex-t7-10','ex-t7-11','ex-t7-12','ex-t7-13','ex-t7-14','ex-t7-15',
+    'ex-t8-1','ex-t8-2','ex-t8-3','ex-t8-4','ex-t8-5','ex-t8-6','ex-t8-7','ex-t8-8','ex-t8-9','ex-t8-10','ex-t8-11','ex-t8-12','ex-t8-13','ex-t8-14','ex-t8-15',
+    'ex-ai-1','ex-ai-2','ex-ai-3','ex-ai-4','ex-ai-5','ex-ai-6','ex-ai-7','ex-ai-8','ex-ai-9','ex-ai-10','ex-ai-11','ex-ai-12','ex-ai-13','ex-ai-14','ex-ai-15'
+  ];
+  const exercisesCount = completed.filter(s => exercisesSections.includes(s)).length;
+  const exercisesProgress = document.getElementById('exercises-progress');
+  if (exercisesProgress) exercisesProgress.value = exercisesCount;
+  const exercisesText = document.getElementById('exercises-progress-text');
+  if (exercisesText) exercisesText.textContent = exercisesCount + ' / ' + exercisesSections.length;
+
+  // ダッシュボードカードリンクのテキストを更新（実践問題集）
+  const exCard = document.querySelector('.dashboard-card[data-level="exercises"]');
+  if (exCard) {
+    const exLink = exCard.querySelector('.dashboard-card-link');
+    if (exLink) {
+      if (exercisesCount === 0) {
+        exLink.textContent = '問題を解く';
+        exLink.classList.remove('completed-level');
+      } else if (exercisesCount >= exercisesSections.length) {
+        exLink.textContent = 'もう一度解く';
+        exLink.classList.add('completed-level');
+      } else {
+        exLink.textContent = '続きから解く';
+        exLink.classList.remove('completed-level');
+      }
+    }
+  }
 
   // 次のステップ表示を更新
   updateNextStep();

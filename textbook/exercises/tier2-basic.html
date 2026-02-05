@@ -1,0 +1,1124 @@
+<!-- ============================================
+     Tier 2: JavaScript基礎 コーディング演習
+     15問（ex-t2-1 〜 ex-t2-15）
+     ============================================ -->
+
+<section id="ex-t2-1">
+  <h1>問題 1: varのホイスティングとスコープ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      新人エンジニアが書いたコードをレビューしています。
+      「変数を宣言する前に使っているのにエラーにならない」と不思議がっています。
+      varのホイスティング（巻き上げ）の挙動を正確に理解し、出力結果を予測してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>console.log("--- 開始 ---");
+console.log("a:", a);
+
+var a = 10;
+
+function showValue() {
+  console.log("b:", b);
+  var b = 20;
+
+  if (true) {
+    var c = 30;
+    console.log("c (if内):", c);
+  }
+
+  console.log("c (if外):", c);
+  console.log("b (代入後):", b);
+}
+
+showValue();
+console.log("a (最終):", a);</code></pre>
+
+  <div class="quiz" id="quiz-ex-t2-1">
+    <div class="quiz-question"><strong>問題：</strong>上記コードを実行したとき、最初の <code>console.log("a:", a)</code> と <code>console.log("b:", b)</code> の出力はそれぞれ何になりますか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-1" value="a">
+        a: 10、b: 20（宣言と代入が両方とも巻き上げられる）
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="varで宣言された変数はホイスティング（巻き上げ）により、スコープの先頭で宣言だけが行われます。しかし代入はそのまま元の位置で行われるため、宣言前にアクセスするとundefinedになります。また、varはブロックスコープを持たないため、if文の中で宣言したcも関数スコープ全体で有効です。">
+        <input type="radio" name="quiz-ex-t2-1" value="b">
+        a: undefined、b: undefined（宣言のみ巻き上げ、代入は巻き上げられない）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-1" value="c">
+        ReferenceError が発生する（宣言前のアクセスはエラー）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-1" value="d">
+        a: undefined、b: ReferenceError（関数内は巻き上げされない）
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t2-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t2-1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t2-2">
+  <h1>問題 2: == vs ===（暗黙の型変換の罠）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      フォームの入力値を検証する処理で、等価比較を使っています。
+      しかしテスト中に「空文字列が0と等しいと判定されている」というバグ報告がありました。
+      ==（等価演算子）と ===（厳密等価演算子）の違いを正しく理解し、各比較の結果を予測してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// フォーム入力値の検証ロジック
+function validateInput(value) {
+  const results = [];
+
+  // テストケース1: 空文字列と0
+  results.push(0 == "");        // A
+  results.push(0 === "");       // B
+
+  // テストケース2: nullとundefined
+  results.push(null == undefined);   // C
+  results.push(null === undefined);  // D
+
+  // テストケース3: 文字列と数値
+  results.push(1 == "1");       // E
+  results.push(1 === "1");      // F
+
+  // テストケース4: falsy値同士
+  results.push(false == "");    // G
+  results.push(false == null);  // H
+
+  console.log("結果:", results);
+  return results;
+}
+
+validateInput();</code></pre>
+
+  <div class="quiz" id="quiz-ex-t2-2">
+    <div class="quiz-question"><strong>問題：</strong>A〜Hの結果を正しく表しているのはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-2" value="a">
+        A:true, B:false, C:true, D:true, E:true, F:false, G:true, H:true
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="==は暗黙の型変換を行います。0==''はどちらもfalsy値で、型変換後に等しくなるためtrue。null==undefinedは特別なルールでtrue（ただし===ではfalse）。1=='1'は文字列が数値に変換されてtrue。false==''は両方0に変換されてtrue。しかしfalse==nullはfalse。nullは==でundefinedとのみ等しく、他のfalsy値とは等しくなりません。これが==の最も危険な落とし穴の一つです。">
+        <input type="radio" name="quiz-ex-t2-2" value="b">
+        A:true, B:false, C:true, D:false, E:true, F:false, G:true, H:false
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-2" value="c">
+        A:false, B:false, C:true, D:false, E:true, F:false, G:false, H:false
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-2" value="d">
+        A:true, B:false, C:true, D:false, E:true, F:false, G:true, H:true
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t2-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t2-2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t2-3">
+  <h1>問題 3: constオブジェクトのプロパティ変更</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      チームメンバーが「constで宣言したから変更されないはず」と主張していますが、
+      ユーザー情報が書き換わってしまうバグが発生しています。
+      constの「何が不変なのか」を正確に理解してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>const user = {
+  name: "田中太郎",
+  age: 25,
+  hobbies: ["読書", "映画"]
+};
+
+// 操作A: プロパティの変更
+user.age = 26;
+
+// 操作B: プロパティの追加
+user.email = "tanaka@example.com";
+
+// 操作C: 配列への追加
+user.hobbies.push("ゲーム");
+
+// 操作D: 再代入
+// user = { name: "佐藤花子" };
+
+// 操作E: Object.freeze後の変更
+const config = Object.freeze({
+  apiUrl: "https://api.example.com",
+  timeout: 3000,
+  options: { retry: true }
+});
+
+config.timeout = 5000;
+config.options.retry = false;
+
+console.log("user:", user);
+console.log("config.timeout:", config.timeout);
+console.log("config.options.retry:", config.options.retry);</code></pre>
+
+  <div class="quiz" id="quiz-ex-t2-3">
+    <div class="quiz-question"><strong>問題：</strong>操作A〜Cの結果と、config.timeout、config.options.retryの最終値について正しいのはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-3" value="a">
+        操作A〜Cはすべてエラー。constで宣言したオブジェクトは変更不可。
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-3" value="b">
+        操作A〜Cは成功。config.timeoutは5000、config.options.retryはfalse。
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="constは「変数の再代入」を禁止するだけで、オブジェクトの中身（プロパティ）の変更は許可されます。そのため操作A〜Cはすべて成功します。Object.freeze()を使うとプロパティの変更を禁止できますが、これは「浅い凍結（shallow freeze）」です。直接のプロパティ（timeout）は変更されませんが、ネストされたオブジェクト（options）の中身は変更可能です。完全に不変にするにはdeep freezeが必要です。">
+        <input type="radio" name="quiz-ex-t2-3" value="c">
+        操作A〜Cは成功。config.timeoutは3000、config.options.retryはfalse。
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-3" value="d">
+        操作A〜Cは成功。config.timeoutは3000、config.options.retryはtrue。
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t2-3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t2-3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t2-4">
+  <h1>問題 4: typeofの意外な挙動</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      デバッグ中に型チェックのコードを書いていますが、期待と異なる結果が返ってきます。
+      JavaScriptのtypeof演算子には歴史的な理由による「罠」がいくつかあります。
+      正確な出力を予測してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>function checkTypes() {
+  const values = [
+    null,
+    [],
+    NaN,
+    undefined,
+    "hello",
+    42,
+    true,
+    function() {},
+    {},
+    Symbol("id")
+  ];
+
+  const labels = [
+    "null", "[]", "NaN", "undefined",
+    '"hello"', "42", "true",
+    "function(){}", "{}", 'Symbol("id")'
+  ];
+
+  values.forEach((val, i) => {
+    console.log(`typeof ${labels[i]} → "${typeof val}"`);
+  });
+
+  // おまけ: 配列かどうかの正しい判定
+  console.log("Array.isArray([]):", Array.isArray([]));
+  console.log("NaN === NaN:", NaN === NaN);
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t2-4">
+    <div class="quiz-question"><strong>問題：</strong><code>typeof null</code>、<code>typeof []</code>、<code>typeof NaN</code> の結果の組み合わせとして正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-4" value="a">
+        "null"、"array"、"NaN"
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-4" value="b">
+        "null"、"object"、"number"
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="typeof nullが'object'を返すのはJavaScript初期の実装バグが仕様として残ったものです。typeof []が'object'を返すのは配列もオブジェクトの一種だからです（配列判定にはArray.isArray()を使います）。typeof NaNが'number'を返すのはNaNがIEEE 754浮動小数点の特殊な数値だからです。また、NaN === NaNはfalseになる唯一の値です。判定にはNumber.isNaN()を使いましょう。">
+        <input type="radio" name="quiz-ex-t2-4" value="c">
+        "object"、"object"、"number"
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-4" value="d">
+        "object"、"array"、"number"
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t2-4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t2-4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t2-5">
+  <h1>問題 5: forループのlet vs varとクロージャ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      UIに5つのボタンを配置し、各ボタンに番号を表示する処理を実装しました。
+      しかし、どのボタンをクリックしても同じ番号が表示されるというバグ報告がありました。
+      varとletのスコープの違いがクロージャにどう影響するかを理解してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// パターンA: varを使った場合
+const handlersA = [];
+for (var i = 0; i < 5; i++) {
+  handlersA.push(function() {
+    console.log("A: ボタン", i, "がクリックされました");
+  });
+}
+
+// パターンB: letを使った場合
+const handlersB = [];
+for (let j = 0; j < 5; j++) {
+  handlersB.push(function() {
+    console.log("B: ボタン", j, "がクリックされました");
+  });
+}
+
+// 全ハンドラを実行
+console.log("=== パターンA (var) ===");
+handlersA.forEach(fn => fn());
+
+console.log("=== パターンB (let) ===");
+handlersB.forEach(fn => fn());</code></pre>
+
+  <div class="quiz" id="quiz-ex-t2-5">
+    <div class="quiz-question"><strong>問題：</strong>パターンAとパターンBの出力結果として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-5" value="a">
+        A: 0,1,2,3,4 / B: 0,1,2,3,4（どちらも正しく動く）
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="varは関数スコープなので、ループ全体で1つのiを共有します。ループ終了後iは5になっているため、すべてのクロージャが同じi（=5）を参照します。一方letはブロックスコープなので、ループの各反復ごとに新しいjが作られ、各クロージャは自分の反復時のjを保持します。これはJavaScriptで最も有名なクロージャの落とし穴です。">
+        <input type="radio" name="quiz-ex-t2-5" value="b">
+        A: すべて5 / B: 0,1,2,3,4（varは共有、letは各反復で新しい変数）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-5" value="c">
+        A: すべて4 / B: 0,1,2,3,4
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-5" value="d">
+        A: すべて5 / B: すべて5（どちらも同じ挙動）
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t2-5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t2-5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t2-6">
+  <h1>問題 6: Array.sort()のデフォルト挙動</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      商品の価格一覧を安い順に並び替える処理を実装しました。
+      しかしテストで「100円が20円より前に来ている」という不具合が報告されました。
+      Array.sort()のデフォルトの比較方法を理解し、正しい修正方法を選んでください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// 商品価格の並び替え
+const prices = [300, 50, 1000, 20, 100, 8];
+
+// パターンA: デフォルトのsort
+const sortedA = [...prices].sort();
+console.log("パターンA:", sortedA);
+
+// パターンB: 比較関数あり
+const sortedB = [...prices].sort((a, b) => a - b);
+console.log("パターンB:", sortedB);
+
+// パターンC: 文字列の配列
+const names = ["banana", "apple", "cherry", "date"];
+const sortedNames = [...names].sort();
+console.log("パターンC:", sortedNames);
+
+// パターンD: 混在する値
+const mixed = [10, "9", 2, "30"];
+const sortedMixed = [...mixed].sort();
+console.log("パターンD:", sortedMixed);
+
+// パターンE: 元の配列への影響
+const original = [3, 1, 2];
+const sorted = original.sort();
+console.log("original:", original);
+console.log("sorted === original:", sorted === original);</code></pre>
+
+  <div class="quiz" id="quiz-ex-t2-6">
+    <div class="quiz-question"><strong>問題：</strong>パターンAの出力とパターンEの <code>sorted === original</code> の結果として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-6" value="a">
+        A: [8, 20, 50, 100, 300, 1000] / sorted === original: false
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-6" value="b">
+        A: [1000, 100, 20, 300, 50, 8] / sorted === original: true
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Array.sort()はデフォルトで要素を文字列に変換してから辞書順（Unicode順）で比較します。そのため数値の1000は文字列'1000'として'20'より前に来ます（'1' < '2'）。また、sort()は破壊的メソッドで元の配列を直接変更し、戻り値は元の配列への参照です。そのためsorted === originalはtrueになります。数値を正しくソートするには比較関数 (a, b) => a - b を渡す必要があります。">
+        <input type="radio" name="quiz-ex-t2-6" value="c">
+        A: [100, 1000, 20, 300, 50, 8] / sorted === original: true
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-6" value="d">
+        A: [100, 1000, 20, 300, 50, 8] / sorted === original: false
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t2-6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t2-6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t2-7">
+  <h1>問題 7: map vs forEachの戻り値の違い</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      商品リストの価格を税込みに変換する処理を2つの方法で実装しましたが、
+      片方は期待通りに動かず、もう片方は戻り値を無視してしまっています。
+      mapとforEachの根本的な違いを理解してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>const prices = [100, 200, 300, 400, 500];
+const taxRate = 1.10;
+
+// パターンA: forEachで結果を返そうとする
+const resultA = prices.forEach(price => {
+  return price * taxRate;
+});
+console.log("パターンA:", resultA);
+
+// パターンB: mapの戻り値を変数に入れない
+prices.map(price => {
+  return price * taxRate;
+});
+console.log("パターンB: pricesは変わった？", prices);
+
+// パターンC: mapを正しく使う
+const resultC = prices.map(price => price * taxRate);
+console.log("パターンC:", resultC);
+
+// パターンD: forEachの正しい使い方
+const resultD = [];
+prices.forEach(price => {
+  resultD.push(price * taxRate);
+});
+console.log("パターンD:", resultD);
+
+// パターンE: mapで副作用を起こす（アンチパターン）
+const resultE = [];
+prices.map(price => {
+  resultE.push(price * taxRate);
+});
+console.log("パターンE:", resultE);</code></pre>
+
+  <div class="quiz" id="quiz-ex-t2-7">
+    <div class="quiz-question"><strong>問題：</strong>パターンAの <code>resultA</code> とパターンBの <code>prices</code> の値として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-7" value="a">
+        resultA: [110, 220, 330, 440, 550] / prices: [110, 220, 330, 440, 550]
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="forEachは常にundefinedを返します。コールバック内でreturnしても戻り値は捨てられます。一方mapは新しい配列を返しますが、元の配列は変更しません（非破壊的）。パターンBではmapの戻り値を変数に代入していないため、計算結果は失われ、pricesは元のままです。正しくはパターンCのようにmapの戻り値を変数に格納するか、パターンDのようにforEachで外部の配列にpushします。パターンEのようにmapで副作用を使うのはアンチパターンです。">
+        <input type="radio" name="quiz-ex-t2-7" value="b">
+        resultA: undefined / prices: [100, 200, 300, 400, 500]（元のまま）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-7" value="c">
+        resultA: undefined / prices: [110, 220, 330, 440, 550]
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-7" value="d">
+        resultA: [] / prices: [100, 200, 300, 400, 500]
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t2-7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t2-7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t2-8">
+  <h1>問題 8: オブジェクトの参照渡しによる意図しない変更</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      ユーザー設定の初期値をテンプレートとして使い回す処理を書きました。
+      しかし、あるユーザーの設定を変更すると別のユーザーの設定まで変わってしまいます。
+      オブジェクトの「参照渡し」の仕組みを理解してバグの原因を特定してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// ユーザー設定のテンプレート
+const defaultSettings = {
+  theme: "light",
+  fontSize: 14,
+  notifications: {
+    email: true,
+    push: true
+  }
+};
+
+// ユーザーAの設定を作成
+const userA = defaultSettings;
+userA.theme = "dark";
+
+// ユーザーBの設定を作成（スプレッド構文でコピー）
+const userB = { ...defaultSettings };
+userB.fontSize = 18;
+
+// ユーザーCの設定を作成（スプレッド構文でコピー）
+const userC = { ...defaultSettings };
+userC.notifications.email = false;
+
+console.log("default theme:", defaultSettings.theme);
+console.log("default fontSize:", defaultSettings.fontSize);
+console.log("userB notifications.email:", userB.notifications.email);
+console.log("userC notifications.email:", userC.notifications.email);</code></pre>
+
+  <div class="quiz" id="quiz-ex-t2-8">
+    <div class="quiz-question"><strong>問題：</strong>各console.logの出力として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-8" value="a">
+        theme: "light", fontSize: 14, userB email: true, userC email: false
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-8" value="b">
+        theme: "dark", fontSize: 18, userB email: true, userC email: false
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="userA = defaultSettingsは参照のコピーなので、userAとdefaultSettingsは同じオブジェクトを指します。userA.theme = 'dark'はdefaultSettingsも変更します。スプレッド構文{...obj}は浅いコピー（shallow copy）です。プリミティブ値（theme, fontSize）は独立しますが、ネストされたオブジェクト（notifications）は参照が共有されます。そのためuserCがnotifications.emailを変更すると、defaultSettings、userBのnotificationsも影響を受けます。深いコピーにはstructuredClone()やJSON.parse(JSON.stringify())を使います。">
+        <input type="radio" name="quiz-ex-t2-8" value="c">
+        theme: "dark", fontSize: 14, userB email: false, userC email: false
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-8" value="d">
+        theme: "dark", fontSize: 14, userB email: true, userC email: true
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t2-8')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t2-8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t2-9">
+  <h1>問題 9: parseIntとNumber()の違い</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      ユーザーが入力した文字列を数値に変換する処理を実装しています。
+      しかし、一部の入力で予期しない変換結果になりました。
+      parseInt()とNumber()の挙動の違いを正確に理解してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// さまざまな文字列を数値に変換
+const inputs = ["08", "0xFF", "3.14", "123abc", "", "  42  ", "Infinity"];
+
+console.log("=== parseInt ===");
+inputs.forEach(input => {
+  console.log(`parseInt("${input}") →`, parseInt(input));
+});
+
+console.log("\n=== Number ===");
+inputs.forEach(input => {
+  console.log(`Number("${input}") →`, Number(input));
+});
+
+// 追加テスト
+console.log("\n=== 追加テスト ===");
+console.log("parseInt('08'):", parseInt("08"));
+console.log("parseInt('08', 10):", parseInt("08", 10));
+console.log("parseInt('08', 8):", parseInt("08", 8));
+console.log("Number(null):", Number(null));
+console.log("Number(undefined):", Number(undefined));
+console.log("Number(true):", Number(true));
+console.log("Number(''):", Number(""));</code></pre>
+
+  <div class="quiz" id="quiz-ex-t2-9">
+    <div class="quiz-question"><strong>問題：</strong><code>parseInt("123abc")</code>、<code>Number("123abc")</code>、<code>Number("")</code> の結果として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-9" value="a">
+        123、123、NaN
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="parseIntは文字列の先頭から解析を始め、数値として解釈できない文字に達した時点で解析を停止します。'123abc'の場合、'123'まで解析できるので123を返します。Number()は文字列全体を数値として解釈しようとし、変換できない場合はNaNを返します。'123abc'は全体が数値ではないのでNaN。空文字列''はNumber()では0になります（特殊ルール）。なお、現代のJavaScriptではparseInt('08')は10進数として8を返しますが、明示的に基数を指定するparseInt('08', 10)が推奨されます。">
+        <input type="radio" name="quiz-ex-t2-9" value="b">
+        123、NaN、0
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-9" value="c">
+        NaN、NaN、0
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-9" value="d">
+        123、NaN、NaN
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t2-9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t2-9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t2-10">
+  <h1>問題 10: thisの参照先（メソッドをコールバックに渡した場合）</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      カウンターオブジェクトを作成し、ボタンのクリックイベントに紐づけました。
+      しかし「thisがundefinedでエラーになる」というバグが発生しました。
+      JavaScriptのthisの束縛ルールと、アロー関数との違いを理解してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>const counter = {
+  count: 0,
+
+  // 通常のメソッド
+  increment: function() {
+    this.count++;
+    console.log("count:", this.count);
+  },
+
+  // アロー関数のメソッド
+  decrement: () => {
+    this.count--;
+    console.log("count:", this.count);
+  },
+
+  // 遅延実行
+  delayedIncrement: function() {
+    setTimeout(function() {
+      // A: このthisは何を指す？
+      console.log("delayed this:", this);
+      this.count++;
+    }, 100);
+  },
+
+  // アロー関数で遅延実行
+  delayedIncrementArrow: function() {
+    setTimeout(() => {
+      // B: このthisは何を指す？
+      console.log("arrow this:", this);
+      this.count++;
+    }, 100);
+  }
+};
+
+// パターン1: 直接呼び出し
+counter.increment();
+
+// パターン2: 変数に代入して呼び出し
+const fn = counter.increment;
+// fn(); // これを実行するとどうなる？
+
+// パターン3: コールバックとして渡す
+// [1].forEach(counter.increment); // これは？</code></pre>
+
+  <div class="quiz" id="quiz-ex-t2-10">
+    <div class="quiz-question"><strong>問題：</strong>コメントAの <code>setTimeout</code> 内の通常関数でのthisと、コメントBのアロー関数でのthisの参照先として正しい組み合わせはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-10" value="a">
+        A: counterオブジェクト / B: counterオブジェクト
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="通常の関数のthisは「呼び出し方」で決まります。setTimeoutのコールバックは単独で呼び出されるため、thisはグローバルオブジェクト（ブラウザではwindow、strictモードではundefined）になります。アロー関数は自分自身のthisを持たず、定義された時点の外側のスコープのthisを引き継ぎます。delayedIncrementArrow内のアロー関数はdelayedIncrementArrowのthis（=counter）を引き継ぐため、正しくcounterを参照します。これがsetTimeout内でアロー関数が推奨される理由です。">
+        <input type="radio" name="quiz-ex-t2-10" value="b">
+        A: グローバル（またはundefined） / B: counterオブジェクト
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-10" value="c">
+        A: グローバル（またはundefined） / B: グローバル（またはundefined）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-10" value="d">
+        A: counterオブジェクト / B: グローバル（またはundefined）
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t2-10')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t2-10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t2-11">
+  <h1>問題 11: イベントリスナーの登録順とstopPropagation</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      ネストされたHTML要素にイベントリスナーを設定しています。
+      内側の要素をクリックすると、外側の要素のイベントも発火してしまいます（イベントバブリング）。
+      stopPropagation()の効果と、イベント伝播の仕組みを正確に理解してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// HTML構造:
+// &lt;div id="outer"&gt;
+//   &lt;div id="middle"&gt;
+//     &lt;button id="inner"&gt;クリック&lt;/button&gt;
+//   &lt;/div&gt;
+// &lt;/div&gt;
+
+const outer = document.getElementById("outer");
+const middle = document.getElementById("middle");
+const inner = document.getElementById("inner");
+
+// バブリングフェーズ（デフォルト）
+outer.addEventListener("click", () => {
+  console.log("1: outer - バブリング");
+});
+
+middle.addEventListener("click", (e) => {
+  console.log("2: middle - バブリング");
+  e.stopPropagation();
+});
+
+inner.addEventListener("click", () => {
+  console.log("3: inner - バブリング");
+});
+
+// キャプチャリングフェーズ
+outer.addEventListener("click", () => {
+  console.log("4: outer - キャプチャリング");
+}, true);
+
+middle.addEventListener("click", () => {
+  console.log("5: middle - キャプチャリング");
+}, true);
+
+// innerボタンをクリックした場合の出力順は？</code></pre>
+
+  <div class="quiz" id="quiz-ex-t2-11">
+    <div class="quiz-question"><strong>問題：</strong>innerボタンをクリックしたとき、console.logの出力順として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-11" value="a">
+        3 → 2 → 1（バブリング順のみ、キャプチャリングは無視される）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-11" value="b">
+        4 → 5 → 3 → 2 → 1（キャプチャリング → バブリング、stopPropagation無効）
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="イベントは3段階で伝播します。1)キャプチャリング（外→内）: outer(4) → middle(5) → 2)ターゲット: inner(3) → 3)バブリング（内→外）: middle(2)。middleのバブリングハンドラでstopPropagation()を呼んでいるため、outerのバブリングハンドラ(1)には到達しません。キャプチャリングフェーズはstopPropagation前に完了するため影響を受けません。stopPropagationは「これ以上の伝播を止める」ものであり、同じ要素の他のリスナーは実行されます（それを止めるにはstopImmediatePropagation）。">
+        <input type="radio" name="quiz-ex-t2-11" value="c">
+        4 → 5 → 3 → 2（キャプチャリング後、バブリングでstopPropagationにより1は実行されない）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-11" value="d">
+        4 → 5 → 3（stopPropagationにより2も1も実行されない）
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t2-11')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t2-11')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t2-12">
+  <h1>問題 12: innerHTML vs textContentのXSSリスク</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      ユーザーのコメントを画面に表示する掲示板アプリを開発しています。
+      セキュリティレビューで「XSS（クロスサイトスクリプティング）の脆弱性がある」と指摘されました。
+      innerHTMLとtextContentの違いを理解し、安全なコードを見極めてください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// ユーザーの入力値（悪意あるケース）
+const userInput = '&lt;img src="x" onerror="alert(document.cookie)"&gt;';
+const safeInput = "こんにちは！良い天気ですね。";
+
+const commentArea = document.getElementById("comments");
+
+// パターンA: innerHTMLを使用（危険）
+function displayCommentA(text) {
+  const div = document.createElement("div");
+  div.innerHTML = "&lt;p&gt;" + text + "&lt;/p&gt;";
+  commentArea.appendChild(div);
+}
+
+// パターンB: textContentを使用（安全）
+function displayCommentB(text) {
+  const div = document.createElement("div");
+  const p = document.createElement("p");
+  p.textContent = text;
+  div.appendChild(p);
+  commentArea.appendChild(div);
+}
+
+// パターンC: テンプレートリテラルでinnerHTML（危険）
+function displayCommentC(text) {
+  commentArea.innerHTML += `&lt;div class="comment"&gt;${text}&lt;/div&gt;`;
+}
+
+// パターンD: エスケープ処理
+function escapeHTML(str) {
+  return str
+    .replace(/&/g, "&amp;amp;")
+    .replace(/&lt;/g, "&amp;lt;")
+    .replace(/&gt;/g, "&amp;gt;")
+    .replace(/"/g, "&amp;quot;")
+    .replace(/'/g, "&amp;#039;");
+}
+
+function displayCommentD(text) {
+  const div = document.createElement("div");
+  div.innerHTML = `&lt;p&gt;${escapeHTML(text)}&lt;/p&gt;`;
+  commentArea.appendChild(div);
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t2-12">
+    <div class="quiz-question"><strong>問題：</strong>悪意ある <code>userInput</code> を渡した場合、XSS攻撃が成功してしまうパターンはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-12" value="a">
+        パターンA, B, C（innerHTML、textContentの両方が危険）
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="innerHTMLはHTML文字列をパースしてDOMに挿入するため、scriptタグやイベントハンドラが実行されます。パターンAとCはユーザー入力をそのままinnerHTMLに渡すため、img要素のonerrorイベントでJavaScriptが実行されます。パターンBのtextContentはテキストとして挿入するため、HTMLタグは文字列として表示され安全です。パターンDはエスケープ処理で<や>を実体参照に変換するため安全です。実務ではtextContentの使用が最も確実な対策です。">
+        <input type="radio" name="quiz-ex-t2-12" value="b">
+        パターンAとCのみ（innerHTMLにユーザー入力を直接渡している）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-12" value="c">
+        パターンAのみ（テンプレートリテラルは安全）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-12" value="d">
+        パターンA, C, D（エスケープ処理も不完全で危険）
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t2-12')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t2-12')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t2-13">
+  <h1>問題 13: setTimeout(fn, 0)の実行タイミング</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      処理の実行順序を制御するために <code>setTimeout(fn, 0)</code> を使いました。
+      「0ミリ秒なら即座に実行されるはず」と思っていましたが、期待通りの順序になりません。
+      JavaScriptのイベントループの仕組みを理解し、正確な実行順序を予測してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>console.log("1: スクリプト開始");
+
+setTimeout(() => {
+  console.log("2: setTimeout(0)");
+}, 0);
+
+Promise.resolve().then(() => {
+  console.log("3: Promise.then");
+});
+
+Promise.resolve().then(() => {
+  console.log("4: Promise.then 2");
+  setTimeout(() => {
+    console.log("5: ネストされたsetTimeout");
+  }, 0);
+});
+
+setTimeout(() => {
+  console.log("6: 2番目のsetTimeout(0)");
+}, 0);
+
+queueMicrotask(() => {
+  console.log("7: queueMicrotask");
+});
+
+console.log("8: スクリプト終了");</code></pre>
+
+  <div class="quiz" id="quiz-ex-t2-13">
+    <div class="quiz-question"><strong>問題：</strong>上記コードの出力順として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-13" value="a">
+        1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-13" value="b">
+        1 → 8 → 2 → 6 → 3 → 4 → 7 → 5
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="JavaScriptのイベントループには優先順位があります。1)同期コード（コールスタック）: 1→8 が最初に実行。2)マイクロタスク（Promise.then, queueMicrotask）: 3→4→7 が次に実行。マイクロタスクは全て処理されるまで次のマクロタスクには進みません。3)マクロタスク（setTimeout）: 2→6 の順で実行。4)ネストされたsetTimeout(5)は4の実行時にキューに追加されるため最後。setTimeout(fn, 0)は「0msの遅延」ではなく「次のマクロタスクとして実行」を意味します。">
+        <input type="radio" name="quiz-ex-t2-13" value="c">
+        1 → 8 → 3 → 4 → 7 → 2 → 6 → 5
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-13" value="d">
+        1 → 8 → 3 → 7 → 4 → 2 → 6 → 5
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t2-13')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t2-13')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t2-14">
+  <h1>問題 14: 配列の浅いコピーとネストされたデータ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      タスク管理アプリで、タスクリストのバックアップを作成する機能を実装しました。
+      スプレッド構文でコピーしたはずなのに、バックアップを編集すると元のデータまで変わってしまいます。
+      浅いコピー（shallow copy）と深いコピー（deep copy）の違いを理解してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// タスクリスト
+const tasks = [
+  { id: 1, title: "買い物", done: false, tags: ["日常"] },
+  { id: 2, title: "レポート提出", done: false, tags: ["仕事", "急ぎ"] },
+  { id: 3, title: "運動", done: true, tags: ["健康"] }
+];
+
+// バックアップA: スプレッド構文
+const backupA = [...tasks];
+
+// バックアップB: Array.from
+const backupB = Array.from(tasks);
+
+// バックアップC: structuredClone（深いコピー）
+const backupC = structuredClone(tasks);
+
+// 操作1: バックアップAの要素を変更
+backupA[0].done = true;
+backupA[0].tags.push("完了");
+
+// 操作2: バックアップAに新しい要素を追加
+backupA.push({ id: 4, title: "読書", done: false, tags: [] });
+
+// 操作3: バックアップCの要素を変更
+backupC[1].title = "レポート修正";
+
+console.log("元のtasks[0].done:", tasks[0].done);
+console.log("元のtasks[0].tags:", tasks[0].tags);
+console.log("元のtasks.length:", tasks.length);
+console.log("元のtasks[1].title:", tasks[1].title);
+console.log("backupB[0].done:", backupB[0].done);</code></pre>
+
+  <div class="quiz" id="quiz-ex-t2-14">
+    <div class="quiz-question"><strong>問題：</strong>各console.logの出力として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-14" value="a">
+        done: false, tags: ["日常"], length: 4, title: "レポート修正", backupB done: false
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="スプレッド構文[...arr]とArray.from()は浅いコピーです。配列自体は新しいものが作られますが、中身のオブジェクトは参照が共有されます。backupA[0]とtasks[0]は同じオブジェクトを指すため、backupA[0].doneの変更はtasks[0]にも反映されます（true）。tags配列も共有されるのでpushも反映されます。しかしbackupA.push()は配列自体の操作なので元のtasksには影響しません（length: 3のまま）。structuredCloneは完全な深いコピーなので、backupCの変更は元に影響しません。backupBもbackupAと同じ参照を共有するのでdone: trueです。">
+        <input type="radio" name="quiz-ex-t2-14" value="b">
+        done: true, tags: ["日常", "完了"], length: 3, title: "レポート提出", backupB done: true
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-14" value="c">
+        done: true, tags: ["日常", "完了"], length: 4, title: "レポート修正", backupB done: false
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-14" value="d">
+        done: false, tags: ["日常"], length: 3, title: "レポート提出", backupB done: false
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t2-14')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t2-14')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t2-15">
+  <h1>問題 15: 総合 - TODOアプリのJS実装レビュー</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>
+      新人エンジニアがTODOアプリのJavaScript部分を実装しました。
+      コードレビューを依頼されています。このコードには複数のバグと設計上の問題があります。
+      シニアエンジニアの視点で最も致命的な問題を特定してください。
+    </p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// TODOアプリの実装
+let todos = [];
+let nextId = 1;
+
+function addTodo() {
+  const input = document.getElementById("todo-input");
+  const text = input.value;
+
+  // 問題点1: 入力チェック
+  if (text == "") {
+    alert("テキストを入力してください");
+    return;
+  }
+
+  const todo = {
+    id: nextId++,
+    text: text,
+    done: false,
+    createdAt: new Date()
+  };
+
+  todos.push(todo);
+  renderTodos();
+  input.value = "";
+}
+
+function deleteTodo(id) {
+  // 問題点2: 配列操作
+  for (var i = 0; i &lt; todos.length; i++) {
+    if (todos[i].id == id) {
+      todos.splice(i, 1);
+    }
+  }
+  renderTodos();
+}
+
+function toggleTodo(id) {
+  const todo = todos.find(t => t.id == id);
+  todo.done = !todo.done;
+  renderTodos();
+}
+
+function renderTodos() {
+  const list = document.getElementById("todo-list");
+  list.innerHTML = "";
+
+  todos.forEach(todo => {
+    // 問題点3: XSSリスク
+    list.innerHTML += `
+      &lt;li class="${todo.done ? 'done' : ''}"&gt;
+        &lt;span onclick="toggleTodo(${todo.id})"&gt;${todo.text}&lt;/span&gt;
+        &lt;button onclick="deleteTodo(${todo.id})"&gt;削除&lt;/button&gt;
+      &lt;/li&gt;
+    `;
+  });
+
+  // 問題点4: 保存処理
+  localStorage.setItem("todos", todos);
+}
+
+function loadTodos() {
+  const saved = localStorage.getItem("todos");
+  if (saved) {
+    todos = saved;
+  }
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t2-15">
+    <div class="quiz-question"><strong>問題：</strong>このコードの問題点として<strong>最も致命的</strong>なものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-15" value="a">
+        deleteTodoでvarを使っておりsplice後にインデックスがずれる（機能バグ）
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="最も致命的なのはXSS脆弱性です。renderTodosでtodo.textをそのままinnerHTMLに埋め込んでいるため、ユーザーが&lt;script&gt;タグやonerrorイベントを含むテキストを入力すると任意のJavaScriptが実行されます。これはセキュリティ上の最重大問題です。他の問題も重要ですが優先度は次の通り: 1)XSS(セキュリティ) 2)==を使った曖昧な比較 3)localStorageにJSON.stringifyなしで保存（[object Object]になる） 4)deleteTodoのspliceインデックスずれ 5)toggleTodoでfindの結果がundefinedの場合のエラー処理不足。実務ではセキュリティ問題は常に最優先で修正します。">
+        <input type="radio" name="quiz-ex-t2-15" value="b">
+        renderTodosでtodo.textをinnerHTMLに直接埋め込んでいるXSS脆弱性（セキュリティ問題）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-15" value="c">
+        localStorageにJSON.stringifyせずにオブジェクトを保存している（データ損失）
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t2-15" value="d">
+        ==を===の代わりに使っている（型安全性の問題）
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t2-15')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t2-15')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>

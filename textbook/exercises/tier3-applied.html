@@ -1,0 +1,1116 @@
+<!-- ============================================
+     Tier 3 応用基礎: 非同期JS・モダンJS・TypeScript
+     15問のコーディング演習
+     ============================================ -->
+
+<section id="ex-t3-1">
+  <h1>問題 1: Promise.resolve/rejectの連鎖実行順序</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>チームメンバーが「Promiseチェーンの実行順序を理解している」と言いますが、以下のコードの出力を正しく予測できるか確認してください。マイクロタスクキューとコールスタックの関係がポイントです。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>console.log('A');
+
+Promise.resolve()
+  .then(() => {
+    console.log('B');
+    return Promise.resolve();
+  })
+  .then(() => {
+    console.log('C');
+  });
+
+Promise.resolve()
+  .then(() => {
+    console.log('D');
+  })
+  .then(() => {
+    console.log('E');
+  });
+
+console.log('F');</code></pre>
+
+  <div class="quiz" id="quiz-ex-t3-1">
+    <div class="quiz-question"><strong>問題：</strong>このコードの出力順序として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-1" value="a">
+        A → F → B → C → D → E
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-1" value="b">
+        A → F → B → D → C → E
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="同期コードが先に実行され（A, F）、その後マイクロタスクキューが処理されます。最初のPromise.resolveのthenでBが出力されますが、return Promise.resolve()により追加のマイクロタスクが生成されます。そのため2番目のチェーンのDが先に処理され、次にEが処理され、最後にCが処理されます。">
+        <input type="radio" name="quiz-ex-t3-1" value="c">
+        A → F → B → D → E → C
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-1" value="d">
+        A → B → D → F → C → E
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-1')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t3-1')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t3-2">
+  <h1>問題 2: async関数内でawaitを忘れた場合のバグ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ユーザー登録APIを呼び出す関数を実装しました。テスト時に「登録は成功しているのにエラーメッセージが表示されない」という不具合が報告されています。原因を特定してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>async function registerUser(userData) {
+  try {
+    const response = fetch('/api/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData),
+    });
+
+    const result = response.json();
+
+    if (result.error) {
+      showError(result.error);
+      return false;
+    }
+
+    showSuccess('登録が完了しました');
+    return true;
+  } catch (error) {
+    showError('ネットワークエラーが発生しました');
+    return false;
+  }
+}
+
+// 呼び出し側
+const btn = document.getElementById('register-btn');
+btn.addEventListener('click', async () => {
+  const success = await registerUser({
+    name: '田中太郎',
+    email: 'tanaka@example.com',
+  });
+  console.log('登録結果:', success);
+});</code></pre>
+
+  <div class="quiz" id="quiz-ex-t3-2">
+    <div class="quiz-question"><strong>問題：</strong>このコードの主要なバグはどこにありますか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-2" value="a">
+        JSON.stringifyの使い方が間違っている
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="fetchとresponse.json()の両方にawaitが付いていません。awaitなしではPromiseオブジェクトそのものが変数に代入されます。response.json()はPromiseオブジェクトに対して呼ばれるためTypeErrorが発生し、result.errorのチェックも正しく動作しません。">
+        <input type="radio" name="quiz-ex-t3-2" value="b">
+        fetchとresponse.json()にawaitが付いていないため、Promiseオブジェクトのまま処理している
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-2" value="c">
+        try-catchの範囲が広すぎて、showErrorのエラーもキャッチしてしまう
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-2" value="d">
+        addEventListenerのコールバックにasyncを使ってはいけない
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-2')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t3-2')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t3-3">
+  <h1>問題 3: 直列awaitのパフォーマンス問題</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ダッシュボード画面の初期データ読み込みが遅いと報告がありました。各APIは独立しており、互いに依存関係はありません。コードレビューでパフォーマンスの問題を指摘してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>async function loadDashboardData(userId) {
+  console.time('dashboard-load');
+
+  // ユーザー情報取得（約200ms）
+  const user = await fetch(`/api/users/${userId}`).then(r => r.json());
+
+  // 通知一覧取得（約300ms）
+  const notifications = await fetch(`/api/notifications/${userId}`).then(r => r.json());
+
+  // アクティビティ履歴取得（約400ms）
+  const activities = await fetch(`/api/activities/${userId}`).then(r => r.json());
+
+  // 統計データ取得（約250ms）
+  const stats = await fetch(`/api/stats/${userId}`).then(r => r.json());
+
+  console.timeEnd('dashboard-load');
+  // 結果: dashboard-load: 約1150ms
+
+  return { user, notifications, activities, stats };
+}
+
+// 画面表示
+async function initDashboard() {
+  const data = await loadDashboardData('user-123');
+  renderUser(data.user);
+  renderNotifications(data.notifications);
+  renderActivities(data.activities);
+  renderStats(data.stats);
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t3-3">
+    <div class="quiz-question"><strong>問題：</strong>パフォーマンスを改善するために、最も適切な修正方法はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-3" value="a">
+        各fetchをsetTimeoutで囲んで非同期にする
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-3" value="b">
+        Web Workerを使って別スレッドで処理する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="4つのAPIリクエストは互いに依存していないため、Promise.allで並列実行できます。const [user, notifications, activities, stats] = await Promise.all([...]) とすることで、最も遅いリクエスト（400ms）の時間だけで全データを取得でき、約1150ms→約400msに短縮できます。">
+        <input type="radio" name="quiz-ex-t3-3" value="c">
+        Promise.allを使い4つのリクエストを並列実行し、分割代入で受け取る
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-3" value="d">
+        Promise.raceを使い最初に完了したリクエストから順に描画する
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-3')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t3-3')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t3-4">
+  <h1>問題 4: try-catchでawaitなしのPromiseがキャッチされない</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ファイルアップロード処理でエラーハンドリングを実装しました。しかし、アップロードが失敗してもエラーメッセージが表示されず、コンソールに「Unhandled Promise Rejection」が出ています。原因を特定してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>async function uploadFiles(files) {
+  const results = [];
+
+  for (const file of files) {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // awaitを付け忘れている！
+      const response = fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      results.push({ name: file.name, status: 'success' });
+    } catch (error) {
+      // ここには到達しない
+      results.push({ name: file.name, status: 'failed', error: error.message });
+    }
+  }
+
+  return results;
+}
+
+// 呼び出し
+document.getElementById('upload-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const files = document.getElementById('file-input').files;
+  const results = await uploadFiles([...files]);
+
+  results.forEach(r => {
+    console.log(`${r.name}: ${r.status}`);
+  });
+});</code></pre>
+
+  <div class="quiz" id="quiz-ex-t3-4">
+    <div class="quiz-question"><strong>問題：</strong>エラーがキャッチされない根本原因はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-4" value="a">
+        FormDataの使い方が間違っているため
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-4" value="b">
+        forループではなくPromise.allを使うべきだから
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="fetchにawaitが付いていないため、fetchはPromiseオブジェクトを返すだけで、try-catchはPromiseの中で発生するエラー（ネットワークエラー等）をキャッチしません。try-catchは同期的に投げられた例外、またはawaitされたPromiseのrejectのみをキャッチします。awaitなしのPromiseが拒否されると、Unhandled Promise Rejectionになります。">
+        <input type="radio" name="quiz-ex-t3-4" value="c">
+        fetchにawaitがないため、Promiseの拒否がtry-catchのスコープ外で発生する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-4" value="d">
+        async関数の中でfor文を使うとエラーハンドリングが無効になるため
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-4')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t3-4')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t3-5">
+  <h1>問題 5: Promise.allSettled vs Promise.allのエラー時挙動</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>複数の外部APIからデータを取得する処理があります。一部のAPIが失敗しても、成功したデータは表示したいという要件です。現在のコードは1つでもAPIが失敗すると全データが表示されなくなります。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>async function fetchMultipleAPIs() {
+  const apis = [
+    fetch('https://api.service-a.com/data').then(r => r.json()),
+    fetch('https://api.service-b.com/data').then(r => r.json()), // このAPIが時々落ちる
+    fetch('https://api.service-c.com/data').then(r => r.json()),
+  ];
+
+  try {
+    // Promise.allを使用中
+    const [dataA, dataB, dataC] = await Promise.all(apis);
+
+    renderServiceA(dataA);
+    renderServiceB(dataB);
+    renderServiceC(dataC);
+  } catch (error) {
+    // 1つでも失敗すると全部ここに来る
+    showError('データの取得に失敗しました');
+  }
+}
+
+// 改善版（穴埋め）
+async function fetchMultipleAPIsImproved() {
+  const apis = [
+    fetch('https://api.service-a.com/data').then(r => r.json()),
+    fetch('https://api.service-b.com/data').then(r => r.json()),
+    fetch('https://api.service-c.com/data').then(r => r.json()),
+  ];
+
+  const results = await Promise.allSettled(apis);
+
+  results.forEach((result, index) => {
+    if (result.status === '???') {
+      renderByIndex(index, result.value);
+    } else {
+      showPartialError(index, result.reason);
+    }
+  });
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t3-5">
+    <div class="quiz-question"><strong>問題：</strong>改善版コードの '???' に入る正しい値と、Promise.allSettledの特徴として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-5" value="a">
+        'resolved' が入る。Promise.allSettledは成功時にresolved、失敗時にrejectedを返す
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="Promise.allSettledは全てのPromiseが完了するまで待ち、各結果を{status: 'fulfilled', value: ...}または{status: 'rejected', reason: ...}の形で返します。Promise.allと異なり、1つが失敗しても他の結果は失われません。statusは'fulfilled'または'rejected'です。">
+        <input type="radio" name="quiz-ex-t3-5" value="b">
+        'fulfilled' が入る。Promise.allSettledは1つ失敗しても他の結果が得られ、rejectしない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-5" value="c">
+        'success' が入る。Promise.allSettledはtry-catchなしでも安全に使える
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-5" value="d">
+        'completed' が入る。Promise.allSettledは完了したものだけを配列で返す
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-5')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t3-5')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t3-6">
+  <h1>問題 6: 分割代入でデフォルト値が効かないケース</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>APIから取得したユーザーデータを分割代入で受け取り、デフォルト値を設定しています。しかし、一部のフィールドでデフォルト値が適用されないバグが報告されました。nullとundefinedの違いが原因です。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// APIから返ってくるデータ
+const apiResponse = {
+  user: {
+    name: '田中太郎',
+    age: null,          // DBでNULL（未入力）
+    email: undefined,   // フィールドが存在しない
+    role: '',           // 空文字列（入力済みだが空）
+    score: 0,           // 数値のゼロ（有効な値）
+  }
+};
+
+// 分割代入でデフォルト値を設定
+const {
+  name = '名無し',
+  age = 20,
+  email = 'no-email@example.com',
+  role = 'general',
+  score = 100,
+} = apiResponse.user;
+
+console.log('name:', name);
+console.log('age:', age);
+console.log('email:', email);
+console.log('role:', role);
+console.log('score:', score);</code></pre>
+
+  <div class="quiz" id="quiz-ex-t3-6">
+    <div class="quiz-question"><strong>問題：</strong>出力結果として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-6" value="a">
+        name: 田中太郎, age: 20, email: no-email@example.com, role: general, score: 100
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-6" value="b">
+        name: 田中太郎, age: 20, email: no-email@example.com, role: '', score: 0
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="分割代入のデフォルト値はundefinedの場合のみ適用されます。nullはundefinedではないため、age=nullのままです。emailはundefinedなのでデフォルト値が適用されます。空文字列''と数値0もundefinedではないため、デフォルト値は適用されません。これはnull合体演算子(??)との違いを理解する重要なポイントです。">
+        <input type="radio" name="quiz-ex-t3-6" value="c">
+        name: 田中太郎, age: null, email: no-email@example.com, role: '', score: 0
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-6" value="d">
+        name: 田中太郎, age: null, email: no-email@example.com, role: general, score: 100
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-6')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t3-6')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t3-7">
+  <h1>問題 7: スプレッド構文の浅いコピーの罠</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ユーザー設定のコピーを作成し、コピー側だけを変更したつもりが、元のオブジェクトも変わってしまうバグが発生しました。スプレッド構文による浅いコピー（shallow copy）の問題を見抜いてください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>const originalConfig = {
+  theme: 'dark',
+  language: 'ja',
+  notifications: {
+    email: true,
+    push: true,
+    sms: false,
+  },
+  tags: ['javascript', 'react'],
+};
+
+// スプレッド構文でコピーを作成
+const userConfig = { ...originalConfig };
+
+// コピー側を変更
+userConfig.theme = 'light';                    // プリミティブ値の変更
+userConfig.notifications.email = false;        // ネストされたオブジェクトの変更
+userConfig.tags.push('typescript');             // 配列の変更
+
+// 元のオブジェクトを確認
+console.log('元のtheme:', originalConfig.theme);
+console.log('元のemail:', originalConfig.notifications.email);
+console.log('元のtags:', originalConfig.tags);</code></pre>
+
+  <div class="quiz" id="quiz-ex-t3-7">
+    <div class="quiz-question"><strong>問題：</strong>console.logの出力結果として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-7" value="a">
+        元のtheme: light, 元のemail: false, 元のtags: ['javascript', 'react', 'typescript']
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="スプレッド構文は浅いコピー（shallow copy）です。第1階層のプリミティブ値（theme）は独立したコピーになりますが、ネストされたオブジェクト（notifications）や配列（tags）は参照がコピーされるだけです。そのため、notificationsとtagsへの変更は元のオブジェクトにも影響します。深いコピーにはstructuredClone()を使います。">
+        <input type="radio" name="quiz-ex-t3-7" value="b">
+        元のtheme: dark, 元のemail: false, 元のtags: ['javascript', 'react', 'typescript']
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-7" value="c">
+        元のtheme: dark, 元のemail: true, 元のtags: ['javascript', 'react']
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-7" value="d">
+        元のtheme: light, 元のemail: true, 元のtags: ['javascript', 'react']
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-7')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t3-7')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t3-8">
+  <h1>問題 8: モジュールの循環参照によるundefined</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>モジュール分割を行ったところ、特定の関数が「undefined」になるという報告を受けました。コードを確認すると、2つのモジュール間で循環参照（circular dependency）が発生していました。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// ===== moduleA.js =====
+import { formatUser } from './moduleB.js';
+
+export const DEFAULT_ROLE = 'member';
+
+export function createUser(name) {
+  return {
+    name,
+    role: DEFAULT_ROLE,
+    displayName: formatUser(name, DEFAULT_ROLE),
+  };
+}
+
+// ===== moduleB.js =====
+import { DEFAULT_ROLE } from './moduleA.js';
+
+export function formatUser(name, role) {
+  return `${name} (${role})`;
+}
+
+export function getDefaultGreeting() {
+  // DEFAULT_ROLEがundefinedになる可能性がある！
+  return `ようこそ、デフォルト権限は${DEFAULT_ROLE}です`;
+}
+
+// ===== main.js =====
+import { createUser } from './moduleA.js';
+import { getDefaultGreeting } from './moduleB.js';
+
+console.log(createUser('田中'));
+console.log(getDefaultGreeting());</code></pre>
+
+  <div class="quiz" id="quiz-ex-t3-8">
+    <div class="quiz-question"><strong>問題：</strong>循環参照によってundefinedが発生する原因と、最も適切な対処法はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-8" value="a">
+        ESモジュールでは循環参照は完全にエラーとなるため、import文を削除する必要がある
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ESモジュールの循環参照では、モジュールの評価順序により、moduleAが先に評価される前にmoduleBがmoduleAの値を参照すると、まだ初期化されていないためundefinedになります。解決策は共有定数を別モジュール（constants.js等）に切り出し、両モジュールがそこからimportする構造にすることです。">
+        <input type="radio" name="quiz-ex-t3-8" value="b">
+        モジュール評価順序によりexport前の値がundefinedになる。共有定数を別モジュールに切り出して循環を断つ
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-8" value="c">
+        constではなくvarで宣言すれば巻き上げにより循環参照でもundefinedにならない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-8" value="d">
+        dynamic import（import()）を使えば循環参照は自動的に解決される
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-8')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t3-8')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t3-9">
+  <h1>問題 9: TypeScript - string | nullをstringとして使用するバグ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>ユーザープロフィール画面で、氏名の表示処理を実装しています。APIから取得したデータにはnullが含まれる可能性がありますが、TypeScriptの型チェックを無視して実装したため、実行時エラーが発生しています。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>interface UserProfile {
+  id: number;
+  firstName: string;
+  lastName: string;
+  nickname: string | null;
+  bio: string | null;
+}
+
+function getDisplayName(user: UserProfile): string {
+  // nicknameがnullの場合にランタイムエラーが発生する
+  const displayName = user.nickname.toUpperCase();
+  return displayName;
+}
+
+function getBioSummary(user: UserProfile): string {
+  // bioがnullでも文字列メソッドを呼んでしまう
+  return user.bio.substring(0, 100) + '...';
+}
+
+// 使用例
+const user: UserProfile = {
+  id: 1,
+  firstName: '太郎',
+  lastName: '田中',
+  nickname: null,
+  bio: null,
+};
+
+console.log(getDisplayName(user));
+console.log(getBioSummary(user));</code></pre>
+
+  <div class="quiz" id="quiz-ex-t3-9">
+    <div class="quiz-question"><strong>問題：</strong>このコードの問題と正しい修正方法はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-9" value="a">
+        interfaceの型定義を string | null から string に変えれば解決する
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-9" value="b">
+        as stringを使ってnullをstringにキャストすればエラーは出なくなる
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="strictNullChecksが有効な場合、string | null型に対して直接stringのメソッドを呼ぶとコンパイルエラーになります。しかしstrictNullChecksが無効だと、コンパイルは通りますが実行時にTypeErrorが発生します。正しくは、nullチェック（if文、??演算子、?.オプショナルチェーン等）で型を絞り込んでからメソッドを呼ぶべきです。">
+        <input type="radio" name="quiz-ex-t3-9" value="c">
+        nullチェックまたは??演算子・?.演算子で型を絞り込んでからメソッドを呼ぶべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-9" value="d">
+        TypeScriptでは string | null 型は自動的にnullが除外されるため問題ない
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-9')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t3-9')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t3-10">
+  <h1>問題 10: TypeScript - asキャストで型安全を破壊するバグ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>APIレスポンスの型変換で、開発者が「型エラーが出て面倒だから」という理由で as キャストを多用しています。コードレビューで型安全性の問題を指摘してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>interface Product {
+  id: number;
+  name: string;
+  price: number;
+  category: string;
+  inStock: boolean;
+}
+
+async function fetchProduct(id: number): Promise&lt;Product&gt; {
+  const response = await fetch(`/api/products/${id}`);
+  const data = await response.json();
+
+  // 危険: APIが返すデータ構造を検証せずにキャスト
+  return data as Product;
+}
+
+async function displayProduct() {
+  const product = await fetchProduct(999);
+
+  // productがProductの構造を持っている保証がない
+  // APIが { error: "not found" } を返していても
+  // TypeScriptはエラーを出さない
+
+  const taxIncluded = product.price * 1.1;  // NaN の可能性
+  console.log(`${product.name}: ${taxIncluded}円`);
+
+  if (product.inStock) {
+    enablePurchaseButton();
+  }
+}
+
+function processItems(items: unknown[]) {
+  // 各要素を検証なしでキャスト
+  const products = items as Product[];
+
+  const total = products.reduce((sum, p) => sum + p.price, 0);
+  console.log(`合計: ${total}円`);
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t3-10">
+    <div class="quiz-question"><strong>問題：</strong>as キャストの問題点と、より安全な代替手段として最も適切なものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-10" value="a">
+        asキャストの代わりに &lt;Product&gt;data の構文を使えば型チェックが行われる
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-10" value="b">
+        asキャストは安全であり、TypeScriptが型を保証してくれる
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="as キャストはコンパイラに対する『型アサーション』であり、実行時には何のチェックも行いません。APIレスポンスのような外部データに対しては、Zodなどのバリデーションライブラリを使うか、型ガード関数（type predicate）を書いて実行時に構造を検証すべきです。asは型安全を開発者が破棄する行為であり、原則として避けるべきです。">
+        <input type="radio" name="quiz-ex-t3-10" value="c">
+        asは実行時チェックをしないため、Zodなどのバリデーションや型ガード関数で実行時に検証すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-10" value="d">
+        asキャストの代わりにinstanceofチェックを使えばProduct型を検証できる
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-10')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t3-10')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t3-11">
+  <h1>問題 11: TypeScript - ジェネリクスの型推論結果</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>汎用的なデータ取得関数をジェネリクスで実装しています。型推論がどのように動作するか理解し、各呼び出しで推論される型を正確に把握してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>function wrapInArray&lt;T&gt;(value: T): T[] {
+  return [value];
+}
+
+function mergeObjects&lt;T, U&gt;(obj1: T, obj2: U): T &amp; U {
+  return { ...obj1, ...obj2 };
+}
+
+function getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {
+  return obj[key];
+}
+
+// 呼び出し1: 型引数を省略（推論に任せる）
+const result1 = wrapInArray(42);
+
+// 呼び出し2: 型引数を省略
+const result2 = wrapInArray('hello');
+
+// 呼び出し3: 2つのオブジェクトをマージ
+const result3 = mergeObjects(
+  { name: '田中', age: 30 },
+  { role: 'admin', active: true }
+);
+
+// 呼び出し4: オブジェクトからプロパティを取得
+const user = { name: '田中', age: 30, active: true };
+const result4 = getProperty(user, 'age');</code></pre>
+
+  <div class="quiz" id="quiz-ex-t3-11">
+    <div class="quiz-question"><strong>問題：</strong>各resultの推論される型として正しい組み合わせはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-11" value="a">
+        result1: any[], result2: any[], result3: object, result4: any
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="TypeScriptのジェネリクスは引数の値から型を推論します。wrapInArray(42)ではTがnumberに推論されるためnumber[]、wrapInArray('hello')ではTがstringに推論されるためstring[]になります。mergeObjectsではT&U（交差型）により全プロパティを持つ型に、getPropertyではK extends keyof Tとルックアップ型T[K]により'age'キーの値型であるnumberに推論されます。">
+        <input type="radio" name="quiz-ex-t3-11" value="b">
+        result1: number[], result2: string[], result3: { name: string; age: number; role: string; active: boolean }, result4: number
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-11" value="c">
+        result1: number[], result2: string[], result3: { name: string; age: number } | { role: string; active: boolean }, result4: string | number | boolean
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-11" value="d">
+        result1: (number | string)[], result2: (number | string)[], result3: Record&lt;string, unknown&gt;, result4: unknown
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-11')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t3-11')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t3-12">
+  <h1>問題 12: TypeScript - Union型の網羅チェック漏れ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>注文ステータスに応じたメッセージ表示機能を実装しています。新しいステータスが追加されたとき、switch文の更新を忘れてもコンパイルエラーにならず、本番でバグが発生しました。網羅性チェック（exhaustive check）の実装方法を学びましょう。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+
+// 問題のあるコード：新しいステータス追加時にバグが発生
+function getStatusMessage(status: OrderStatus): string {
+  switch (status) {
+    case 'pending':
+      return '注文を受け付けました';
+    case 'processing':
+      return '処理中です';
+    case 'shipped':
+      return '発送しました';
+    case 'delivered':
+      return '配達完了です';
+    // 'cancelled' のケースが漏れている！
+  }
+  // TypeScriptはここに到達し得ることを警告しない場合がある
+  return '不明なステータス';
+}
+
+// 改善版：網羅性チェック付き
+function getStatusMessageSafe(status: OrderStatus): string {
+  switch (status) {
+    case 'pending':
+      return '注文を受け付けました';
+    case 'processing':
+      return '処理中です';
+    case 'shipped':
+      return '発送しました';
+    case 'delivered':
+      return '配達完了です';
+    case 'cancelled':
+      return 'キャンセルされました';
+    default: {
+      const _exhaustiveCheck: never = status;
+      throw new Error(`未対応のステータス: ${_exhaustiveCheck}`);
+    }
+  }
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t3-12">
+    <div class="quiz-question"><strong>問題：</strong>改善版で使われている never 型による網羅性チェックの仕組みとして正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-12" value="a">
+        neverは実行時にエラーを投げる特殊な型で、defaultケースに到達すると自動的に例外が発生する
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="never型には何も代入できません。全てのcase文でUnion型の全パターンを処理していれば、defaultに到達する時点でstatusの型はneverに絞り込まれます。もしcaseを追加し忘れると、statusがまだ未処理の型を持つため、neverへの代入でコンパイルエラーが発生します。これにより型定義にステータスを追加したら、switch文の更新忘れをコンパイル時に検出できます。">
+        <input type="radio" name="quiz-ex-t3-12" value="b">
+        全caseを処理した後のdefaultではstatusの型がneverに絞り込まれるため、case漏れがあるとneverへの代入でコンパイルエラーになる
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-12" value="c">
+        never型はvoid型のエイリアスであり、関数が値を返さないことを示す
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-12" value="d">
+        neverチェックはTypeScript独自の構文であり、JavaScriptにコンパイルすると削除される
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-12')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t3-12')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t3-13">
+  <h1>問題 13: TypeScript - interface拡張で意図しないプロパティ</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>基本的なユーザーinterfaceを拡張して管理者用のinterfaceを作成しています。TypeScriptのinterfaceの宣言マージ（declaration merging）と、extendsによる拡張の違いを理解し、意図しない挙動を見抜いてください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// ===== types/user.ts =====
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+// ===== types/admin.ts =====
+import { User } from './user';
+
+// extendsで拡張
+interface AdminUser extends User {
+  role: 'admin' | 'super-admin';
+  permissions: string[];
+}
+
+// ===== types/user.ts（別の開発者が追加）=====
+// 同じファイル内でinterfaceを再宣言（宣言マージ）
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  department?: string;  // 後から追加
+}
+
+// ===== app.ts =====
+import { User } from './types/user';
+
+function createUser(data: User): User {
+  // departmentが必要かどうか混乱が生じる
+  return {
+    id: data.id,
+    name: data.name,
+    email: data.email,
+    // department は optional なので省略可能
+  };
+}
+
+function processUser(user: User) {
+  // ここでdepartmentにアクセスできるが、
+  // 元々の設計意図ではUserにdepartmentは含まれていなかった
+  console.log(user.department?.toUpperCase());
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t3-13">
+    <div class="quiz-question"><strong>問題：</strong>interfaceの宣言マージに関する説明として正しいものはどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-13" value="a">
+        同じ名前のinterfaceを再宣言するとコンパイルエラーになる
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-13" value="b">
+        宣言マージでは後から宣言した方が前の宣言を完全に上書きする
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="TypeScriptのinterfaceは同じ名前で再宣言すると、自動的にマージされます。これは意図的な機能ですが、大規模プロジェクトでは意図しないプロパティの追加につながる危険があります。type（型エイリアス）は再宣言するとエラーになるため、宣言マージを防ぎたい場合はtypeを使います。interfaceの宣言マージが意図しない拡張を招くリスクを理解し、適切に使い分けることが重要です。">
+        <input type="radio" name="quiz-ex-t3-13" value="c">
+        同じ名前のinterfaceは自動マージされ、意図しないプロパティ追加のリスクがある。typeを使えば再宣言を防げる
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-13" value="d">
+        宣言マージはTypeScript 5.0で廃止された非推奨機能である
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-13')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t3-13')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t3-14">
+  <h1>問題 14: ユーティリティ型でリファクタリング</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>フォームのバリデーション用に型定義を作成しています。現在は手動でプロパティをコピーしていますが、TypeScriptのユーティリティ型（Partial, Pick, Omit, Required等）を使えばもっと簡潔かつ安全に書けます。リファクタリングしてください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>// 元の型定義
+interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  imageUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// 問題のあるコード：手動でプロパティを複製している
+
+// 新規作成フォーム用（id, createdAt, updatedAtは不要）
+interface CreateProductForm {
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  imageUrl: string;
+}
+
+// 更新フォーム用（全フィールドがオプショナル）
+interface UpdateProductForm {
+  name?: string;
+  description?: string;
+  price?: number;
+  category?: string;
+  imageUrl?: string;
+}
+
+// 一覧表示用（name, price, categoryだけ）
+interface ProductListItem {
+  id: number;
+  name: string;
+  price: number;
+  category: string;
+}
+
+// リファクタリング後（コメントの型は正しいか？）
+type CreateProductFormV2 = Omit&lt;Product, 'id' | 'createdAt' | 'updatedAt'&gt;;
+type UpdateProductFormV2 = Partial&lt;CreateProductFormV2&gt;;
+type ProductListItemV2 = Pick&lt;Product, 'id' | 'name' | 'price' | 'category'&gt;;</code></pre>
+
+  <div class="quiz" id="quiz-ex-t3-14">
+    <div class="quiz-question"><strong>問題：</strong>リファクタリング後の型定義（V2版）について、正しい説明はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-14" value="a">
+        V2版は元のinterface定義と完全に同じであり、Productの型定義が変わっても自動追従はしない
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="ユーティリティ型を使うことで、元のProduct型が変更（例：新フィールド追加）された場合、OmitやPickで参照している型も自動的に追従します。手動コピーの場合は追従されず、型の不整合が生じます。また、Omit→Partialのチェーンにより、DRY原則を守りつつ正確な型を導出できます。これはTypeScriptの大きな利点です。">
+        <input type="radio" name="quiz-ex-t3-14" value="b">
+        V2版はProductの変更に自動追従するため保守性が高く、DRY原則に沿った設計である
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-14" value="c">
+        PartialとOmitを組み合わせるとコンパイルエラーになるため、別々に定義すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-14" value="d">
+        ユーティリティ型は実行時のパフォーマンスに影響するため、小さい型には使うべきでない
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-14')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t3-14')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
+
+<section id="ex-t3-15">
+  <h1>問題 15: 総合 - API通信ユーティリティのTypeScript実装レビュー</h1>
+
+  <div class="card card-info">
+    <div class="card-title"><span class="icon">📝</span> シナリオ</div>
+    <p>チームで使用するAPI通信ユーティリティ関数のコードレビューを依頼されました。非同期処理、ジェネリクス、エラーハンドリング、型安全性の全てを総合的に評価してください。以下のコードに含まれる最も重大な問題を特定してください。</p>
+  </div>
+
+  <h2>以下のコードを読んでください</h2>
+  <pre><code>interface ApiResponse&lt;T&gt; {
+  data: T;
+  status: number;
+  message: string;
+}
+
+interface ApiError {
+  code: string;
+  message: string;
+  details?: Record&lt;string, string&gt;;
+}
+
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+
+async function apiClient&lt;T&gt;(
+  url: string,
+  method: HttpMethod = 'GET',
+  body?: unknown,
+): Promise&lt;ApiResponse&lt;T&gt;&gt; {
+  const config: RequestInit = {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+  };
+
+  if (body) {
+    config.body = JSON.stringify(body);
+  }
+
+  const response = await fetch(url, config);
+  const json = await response.json();
+
+  if (!response.ok) {
+    // 問題1: errorをthrowしているがApiError型の保証がない
+    throw json as ApiError;
+  }
+
+  // 問題2: レスポンスデータの型を検証していない
+  return json as ApiResponse&lt;T&gt;;
+}
+
+// 使用例
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+async function getUsers(): Promise&lt;User[]&gt; {
+  // 問題3: apiClientのジェネリクスでUser[]を指定しても
+  // 実行時の型安全は保証されない
+  const response = await apiClient&lt;User[]&gt;('/api/users');
+  return response.data;
+}
+
+async function createUser(name: string, email: string): Promise&lt;User&gt; {
+  const response = await apiClient&lt;User&gt;('/api/users', 'POST', {
+    name,
+    email,
+  });
+  return response.data;
+}
+
+// エラーハンドリング
+async function handleUserAction() {
+  try {
+    const users = await getUsers();
+    console.log(users.map(u => u.name));
+  } catch (error) {
+    // 問題4: catchしたerrorの型がunknownで、
+    // ApiErrorとして安全にアクセスできない
+    const apiError = error as ApiError;
+    console.error(`エラー: ${apiError.message}`);
+    console.error(`コード: ${apiError.code}`);
+  }
+}</code></pre>
+
+  <div class="quiz" id="quiz-ex-t3-15">
+    <div class="quiz-question"><strong>問題：</strong>このコードの4つの問題のうち、実務で最も重大かつ優先的に修正すべき問題はどれですか？</div>
+    <div class="quiz-options">
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-15" value="a">
+        問題3が最重大。ジェネリクスの型パラメータは意味がないので削除すべき
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-15" value="b">
+        問題1が最重大。throw文ではError型のインスタンスのみを投げるべき
+      </label>
+      <label class="quiz-option" data-correct="true" data-explanation="4つ全てが問題ですが、最も重大なのは問題2と問題4の組み合わせです。asキャストによる型アサーションは実行時の検証を行わないため、APIが予期しない構造のレスポンスを返した場合、型システムが嘘をつくことになります。特にcatchブロックでerrorをas ApiErrorとしている部分は、ネットワークエラーなどApiErrorでない例外も強制キャストしてしまいます。修正方針としては：(1)レスポンスのバリデーション関数を作る、(2)catchブロックでは型ガードで判定する、(3)throwするエラーはErrorクラスを拡張したカスタムエラーにする、が必要です。">
+        <input type="radio" name="quiz-ex-t3-15" value="c">
+        問題2と問題4の組み合わせが最重大。asキャストで型安全が崩壊し、実行時エラーを型システムが検出できない
+      </label>
+      <label class="quiz-option" data-correct="false">
+        <input type="radio" name="quiz-ex-t3-15" value="d">
+        問題4のみが問題。他のasキャストはfetchのレスポンス型が保証されているので安全
+      </label>
+    </div>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-15')">回答する</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('ex-t3-15')">
+    <span class="icon">✓</span> このページを完了
+  </button>
+</section>
