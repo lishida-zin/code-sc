@@ -869,6 +869,7 @@ function updateProgress() {
   const level0Count = completed.filter(s => level0Sections.includes(s)).length;
   const level0Progress = document.getElementById('level0-progress');
   if (level0Progress) level0Progress.value = level0Count;
+  updateProgressText('level0', level0Count, level0Sections.length);
 
   // Level 1
   const level1Sections = ['html1','html2','html3','html4','html5','html6','html7',
@@ -877,6 +878,7 @@ function updateProgress() {
   const level1Count = completed.filter(s => level1Sections.includes(s)).length;
   const level1Progress = document.getElementById('level1-progress');
   if (level1Progress) level1Progress.value = level1Count;
+  updateProgressText('level1', level1Count, level1Sections.length);
 
   // Level 2
   const level2Sections = ['js1','js2','js3','js4','js5','js6','js7','js8','js9',
@@ -886,6 +888,7 @@ function updateProgress() {
   const level2Count = completed.filter(s => level2Sections.includes(s)).length;
   const level2Progress = document.getElementById('level2-progress');
   if (level2Progress) level2Progress.value = level2Count;
+  updateProgressText('level2', level2Count, level2Sections.length);
 
   // Level 3
   const level3Sections = ['ts1','ts2','ts3','ts4','ts5','ts6','ts7','ts8',
@@ -895,6 +898,7 @@ function updateProgress() {
   const level3Count = completed.filter(s => level3Sections.includes(s)).length;
   const level3Progress = document.getElementById('level3-progress');
   if (level3Progress) level3Progress.value = level3Count;
+  updateProgressText('level3', level3Count, level3Sections.length);
 
   // Level 4
   const level4Sections = ['node1','node2','node3','node4','node5','node6','node7','node8',
@@ -905,6 +909,7 @@ function updateProgress() {
   const level4Count = completed.filter(s => level4Sections.includes(s)).length;
   const level4Progress = document.getElementById('level4-progress');
   if (level4Progress) level4Progress.value = level4Count;
+  updateProgressText('level4', level4Count, level4Sections.length);
 
   // Level 5
   const level5Sections = ['docker1','docker2','docker3','docker4','docker5','docker6','docker7','docker8','docker9','docker10',
@@ -916,6 +921,7 @@ function updateProgress() {
   const level5Count = completed.filter(s => level5Sections.includes(s)).length;
   const level5Progress = document.getElementById('level5-progress');
   if (level5Progress) level5Progress.value = level5Count;
+  updateProgressText('level5', level5Count, level5Sections.length);
 
   // Level 6
   const level6Sections = [
@@ -931,6 +937,7 @@ function updateProgress() {
   const level6Count = completed.filter(s => level6Sections.includes(s)).length;
   const level6Progress = document.getElementById('level6-progress');
   if (level6Progress) level6Progress.value = level6Count;
+  updateProgressText('level6', level6Count, level6Sections.length);
 
   // Level 7
   const level7Sections = [
@@ -946,6 +953,7 @@ function updateProgress() {
   const level7Count = completed.filter(s => level7Sections.includes(s)).length;
   const level7Progress = document.getElementById('level7-progress');
   if (level7Progress) level7Progress.value = level7Count;
+  updateProgressText('level7', level7Count, level7Sections.length);
 
   // Level 8
   const level8Sections = [
@@ -961,6 +969,7 @@ function updateProgress() {
   const level8Count = completed.filter(s => level8Sections.includes(s)).length;
   const level8Progress = document.getElementById('level8-progress');
   if (level8Progress) level8Progress.value = level8Count;
+  updateProgressText('level8', level8Count, level8Sections.length);
 
   // 次のステップ表示を更新
   updateNextStep();
@@ -1002,6 +1011,79 @@ function updateNextStep() {
       '<span class="icon">🎉</span> おめでとうございます！';
     nextStepText.innerHTML =
       'すべてのセクションを完了しました！復習したい箇所があれば、メニューから自由に選んでください。';
+  }
+}
+
+// ============================================
+// ダッシュボードカードから学習へジャンプ
+// ============================================
+function goToLevel(event, firstSection, sections) {
+  event.preventDefault();
+  const completed = JSON.parse(localStorage.getItem('completedSections') || '[]');
+
+  // 未完了のセクションを見つける
+  let target = firstSection;
+  if (sections && sections.length > 0) {
+    for (const s of sections) {
+      if (!completed.includes(s)) {
+        target = s;
+        break;
+      }
+    }
+  }
+
+  loadSection(target);
+}
+
+// ============================================
+// トップに戻るボタン
+// ============================================
+(function() {
+  document.addEventListener('DOMContentLoaded', () => {
+    const backToTop = document.getElementById('back-to-top');
+    if (!backToTop) return;
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (window.scrollY > 300) {
+            backToTop.classList.add('visible');
+          } else {
+            backToTop.classList.remove('visible');
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  });
+})();
+
+// ============================================
+// 進捗テキスト更新
+// ============================================
+function updateProgressText(levelId, count, max) {
+  const textEl = document.getElementById(levelId + '-progress-text');
+  if (textEl) {
+    textEl.textContent = count + ' / ' + max;
+  }
+
+  // ダッシュボードカードリンクのテキストを更新
+  const card = document.querySelector(`.dashboard-card[data-level="${levelId.replace('level','')  }"]`);
+  if (!card) return;
+  const link = card.querySelector('.dashboard-card-link');
+  if (!link) return;
+
+  if (count === 0) {
+    link.textContent = '学習を始める';
+    link.classList.remove('completed-level');
+  } else if (count >= max) {
+    link.textContent = '復習する';
+    link.classList.add('completed-level');
+  } else {
+    link.textContent = '続きから学習する';
+    link.classList.remove('completed-level');
   }
 }
 
