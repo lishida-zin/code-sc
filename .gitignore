@@ -10,3 +10,6 @@ Thumbs.db
 # Temp
 *.tmp
 *.log
+
+# Claude Code internal state
+.log_state_*.json

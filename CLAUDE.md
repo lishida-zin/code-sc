@@ -191,6 +191,8 @@
 | 4 | API設計ミス、SQLインジェクションを検出できる |
 | 5 | インフラ設定の危険箇所を特定できる |
 | 6 | アーキテクチャの問題を指摘し、改善提案できる |
+| 7 | 要件定義漏れ、非機能要件不足、AI活用の落とし穴を見抜ける |
+| 8 | テスト設計ミス、Flakyテスト、品質プロセス欠如を検出できる |
 
 ## 継続的最適化ルール
 
@@ -232,6 +234,8 @@
 | 4 | Node.js/DB | データベーススペシャリスト |
 | 5 | Docker/Cloud | AWS認定、GCP認定 |
 | 6 | 設計/アーキテクチャ | 応用情報、システムアーキテクト |
+| 7 | 実践設計/AI活用 | AWS認定ソリューションアーキテクト |
+| 8 | テスト戦略/品質保証 | JSTQB認定テスト技術者、ISTQB |
 
 ※資格は必須ではないが、知識の証明として有効
 
@@ -272,7 +276,12 @@ code-sc/
 │   ├── level0.md                # AI時代のエンジニア
 │   ├── level1.md                # HTML/CSS
 │   ├── level2.md                # JavaScript
-│   └── level3.md                # React/TypeScript ← 現在のLevel
+│   ├── level3.md                # React/TypeScript
+│   ├── level4.md                # Node.js/API/DB
+│   ├── level5.md                # インフラ/DevOps
+│   ├── level7.md                # 実践設計とAI活用
+│   └── level8.md                # テスト戦略・品質保証
+│   # ※ level6.md は未作成
 ├── progress/
 │   ├── current.md               # 現在の進捗 ← これを読む
 │   └── archive/                 # 過去の記録（読まない）
@@ -280,23 +289,51 @@ code-sc/
 │   ├── index.html               # メインエントリ（ナビ＋ダッシュボード）
 │   ├── css/style.css            # 共通スタイル
 │   ├── js/main.js               # 共通JavaScript（動的読み込み含む）
-│   ├── level0/intro.html        # Level 0コンテンツ
-│   ├── level1/                  # Level 1コンテンツ
+│   ├── level0/intro.html        # Level 0（l0-1〜l0-8）
+│   ├── level1/                  # Level 1（18セクション）
 │   │   ├── phase1.html          # HTML基礎（html1-html7）
 │   │   ├── phase2.html          # CSS基礎（css1-css7）
 │   │   └── phase3.html          # 実践（prac1-prac4）
-│   ├── level2/                  # Level 2コンテンツ
+│   ├── level2/                  # Level 2（30セクション）
 │   │   ├── phase1.html          # JavaScript基礎（js1-js9）
 │   │   ├── phase2.html          # DOM操作（dom1-dom6）
 │   │   ├── phase3.html          # 非同期処理（async1-async8）
 │   │   └── phase4.html          # モダンJS（modern1-modern7）
-│   ├── level3/                  # Level 3コンテンツ
+│   ├── level3/                  # Level 3（32セクション）
 │   │   ├── phase1.html          # TypeScript基礎（ts1-ts8）
 │   │   ├── phase2.html          # React基礎（react1-react8）
 │   │   ├── phase3.html          # Hooks深掘り（hooks1-hooks8）
-│   │   └── phase4.html          # 実践パターン（advanced1-advanced8）※作成中
+│   │   └── phase4.html          # 実践パターン（advanced1-advanced8）
+│   ├── level4/                  # Level 4（44セクション）
+│   │   ├── phase1.html          # Node.js基礎（node1-node8）
+│   │   ├── phase2.html          # API設計（api1-api8）
+│   │   ├── phase3.html          # DB基礎（db1-db10）
+│   │   ├── phase4.html          # セキュリティ（sec1-sec10）
+│   │   └── phase5.html          # テスト基礎（test1-test8）
+│   ├── level5/                  # Level 5（56セクション）
+│   │   ├── phase1.html          # Docker（docker1-docker10）
+│   │   ├── phase2.html          # Kubernetes（k8s1-k8s10）
+│   │   ├── phase3.html          # AWS（aws1-aws10）
+│   │   ├── phase4.html          # Terraform（tf1-tf10）
+│   │   ├── phase5.html          # CI/CD（cicd1-cicd8）
+│   │   └── phase6.html          # 可観測性（obs1-obs8）
+│   ├── level6/                  # ⚠️ 未作成（78セクション予定）
+│   ├── level7/                  # Level 7（80セクション）
+│   │   └── phase1〜8.html       # 実践設計とAI活用
+│   ├── level8/                  # Level 8（80セクション）
+│   │   └── phase1〜8.html       # テスト戦略・品質保証
+│   ├── exercises/               # 実践問題集（135問）
+│   │   ├── tier1-intro.html     # 入門（15問）
+│   │   ├── tier2-basic.html     # 基礎（15問）
+│   │   ├── tier3-applied.html   # 応用（15問）
+│   │   ├── tier4-frontend.html  # フロントエンド（15問）
+│   │   ├── tier5-backend.html   # バックエンド（15問）
+│   │   ├── tier6-infra.html     # インフラ（15問）
+│   │   ├── tier7-design.html    # 設計（15問）
+│   │   ├── tier8-senior.html    # シニア（15問）
+│   │   └── ai-mistakes.html     # AI生成の罠（15問）
 │   └── engineer-textbook.html   # バックアップ（旧一体型ファイル）
-└── lessons/                     # 教材
+└── docs/                        # ドキュメント・ログ
 ```
 
 ## 教科書HTML分割ルール
