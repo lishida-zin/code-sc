@@ -639,6 +639,52 @@ function App() {
         <p>→ <strong>変更頻度が低い</strong>データに最適</p>
       </div>
 
+      <!-- Context使いすぎ問題のCompare-box -->
+      <div class="card">
+        <h2>Context使いすぎ問題と対策</h2>
+
+        <div class="compare-box">
+          <div class="compare-bad">
+            <div class="compare-title">❌ よくある間違い</div>
+<pre><code>// すべての状態を1つのContextに入れる
+const AppContext = createContext({
+  user: null,
+  theme: 'light',
+  cart: [],
+  notifications: [],
+  settings: {},
+});
+
+// cartが変わるだけで
+// user, theme等を使うコンポーネントも
+// 全て再レンダリングされる！</code></pre>
+          </div>
+          <div class="compare-good">
+            <div class="compare-title">⭕ 正しい方法</div>
+<pre><code>// Context分割 + useMemoで最適化
+const UserContext = createContext(null);
+const ThemeContext = createContext('light');
+const CartContext = createContext([]);
+
+function CartProvider({ children }) {
+  const [cart, setCart] = useState([]);
+
+  // valueをuseMemoで安定化
+  const value = useMemo(
+    () => ({ cart, setCart }),
+    [cart]
+  );
+
+  return (
+    &lt;CartContext.Provider value={value}&gt;
+      {children}
+    &lt;/CartContext.Provider&gt;
+  );
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
       <!-- クイズ -->
       <div class="quiz" id="quiz-advanced3-1">
         <div class="quiz-title">
@@ -1027,6 +1073,79 @@ function App() {
         <strong>React DevTools</strong>が必須ツールです。
       </p>
 
+      <!-- React再レンダリングフローSVG -->
+      <div class="card">
+        <h2>React再レンダリングフロー（図解）</h2>
+        <p>状態が変更された際、Reactがどのように再レンダリングを行い、DOMを更新するかの流れです。</p>
+
+        <svg viewBox="0 0 600 360" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="React再レンダリングフロー：State変更からVirtual DOM差分検出、実DOM更新までのフローチャート">
+          <rect x="0" y="0" width="600" height="360" fill="#f8f9fa" rx="8"/>
+          <defs>
+            <marker id="flow-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L7,3 z" fill="#64748b"/>
+            </marker>
+            <marker id="flow-arrow-green" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L7,3 z" fill="#10b981"/>
+            </marker>
+            <marker id="flow-arrow-purple" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L7,3 z" fill="#8b5cf6"/>
+            </marker>
+          </defs>
+
+          <!-- Step 1: State Change -->
+          <rect x="220" y="15" width="160" height="40" fill="#ef4444" rx="20"/>
+          <text x="300" y="40" text-anchor="middle" fill="white" font-weight="bold" font-size="12">State / Props 変更</text>
+
+          <line x1="300" y1="55" x2="300" y2="75" stroke="#64748b" stroke-width="2" marker-end="url(#flow-arrow)"/>
+
+          <!-- Step 2: Re-render -->
+          <rect x="200" y="80" width="200" height="40" fill="#3b82f6" rx="6"/>
+          <text x="300" y="105" text-anchor="middle" fill="white" font-weight="bold" font-size="12">コンポーネント再実行（Re-render）</text>
+
+          <line x1="300" y1="120" x2="300" y2="140" stroke="#64748b" stroke-width="2" marker-end="url(#flow-arrow)"/>
+
+          <!-- Decision: React.memo? -->
+          <polygon points="300,145 380,175 300,205 220,175" fill="#f59e0b" stroke="#f59e0b"/>
+          <text x="300" y="172" text-anchor="middle" fill="white" font-weight="bold" font-size="10">React.memo</text>
+          <text x="300" y="184" text-anchor="middle" fill="white" font-size="9">Props変更?</text>
+
+          <!-- No branch (skip) -->
+          <line x1="380" y1="175" x2="510" y2="175" stroke="#10b981" stroke-width="2" marker-end="url(#flow-arrow-green)"/>
+          <text x="445" y="167" text-anchor="middle" fill="#10b981" font-weight="bold" font-size="10">変更なし</text>
+          <rect x="515" y="158" width="75" height="34" fill="#10b981" rx="6"/>
+          <text x="552" y="180" text-anchor="middle" fill="white" font-weight="bold" font-size="10">スキップ</text>
+
+          <!-- Yes branch (continue) -->
+          <line x1="300" y1="205" x2="300" y2="225" stroke="#64748b" stroke-width="2" marker-end="url(#flow-arrow)"/>
+          <text x="315" y="218" fill="#ef4444" font-weight="bold" font-size="10">変更あり</text>
+
+          <!-- Step 3: Virtual DOM Diff -->
+          <rect x="190" y="230" width="220" height="40" fill="#8b5cf6" rx="6"/>
+          <text x="300" y="255" text-anchor="middle" fill="white" font-weight="bold" font-size="12">Virtual DOM 差分検出（Diff）</text>
+
+          <!-- Decision: useMemo? -->
+          <line x1="190" y1="250" x2="70" y2="250" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <rect x="10" y="235" width="60" height="30" fill="#fff" stroke="#8b5cf6" stroke-width="1.5" rx="4"/>
+          <text x="40" y="254" text-anchor="middle" fill="#8b5cf6" font-weight="bold" font-size="9">useMemo</text>
+          <text x="40" y="278" text-anchor="middle" fill="#8b5cf6" font-size="8">計算結果を</text>
+          <text x="40" y="289" text-anchor="middle" fill="#8b5cf6" font-size="8">キャッシュ</text>
+
+          <line x1="300" y1="270" x2="300" y2="290" stroke="#64748b" stroke-width="2" marker-end="url(#flow-arrow)"/>
+
+          <!-- Step 4: DOM Update -->
+          <rect x="200" y="295" width="200" height="40" fill="#10b981" rx="6"/>
+          <text x="300" y="315" text-anchor="middle" fill="white" font-weight="bold" font-size="11">最小限のDOM更新</text>
+          <text x="300" y="328" text-anchor="middle" fill="#d1fae5" font-size="9">変更部分のみブラウザに反映</text>
+
+          <!-- useCallback note -->
+          <rect x="440" y="80" width="70" height="25" fill="#fff" stroke="#8b5cf6" stroke-width="1.5" rx="4"/>
+          <text x="475" y="97" text-anchor="middle" fill="#8b5cf6" font-weight="bold" font-size="9">useCallback</text>
+          <line x1="400" y1="100" x2="435" y2="95" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="475" y="118" text-anchor="middle" fill="#8b5cf6" font-size="8">関数参照を</text>
+          <text x="475" y="129" text-anchor="middle" fill="#8b5cf6" font-size="8">安定化</text>
+        </svg>
+      </div>
+
       <!-- React DevTools -->
       <div class="card">
         <h2>React DevToolsの使い方</h2>
@@ -1124,6 +1243,36 @@ const memoizedCallback = () => doSomething(a, b);
 
         <p><strong>注意：</strong>React Compilerを使っていても、
         パフォーマンス問題の<strong>発見・診断能力</strong>は依然として重要です。</p>
+      </div>
+
+      <!-- コードレビューの観点 -->
+      <div class="card card-danger">
+        <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+        <ul>
+          <li><strong>React.memoの誤用</strong>：オブジェクトや配列をpropsに渡す場合、参照が毎回変わるためmemoが無効になる。プリミティブ値のpropsにのみ効果的</li>
+          <li><strong>useCallback不要な箇所での使用</strong>：子コンポーネントがReact.memoでラップされていない場合、useCallbackの意味がない。過剰な最適化は可読性を下げる</li>
+          <li><strong>Key propの不適切な使用</strong>：配列のindexをkeyに使うと、要素の追加・削除・並び替え時にバグの原因になる。一意なIDを使うべき</li>
+          <li><strong>useMemoの過剰使用</strong>：単純な計算にuseMemoを使うのはオーバーヘッド。計算コストが高い場合のみ使用する</li>
+        </ul>
+
+        <div class="compare-box">
+          <div class="compare-bad">
+            <div class="compare-title">❌ よくある間違い</div>
+<pre><code>// indexをkeyに使う
+{items.map((item, index) =&gt; (
+  &lt;Item key={index} data={item} /&gt;
+))}
+// 要素の並び替え・削除時にバグ発生</code></pre>
+          </div>
+          <div class="compare-good">
+            <div class="compare-title">⭕ 正しい方法</div>
+<pre><code>// 一意なIDをkeyに使う
+{items.map(item =&gt; (
+  &lt;Item key={item.id} data={item} /&gt;
+))}
+// Reactが各要素を正しく追跡できる</code></pre>
+          </div>
+        </div>
       </div>
 
       <!-- クイズ -->

@@ -187,6 +187,9 @@
       <li><strong>概念モデルなしで実装</strong>：ビジネス要件を理解していない可能性</li>
       <li><strong>論理モデルがない</strong>：正規化の検討がされていない</li>
       <li><strong>物理モデルが最適化されていない</strong>：インデックス不足など</li>
+      <li><strong>正規化の過不足</strong>：過度な正規化はJOIN地獄を生み、非正規化しすぎるとデータ不整合の温床になる。ユースケースに応じた適切なバランスか確認する</li>
+      <li><strong>外部キー制約の欠如</strong>：アプリ側でのみ参照整合性を担保しているケース。DBレベルでFOREIGN KEY制約を設定し、孤立レコードの発生を防ぐ</li>
+      <li><strong>カラム命名の一貫性</strong>：<code>userId</code>と<code>user_id</code>が混在、<code>created</code>と<code>created_at</code>が混在していないか。チーム内で命名規則を統一する</li>
     </ul>
   </div>
 

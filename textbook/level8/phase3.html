@@ -443,6 +443,37 @@ describe('UserRepository', () => {
     </ul>
   </div>
 
+  <div class="compare-box">
+    <div class="bad-example">
+      <h4>❌ 戦略なしの結合テスト</h4>
+<pre><code>// 全コンポーネントを一度にテスト
+// → どこが壊れたかわからない
+test('全部動くか', async () => {
+  const app = createFullApp();
+  const res = await request(app)
+    .post('/users')
+    .send({ name: '太郎' });
+  expect(res.status).toBe(201);
+  // 失敗 → Controller? Service? DB?
+});</code></pre>
+    </div>
+    <div class="good-example">
+      <h4>⭕ ボトムアップで段階的に</h4>
+<pre><code>// Step1: Repository + DB
+test('DBにユーザー保存', async () => {
+  const repo = new UserRepo(testDb);
+  await repo.save({ name: '太郎' });
+  // DB層だけを確認
+});
+
+// Step2: Service + Repository
+test('Service経由で保存', async () => {
+  const svc = new UserService(repo);
+  await svc.create({ name: '太郎' });
+});</code></pre>
+    </div>
+  </div>
+
   <div class="quiz" id="quiz-int2-1">
     <div class="quiz-title">
       <span class="icon">❓</span>
@@ -915,6 +946,34 @@ public class UserApiTest {
     </ul>
   </div>
 
+  <div class="compare-box">
+    <div class="bad-example">
+      <h4>❌ ステータスコードだけ確認</h4>
+<pre><code>test('ユーザー作成API', async () => {
+  const res = await request(app)
+    .post('/api/users')
+    .send({ name: '太郎' });
+  // ステータスだけ → 中身が間違っていても通る
+  expect(res.status).toBe(201);
+});</code></pre>
+    </div>
+    <div class="good-example">
+      <h4>⭕ レスポンス全体を検証</h4>
+<pre><code>test('ユーザー作成API', async () => {
+  const res = await request(app)
+    .post('/api/users')
+    .send({ name: '太郎' });
+  expect(res.status).toBe(201);
+  expect(res.body).toMatchObject({
+    name: '太郎',
+    id: expect.any(Number)
+  });
+  expect(res.headers['content-type'])
+    .toMatch(/json/);
+});</code></pre>
+    </div>
+  </div>
+
   <div class="quiz" id="quiz-int4-1">
     <div class="quiz-title">
       <span class="icon">❓</span>
@@ -1125,6 +1184,33 @@ describe('Provider Verification', () => {
       <li><strong>状態のセットアップ漏れ</strong>：given()に対応するstateHandlersがない</li>
       <li><strong>契約の肥大化</strong>：1契約に多すぎるシナリオ</li>
     </ul>
+  </div>
+
+  <div class="compare-box">
+    <div class="bad-example">
+      <h4>❌ API結合テストだけに依存</h4>
+<pre><code>// 全サービスを同時に起動してE2Eテスト
+// → 環境構築が大変
+// → 1つのサービス障害で全テスト失敗
+test('注文フロー', async () => {
+  // ユーザーサービス + 商品サービス
+  // + 決済サービス + 通知サービス
+  // → 全部動いていないとテスト不可
+});</code></pre>
+    </div>
+    <div class="good-example">
+      <h4>⭕ 契約テストで独立検証</h4>
+<pre><code>// コンシューマ側: 期待するAPIを定義
+const interaction = {
+  uponReceiving: '注文作成リクエスト',
+  willRespondWith: {
+    status: 201,
+    body: like({ orderId: '123' })
+  }
+};
+// → 各サービスを独立してテスト可能
+// → CI/CDが高速化</code></pre>
+    </div>
   </div>
 
   <div class="quiz" id="quiz-int5-1">

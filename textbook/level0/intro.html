@@ -231,6 +231,47 @@
     だから上司であるあなたが<strong>必ず目を通して確認する</strong>必要があります。
   </p>
 
+  <!-- AI時代のエンジニアの役割 図解 -->
+  <svg viewBox="0 0 600 300" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="AI時代のエンジニアの役割：AIコード生成、人間のレビュー、品質保証の関係">
+    <!-- AI Code Generation -->
+    <circle cx="120" cy="150" r="70" fill="#EFF6FF" stroke="#2563EB" stroke-width="3"/>
+    <text x="120" y="130" text-anchor="middle" font-size="28">🤖</text>
+    <text x="120" y="160" text-anchor="middle" font-size="13" font-weight="bold" fill="#2563EB">AI</text>
+    <text x="120" y="178" text-anchor="middle" font-size="12" fill="#333">コード生成</text>
+
+    <!-- Arrow 1 -->
+    <defs>
+      <marker id="arrow-role" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+        <path d="M0,0 L0,6 L9,3 z" fill="#333"/>
+      </marker>
+    </defs>
+    <line x1="195" y1="150" x2="235" y2="150" stroke="#333" stroke-width="2.5" marker-end="url(#arrow-role)"/>
+    <text x="215" y="138" text-anchor="middle" font-size="11" fill="#666">出力</text>
+
+    <!-- Human Review -->
+    <circle cx="310" cy="150" r="70" fill="#FFF7ED" stroke="#EA580C" stroke-width="3"/>
+    <text x="310" y="130" text-anchor="middle" font-size="28">👤</text>
+    <text x="310" y="160" text-anchor="middle" font-size="13" font-weight="bold" fill="#EA580C">人間</text>
+    <text x="310" y="178" text-anchor="middle" font-size="12" fill="#333">レビュー・判断</text>
+
+    <!-- Arrow 2 -->
+    <line x1="385" y1="150" x2="425" y2="150" stroke="#333" stroke-width="2.5" marker-end="url(#arrow-role)"/>
+    <text x="405" y="138" text-anchor="middle" font-size="11" fill="#666">承認</text>
+
+    <!-- Quality Assurance -->
+    <circle cx="500" cy="150" r="70" fill="#F0FDF4" stroke="#16A34A" stroke-width="3"/>
+    <text x="500" y="130" text-anchor="middle" font-size="28">✅</text>
+    <text x="500" y="160" text-anchor="middle" font-size="13" font-weight="bold" fill="#16A34A">品質保証</text>
+    <text x="500" y="178" text-anchor="middle" font-size="12" fill="#333">安全なプロダクト</text>
+
+    <!-- Feedback arrow (bottom) -->
+    <path d="M470,225 Q310,280 150,225" fill="none" stroke="#DC2626" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arrow-role)"/>
+    <text x="310" y="270" text-anchor="middle" font-size="11" fill="#DC2626">修正フィードバック</text>
+
+    <!-- Title -->
+    <text x="310" y="40" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">AI時代のエンジニアの役割</text>
+  </svg>
+
   <!-- クイズ -->
   <div class="quiz" id="quiz-l0-2">
     <div class="quiz-title">
@@ -386,6 +427,15 @@
     <li><strong>AIと協働するワークフロー設計</strong> — AIコーディングアシスタント（Claude Code、GitHub Copilot、Cursor等）を業務にどう組み込むか考える力</li>
   </ul>
 
+  <div class="card card-danger">
+    <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+    <ul>
+      <li><strong>論理エラーの見落とし</strong>：AIが生成したコードは一見正しく見えるが、境界値や特殊ケースで間違った結果を返すことがある</li>
+      <li><strong>セキュリティの甘さ</strong>：ユーザー入力のバリデーション不足、SQLインジェクション、XSSなどの脆弱性をAIが埋め込むことがある</li>
+      <li><strong>不要な複雑さ</strong>：AIはシンプルな解法があるのに、過剰に複雑なコードを生成することがある。「もっと簡単に書けないか？」と常に問う</li>
+    </ul>
+  </div>
+
   <!-- クイズ1 -->
   <div class="quiz" id="quiz-l0-3a">
     <div class="quiz-title">
@@ -505,6 +555,24 @@
     この教科書では特に<strong>「コードレビュー」</strong>の力を重点的に鍛えます。
     読む力は、設計やオーケストレーションの土台にもなるからです。
   </p>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">❌ よくある間違い</div>
+      <pre><code>// AIの出力をそのままコピペ
+AI: 「このコードで動きます」
+→ コピペ → デプロイ
+→ 本番でバグ発生！</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">⭕ 正しい方法</div>
+      <pre><code>// AIの出力をレビューして改善
+AI: 「このコードで動きます」
+→ 読んで理解する
+→ 問題点を指摘・修正
+→ テストを書く → デプロイ</code></pre>
+    </div>
+  </div>
 
   <!-- クイズ -->
   <div class="quiz" id="quiz-l0-4">
@@ -652,6 +720,15 @@
     </p>
   </div>
 
+  <div class="card card-danger">
+    <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+    <ul>
+      <li><strong>学習の優先順位</strong>：基礎（HTML/CSS/JS）を飛ばしてフレームワークに進んでいないか？土台なしの応用は砂上の楼閣</li>
+      <li><strong>「読む力」の段階</strong>：まず「何をしているか説明できる」→ 次に「問題点を指摘できる」→ 最後に「改善案を出せる」の順で力を伸ばす</li>
+      <li><strong>アウトプットの質</strong>：「動いた」で満足せず、「なぜ動くのか」「別の方法はないか」まで考えているか</li>
+    </ul>
+  </div>
+
   <!-- クイズ -->
   <div class="quiz" id="quiz-l0-5">
     <div class="quiz-title">
@@ -783,6 +860,15 @@
     だから常に<strong>「本当か？」</strong>と疑う姿勢が必要です。
     公式ドキュメントで確認する習慣をつけましょう。
   </p>
+
+  <div class="card card-danger">
+    <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+    <ul>
+      <li><strong>公式ドキュメントとの照合</strong>：AIが提案するAPI名・メソッド名が本当に存在するか、公式ドキュメントで必ず確認する</li>
+      <li><strong>バージョンの整合性</strong>：AIが古いバージョンの書き方を最新と偽ることがある。使用しているライブラリのバージョンと対応しているか確認する</li>
+      <li><strong>エッジケースのテスト</strong>：AIは「正常系」のコードは得意だが、空文字・null・大量データなどの「異常系」を見落としやすい</li>
+    </ul>
+  </div>
 
   <!-- クイズ1 -->
   <div class="quiz" id="quiz-l0-6a">

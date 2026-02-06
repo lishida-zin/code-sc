@@ -446,6 +446,273 @@ SELECT id, name FROM users;</code></pre>
   </button>
 </section>
 
+<!-- db2b: 複雑なJOINパターン -->
+<section id="db2b">
+  <h1>複雑なJOINパターン</h1>
+
+  <p class="lead">
+    実務では3つ以上のテーブルを結合することが頻繁にあります。
+    ECサイトを例に、複雑なJOINパターンとパフォーマンス問題を学びます。
+  </p>
+
+  <!-- 3テーブルJOINの可視化SVG -->
+  <div class="card">
+    <h2>3テーブルJOINの可視化</h2>
+
+    <svg viewBox="0 0 600 300" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="users, orders, productsの3テーブルJOIN関係と結果セットの可視化">
+      <rect x="0" y="0" width="600" height="300" fill="#f8f9fa" rx="8"/>
+
+      <!-- usersテーブル -->
+      <rect x="20" y="30" width="150" height="110" fill="#fff" stroke="#3b82f6" stroke-width="2" rx="6"/>
+      <rect x="20" y="30" width="150" height="28" fill="#3b82f6" rx="6 6 0 0"/>
+      <text x="95" y="49" text-anchor="middle" fill="white" font-weight="bold" font-size="12">users</text>
+      <text x="30" y="75" fill="#334155" font-size="10">id: 1 | 田中太郎</text>
+      <text x="30" y="93" fill="#334155" font-size="10">id: 2 | 山田花子</text>
+      <text x="30" y="111" fill="#334155" font-size="10">id: 3 | 佐藤次郎</text>
+      <text x="30" y="129" fill="#94a3b8" font-size="9">PK: id</text>
+
+      <!-- ordersテーブル -->
+      <rect x="225" y="30" width="150" height="110" fill="#fff" stroke="#f59e0b" stroke-width="2" rx="6"/>
+      <rect x="225" y="30" width="150" height="28" fill="#f59e0b" rx="6 6 0 0"/>
+      <text x="300" y="49" text-anchor="middle" fill="white" font-weight="bold" font-size="12">orders</text>
+      <text x="235" y="75" fill="#334155" font-size="10">id:1 user:1 prod:1</text>
+      <text x="235" y="93" fill="#334155" font-size="10">id:2 user:1 prod:2</text>
+      <text x="235" y="111" fill="#334155" font-size="10">id:3 user:2 prod:1</text>
+      <text x="235" y="129" fill="#94a3b8" font-size="9">FK: user_id, product_id</text>
+
+      <!-- productsテーブル -->
+      <rect x="430" y="30" width="150" height="110" fill="#fff" stroke="#10b981" stroke-width="2" rx="6"/>
+      <rect x="430" y="30" width="150" height="28" fill="#10b981" rx="6 6 0 0"/>
+      <text x="505" y="49" text-anchor="middle" fill="white" font-weight="bold" font-size="12">products</text>
+      <text x="440" y="75" fill="#334155" font-size="10">id: 1 | PC ¥80,000</text>
+      <text x="440" y="93" fill="#334155" font-size="10">id: 2 | Mouse ¥3,000</text>
+      <text x="440" y="111" fill="#94a3b8" font-size="9">PK: id</text>
+
+      <!-- JOIN線 -->
+      <line x1="170" y1="85" x2="225" y2="85" stroke="#ef4444" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="197" y="78" text-anchor="middle" fill="#ef4444" font-weight="bold" font-size="9">JOIN</text>
+      <line x1="375" y1="85" x2="430" y2="85" stroke="#ef4444" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="402" y="78" text-anchor="middle" fill="#ef4444" font-weight="bold" font-size="9">JOIN</text>
+
+      <!-- 結果セット -->
+      <rect x="50" y="165" width="500" height="120" fill="#fff" stroke="#8b5cf6" stroke-width="2" rx="6"/>
+      <rect x="50" y="165" width="500" height="25" fill="#8b5cf6" rx="6 6 0 0"/>
+      <text x="300" y="182" text-anchor="middle" fill="white" font-weight="bold" font-size="11">JOIN結果セット</text>
+
+      <text x="70" y="205" fill="#64748b" font-size="9" font-weight="bold">user_name</text>
+      <text x="200" y="205" fill="#64748b" font-size="9" font-weight="bold">order_id</text>
+      <text x="320" y="205" fill="#64748b" font-size="9" font-weight="bold">product_name</text>
+      <text x="460" y="205" fill="#64748b" font-size="9" font-weight="bold">price</text>
+
+      <line x1="60" y1="210" x2="540" y2="210" stroke="#e2e8f0" stroke-width="1"/>
+
+      <text x="70" y="225" fill="#334155" font-size="10">田中太郎</text>
+      <text x="200" y="225" fill="#334155" font-size="10">1</text>
+      <text x="320" y="225" fill="#334155" font-size="10">PC</text>
+      <text x="460" y="225" fill="#334155" font-size="10">¥80,000</text>
+
+      <text x="70" y="243" fill="#334155" font-size="10">田中太郎</text>
+      <text x="200" y="243" fill="#334155" font-size="10">2</text>
+      <text x="320" y="243" fill="#334155" font-size="10">Mouse</text>
+      <text x="460" y="243" fill="#334155" font-size="10">¥3,000</text>
+
+      <text x="70" y="261" fill="#334155" font-size="10">山田花子</text>
+      <text x="200" y="261" fill="#334155" font-size="10">3</text>
+      <text x="320" y="261" fill="#334155" font-size="10">PC</text>
+      <text x="460" y="261" fill="#334155" font-size="10">¥80,000</text>
+
+      <text x="70" y="279" fill="#94a3b8" font-size="10">佐藤次郎</text>
+      <text x="200" y="279" fill="#94a3b8" font-size="10">-</text>
+      <text x="320" y="279" fill="#94a3b8" font-size="10">NULL</text>
+      <text x="460" y="279" fill="#94a3b8" font-size="10">NULL (LEFT JOIN)</text>
+    </svg>
+  </div>
+
+  <!-- 3テーブルJOINの例 -->
+  <div class="card">
+    <h2>3テーブルJOINの実装</h2>
+
+<pre><code class="language-sql">-- ユーザーごとの注文と商品情報を取得
+SELECT
+  u.name AS user_name,
+  o.id AS order_id,
+  o.created_at AS order_date,
+  p.name AS product_name,
+  p.price
+FROM users u
+INNER JOIN orders o ON u.id = o.user_id
+INNER JOIN products p ON o.product_id = p.id
+ORDER BY o.created_at DESC;
+
+-- 注文がないユーザーも含める場合
+SELECT
+  u.name AS user_name,
+  o.id AS order_id,
+  p.name AS product_name,
+  p.price
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id
+LEFT JOIN products p ON o.product_id = p.id;</code></pre>
+  </div>
+
+  <!-- LEFT JOIN vs INNER JOIN -->
+  <div class="card">
+    <h2>LEFT JOIN vs INNER JOIN の実務での使い分け</h2>
+
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border-light);background:var(--bg-secondary);">
+          <th style="padding:12px;text-align:left;">場面</th>
+          <th style="padding:12px;text-align:left;">JOIN種類</th>
+          <th style="padding:12px;text-align:left;">理由</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">ユーザーと注文履歴</td>
+          <td style="padding:12px;"><strong>LEFT JOIN</strong></td>
+          <td style="padding:12px;">注文がないユーザーも表示したい</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">注文と商品情報</td>
+          <td style="padding:12px;"><strong>INNER JOIN</strong></td>
+          <td style="padding:12px;">商品がない注文は存在しない</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:12px;">商品とレビュー</td>
+          <td style="padding:12px;"><strong>LEFT JOIN</strong></td>
+          <td style="padding:12px;">レビューがない商品も表示したい</td>
+        </tr>
+        <tr>
+          <td style="padding:12px;">投稿と著者</td>
+          <td style="padding:12px;"><strong>INNER JOIN</strong></td>
+          <td style="padding:12px;">著者がいない投稿は表示しない</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card card-info" style="margin-top:15px;">
+      <p style="margin:0;"><strong>判断基準</strong>：「関連データがない行も結果に含めたいか？」<br>
+      Yes → LEFT JOIN / No → INNER JOIN</p>
+    </div>
+  </div>
+
+  <!-- N+1問題 -->
+  <div class="card card-danger">
+    <h2>N+1問題の検出と対策</h2>
+
+    <p><strong>N+1問題</strong>とは、1回のクエリでリストを取得した後、各行ごとに追加クエリを発行してしまう問題です。</p>
+
+    <div class="compare-box">
+      <div class="compare-bad">
+        <div class="compare-title">❌ N+1問題（遅い）</div>
+<pre><code class="language-typescript">// 1回目: ユーザー一覧を取得
+const users = await db.query(
+  'SELECT * FROM users'
+);
+
+// N回: 各ユーザーの注文を個別に取得
+for (const user of users) {
+  const orders = await db.query(
+    'SELECT * FROM orders WHERE user_id = $1',
+    [user.id]
+  );
+  // 100人なら101回のクエリが走る！
+}</code></pre>
+      </div>
+      <div class="compare-good">
+        <div class="compare-title">⭕ JOINで1回のクエリに</div>
+<pre><code class="language-sql">-- 1回のクエリで全て取得
+SELECT u.name, o.id AS order_id, o.total
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id
+ORDER BY u.name;</code></pre>
+      </div>
+    </div>
+
+    <p><strong>検出方法：</strong></p>
+    <ul>
+      <li>ログにSQLクエリを出力し、同じパターンのクエリが大量に出ていないか確認</li>
+      <li>ORMのクエリログを有効にする（Prisma: <code>log: ['query']</code>）</li>
+      <li>ループ内にawaitがある場合は要注意</li>
+    </ul>
+  </div>
+
+  <!-- Window関数 -->
+  <div class="card">
+    <h2>Window関数（ROW_NUMBER, RANK, LAG/LEAD）</h2>
+
+    <p><strong>Window関数</strong>は、集計しつつ個別の行もそのまま表示できる強力な機能です。</p>
+
+<pre><code class="language-sql">-- ROW_NUMBER: 行番号を付与
+-- ユーザーごとの注文に番号をつける
+SELECT
+  user_id,
+  order_id,
+  total,
+  ROW_NUMBER() OVER (
+    PARTITION BY user_id ORDER BY created_at DESC
+  ) AS order_rank
+FROM orders;
+
+-- RANK: 同順位を許可するランキング
+-- 売上ランキング
+SELECT
+  product_id,
+  SUM(quantity) AS total_sold,
+  RANK() OVER (ORDER BY SUM(quantity) DESC) AS rank
+FROM order_items
+GROUP BY product_id;
+
+-- LAG / LEAD: 前後の行の値を参照
+-- 前月との売上比較
+SELECT
+  month,
+  revenue,
+  LAG(revenue) OVER (ORDER BY month) AS prev_month,
+  revenue - LAG(revenue) OVER (ORDER BY month) AS diff
+FROM monthly_sales;</code></pre>
+  </div>
+
+  <!-- コードレビューの観点 -->
+  <div class="card card-danger">
+    <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+    <ul>
+      <li><strong>SELECT * の禁止</strong>：必要なカラムのみ指定する。パフォーマンス低下と機密情報漏洩の原因</li>
+      <li><strong>N+1クエリの検出</strong>：ループ内でのクエリ発行がないか確認。JOINまたはincludeで解決する</li>
+      <li><strong>インデックスの考慮</strong>：JOIN条件やWHERE句で使用するカラムにインデックスがあるか確認。EXPLAIN ANALYZEで実行計画を確認する</li>
+      <li><strong>LEFT JOINの不要な使用</strong>：INNER JOINで十分な場面でLEFT JOINを使うとパフォーマンスが低下する</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz-db2b-1">
+    <div class="quiz-title">
+      <span class="icon">❓</span>
+      確認クイズ
+    </div>
+    <p>ユーザー一覧と各ユーザーの注文を取得する際、ループ内で個別にクエリを発行すると何が起こる？</p>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db2b-1" style="display:none;">
+      A. SQLの文法エラー
+    </label>
+    <label class="quiz-option" data-correct="true">
+      <input type="radio" name="q-db2b-1" style="display:none;">
+      B. N+1問題が発生し、クエリ数が爆発的に増加
+    </label>
+    <label class="quiz-option" data-correct="false">
+      <input type="radio" name="q-db2b-1" style="display:none;">
+      C. データの整合性が壊れる
+    </label>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-db2b-1')">答え合わせ</button>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <button class="complete-btn" onclick="completeSection('db2b')">
+    <span class="icon">✓</span>
+    このページを完了
+  </button>
+</section>
+
 <!-- db3: 正規化（1NF） -->
 <section id="db3">
   <h1>正規化（1NF）</h1>

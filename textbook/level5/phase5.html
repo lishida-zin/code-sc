@@ -146,6 +146,99 @@
     </tbody>
   </table>
 
+  <h2>CI/CDパイプラインの全体フロー（ロールバック付き）</h2>
+
+  <!-- SVG図解: CI/CDパイプラインフロー（ロールバック付き） -->
+  <svg viewBox="0 0 700 250" style="width:100%;max-width:700px;display:block;margin:1rem auto;" role="img" aria-label="CI/CDパイプラインのフロー図（ロールバックパスを含む）">
+    <title>CI/CDパイプライン：Code Push → Build → Test → Stage → Approve → Deploy → Monitor（ロールバック付き）</title>
+    <defs>
+      <marker id="arrowPipe" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#6366f1"/>
+      </marker>
+      <marker id="arrowRollback" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#ef4444"/>
+      </marker>
+    </defs>
+
+    <!-- メインフロー -->
+    <rect x="10" y="80" width="75" height="50" rx="6" fill="#9b59b6"/>
+    <text x="47" y="100" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Push</text>
+    <text x="47" y="115" text-anchor="middle" fill="#e0d4f5" font-size="8">コード変更</text>
+
+    <line x1="85" y1="105" x2="105" y2="105" stroke="#6366f1" stroke-width="2" marker-end="url(#arrowPipe)"/>
+
+    <rect x="110" y="80" width="75" height="50" rx="6" fill="#3498db"/>
+    <text x="147" y="100" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Build</text>
+    <text x="147" y="115" text-anchor="middle" fill="#dbeafe" font-size="8">コンパイル</text>
+
+    <line x1="185" y1="105" x2="205" y2="105" stroke="#6366f1" stroke-width="2" marker-end="url(#arrowPipe)"/>
+
+    <rect x="210" y="80" width="75" height="50" rx="6" fill="#f59e0b"/>
+    <text x="247" y="100" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Test</text>
+    <text x="247" y="115" text-anchor="middle" fill="#fef3c7" font-size="8">自動テスト</text>
+
+    <line x1="285" y1="105" x2="305" y2="105" stroke="#6366f1" stroke-width="2" marker-end="url(#arrowPipe)"/>
+
+    <rect x="310" y="80" width="75" height="50" rx="6" fill="#10b981"/>
+    <text x="347" y="100" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Stage</text>
+    <text x="347" y="115" text-anchor="middle" fill="#d1fae5" font-size="8">検証環境</text>
+
+    <line x1="385" y1="105" x2="405" y2="105" stroke="#6366f1" stroke-width="2" marker-end="url(#arrowPipe)"/>
+
+    <rect x="410" y="80" width="75" height="50" rx="6" fill="#f97316"/>
+    <text x="447" y="100" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Approve</text>
+    <text x="447" y="115" text-anchor="middle" fill="#ffedd5" font-size="8">承認</text>
+
+    <line x1="485" y1="105" x2="505" y2="105" stroke="#6366f1" stroke-width="2" marker-end="url(#arrowPipe)"/>
+
+    <rect x="510" y="80" width="75" height="50" rx="6" fill="#ef4444"/>
+    <text x="547" y="100" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Deploy</text>
+    <text x="547" y="115" text-anchor="middle" fill="#fee2e2" font-size="8">本番展開</text>
+
+    <line x1="585" y1="105" x2="605" y2="105" stroke="#6366f1" stroke-width="2" marker-end="url(#arrowPipe)"/>
+
+    <rect x="610" y="80" width="75" height="50" rx="6" fill="#8b5cf6"/>
+    <text x="647" y="100" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Monitor</text>
+    <text x="647" y="115" text-anchor="middle" fill="#ede9fe" font-size="8">監視</text>
+
+    <!-- ロールバックパス -->
+    <path d="M647,135 L647,190 L347,190 L347,135" stroke="#ef4444" stroke-width="2" fill="none" stroke-dasharray="6,3" marker-end="url(#arrowRollback)"/>
+    <rect x="440" y="178" width="110" height="24" rx="4" fill="#fee2e2" stroke="#ef4444"/>
+    <text x="495" y="194" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="bold">Rollback Path</text>
+
+    <!-- 説明 -->
+    <text x="350" y="235" text-anchor="middle" fill="#666" font-size="10">問題検知時は前のバージョンに自動/手動でロールバック</text>
+  </svg>
+
+  <h2>デプロイ戦略</h2>
+
+  <div class="compare-box">
+    <div class="compare-bad">
+      <div class="compare-title">よくある間違い</div>
+<pre><code>// ビッグバンデプロイ
+// 全サーバーを同時に新バージョンに更新
+deploy --all-servers --version=v2.0
+
+// 問題発生時:
+// - 全ユーザーに影響
+// - ロールバックにも時間がかかる
+// - 原因特定が困難</code></pre>
+    </div>
+    <div class="compare-good">
+      <div class="compare-title">正しい方法</div>
+<pre><code>// カナリアリリース（段階的展開）
+deploy --canary --percentage=1%   // 1. まず1%に展開
+monitor --duration=10m            // 2. エラー率を監視
+deploy --canary --percentage=10%  // 3. 問題なければ10%に
+deploy --canary --percentage=50%  // 4. さらに50%に
+deploy --canary --percentage=100% // 5. 全体に展開
+
+// 問題発生時:
+// - 影響は1%のユーザーのみ
+// - 即座にロールバック可能</code></pre>
+    </div>
+  </div>
+
   <h2>CI/CDがない世界の問題</h2>
 
   <div class="compare-container">

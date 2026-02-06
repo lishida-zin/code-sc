@@ -204,6 +204,62 @@ useEffect(() => {
         </div>
       </div>
 
+      <!-- useEffect依存配列の動作フロー（SVG図解） -->
+      <div class="card">
+        <h2>useEffect依存配列の動作フロー（図解）</h2>
+        <p>依存配列の値がどのように評価され、Effectが実行されるかの流れを理解しましょう。</p>
+
+        <svg viewBox="0 0 600 280" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="useEffect依存配列の動作フロー：レンダリングから依存チェック、クリーンアップ、Effect実行までのタイムライン">
+          <!-- 背景 -->
+          <rect x="0" y="0" width="600" height="280" fill="#f8f9fa" rx="8"/>
+
+          <!-- タイムラインの矢印 -->
+          <defs>
+            <marker id="timeline-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L7,3 z" fill="#64748b"/>
+            </marker>
+          </defs>
+          <line x1="30" y1="80" x2="580" y2="80" stroke="#64748b" stroke-width="2" marker-end="url(#timeline-arrow)"/>
+          <text x="300" y="20" text-anchor="middle" fill="#334155" font-weight="bold" font-size="13">useEffect 依存配列チェックのタイムライン</text>
+          <text x="300" y="38" text-anchor="middle" fill="#64748b" font-size="11">（依存配列: [userId] の場合）</text>
+
+          <!-- Step 1: レンダリング -->
+          <rect x="40" y="55" width="100" height="50" fill="#3b82f6" rx="6"/>
+          <text x="90" y="77" text-anchor="middle" fill="white" font-weight="bold" font-size="11">1. レンダリング</text>
+          <text x="90" y="92" text-anchor="middle" fill="#dbeafe" font-size="9">DOM更新</text>
+
+          <!-- Step 2: 依存チェック -->
+          <rect x="165" y="55" width="110" height="50" fill="#f59e0b" rx="6"/>
+          <text x="220" y="77" text-anchor="middle" fill="white" font-weight="bold" font-size="11">2. 依存チェック</text>
+          <text x="220" y="92" text-anchor="middle" fill="#fef3c7" font-size="9">前回値と比較</text>
+
+          <!-- 分岐 -->
+          <text x="330" y="60" text-anchor="middle" fill="#10b981" font-weight="bold" font-size="10">変更あり</text>
+          <path d="M275 80 L310 80 L310 55 L345 80 L310 105 Z" fill="none" stroke="#10b981" stroke-width="1.5"/>
+          <text x="310" y="84" text-anchor="middle" fill="#10b981" font-size="8">?</text>
+          <text x="330" y="115" text-anchor="middle" fill="#ef4444" font-size="10">変更なし → スキップ</text>
+
+          <!-- Step 3: クリーンアップ -->
+          <rect x="360" y="55" width="100" height="50" fill="#ef4444" rx="6"/>
+          <text x="410" y="77" text-anchor="middle" fill="white" font-weight="bold" font-size="11">3. Cleanup</text>
+          <text x="410" y="92" text-anchor="middle" fill="#fecaca" font-size="9">前回Effect解除</text>
+
+          <!-- Step 4: 新Effect実行 -->
+          <rect x="485" y="55" width="100" height="50" fill="#10b981" rx="6"/>
+          <text x="535" y="77" text-anchor="middle" fill="white" font-weight="bold" font-size="11">4. 新Effect</text>
+          <text x="535" y="92" text-anchor="middle" fill="#d1fae5" font-size="9">副作用実行</text>
+
+          <!-- 具体例 -->
+          <rect x="30" y="140" width="555" height="120" fill="#fff" stroke="#e2e8f0" stroke-width="1" rx="6"/>
+          <text x="50" y="162" fill="#334155" font-weight="bold" font-size="11">具体例: userId が 1 → 2 に変更</text>
+
+          <text x="50" y="185" fill="#3b82f6" font-size="10">1. コンポーネント再レンダリング（userId=2）</text>
+          <text x="50" y="203" fill="#f59e0b" font-size="10">2. 依存配列チェック: [1] !== [2] → 変更あり</text>
+          <text x="50" y="221" fill="#ef4444" font-size="10">3. 前回のEffect（userId=1のfetch）をクリーンアップ</text>
+          <text x="50" y="239" fill="#10b981" font-size="10">4. 新しいEffect実行（userId=2でfetch開始）</text>
+        </svg>
+      </div>
+
       <!-- レビューポイント -->
       <div class="card card-danger">
         <h2>レビューで指摘すべきポイント</h2>
@@ -386,13 +442,55 @@ useEffect(() => {
         </div>
       </div>
 
+      <!-- useEffect競合状態のCompare-box -->
+      <div class="card">
+        <h2>useEffectの競合状態（Race Condition）</h2>
+        <p>非同期処理を伴うuseEffectでは、<strong>レスポンスの到着順序</strong>が保証されないため、古いデータが新しいデータを上書きしてしまう問題が起こります。</p>
+
+        <div class="compare-box">
+          <div class="compare-bad">
+            <div class="compare-title">❌ よくある間違い</div>
+<pre><code>// レスポンスの順序を考慮しない
+useEffect(() => {
+  fetch(`/api/users/${userId}`)
+    .then(res => res.json())
+    .then(data => setUser(data));
+  // userId=1のレスポンスが遅延し
+  // userId=2の後に届くと古いデータで上書き
+}, [userId]);</code></pre>
+          </div>
+          <div class="compare-good">
+            <div class="compare-title">⭕ 正しい方法</div>
+<pre><code>// AbortControllerでクリーンアップ
+useEffect(() => {
+  const controller = new AbortController();
+
+  fetch(`/api/users/${userId}`, {
+    signal: controller.signal
+  })
+    .then(res => res.json())
+    .then(data => setUser(data))
+    .catch(err => {
+      if (err.name !== 'AbortError') throw err;
+    });
+
+  return () => controller.abort();
+}, [userId]);</code></pre>
+          </div>
+        </div>
+      </div>
+
       <!-- レビューポイント -->
       <div class="card card-danger">
-        <h2>レビューで指摘すべきポイント</h2>
+        <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
         <ul>
           <li><strong>isMountedフラグなし</strong> → アンマウント後のsetStateでWarning</li>
           <li><strong>クリーンアップなし</strong> → イベントリスナー、タイマーの蓄積（メモリリーク）</li>
           <li><strong>useEffect内で直接async</strong> → 非推奨（内部で関数定義すべき）</li>
+          <li><strong>競合状態の未対策</strong> → AbortControllerまたはstale closureチェックがない</li>
+          <li><strong>Hooksルール違反</strong> → 条件分岐やループの中でHooksを呼んでいる</li>
+          <li><strong>依存配列の欠落</strong> → ESLint react-hooks/exhaustive-deps の警告を無視している</li>
+          <li><strong>Stale closure問題</strong> → useEffect内で古い値を参照し続けている</li>
         </ul>
 
         <div class="code-block">
@@ -624,6 +722,44 @@ function Component({ isLoggedIn }) {
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Stale Closureの詳細 -->
+      <div class="card card-danger">
+        <div class="card-title"><span class="icon">🔍</span> コードレビューの観点：Stale Closure（古いクロージャ）</div>
+        <p>useEffect内のコールバックが、<strong>古い変数の値を掴んだまま</strong>になる問題です。</p>
+
+        <div class="compare-box">
+          <div class="compare-bad">
+            <div class="compare-title">❌ よくある間違い</div>
+<pre><code>function Counter() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      // countは常に0（古い値）
+      console.log(count);
+      setCount(count + 1); // 常に1になる
+    }, 1000);
+    return () => clearInterval(id);
+  }, []); // countが依存配列にない
+}</code></pre>
+          </div>
+          <div class="compare-good">
+            <div class="compare-title">⭕ 正しい方法</div>
+<pre><code>function Counter() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      // 関数形式で最新の値を取得
+      setCount(prev => prev + 1);
+    }, 1000);
+    return () => clearInterval(id);
+  }, []); // setCountの関数形式なら安全
+}</code></pre>
+          </div>
+        </div>
       </div>
 
       <!-- クイズ1 -->

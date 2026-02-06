@@ -477,6 +477,61 @@
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 
+      <!-- DOM構造の図解 -->
+      <svg viewBox="0 0 600 300" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="DOM構造：html要素からhead・bodyへの木構造">
+        <!-- Root -->
+        <rect x="240" y="10" width="120" height="40" rx="8" fill="#2563EB" stroke="#1D4ED8" stroke-width="2"/>
+        <text x="300" y="36" text-anchor="middle" font-size="15" font-weight="bold" fill="white">&lt;html&gt;</text>
+
+        <!-- Lines from html -->
+        <line x1="270" y1="50" x2="150" y2="90" stroke="#333" stroke-width="2"/>
+        <line x1="330" y1="50" x2="450" y2="90" stroke="#333" stroke-width="2"/>
+
+        <!-- head -->
+        <rect x="90" y="90" width="120" height="40" rx="8" fill="#EA580C" stroke="#C2410C" stroke-width="2"/>
+        <text x="150" y="116" text-anchor="middle" font-size="15" font-weight="bold" fill="white">&lt;head&gt;</text>
+
+        <!-- body -->
+        <rect x="390" y="90" width="120" height="40" rx="8" fill="#16A34A" stroke="#15803D" stroke-width="2"/>
+        <text x="450" y="116" text-anchor="middle" font-size="15" font-weight="bold" fill="white">&lt;body&gt;</text>
+
+        <!-- Lines from head -->
+        <line x1="120" y1="130" x2="70" y2="170" stroke="#333" stroke-width="1.5"/>
+        <line x1="170" y1="130" x2="220" y2="170" stroke="#333" stroke-width="1.5"/>
+
+        <!-- head children -->
+        <rect x="20" y="170" width="100" height="35" rx="6" fill="#FFF7ED" stroke="#EA580C" stroke-width="1.5"/>
+        <text x="70" y="193" text-anchor="middle" font-size="12" fill="#333">&lt;meta&gt;</text>
+
+        <rect x="170" y="170" width="100" height="35" rx="6" fill="#FFF7ED" stroke="#EA580C" stroke-width="1.5"/>
+        <text x="220" y="193" text-anchor="middle" font-size="12" fill="#333">&lt;title&gt;</text>
+
+        <!-- Lines from body -->
+        <line x1="420" y1="130" x2="350" y2="170" stroke="#333" stroke-width="1.5"/>
+        <line x1="450" y1="130" x2="450" y2="170" stroke="#333" stroke-width="1.5"/>
+        <line x1="480" y1="130" x2="550" y2="170" stroke="#333" stroke-width="1.5"/>
+
+        <!-- body children -->
+        <rect x="300" y="170" width="100" height="35" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="1.5"/>
+        <text x="350" y="193" text-anchor="middle" font-size="12" fill="#333">&lt;h1&gt;</text>
+
+        <rect x="400" y="170" width="100" height="35" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="1.5"/>
+        <text x="450" y="193" text-anchor="middle" font-size="12" fill="#333">&lt;p&gt;</text>
+
+        <rect x="500" y="170" width="100" height="35" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="1.5"/>
+        <text x="550" y="193" text-anchor="middle" font-size="12" fill="#333">&lt;img&gt;</text>
+
+        <!-- Lines from p -->
+        <line x1="450" y1="205" x2="450" y2="240" stroke="#333" stroke-width="1.5"/>
+
+        <!-- text node -->
+        <rect x="400" y="240" width="100" height="35" rx="6" fill="#FAF5FF" stroke="#7C3AED" stroke-width="1.5"/>
+        <text x="450" y="263" text-anchor="middle" font-size="11" fill="#333">"テキスト"</text>
+
+        <!-- Legend -->
+        <text x="300" y="295" text-anchor="middle" font-size="13" fill="#666">DOM（Document Object Model）のツリー構造</text>
+      </svg>
+
       <h2>各部分の役割</h2>
 
       <h3>DOCTYPE宣言</h3>
@@ -721,6 +776,15 @@
         </ol>
       </div>
 
+      <div class="card card-danger">
+        <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+        <ul>
+          <li><strong>見出しの階層違反</strong>：h1→h3のように階層を飛ばしていないか。スクリーンリーダーは見出し階層でページ構造を把握する</li>
+          <li><strong>見た目目的のタグ使用</strong>：文字を大きくしたいだけでh1を使っていないか。見た目はCSSで変えるべき</li>
+          <li><strong>brタグの乱用</strong>：レイアウト調整のためにbrを連発していないか。余白はmargin/paddingで制御する</li>
+        </ul>
+      </div>
+
       <div class="quiz" id="quiz-html4">
         <div class="quiz-title">
           <span class="icon">❓</span>
@@ -880,6 +944,15 @@
           <li>画像は<strong>&lt;img src="..." alt="..."&gt;</strong>で表示</li>
           <li><strong>alt属性は必須</strong>（アクセシビリティのため）</li>
         </ol>
+      </div>
+
+      <div class="card card-danger">
+        <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+        <ul>
+          <li><strong>alt属性の品質</strong>：<code>alt=""</code>（空）や<code>alt="image"</code>のような無意味なaltになっていないか。画像の内容を具体的に説明する</li>
+          <li><strong>外部リンクのセキュリティ</strong>：<code>target="_blank"</code>を使う場合、<code>rel="noopener"</code>を付けているか（タブナビング攻撃防止）</li>
+          <li><strong>リンクテキストの明確さ</strong>：「ここをクリック」ではなく、リンク先の内容がわかるテキストになっているか</li>
+        </ul>
       </div>
 
       <div class="quiz" id="quiz-html5">
@@ -1190,6 +1263,35 @@
         </ul>
       </div>
 
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-title">❌ よくある間違い（div soup）</div>
+          <pre><code>&lt;div class="header"&gt;
+  &lt;div class="logo"&gt;サイト名&lt;/div&gt;
+  &lt;div class="nav"&gt;
+    &lt;div&gt;&lt;a href="/"&gt;ホーム&lt;/a&gt;&lt;/div&gt;
+    &lt;div&gt;&lt;a href="/about"&gt;概要&lt;/a&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="content"&gt;...&lt;/div&gt;
+&lt;div class="footer"&gt;...&lt;/div&gt;</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-title">⭕ 正しい方法（セマンティックHTML）</div>
+          <pre><code>&lt;header&gt;
+  &lt;h1&gt;サイト名&lt;/h1&gt;
+  &lt;nav&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="/"&gt;ホーム&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="/about"&gt;概要&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/nav&gt;
+&lt;/header&gt;
+&lt;main&gt;...&lt;/main&gt;
+&lt;footer&gt;...&lt;/footer&gt;</code></pre>
+        </div>
+      </div>
+
       <div class="quiz" id="quiz-html7">
         <div class="quiz-title">
           <span class="icon">❓</span>
@@ -1467,6 +1569,15 @@
       <p>
         <code>&lt;nav&gt;</code>タグを使い、<code>aria-label</code>で「何のナビゲーションか」を明示しています。
       </p>
+
+      <div class="card card-danger">
+        <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+        <ul>
+          <li><strong>冗長なARIA</strong>：<code>&lt;nav role="navigation"&gt;</code>のようにネイティブHTMLで十分な要素にARIAを付けていないか</li>
+          <li><strong>aria-labelの欠落</strong>：アイコンのみのボタンにテキストラベルがあるか。視覚的に明らかでも支援技術には伝わらない</li>
+          <li><strong>インタラクティブ要素の偽装</strong>：<code>&lt;div onclick="..."&gt;</code>で偽ボタンを作っていないか。<code>&lt;button&gt;</code>を使えばキーボード操作・フォーカス管理が自動で得られる</li>
+        </ul>
+      </div>
 
       <div class="quiz" id="quiz-html8">
         <div class="quiz-title">

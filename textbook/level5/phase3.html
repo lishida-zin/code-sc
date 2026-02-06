@@ -704,6 +704,65 @@ Source: 10.0.0.0/8  # SSHは社内ネットワークのみ</code></pre>
     </ul>
   </div>
 
+  <h2>クラウドコスト最適化</h2>
+
+  <!-- SVG図解: クラウドコスト最適化マトリクス -->
+  <svg viewBox="0 0 600 300" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="EC2インスタンスの購入オプション比較（On-Demand, Reserved, Spot）">
+    <title>クラウドコスト最適化：インスタンス購入オプションの比較</title>
+
+    <!-- ヘッダー -->
+    <rect x="10" y="10" width="580" height="40" rx="6" fill="#2c3e50"/>
+    <text x="300" y="35" text-anchor="middle" fill="white" font-size="14" font-weight="bold">EC2 インスタンス購入オプション比較</text>
+
+    <!-- On-Demand -->
+    <rect x="10" y="65" width="185" height="220" rx="8" fill="#e74c3c" opacity="0.1" stroke="#e74c3c" stroke-width="2"/>
+    <rect x="10" y="65" width="185" height="35" rx="8" fill="#e74c3c"/>
+    <text x="102" y="87" text-anchor="middle" fill="white" font-size="12" font-weight="bold">On-Demand</text>
+    <text x="102" y="120" text-anchor="middle" fill="#333" font-size="11">従量課金（定価）</text>
+    <text x="102" y="145" text-anchor="middle" fill="#e74c3c" font-size="20" font-weight="bold">100%</text>
+    <text x="102" y="165" text-anchor="middle" fill="#666" font-size="10">割引なし</text>
+    <text x="102" y="190" text-anchor="middle" fill="#333" font-size="10">いつでも起動/停止</text>
+    <text x="102" y="210" text-anchor="middle" fill="#333" font-size="10">契約不要</text>
+    <rect x="30" y="225" width="145" height="25" rx="4" fill="#e74c3c" opacity="0.2"/>
+    <text x="102" y="242" text-anchor="middle" fill="#c0392b" font-size="10" font-weight="bold">開発/テスト/変動ワークロード</text>
+    <text x="102" y="270" text-anchor="middle" fill="#999" font-size="9">最も柔軟、最もコスト高</text>
+
+    <!-- Reserved -->
+    <rect x="207" y="65" width="185" height="220" rx="8" fill="#27ae60" opacity="0.1" stroke="#27ae60" stroke-width="2"/>
+    <rect x="207" y="65" width="185" height="35" rx="8" fill="#27ae60"/>
+    <text x="300" y="87" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Reserved</text>
+    <text x="300" y="120" text-anchor="middle" fill="#333" font-size="11">1年/3年契約</text>
+    <text x="300" y="145" text-anchor="middle" fill="#27ae60" font-size="20" font-weight="bold">30-72% OFF</text>
+    <text x="300" y="165" text-anchor="middle" fill="#666" font-size="10">大幅割引</text>
+    <text x="300" y="190" text-anchor="middle" fill="#333" font-size="10">一定期間のコミット必要</text>
+    <text x="300" y="210" text-anchor="middle" fill="#333" font-size="10">全額前払いで最大割引</text>
+    <rect x="227" y="225" width="145" height="25" rx="4" fill="#27ae60" opacity="0.2"/>
+    <text x="300" y="242" text-anchor="middle" fill="#1e8449" font-size="10" font-weight="bold">常時稼働の本番サーバー</text>
+    <text x="300" y="270" text-anchor="middle" fill="#999" font-size="9">予測可能なワークロードに最適</text>
+
+    <!-- Spot -->
+    <rect x="405" y="65" width="185" height="220" rx="8" fill="#3498db" opacity="0.1" stroke="#3498db" stroke-width="2"/>
+    <rect x="405" y="65" width="185" height="35" rx="8" fill="#3498db"/>
+    <text x="497" y="87" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Spot</text>
+    <text x="497" y="120" text-anchor="middle" fill="#333" font-size="11">余剰キャパシティ利用</text>
+    <text x="497" y="145" text-anchor="middle" fill="#3498db" font-size="20" font-weight="bold">最大90% OFF</text>
+    <text x="497" y="165" text-anchor="middle" fill="#666" font-size="10">最大割引</text>
+    <text x="497" y="190" text-anchor="middle" fill="#e74c3c" font-size="10">中断リスクあり（2分前通知）</text>
+    <text x="497" y="210" text-anchor="middle" fill="#333" font-size="10">入札制/市場価格</text>
+    <rect x="425" y="225" width="145" height="25" rx="4" fill="#3498db" opacity="0.2"/>
+    <text x="497" y="242" text-anchor="middle" fill="#2471a3" font-size="10" font-weight="bold">バッチ処理/CI/開発環境</text>
+    <text x="497" y="270" text-anchor="middle" fill="#999" font-size="9">中断耐性のあるワークロードに</text>
+  </svg>
+
+  <div class="card card-danger">
+    <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+    <ul>
+      <li><strong>セキュリティグループの0.0.0.0/0ルール</strong>：SSH(22)やDB(3306/5432)を全世界に公開していないか。管理用ポートは特定IPまたはVPN経由に限定すべき</li>
+      <li><strong>IAMポリシーの最小権限原則違反</strong>：<code>"Action": "*"</code>や<code>"Resource": "*"</code>が含まれていないか。必要な操作と対象リソースのみに限定する</li>
+      <li><strong>リソースタグ付けの不足</strong>：Environment、Team、Projectなどのタグがリソースに付与されているか。タグがないとコスト配分や管理が困難になる</li>
+    </ul>
+  </div>
+
   <div class="quiz" id="quiz-aws4">
     <h3>理解度チェック</h3>
     <p><strong>Q: 以下のセキュリティグループ設定の問題点は？</strong></p>

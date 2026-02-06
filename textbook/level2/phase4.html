@@ -989,6 +989,47 @@ console.log(taro.greet()); // 'こんにちは、太郎です'</code></pre>
         </p>
       </div>
 
+      <!-- SVG: プロトタイプチェーン -->
+      <svg viewBox="0 0 600 200" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="プロトタイプチェーンの図。インスタンスからConstructor.prototype、Object.prototype、nullへの__proto__リンクを表示">
+        <defs>
+          <marker id="arrow-proto" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6"/>
+          </marker>
+        </defs>
+        <!-- タイトル -->
+        <text x="300" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="currentColor">プロトタイプチェーン</text>
+        <!-- インスタンス -->
+        <rect x="15" y="50" width="120" height="70" rx="8" fill="#D1FAE5" stroke="#10b981" stroke-width="2"/>
+        <text x="75" y="72" text-anchor="middle" font-size="12" font-weight="bold" fill="#10b981">instance</text>
+        <text x="75" y="90" text-anchor="middle" font-size="10" fill="currentColor">{ name, age }</text>
+        <text x="75" y="108" text-anchor="middle" font-size="9" fill="#6b7280">自身のプロパティ</text>
+        <!-- Constructor.prototype -->
+        <rect x="170" y="50" width="140" height="70" rx="8" fill="#DBEAFE" stroke="#3b82f6" stroke-width="2"/>
+        <text x="240" y="72" text-anchor="middle" font-size="11" font-weight="bold" fill="#3b82f6">Constructor</text>
+        <text x="240" y="88" text-anchor="middle" font-size="11" font-weight="bold" fill="#3b82f6">.prototype</text>
+        <text x="240" y="108" text-anchor="middle" font-size="9" fill="#6b7280">greet(), speak()</text>
+        <!-- Object.prototype -->
+        <rect x="345" y="50" width="130" height="70" rx="8" fill="#EDE9FE" stroke="#8b5cf6" stroke-width="2"/>
+        <text x="410" y="72" text-anchor="middle" font-size="11" font-weight="bold" fill="#8b5cf6">Object</text>
+        <text x="410" y="88" text-anchor="middle" font-size="11" font-weight="bold" fill="#8b5cf6">.prototype</text>
+        <text x="410" y="108" text-anchor="middle" font-size="9" fill="#6b7280">toString(), etc.</text>
+        <!-- null -->
+        <rect x="510" y="60" width="70" height="50" rx="25" fill="#F3F4F6" stroke="#6b7280" stroke-width="2"/>
+        <text x="545" y="90" text-anchor="middle" font-size="13" font-weight="bold" fill="#6b7280">null</text>
+        <!-- __proto__矢印 -->
+        <line x1="135" y1="85" x2="165" y2="85" stroke="#3b82f6" stroke-width="2.5" marker-end="url(#arrow-proto)"/>
+        <line x1="310" y1="85" x2="340" y2="85" stroke="#3b82f6" stroke-width="2.5" marker-end="url(#arrow-proto)"/>
+        <line x1="475" y1="85" x2="505" y2="85" stroke="#3b82f6" stroke-width="2.5" marker-end="url(#arrow-proto)"/>
+        <!-- ラベル -->
+        <text x="150" y="78" text-anchor="middle" font-size="8" fill="#3b82f6" font-weight="bold">__proto__</text>
+        <text x="325" y="78" text-anchor="middle" font-size="8" fill="#3b82f6" font-weight="bold">__proto__</text>
+        <text x="490" y="78" text-anchor="middle" font-size="8" fill="#3b82f6" font-weight="bold">__proto__</text>
+        <!-- 説明 -->
+        <text x="300" y="150" text-anchor="middle" font-size="11" fill="currentColor">プロパティが見つからないとき、__proto__ を辿って親を探す</text>
+        <text x="300" y="170" text-anchor="middle" font-size="11" fill="currentColor">この「辿る仕組み」がプロトタイプチェーン</text>
+        <text x="300" y="192" text-anchor="middle" font-size="10" fill="#6b7280">※ class構文は内部的にこのプロトタイプチェーンを使っている</text>
+      </svg>
+
       <h2>継承（extends）</h2>
 
       <pre><code>// 親クラス
@@ -1458,6 +1499,15 @@ counter(); counter(); counter();</code></pre>
         </div>
       </div>
 
+      <div class="card card-danger">
+        <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+        <ul>
+          <li><strong>クロージャによるメモリリーク</strong>：大きなオブジェクトを参照するクロージャが長期間保持されていないか。不要になったら参照を<code>null</code>にする</li>
+          <li><strong>this参照の曖昧さ</strong>：コールバック内の<code>this</code>が意図した値を指しているか。アロー関数を使うか<code>bind</code>で明示的にバインドすべき</li>
+          <li><strong>モジュールの循環依存</strong>：A→B→Aのように循環するimportがないか。循環依存はundefinedエクスポートの原因になる</li>
+        </ul>
+      </div>
+
       <div class="card card-info">
         <div class="card-title">
           <span class="icon">📝</span>
@@ -1520,6 +1570,43 @@ counter(); counter(); counter();</code></pre>
           thisも同じで、<strong>どう呼び出されたか</strong>で変わります。
         </p>
       </div>
+
+      <!-- SVG: thisバインディングルール -->
+      <svg viewBox="0 0 600 280" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="thisバインディングルールの優先度ピラミッド。new、明示的bind/call/apply、暗黙的obj.method、デフォルトの4段階">
+        <defs>
+          <marker id="arrow-this" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#6b7280"/>
+          </marker>
+        </defs>
+        <!-- タイトル -->
+        <text x="300" y="22" text-anchor="middle" font-size="15" font-weight="bold" fill="currentColor">this バインディングの優先順位</text>
+        <!-- 優先度ラベル -->
+        <text x="30" y="75" font-size="11" fill="#6b7280">高</text>
+        <line x1="30" y1="80" x2="30" y2="240" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arrow-this)"/>
+        <text x="30" y="258" font-size="11" fill="#6b7280">低</text>
+        <!-- ピラミッド段1: new（最高優先度） -->
+        <polygon points="300,40 390,90 210,90" fill="#ef4444" stroke="none"/>
+        <text x="300" y="75" text-anchor="middle" font-size="13" font-weight="bold" fill="white">new</text>
+        <!-- ピラミッド段2: 明示的 bind/call/apply -->
+        <polygon points="210,95 390,95 430,145 170,145" fill="#f59e0b" stroke="none"/>
+        <text x="300" y="118" text-anchor="middle" font-size="12" font-weight="bold" fill="white">explicit</text>
+        <text x="300" y="135" text-anchor="middle" font-size="10" fill="white">bind / call / apply</text>
+        <!-- ピラミッド段3: 暗黙的 obj.method -->
+        <polygon points="170,150 430,150 470,200 130,200" fill="#3b82f6" stroke="none"/>
+        <text x="300" y="173" text-anchor="middle" font-size="12" font-weight="bold" fill="white">implicit</text>
+        <text x="300" y="190" text-anchor="middle" font-size="10" fill="white">obj.method() → this = obj</text>
+        <!-- ピラミッド段4: デフォルト -->
+        <polygon points="130,205 470,205 510,255 90,255" fill="#8b5cf6" stroke="none"/>
+        <text x="300" y="228" text-anchor="middle" font-size="12" font-weight="bold" fill="white">default</text>
+        <text x="300" y="245" text-anchor="middle" font-size="10" fill="white">window（通常）/ undefined（strict mode）</text>
+        <!-- 右側の説明 -->
+        <text x="520" y="75" font-size="11" fill="#ef4444" font-weight="bold">new Foo()</text>
+        <text x="520" y="125" font-size="11" fill="#f59e0b" font-weight="bold">fn.bind(x)()</text>
+        <text x="520" y="180" font-size="11" fill="#3b82f6" font-weight="bold">obj.fn()</text>
+        <text x="520" y="235" font-size="11" fill="#8b5cf6" font-weight="bold">fn()</text>
+        <!-- 特記事項 -->
+        <text x="300" y="275" text-anchor="middle" font-size="11" fill="#6b7280">※ アロー関数は自身のthisを持たない（外側のthisを継承）</text>
+      </svg>
 
       <h2>thisの4つのパターン</h2>
 
