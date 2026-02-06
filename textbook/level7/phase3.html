@@ -473,7 +473,109 @@ ScalingPolicy:
       <li><strong>ステートフルな設計</strong>でスケールアウトできない</li>
       <li><strong>セッションをサーバーに保存</strong>している（Redis等に外出しすべき）</li>
       <li><strong>スケールダウン時のGraceful Shutdown</strong>が考慮されていない</li>
+      <li><strong>単一障害点の存在</strong>：ロードバランサー、DB、キャッシュなど各レイヤーに冗長性があるか</li>
+      <li><strong>スケーリング戦略の不在</strong>：オートスケーリングのポリシーが定義されていない、または閾値が不適切</li>
+      <li><strong>コスト最適化の考慮不足</strong>：常時On-Demandで運用していないか。Reserved/Spotの活用余地がないか</li>
     </ul>
+  </div>
+
+  <h2>データベースシャーディング</h2>
+
+  <p>
+    水平スケーリングの考え方はデータベースにも適用できます。<br>
+    <strong>シャーディング</strong>は、データを複数のDBに分散する手法です。
+  </p>
+
+  <!-- SVG図解: データベースシャーディング -->
+  <svg viewBox="0 0 600 320" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="データベースシャーディングの概念図（単一DBからシャードDBへの移行）">
+    <title>データベースシャーディング：ルーティングレイヤーによるデータ分散</title>
+
+    <!-- Before: 単一DB -->
+    <text x="100" y="20" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="bold">Before: 単一DB</text>
+    <rect x="30" y="35" width="140" height="80" rx="6" fill="#ef4444" opacity="0.15" stroke="#ef4444" stroke-width="2"/>
+    <ellipse cx="100" cy="75" rx="50" ry="25" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
+    <text x="100" y="72" text-anchor="middle" fill="white" font-size="11" font-weight="bold">DB</text>
+    <text x="100" y="87" text-anchor="middle" fill="white" font-size="8">100TB</text>
+    <text x="100" y="130" text-anchor="middle" fill="#ef4444" font-size="9">ボトルネック</text>
+
+    <!-- 矢印 -->
+    <line x1="180" y1="75" x2="220" y2="75" stroke="#666" stroke-width="2" marker-end="url(#arrow-scale-up)"/>
+
+    <!-- After: シャード構成 -->
+    <text x="420" y="20" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">After: シャード構成</text>
+
+    <!-- アプリ -->
+    <rect x="340" y="35" width="160" height="35" rx="6" fill="#3b82f6"/>
+    <text x="420" y="57" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Application</text>
+
+    <!-- ルーティングレイヤー -->
+    <rect x="310" y="90" width="220" height="35" rx="6" fill="#8b5cf6"/>
+    <text x="420" y="112" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Routing Layer (Shard Key)</text>
+
+    <!-- 矢印 -->
+    <line x1="420" y1="70" x2="420" y2="90" stroke="#6b7280" stroke-width="2"/>
+    <line x1="340" y1="125" x2="310" y2="155" stroke="#6b7280" stroke-width="2"/>
+    <line x1="420" y1="125" x2="420" y2="155" stroke="#6b7280" stroke-width="2"/>
+    <line x1="500" y1="125" x2="530" y2="155" stroke="#6b7280" stroke-width="2"/>
+
+    <!-- Shard 1 -->
+    <ellipse cx="310" cy="185" rx="50" ry="25" fill="#10b981" stroke="#047857" stroke-width="2"/>
+    <text x="310" y="182" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Shard 1</text>
+    <text x="310" y="195" text-anchor="middle" fill="white" font-size="8">A-H</text>
+
+    <!-- Shard 2 -->
+    <ellipse cx="420" cy="185" rx="50" ry="25" fill="#10b981" stroke="#047857" stroke-width="2"/>
+    <text x="420" y="182" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Shard 2</text>
+    <text x="420" y="195" text-anchor="middle" fill="white" font-size="8">I-P</text>
+
+    <!-- Shard 3 -->
+    <ellipse cx="530" cy="185" rx="50" ry="25" fill="#10b981" stroke="#047857" stroke-width="2"/>
+    <text x="530" y="182" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Shard 3</text>
+    <text x="530" y="195" text-anchor="middle" fill="white" font-size="8">Q-Z</text>
+
+    <!-- 説明 -->
+    <text x="420" y="240" text-anchor="middle" fill="#666" font-size="10">各シャードが約33TBずつ分担</text>
+  </svg>
+
+  <div class="compare-box">
+    <div class="compare-blue">
+      <div class="compare-title">Hash Sharding</div>
+      <ul>
+        <li>シャードキーのハッシュ値でデータを分散</li>
+        <li>データが<strong>均等に分散</strong>される</li>
+        <li>範囲クエリが苦手（複数シャードにまたがる）</li>
+      </ul>
+<pre><code>shard_id = hash(user_id) % num_shards
+// user_id=123 → hash=7 → shard 1
+// user_id=456 → hash=2 → shard 2</code></pre>
+    </div>
+    <div class="compare-green">
+      <div class="compare-title">Range Sharding</div>
+      <ul>
+        <li>キーの範囲でデータを分散</li>
+        <li>範囲クエリが<strong>効率的</strong></li>
+        <li><strong>ホットパーティション</strong>（偏り）が発生しやすい</li>
+      </ul>
+<pre><code>// 日付でシャーディング
+2025年データ → shard_2025
+2026年データ → shard_2026
+// 最新データに負荷集中しやすい</code></pre>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <div class="card-title">
+      <span class="icon">⚠️</span>
+      シャーディングの課題
+    </div>
+    <ul>
+      <li><strong>Hot Partition問題</strong>：特定のシャードにアクセスが集中する。例：有名ユーザーのデータが1つのシャードに集中</li>
+      <li><strong>リシャーディングの困難さ</strong>：シャード数を変更するとデータの再配置が必要。大量データの移行中にダウンタイムが発生する可能性</li>
+      <li><strong>クロスシャードクエリ</strong>：複数シャードにまたがるJOINやトランザクションが複雑になる</li>
+    </ul>
+    <p style="margin:0;">
+      <strong>原則</strong>：シャーディングは最後の手段。まずは読み取りレプリカ、キャッシュ、クエリ最適化を検討する。
+    </p>
   </div>
 
   <div class="quiz" id="quiz-cloud3-1">

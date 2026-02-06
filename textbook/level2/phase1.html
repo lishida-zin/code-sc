@@ -534,6 +534,49 @@ console.log(y);</code></pre>
         </table>
       </div>
 
+      <!-- SVG: JavaScript型の関係図 -->
+      <svg viewBox="0 0 600 320" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="JavaScriptの型の関係図。プリミティブ型7種と参照型をグループ分けして表示">
+        <defs>
+          <marker id="arrow-type" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#6b7280"/>
+          </marker>
+        </defs>
+        <!-- タイトル -->
+        <text x="300" y="28" text-anchor="middle" font-size="16" font-weight="bold" fill="currentColor">JavaScriptのデータ型</text>
+        <!-- プリミティブ型グループ -->
+        <rect x="20" y="45" width="350" height="250" rx="12" fill="#DBEAFE" stroke="#3b82f6" stroke-width="2"/>
+        <text x="195" y="72" text-anchor="middle" font-size="14" font-weight="bold" fill="#3b82f6">プリミティブ型（値そのもの）</text>
+        <!-- 各プリミティブ型 -->
+        <rect x="40" y="85" width="100" height="40" rx="6" fill="#EFF6FF" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="90" y="110" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">string</text>
+        <rect x="155" y="85" width="100" height="40" rx="6" fill="#EFF6FF" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="205" y="110" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">number</text>
+        <rect x="270" y="85" width="90" height="40" rx="6" fill="#EFF6FF" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="315" y="110" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">boolean</text>
+        <rect x="40" y="140" width="100" height="40" rx="6" fill="#EFF6FF" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="90" y="165" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">null</text>
+        <rect x="155" y="140" width="100" height="40" rx="6" fill="#EFF6FF" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="205" y="165" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">undefined</text>
+        <rect x="270" y="140" width="90" height="40" rx="6" fill="#EFF6FF" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="315" y="165" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">symbol</text>
+        <rect x="40" y="195" width="100" height="40" rx="6" fill="#EFF6FF" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="90" y="220" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">bigint</text>
+        <!-- 特徴テキスト -->
+        <text x="195" y="260" text-anchor="middle" font-size="11" fill="#3b82f6">コピー時：値そのものがコピーされる</text>
+        <text x="195" y="278" text-anchor="middle" font-size="11" fill="#3b82f6">変更しても元のデータに影響なし</text>
+        <!-- 参照型グループ -->
+        <rect x="395" y="45" width="185" height="250" rx="12" fill="#D1FAE5" stroke="#10b981" stroke-width="2"/>
+        <text x="487" y="72" text-anchor="middle" font-size="14" font-weight="bold" fill="#10b981">参照型</text>
+        <rect x="415" y="85" width="145" height="40" rx="6" fill="#ECFDF5" stroke="#10b981" stroke-width="1.5"/>
+        <text x="487" y="110" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">Object { }</text>
+        <rect x="415" y="140" width="145" height="40" rx="6" fill="#ECFDF5" stroke="#10b981" stroke-width="1.5"/>
+        <text x="487" y="165" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">Array [ ]</text>
+        <rect x="415" y="195" width="145" height="40" rx="6" fill="#ECFDF5" stroke="#10b981" stroke-width="1.5"/>
+        <text x="487" y="220" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">Function f()</text>
+        <text x="487" y="260" text-anchor="middle" font-size="11" fill="#10b981">コピー時：参照（住所）がコピー</text>
+        <text x="487" y="278" text-anchor="middle" font-size="11" fill="#10b981">変更すると元データも変わる!</text>
+      </svg>
+
       <h2>参照型（オブジェクト型）</h2>
 
       <p>
@@ -813,6 +856,15 @@ true || doSomething()   // doSomething()は実行されない
 // よく使うパターン
 const name = user.name || "名無し";  // nameがなければ"名無し"
 const result = isReady && execute();  // isReadyがtrueの時だけ実行</code></pre>
+
+      <div class="card card-danger">
+        <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+        <ul>
+          <li><strong>== の使用</strong>：暗黙の型変換に依存しており予測困難なバグの原因になる。===に統一すべき</li>
+          <li><strong>文字列 + 数値の結合</strong>：<code>"5" + 3</code> が <code>"53"</code> になる暗黙変換を見逃さない</li>
+          <li><strong>Falsy値の罠</strong>：<code>0</code>, <code>""</code>, <code>null</code>, <code>undefined</code>, <code>NaN</code> が全てfalseに変換される点に注意</li>
+        </ul>
+      </div>
 
       <!-- クイズ1 -->
       <h2>確認クイズ</h2>
@@ -1260,6 +1312,43 @@ const result2 = noReturn();  // undefined</code></pre>
 
       <h2>関数宣言 vs 関数式の違い</h2>
 
+      <!-- SVG: ホイスティング -->
+      <svg viewBox="0 0 600 320" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="ホイスティングの図。var、let/const、functionの巻き上げ挙動の違いをタイムラインで表示">
+        <defs>
+          <marker id="arrow-hoist" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#6b7280"/>
+          </marker>
+        </defs>
+        <!-- タイトル -->
+        <text x="300" y="24" text-anchor="middle" font-size="15" font-weight="bold" fill="currentColor">ホイスティング（巻き上げ）の違い</text>
+        <!-- タイムライン軸 -->
+        <line x1="150" y1="50" x2="150" y2="305" stroke="#6b7280" stroke-width="1.5"/>
+        <text x="150" y="45" text-anchor="middle" font-size="11" fill="#6b7280">コード実行前</text>
+        <line x1="430" y1="50" x2="430" y2="305" stroke="#6b7280" stroke-width="1.5"/>
+        <text x="430" y="45" text-anchor="middle" font-size="11" fill="#6b7280">コード実行時</text>
+        <!-- var -->
+        <text x="30" y="85" font-size="14" font-weight="bold" fill="#ef4444">var</text>
+        <rect x="150" y="68" width="280" height="34" rx="6" fill="#FEE2E2" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="290" y="90" text-anchor="middle" font-size="12" fill="#ef4444">宣言のみ巻き上げ（値は undefined）</text>
+        <rect x="430" y="68" width="150" height="34" rx="6" fill="#FCA5A5" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="505" y="90" text-anchor="middle" font-size="12" fill="#ef4444">値が代入される</text>
+        <!-- let/const -->
+        <text x="30" y="155" font-size="14" font-weight="bold" fill="#f59e0b">let</text>
+        <text x="30" y="172" font-size="14" font-weight="bold" fill="#f59e0b">const</text>
+        <rect x="150" y="138" width="280" height="40" rx="6" fill="#FEF3C7" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="290" y="157" text-anchor="middle" font-size="12" font-weight="bold" fill="#f59e0b">TDZ（Temporal Dead Zone）</text>
+        <text x="290" y="172" text-anchor="middle" font-size="10" fill="#f59e0b">アクセスするとReferenceError!</text>
+        <rect x="430" y="138" width="150" height="40" rx="6" fill="#FDE68A" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="505" y="162" text-anchor="middle" font-size="12" fill="#f59e0b">使用可能になる</text>
+        <!-- function -->
+        <text x="30" y="230" font-size="14" font-weight="bold" fill="#10b981">function</text>
+        <rect x="150" y="210" width="430" height="40" rx="6" fill="#D1FAE5" stroke="#10b981" stroke-width="2"/>
+        <text x="365" y="235" text-anchor="middle" font-size="13" font-weight="bold" fill="#10b981">完全に巻き上げ（宣言前でも呼び出せる）</text>
+        <!-- 結論 -->
+        <rect x="80" y="268" width="440" height="35" rx="8" fill="#EFF6FF" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="300" y="290" text-anchor="middle" font-size="12" font-weight="bold" fill="#3b82f6">結論：const/let を使えば TDZ により安全（宣言前使用がエラーになる）</text>
+      </svg>
+
       <div class="card card-warning">
         <div class="card-title">
           <span class="icon">⚠️</span>
@@ -1451,6 +1540,39 @@ console.log(safe);    // エラー（正しくブロック内に留まる）</co
         内側のスコープから外側のスコープの変数にアクセスできます。
       </p>
 
+      <!-- SVG: スコープチェーン -->
+      <svg viewBox="0 0 600 300" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="スコープチェーンの図。グローバルスコープ、関数スコープ、ブロックスコープが入れ子になり、変数の探索方向を矢印で示す">
+        <defs>
+          <marker id="arrow-scope" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#8b5cf6"/>
+          </marker>
+        </defs>
+        <!-- グローバルスコープ（外側） -->
+        <rect x="20" y="15" width="560" height="270" rx="14" fill="#EDE9FE" stroke="#8b5cf6" stroke-width="2.5"/>
+        <text x="300" y="40" text-anchor="middle" font-size="14" font-weight="bold" fill="#8b5cf6">Global Scope</text>
+        <text x="520" y="40" text-anchor="end" font-size="11" fill="#8b5cf6">const globalVar = "外"</text>
+        <!-- 関数スコープ（中間） -->
+        <rect x="60" y="55" width="480" height="215" rx="12" fill="#DBEAFE" stroke="#3b82f6" stroke-width="2"/>
+        <text x="300" y="78" text-anchor="middle" font-size="14" font-weight="bold" fill="#3b82f6">Function Scope（関数スコープ）</text>
+        <text x="480" y="78" text-anchor="end" font-size="11" fill="#3b82f6">const middle = "中"</text>
+        <!-- ブロックスコープ（内側） -->
+        <rect x="110" y="95" width="380" height="160" rx="10" fill="#FEF3C7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="300" y="118" text-anchor="middle" font-size="14" font-weight="bold" fill="#f59e0b">Block Scope（ブロックスコープ）</text>
+        <text x="440" y="118" text-anchor="end" font-size="11" fill="#f59e0b">const inner = "内"</text>
+        <!-- 変数ルックアップの矢印 -->
+        <text x="300" y="150" text-anchor="middle" font-size="12" fill="currentColor">変数が見つからないとき</text>
+        <!-- 矢印: 内側 → 外側 -->
+        <line x1="300" y1="158" x2="300" y2="175" stroke="#8b5cf6" stroke-width="2"/>
+        <text x="300" y="190" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">内側から外側へ探しに行く</text>
+        <!-- 上向き矢印群 -->
+        <path d="M 200,210 L 200,235 L 140,235" stroke="#8b5cf6" stroke-width="2" fill="none" marker-end="url(#arrow-scope)"/>
+        <text x="125" y="232" text-anchor="end" font-size="11" fill="#8b5cf6">外へ</text>
+        <path d="M 400,210 L 400,235 L 460,235" stroke="#8b5cf6" stroke-width="2" fill="none" marker-end="url(#arrow-scope)"/>
+        <text x="475" y="232" text-anchor="start" font-size="11" fill="#8b5cf6">外へ</text>
+        <!-- 説明テキスト -->
+        <text x="300" y="265" text-anchor="middle" font-size="11" fill="currentColor">内側から外側の変数は見える / 外側から内側の変数は見えない</text>
+      </svg>
+
       <pre><code>const outer = "外";
 
 function test() {
@@ -1476,6 +1598,15 @@ test();</code></pre>
         <ul style="margin:0;">
           <li><strong>内から外は見える</strong></li>
           <li><strong>外から内は見えない</strong></li>
+        </ul>
+      </div>
+
+      <div class="card card-danger">
+        <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+        <ul>
+          <li><strong>varのスコープ漏れ</strong>：forループ内の<code>var</code>がブロック外に漏れていないか確認</li>
+          <li><strong>グローバル汚染</strong>：<code>var</code>や宣言なしの変数がグローバルスコープを汚染していないか</li>
+          <li><strong>シャドーイング</strong>：外側と同名の変数で意図せず内側で上書きしていないか注意</li>
         </ul>
       </div>
 
@@ -1676,6 +1807,15 @@ numbers.every(n => n > 3);      // false（すべてではない）
 
 // 要素が含まれているか
 numbers.includes(3);            // true</code></pre>
+
+      <div class="card card-danger">
+        <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+        <ul>
+          <li><strong>ミュータブル操作の危険性</strong>：<code>push</code>, <code>splice</code>, <code>sort</code> は元の配列を変更する。意図しない副作用がないか確認</li>
+          <li><strong>参照の共有</strong>：<code>const copy = original</code> は参照コピー。独立コピーには <code>[...arr]</code> や <code>{...obj}</code> を使うべき</li>
+          <li><strong>配列メソッドの戻り値</strong>：<code>forEach</code>はundefinedを返す。値が必要なら<code>map</code>を使うべき</li>
+        </ul>
+      </div>
 
       <!-- クイズ -->
       <h2>確認クイズ</h2>

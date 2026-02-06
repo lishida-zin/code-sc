@@ -169,6 +169,75 @@ console.log('3番目');
         JavaScriptが非同期処理を実現する仕組みが<strong>イベントループ</strong>です。
       </p>
 
+      <!-- SVG: イベントループ -->
+      <svg viewBox="0 0 620 400" style="width:100%;max-width:620px;display:block;margin:1rem auto;" role="img" aria-label="イベントループの図。コールスタック、Web APIs、マイクロタスクキュー、コールバックキューの循環フローを表示">
+        <defs>
+          <marker id="arrow-el1" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6"/>
+          </marker>
+          <marker id="arrow-el2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#10b981"/>
+          </marker>
+          <marker id="arrow-el3" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#8b5cf6"/>
+          </marker>
+          <marker id="arrow-el4" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#f59e0b"/>
+          </marker>
+        </defs>
+        <!-- タイトル -->
+        <text x="310" y="24" text-anchor="middle" font-size="16" font-weight="bold" fill="currentColor">JavaScript イベントループ</text>
+        <!-- コールスタック -->
+        <rect x="30" y="45" width="170" height="160" rx="10" fill="#DBEAFE" stroke="#3b82f6" stroke-width="2.5"/>
+        <text x="115" y="70" text-anchor="middle" font-size="14" font-weight="bold" fill="#3b82f6">Call Stack</text>
+        <text x="115" y="86" text-anchor="middle" font-size="10" fill="#3b82f6">（コールスタック）</text>
+        <rect x="50" y="100" width="130" height="28" rx="4" fill="#EFF6FF" stroke="#3b82f6" stroke-width="1"/>
+        <text x="115" y="119" text-anchor="middle" font-size="11" fill="currentColor">main()</text>
+        <rect x="50" y="135" width="130" height="28" rx="4" fill="#EFF6FF" stroke="#3b82f6" stroke-width="1"/>
+        <text x="115" y="154" text-anchor="middle" font-size="11" fill="currentColor">console.log()</text>
+        <rect x="50" y="170" width="130" height="28" rx="4" fill="#EFF6FF" stroke="#3b82f6" stroke-width="1" opacity="0.4"/>
+        <text x="115" y="189" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.5">...</text>
+        <!-- Web APIs -->
+        <rect x="260" y="45" width="170" height="160" rx="10" fill="#D1FAE5" stroke="#10b981" stroke-width="2.5"/>
+        <text x="345" y="70" text-anchor="middle" font-size="14" font-weight="bold" fill="#10b981">Web APIs</text>
+        <text x="345" y="86" text-anchor="middle" font-size="10" fill="#10b981">（ブラウザ提供）</text>
+        <rect x="280" y="100" width="130" height="28" rx="4" fill="#ECFDF5" stroke="#10b981" stroke-width="1"/>
+        <text x="345" y="119" text-anchor="middle" font-size="11" fill="currentColor">setTimeout()</text>
+        <rect x="280" y="135" width="130" height="28" rx="4" fill="#ECFDF5" stroke="#10b981" stroke-width="1"/>
+        <text x="345" y="154" text-anchor="middle" font-size="11" fill="currentColor">fetch()</text>
+        <rect x="280" y="170" width="130" height="28" rx="4" fill="#ECFDF5" stroke="#10b981" stroke-width="1"/>
+        <text x="345" y="189" text-anchor="middle" font-size="11" fill="currentColor">DOM Events</text>
+        <!-- 矢印: コールスタック → Web APIs -->
+        <path d="M 200,125 L 255,125" stroke="#3b82f6" stroke-width="2.5" fill="none" marker-end="url(#arrow-el1)"/>
+        <text x="228" y="118" text-anchor="middle" font-size="10" font-weight="bold" fill="#3b82f6">1</text>
+        <!-- マイクロタスクキュー -->
+        <rect x="30" y="250" width="260" height="65" rx="10" fill="#EDE9FE" stroke="#8b5cf6" stroke-width="2.5"/>
+        <text x="160" y="272" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">Microtask Queue（マイクロタスクキュー）</text>
+        <text x="160" y="300" text-anchor="middle" font-size="11" fill="#8b5cf6">Promise.then(), async/await, queueMicrotask()</text>
+        <!-- コールバックキュー -->
+        <rect x="30" y="335" width="260" height="55" rx="10" fill="#FEF3C7" stroke="#f59e0b" stroke-width="2.5"/>
+        <text x="160" y="357" text-anchor="middle" font-size="13" font-weight="bold" fill="#f59e0b">Callback Queue（コールバックキュー）</text>
+        <text x="160" y="378" text-anchor="middle" font-size="11" fill="#f59e0b">setTimeout, setInterval, DOM Events</text>
+        <!-- 矢印: Web APIs → キュー -->
+        <path d="M 345,205 L 345,270 L 295,270" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#arrow-el2)"/>
+        <text x="355" y="238" text-anchor="start" font-size="10" font-weight="bold" fill="#10b981">2</text>
+        <path d="M 370,205 L 370,355 L 295,355" stroke="#10b981" stroke-width="2" fill="none" stroke-dasharray="5,3" marker-end="url(#arrow-el2)"/>
+        <!-- 矢印: マイクロタスク → コールスタック -->
+        <path d="M 30,270 L 10,270 L 10,150 L 25,150" stroke="#8b5cf6" stroke-width="2.5" fill="none" marker-end="url(#arrow-el3)"/>
+        <text x="15" y="215" text-anchor="middle" font-size="10" font-weight="bold" fill="#8b5cf6">3</text>
+        <!-- 矢印: コールバック → コールスタック -->
+        <path d="M 30,360 L 0,360 L 0,180 L 25,180" stroke="#f59e0b" stroke-width="2" fill="none" stroke-dasharray="5,3" marker-end="url(#arrow-el4)"/>
+        <text x="5" y="290" text-anchor="middle" font-size="10" font-weight="bold" fill="#f59e0b">4</text>
+        <!-- イベントループ中央ラベル -->
+        <rect x="430" y="250" width="180" height="140" rx="10" fill="#F3F4F6" stroke="#6b7280" stroke-width="1.5"/>
+        <text x="520" y="275" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">実行順序</text>
+        <text x="440" y="300" font-size="12" fill="#3b82f6" font-weight="bold">1. 同期処理を実行</text>
+        <text x="440" y="322" font-size="12" fill="#10b981" font-weight="bold">2. Web APIに委託</text>
+        <text x="440" y="344" font-size="12" fill="#8b5cf6" font-weight="bold">3. マイクロタスク優先</text>
+        <text x="440" y="366" font-size="12" fill="#f59e0b" font-weight="bold">4. コールバック実行</text>
+        <text x="520" y="386" text-anchor="middle" font-size="10" fill="#6b7280">※ 3は4より常に先に実行される</text>
+      </svg>
+
       <div class="card">
         <div class="card-title">
           <span class="icon">🔄</span>
@@ -557,6 +626,48 @@ getUser(userId, (error, user) => {
           <li><strong>rejected</strong> = 配送失敗...</li>
         </ul>
       </div>
+
+      <!-- SVG: Promise状態遷移 -->
+      <svg viewBox="0 0 600 220" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="Promiseの状態遷移図。pending状態からfulfilled（成功）またはrejected（失敗）へ遷移し、.then()と.catch()で処理する">
+        <defs>
+          <marker id="arrow-prom1" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#10b981"/>
+          </marker>
+          <marker id="arrow-prom2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444"/>
+          </marker>
+          <marker id="arrow-prom3" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#6b7280"/>
+          </marker>
+        </defs>
+        <!-- pending -->
+        <rect x="30" y="75" width="140" height="60" rx="30" fill="#FEF3C7" stroke="#f59e0b" stroke-width="2.5"/>
+        <text x="100" y="102" text-anchor="middle" font-size="15" font-weight="bold" fill="#f59e0b">pending</text>
+        <text x="100" y="122" text-anchor="middle" font-size="10" fill="#f59e0b">（保留中）</text>
+        <!-- fulfilled -->
+        <rect x="300" y="20" width="150" height="60" rx="30" fill="#D1FAE5" stroke="#10b981" stroke-width="2.5"/>
+        <text x="375" y="47" text-anchor="middle" font-size="15" font-weight="bold" fill="#10b981">fulfilled</text>
+        <text x="375" y="67" text-anchor="middle" font-size="10" fill="#10b981">（成功）</text>
+        <!-- rejected -->
+        <rect x="300" y="130" width="150" height="60" rx="30" fill="#FEE2E2" stroke="#ef4444" stroke-width="2.5"/>
+        <text x="375" y="157" text-anchor="middle" font-size="15" font-weight="bold" fill="#ef4444">rejected</text>
+        <text x="375" y="177" text-anchor="middle" font-size="10" fill="#ef4444">（失敗）</text>
+        <!-- 矢印: pending → fulfilled -->
+        <path d="M 170,90 L 295,50" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#arrow-prom1)"/>
+        <text x="220" y="60" font-size="11" font-weight="bold" fill="#10b981">resolve()</text>
+        <!-- 矢印: pending → rejected -->
+        <path d="M 170,120 L 295,155" stroke="#ef4444" stroke-width="2.5" fill="none" marker-end="url(#arrow-prom2)"/>
+        <text x="220" y="152" font-size="11" font-weight="bold" fill="#ef4444">reject()</text>
+        <!-- .then() / .catch() ハンドラ -->
+        <path d="M 450,50 L 530,50" stroke="#6b7280" stroke-width="2" fill="none" marker-end="url(#arrow-prom3)"/>
+        <rect x="480" y="28" width="100" height="32" rx="6" fill="#D1FAE5" stroke="#10b981" stroke-width="1.5"/>
+        <text x="530" y="50" text-anchor="middle" font-size="12" font-weight="bold" fill="#10b981">.then()</text>
+        <path d="M 450,160 L 530,160" stroke="#6b7280" stroke-width="2" fill="none" marker-end="url(#arrow-prom3)"/>
+        <rect x="480" y="138" width="100" height="32" rx="6" fill="#FEE2E2" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="530" y="160" text-anchor="middle" font-size="12" font-weight="bold" fill="#ef4444">.catch()</text>
+        <!-- 注釈 -->
+        <text x="300" y="210" text-anchor="middle" font-size="11" fill="#6b7280">一度 fulfilled / rejected になると二度と変わらない（不可逆）</text>
+      </svg>
 
       <h2>Promiseの基本構文</h2>
 
@@ -1486,32 +1597,12 @@ async function getData() {
       <h2>レビューで指摘すべきポイント</h2>
 
       <div class="card card-danger">
-        <div class="card-title">
-          <span class="icon">🔴</span>
-          よくある問題
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>問題</th>
-              <th>指摘例</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>try/catchがない</td>
-              <td>「エラーハンドリングが必要」</td>
-            </tr>
-            <tr>
-              <td>catchで握り潰し</td>
-              <td>「エラーを隠さずログ出力 or 再スローすべき」</td>
-            </tr>
-            <tr>
-              <td>finallyがない</td>
-              <td>「リソース解放にfinallyを使うべき」</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+        <ul>
+          <li><strong>async/await エラーハンドリング漏れ</strong>：<code>await</code>する呼び出しに<code>try/catch</code>がないとエラーが握り潰されるか、未処理Promiseエラーになる</li>
+          <li><strong>catchブロックの空実装</strong>：<code>catch(e) {}</code>はエラーを隠す最悪のパターン。最低限ログ出力か再スローすべき</li>
+          <li><strong>response.okの未チェック</strong>：<code>fetch</code>は404/500でもrejectしない。<code>response.ok</code>のチェックが必須</li>
+        </ul>
       </div>
 
       <button class="complete-btn" onclick="completeSection('async6')">
@@ -1759,28 +1850,12 @@ async function checkout() {
       <h2>レビューで指摘すべきポイント</h2>
 
       <div class="card card-danger">
-        <div class="card-title">
-          <span class="icon">🔴</span>
-          よくある問題
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>問題</th>
-              <th>指摘例</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>不要な直列実行</td>
-              <td>「依存関係がないならPromise.allで並列化すべき」</td>
-            </tr>
-            <tr>
-              <td>Promise.allで部分失敗</td>
-              <td>「allSettledで全結果を取得すべきかも」</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+        <ul>
+          <li><strong>Promise.all vs Promise.allSettled の使い分け</strong>：1つの失敗で全体を止めたいなら<code>all</code>、個別結果が必要なら<code>allSettled</code></li>
+          <li><strong>不要な直列実行</strong>：依存関係のないawaitが連続していたら<code>Promise.all</code>で並列化を提案</li>
+          <li><strong>コールバック地獄の検出</strong>：3段以上のネストされたコールバックは<code>async/await</code>に書き直すべき</li>
+        </ul>
       </div>
 
       <button class="complete-btn" onclick="completeSection('async7')">

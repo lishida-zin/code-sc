@@ -1370,6 +1370,25 @@ const users = await prisma.user.findMany({
     </div>
   </div>
 
+  <!-- Compare-box: SQL Injection -->
+  <div class="card">
+    <h2>SQL Injection：一目で分かる比較</h2>
+
+    <div class="compare-box">
+      <div class="compare-bad">
+        <div class="compare-title">❌ よくある間違い</div>
+<pre><code>SELECT * FROM users WHERE name = '${userInput}'</code></pre>
+        <p>ユーザー入力を直接SQLに埋め込む → 全データ漏洩・削除のリスク</p>
+      </div>
+      <div class="compare-good">
+        <div class="compare-title">⭕ 正しい方法</div>
+<pre><code>SELECT * FROM users WHERE name = $1
+-- パラメータ: [userInput]</code></pre>
+        <p>パラメータ化クエリ（Prepared Statement）で安全にデータとして処理</p>
+      </div>
+    </div>
+  </div>
+
   <!-- レビューポイント -->
   <div class="card card-danger">
     <h2>レビューで見抜くべきポイント</h2>
@@ -1562,6 +1581,35 @@ app.use(helmet());</code></pre>
       <li>外部スクリプトの読み込みを制限</li>
       <li>eval()の実行を禁止</li>
     </ul>
+  </div>
+
+  <!-- Compare-box: XSS Prevention -->
+  <div class="card">
+    <h2>XSS Prevention：一目で分かる比較</h2>
+
+    <div class="compare-box">
+      <div class="compare-bad">
+        <div class="compare-title">❌ よくある間違い</div>
+<pre><code>// ユーザー入力をHTMLとして挿入
+element.innerHTML = userInput;
+
+// Reactでの危険な使用
+&lt;div dangerouslySetInnerHTML=
+  {{ __html: userInput }} /&gt;</code></pre>
+        <p>スクリプトが実行される可能性あり</p>
+      </div>
+      <div class="compare-good">
+        <div class="compare-title">⭕ 正しい方法</div>
+<pre><code>// テキストとして安全に挿入
+element.textContent = userInput;
+
+// HTMLが必要な場合はサニタイズ
+import DOMPurify from 'dompurify';
+element.innerHTML =
+  DOMPurify.sanitize(userInput);</code></pre>
+        <p>DOMPurifyで危険なタグを除去</p>
+      </div>
+    </div>
   </div>
 
   <!-- レビューポイント -->
@@ -2113,6 +2161,79 @@ app.use(cors({ origin: 'https://myapp.com' }));</code></pre>
 
   <h2>OWASP Top 10（2021年版）</h2>
 
+  <!-- OWASP Top 10 リスクマップSVG -->
+  <div class="card">
+    <h3>OWASP Top 10 リスクマップ</h3>
+
+    <svg viewBox="0 0 600 320" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="OWASP Top 10 リスクマップ：各脆弱性を危険度に応じた色で表示">
+      <rect x="0" y="0" width="600" height="320" fill="#f8f9fa" rx="8"/>
+      <text x="300" y="22" text-anchor="middle" fill="#334155" font-weight="bold" font-size="13">OWASP Top 10 (2021) リスクマップ</text>
+
+      <!-- 危険度：高 (赤系) -->
+      <rect x="15" y="35" width="175" height="55" fill="#ef4444" rx="6"/>
+      <text x="102" y="55" text-anchor="middle" fill="white" font-weight="bold" font-size="10">A01: アクセス制御の欠陥</text>
+      <text x="102" y="70" text-anchor="middle" fill="#fecaca" font-size="9">権限チェック漏れ</text>
+      <text x="102" y="83" text-anchor="middle" fill="#fecaca" font-weight="bold" font-size="8">危険度: 最高</text>
+
+      <rect x="205" y="35" width="175" height="55" fill="#ef4444" rx="6"/>
+      <text x="292" y="55" text-anchor="middle" fill="white" font-weight="bold" font-size="10">A02: 暗号化の失敗</text>
+      <text x="292" y="70" text-anchor="middle" fill="#fecaca" font-size="9">機密データの露出</text>
+      <text x="292" y="83" text-anchor="middle" fill="#fecaca" font-weight="bold" font-size="8">危険度: 最高</text>
+
+      <rect x="395" y="35" width="190" height="55" fill="#ef4444" rx="6"/>
+      <text x="490" y="55" text-anchor="middle" fill="white" font-weight="bold" font-size="10">A03: インジェクション</text>
+      <text x="490" y="70" text-anchor="middle" fill="#fecaca" font-size="9">SQL/XSS/コマンド注入</text>
+      <text x="490" y="83" text-anchor="middle" fill="#fecaca" font-weight="bold" font-size="8">危険度: 最高</text>
+
+      <!-- 危険度：中高 (オレンジ系) -->
+      <rect x="15" y="100" width="175" height="55" fill="#f59e0b" rx="6"/>
+      <text x="102" y="120" text-anchor="middle" fill="white" font-weight="bold" font-size="10">A04: 安全でない設計</text>
+      <text x="102" y="135" text-anchor="middle" fill="#fef3c7" font-size="9">設計段階のセキュリティ欠如</text>
+      <text x="102" y="148" text-anchor="middle" fill="#fef3c7" font-weight="bold" font-size="8">危険度: 高</text>
+
+      <rect x="205" y="100" width="175" height="55" fill="#f59e0b" rx="6"/>
+      <text x="292" y="120" text-anchor="middle" fill="white" font-weight="bold" font-size="10">A05: 設定ミス</text>
+      <text x="292" y="135" text-anchor="middle" fill="#fef3c7" font-size="9">デフォルト設定の放置</text>
+      <text x="292" y="148" text-anchor="middle" fill="#fef3c7" font-weight="bold" font-size="8">危険度: 高</text>
+
+      <rect x="395" y="100" width="190" height="55" fill="#f59e0b" rx="6"/>
+      <text x="490" y="120" text-anchor="middle" fill="white" font-weight="bold" font-size="10">A06: 脆弱なコンポーネント</text>
+      <text x="490" y="135" text-anchor="middle" fill="#fef3c7" font-size="9">既知脆弱性のあるライブラリ</text>
+      <text x="490" y="148" text-anchor="middle" fill="#fef3c7" font-weight="bold" font-size="8">危険度: 高</text>
+
+      <!-- 危険度：中 (青/紫系) -->
+      <rect x="15" y="165" width="175" height="55" fill="#3b82f6" rx="6"/>
+      <text x="102" y="185" text-anchor="middle" fill="white" font-weight="bold" font-size="10">A07: 認証の欠陥</text>
+      <text x="102" y="200" text-anchor="middle" fill="#dbeafe" font-size="9">認証メカニズムの不備</text>
+      <text x="102" y="213" text-anchor="middle" fill="#dbeafe" font-weight="bold" font-size="8">危険度: 中</text>
+
+      <rect x="205" y="165" width="175" height="55" fill="#3b82f6" rx="6"/>
+      <text x="292" y="185" text-anchor="middle" fill="white" font-weight="bold" font-size="10">A08: 整合性障害</text>
+      <text x="292" y="200" text-anchor="middle" fill="#dbeafe" font-size="9">安全でないデシリアライゼーション</text>
+      <text x="292" y="213" text-anchor="middle" fill="#dbeafe" font-weight="bold" font-size="8">危険度: 中</text>
+
+      <rect x="395" y="165" width="190" height="55" fill="#8b5cf6" rx="6"/>
+      <text x="490" y="185" text-anchor="middle" fill="white" font-weight="bold" font-size="10">A09: ログ/監視の失敗</text>
+      <text x="490" y="200" text-anchor="middle" fill="#ede9fe" font-size="9">不十分なログと監視</text>
+      <text x="490" y="213" text-anchor="middle" fill="#ede9fe" font-weight="bold" font-size="8">危険度: 中</text>
+
+      <rect x="15" y="230" width="175" height="55" fill="#8b5cf6" rx="6"/>
+      <text x="102" y="250" text-anchor="middle" fill="white" font-weight="bold" font-size="10">A10: SSRF</text>
+      <text x="102" y="265" text-anchor="middle" fill="#ede9fe" font-size="9">サーバーサイドリクエスト偽造</text>
+      <text x="102" y="278" text-anchor="middle" fill="#ede9fe" font-weight="bold" font-size="8">危険度: 中</text>
+
+      <!-- 凡例 -->
+      <rect x="250" y="240" width="12" height="12" fill="#ef4444" rx="2"/>
+      <text x="268" y="250" fill="#334155" font-size="9">最高危険度</text>
+      <rect x="350" y="240" width="12" height="12" fill="#f59e0b" rx="2"/>
+      <text x="368" y="250" fill="#334155" font-size="9">高危険度</text>
+      <rect x="440" y="240" width="12" height="12" fill="#3b82f6" rx="2"/>
+      <text x="458" y="250" fill="#334155" font-size="9">中危険度</text>
+
+      <text x="300" y="305" text-anchor="middle" fill="#64748b" font-size="9">出典: OWASP Top 10 (2021)</text>
+    </svg>
+  </div>
+
   <div class="card">
     <table class="table-responsive">
       <thead>
@@ -2303,6 +2424,18 @@ app.use((req, res, next) =&gt; {
   next();
 });</code></pre>
     </div>
+  </div>
+
+  <!-- コードレビューの観点 -->
+  <div class="card card-danger">
+    <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+    <ul>
+      <li><strong>JWT expiration チェック漏れ</strong>：トークンの有効期限（exp）を検証していないと、盗まれたトークンが永久に使える。<code>jwt.verify()</code>はデフォルトでexpを検証するが、<code>jwt.decode()</code>は検証しない</li>
+      <li><strong>CORS wildcard 設定の危険性</strong>：<code>Access-Control-Allow-Origin: *</code>は、任意のサイトからAPIにアクセスできてしまう。本番環境では必ずオリジンを限定する</li>
+      <li><strong>パスワードのハードコーディング</strong>：ソースコードにAPIキー、DB接続文字列、シークレットキーを直書きしていないか。環境変数（<code>process.env</code>）で管理すべき</li>
+      <li><strong>認可チェックの欠如</strong>：認証（ログイン済み）だけでなく、そのユーザーが当該リソースにアクセスする権限があるかの認可チェックを忘れていないか</li>
+      <li><strong>HTTPSの未使用</strong>：本番環境でHTTPを使っていないか。Cookie, トークン等が平文で通信されるリスク</li>
+    </ul>
   </div>
 
   <!-- クイズ -->

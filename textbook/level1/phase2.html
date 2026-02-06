@@ -264,6 +264,33 @@ p {
         同じ要素に複数のスタイルがあると、<strong>詳細度が高い方</strong>が勝ちます。
       </p>
 
+      <!-- CSS詳細度ピラミッド図解 -->
+      <svg viewBox="0 0 600 280" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="CSS詳細度のピラミッド：inline style、ID、class、要素の順に優先度が下がる">
+        <!-- Pyramid layers -->
+        <polygon points="300,20 240,90 360,90" fill="#DC2626" stroke="#B91C1C" stroke-width="2"/>
+        <text x="300" y="68" text-anchor="middle" font-size="12" font-weight="bold" fill="white">!important</text>
+
+        <polygon points="240,90 190,155 410,155 360,90" fill="#EA580C" stroke="#C2410C" stroke-width="2"/>
+        <text x="300" y="128" text-anchor="middle" font-size="13" font-weight="bold" fill="white">inline style</text>
+        <text x="300" y="145" text-anchor="middle" font-size="11" fill="white">style="..."</text>
+
+        <polygon points="190,155 140,220 460,220 410,155" fill="#2563EB" stroke="#1D4ED8" stroke-width="2"/>
+        <text x="300" y="190" text-anchor="middle" font-size="14" font-weight="bold" fill="white">ID セレクタ #id</text>
+
+        <polygon points="140,220 90,260 510,260 460,220" fill="#16A34A" stroke="#15803D" stroke-width="2"/>
+        <text x="300" y="248" text-anchor="middle" font-size="14" font-weight="bold" fill="white">class セレクタ .class</text>
+
+        <rect x="70" y="260" width="460" height="15" fill="#7C3AED" stroke="#6D28D9" stroke-width="1"/>
+        <text x="300" y="272" text-anchor="middle" font-size="11" font-weight="bold" fill="white">要素セレクタ (p, div, h1...)</text>
+
+        <!-- Labels -->
+        <text x="530" y="55" font-size="11" fill="#DC2626" font-weight="bold">高い</text>
+        <text x="530" y="75" font-size="14" fill="#DC2626">↑</text>
+        <text x="530" y="200" font-size="14" fill="#7C3AED">↓</text>
+        <text x="530" y="220" font-size="11" fill="#7C3AED" font-weight="bold">低い</text>
+        <text x="555" y="140" font-size="12" fill="#333">優先度</text>
+      </svg>
+
       <div class="card card-info">
         <div class="card-title">
           <span class="icon">🏆</span>
@@ -290,6 +317,15 @@ p {
           <li>IDセレクタ：<code>#名前</code>（シャープ＋名前）</li>
           <li>優先度：ID ＞ クラス ＞ 要素</li>
         </ol>
+      </div>
+
+      <div class="card card-danger">
+        <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+        <ul>
+          <li><strong>!importantの乱用</strong>：!importantは「最後の手段」。多用すると優先順位が制御不能になる。根本原因（詳細度の設計ミス）を修正すべき</li>
+          <li><strong>IDセレクタのCSS使用</strong>：IDセレクタは詳細度が高すぎて上書きが困難。CSSではclassセレクタを使い、IDはJavaScript用に限定する</li>
+          <li><strong>セレクタの過度なネスト</strong>：<code>.header .nav .menu .item a</code>のような深いセレクタは保守性が低い。2～3階層に抑える</li>
+        </ul>
       </div>
 
       <div class="quiz" id="quiz-css2">
@@ -566,6 +602,15 @@ color: rgb(255, 0, 0);</code></pre>
           <li><code>line-height</code>で行間を広げる（読みやすさUP）</li>
           <li><code>text-align</code>で揃え方を変える</li>
         </ol>
+      </div>
+
+      <div class="card card-danger">
+        <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+        <ul>
+          <li><strong>マジックナンバー</strong>：<code>margin-top: 37px</code>のような意味不明な数値がないか。なぜその値なのか説明できるべき。CSS変数で意味のある名前を付ける</li>
+          <li><strong>px固定値の多用</strong>：<code>font-size: 14px</code>ではなく<code>font-size: 0.875rem</code>を使い、ユーザーの文字サイズ設定を尊重する</li>
+          <li><strong>BEM命名規則違反</strong>：クラス名が<code>.red-text</code>（見た目依存）ではなく<code>.card__title--highlighted</code>（構造・状態依存）になっているか</li>
+        </ul>
       </div>
 
       <div class="quiz" id="quiz-css4">
@@ -907,6 +952,33 @@ color: rgb(255, 0, 0);</code></pre>
           <li><code>align-items</code>は縦方向の揃え</li>
           <li><code>gap</code>で要素間の隙間を作る</li>
         </ol>
+      </div>
+
+      <div class="compare-box">
+        <div class="compare-bad">
+          <div class="compare-title">❌ よくある間違い（Float レイアウト）</div>
+          <pre><code>.item {
+  float: left;
+  width: 33.33%;
+}
+.container::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+/* clearfixが必要、計算が面倒 */</code></pre>
+        </div>
+        <div class="compare-good">
+          <div class="compare-title">⭕ 正しい方法（Flexbox）</div>
+          <pre><code>.container {
+  display: flex;
+  gap: 20px;
+}
+.item {
+  flex: 1;
+}
+/* シンプル、clearfix不要 */</code></pre>
+        </div>
       </div>
 
       <div class="quiz" id="quiz-css6">

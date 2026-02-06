@@ -947,6 +947,60 @@ aws s3api put-object-lock-configuration \
 # 4. テスト環境を削除</code></pre>
   </div>
 
+  <!-- 3-2-1バックアップルールSVG -->
+  <svg role="img" aria-label="3-2-1バックアップルールの図解" viewBox="0 0 600 280" style="max-width:600px;width:100%;margin:1.5rem auto;display:block;">
+    <title>3-2-1 バックアップルール</title>
+    <!-- タイトル -->
+    <text x="300" y="25" text-anchor="middle" fill="currentColor" font-size="15" font-weight="bold">3-2-1 バックアップルール</text>
+    <!-- 3: 3つのコピー -->
+    <circle cx="100" cy="100" r="45" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+    <text x="100" y="95" text-anchor="middle" fill="white" font-size="28" font-weight="bold">3</text>
+    <text x="100" y="115" text-anchor="middle" fill="#e0e7ff" font-size="10">コピー</text>
+    <text x="100" y="170" text-anchor="middle" fill="currentColor" font-size="11" font-weight="bold">3つのデータコピー</text>
+    <text x="100" y="185" text-anchor="middle" fill="currentColor" font-size="10">本番 + バックアップ2つ</text>
+    <!-- 2: 2つの異なるメディア -->
+    <circle cx="300" cy="100" r="45" fill="#10b981" stroke="#047857" stroke-width="2"/>
+    <text x="300" y="95" text-anchor="middle" fill="white" font-size="28" font-weight="bold">2</text>
+    <text x="300" y="115" text-anchor="middle" fill="#d1fae5" font-size="10">メディア</text>
+    <text x="300" y="170" text-anchor="middle" fill="currentColor" font-size="11" font-weight="bold">2種類の保存媒体</text>
+    <text x="300" y="185" text-anchor="middle" fill="currentColor" font-size="10">例: SSD + オブジェクトストレージ</text>
+    <!-- 1: 1つのオフサイト -->
+    <circle cx="500" cy="100" r="45" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+    <text x="500" y="95" text-anchor="middle" fill="white" font-size="28" font-weight="bold">1</text>
+    <text x="500" y="115" text-anchor="middle" fill="#fef3c7" font-size="10">オフサイト</text>
+    <text x="500" y="170" text-anchor="middle" fill="currentColor" font-size="11" font-weight="bold">1つは遠隔地保管</text>
+    <text x="500" y="185" text-anchor="middle" fill="currentColor" font-size="10">例: 別リージョン・別クラウド</text>
+    <!-- 矢印で接続 -->
+    <line x1="145" y1="100" x2="255" y2="100" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <line x1="345" y1="100" x2="455" y2="100" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <!-- 補足 -->
+    <rect x="100" y="210" width="400" height="50" rx="8" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="300" y="232" text-anchor="middle" fill="currentColor" font-size="11">+ イミュータブルバックアップ（変更不可）で</text>
+    <text x="300" y="250" text-anchor="middle" fill="currentColor" font-size="11" font-weight="bold">ランサムウェア耐性を確保</text>
+  </svg>
+
+  <div class="compare-box">
+    <div class="bad-example">
+      <h4>❌ 不十分なバックアップ戦略</h4>
+<pre><code># 同一リージョンのみにバックアップ
+aws rds create-db-snapshot \
+  --db-instance-identifier mydb \
+  --db-snapshot-identifier mydb-backup
+# リージョン障害時にバックアップも失われる！
+# 復元テストもしていない...</code></pre>
+    </div>
+    <div class="good-example">
+      <h4>⭕ 3-2-1ルールに従ったバックアップ</h4>
+<pre><code># 自動バックアップ + クロスリージョンコピー
+aws rds modify-db-instance \
+  --backup-retention-period 30
+aws rds copy-db-snapshot \
+  --source-region ap-northeast-1 \
+  --target-region us-west-2
+# 月次で復元テストを自動実行</code></pre>
+    </div>
+  </div>
+
   <div class="quiz" id="quiz-cloud-a4">
     <div class="quiz-title">
       <span class="icon">❓</span>
@@ -1666,6 +1720,74 @@ aws fis create-experiment-template \
     </ul>
   </div>
 
+  <!-- 信頼性パターンのSVG -->
+  <svg role="img" aria-label="信頼性設計パターンの比較：SPOF vs 冗長構成" viewBox="0 0 600 250" style="max-width:600px;width:100%;margin:1.5rem auto;display:block;">
+    <title>SPOF（単一障害点）vs 冗長構成</title>
+    <!-- 左: SPOFのある設計 -->
+    <text x="150" y="20" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="bold">❌ SPOFあり</text>
+    <rect x="100" y="30" width="100" height="30" rx="5" fill="#6366f1" stroke="#4f46e5" stroke-width="1.5"/>
+    <text x="150" y="50" text-anchor="middle" fill="white" font-size="10">ユーザー</text>
+    <line x1="150" y1="60" x2="150" y2="80" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="100" y="80" width="100" height="30" rx="5" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
+    <text x="150" y="100" text-anchor="middle" fill="white" font-size="10">LB（1台）</text>
+    <line x1="150" y1="110" x2="150" y2="130" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="100" y="130" width="100" height="30" rx="5" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
+    <text x="150" y="150" text-anchor="middle" fill="white" font-size="10">App（1台）</text>
+    <line x1="150" y1="160" x2="150" y2="180" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="100" y="180" width="100" height="30" rx="5" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
+    <text x="150" y="200" text-anchor="middle" fill="white" font-size="10">DB（1台）</text>
+    <text x="150" y="235" text-anchor="middle" fill="#ef4444" font-size="10">どこか1つ故障 → 全停止</text>
+    <!-- 右: 冗長構成 -->
+    <text x="450" y="20" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">⭕ 冗長構成</text>
+    <rect x="400" y="30" width="100" height="30" rx="5" fill="#6366f1" stroke="#4f46e5" stroke-width="1.5"/>
+    <text x="450" y="50" text-anchor="middle" fill="white" font-size="10">ユーザー</text>
+    <line x1="450" y1="60" x2="420" y2="80" stroke="currentColor" stroke-width="1.5"/>
+    <line x1="450" y1="60" x2="480" y2="80" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="370" y="80" width="50" height="28" rx="4" fill="#10b981" stroke="#047857" stroke-width="1.5"/>
+    <text x="395" y="98" text-anchor="middle" fill="white" font-size="8">LB-1</text>
+    <rect x="430" y="80" width="50" height="28" rx="4" fill="#10b981" stroke="#047857" stroke-width="1.5"/>
+    <text x="455" y="98" text-anchor="middle" fill="white" font-size="8">LB-2</text>
+    <line x1="395" y1="108" x2="395" y2="128" stroke="currentColor" stroke-width="1"/>
+    <line x1="455" y1="108" x2="455" y2="128" stroke="currentColor" stroke-width="1"/>
+    <rect x="350" y="128" width="45" height="28" rx="4" fill="#10b981" stroke="#047857" stroke-width="1.5"/>
+    <text x="372" y="146" text-anchor="middle" fill="white" font-size="8">App-1</text>
+    <rect x="403" y="128" width="45" height="28" rx="4" fill="#10b981" stroke="#047857" stroke-width="1.5"/>
+    <text x="425" y="146" text-anchor="middle" fill="white" font-size="8">App-2</text>
+    <rect x="455" y="128" width="45" height="28" rx="4" fill="#10b981" stroke="#047857" stroke-width="1.5"/>
+    <text x="477" y="146" text-anchor="middle" fill="white" font-size="8">App-3</text>
+    <line x1="425" y1="156" x2="405" y2="178" stroke="currentColor" stroke-width="1"/>
+    <line x1="425" y1="156" x2="475" y2="178" stroke="currentColor" stroke-width="1"/>
+    <rect x="370" y="178" width="70" height="28" rx="4" fill="#10b981" stroke="#047857" stroke-width="1.5"/>
+    <text x="405" y="196" text-anchor="middle" fill="white" font-size="8">DB Primary</text>
+    <rect x="450" y="178" width="70" height="28" rx="4" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5"/>
+    <text x="485" y="196" text-anchor="middle" fill="white" font-size="8">DB Standby</text>
+    <text x="450" y="235" text-anchor="middle" fill="#10b981" font-size="10">1台故障しても継続稼働</text>
+  </svg>
+
+  <div class="compare-box">
+    <div class="bad-example">
+      <h4>❌ 障害時の対応がない</h4>
+<pre><code>// APIコール: リトライなし
+const response = await fetch(apiUrl);
+// 一時的なネットワーク障害で即エラー
+if (!response.ok) throw new Error('Failed');</code></pre>
+    </div>
+    <div class="good-example">
+      <h4>⭕ 指数バックオフ付きリトライ</h4>
+<pre><code>// 指数バックオフでリトライ
+async function fetchWithRetry(url, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) return res;
+    } catch (e) { /* 一時障害 */ }
+    await sleep(Math.pow(2, i) * 1000); // 1s,2s,4s
+  }
+  throw new Error('All retries failed');
+}</code></pre>
+    </div>
+  </div>
+
   <div class="quiz" id="quiz-cloud-a8">
     <div class="quiz-title">
       <span class="icon">❓</span>
@@ -1828,6 +1950,74 @@ aws cloudwatch get-metric-statistics \
       <li><strong>非同期処理</strong>：SQS、Step Functionsの活用</li>
       <li><strong>コールドスタート</strong>：Lambda Provisioned Concurrency</li>
     </ul>
+  </div>
+
+  <!-- パフォーマンス最適化のキャッシュ戦略SVG -->
+  <svg role="img" aria-label="キャッシュ戦略の多層構成図" viewBox="0 0 600 240" style="max-width:600px;width:100%;margin:1.5rem auto;display:block;">
+    <title>多層キャッシュ戦略</title>
+    <text x="300" y="20" text-anchor="middle" fill="currentColor" font-size="13" font-weight="bold">多層キャッシュ戦略（レイテンシの削減）</text>
+    <!-- ユーザー -->
+    <rect x="10" y="50" width="80" height="40" rx="6" fill="#6366f1" stroke="#4f46e5" stroke-width="1.5"/>
+    <text x="50" y="75" text-anchor="middle" fill="white" font-size="11">ユーザー</text>
+    <!-- CDN -->
+    <line x1="90" y1="70" x2="120" y2="70" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="120" y="50" width="90" height="40" rx="6" fill="#10b981" stroke="#047857" stroke-width="1.5"/>
+    <text x="165" y="68" text-anchor="middle" fill="white" font-size="10" font-weight="bold">CDN</text>
+    <text x="165" y="82" text-anchor="middle" fill="#d1fae5" font-size="9">~1-10ms</text>
+    <!-- API Gateway -->
+    <line x1="210" y1="70" x2="240" y2="70" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="240" y="50" width="90" height="40" rx="6" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5"/>
+    <text x="285" y="68" text-anchor="middle" fill="white" font-size="10" font-weight="bold">API Cache</text>
+    <text x="285" y="82" text-anchor="middle" fill="#bfdbfe" font-size="9">~10-50ms</text>
+    <!-- Redis -->
+    <line x1="330" y1="70" x2="360" y2="70" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="360" y="50" width="90" height="40" rx="6" fill="#f59e0b" stroke="#d97706" stroke-width="1.5"/>
+    <text x="405" y="68" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Redis</text>
+    <text x="405" y="82" text-anchor="middle" fill="#fef3c7" font-size="9">~1-5ms</text>
+    <!-- DB -->
+    <line x1="450" y1="70" x2="480" y2="70" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="480" y="50" width="90" height="40" rx="6" fill="#ef4444" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="525" y="68" text-anchor="middle" fill="white" font-size="10" font-weight="bold">DB</text>
+    <text x="525" y="82" text-anchor="middle" fill="#fecaca" font-size="9">~10-100ms</text>
+    <!-- ヒット率の説明 -->
+    <rect x="50" y="120" width="500" height="100" rx="8" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="300" y="142" text-anchor="middle" fill="currentColor" font-size="11" font-weight="bold">キャッシュヒット率の目安</text>
+    <text x="300" y="162" text-anchor="middle" fill="#10b981" font-size="11">CDN: 静的コンテンツ 90%以上 → 大半のリクエストをここで返す</text>
+    <text x="300" y="182" text-anchor="middle" fill="#f59e0b" font-size="11">Redis: セッション・頻出クエリ 80%以上 → DBアクセスを削減</text>
+    <text x="300" y="202" text-anchor="middle" fill="#ef4444" font-size="11">DB: キャッシュミスのみ → 最終手段として参照</text>
+  </svg>
+
+  <div class="compare-box">
+    <div class="bad-example">
+      <h4>❌ キャッシュ戦略なし</h4>
+<pre><code>// 毎回DBにアクセス
+app.get('/products/:id', async (req, res) => {
+  const product = await db.query(
+    'SELECT * FROM products WHERE id = ?',
+    [req.params.id]
+  );
+  res.json(product);
+  // 人気商品は毎秒1000回同じクエリ...
+});</code></pre>
+    </div>
+    <div class="good-example">
+      <h4>⭕ Cache-Asideパターン</h4>
+<pre><code>app.get('/products/:id', async (req, res) => {
+  const key = `product:${req.params.id}`;
+  // 1. まずキャッシュを確認
+  let product = await redis.get(key);
+  if (!product) {
+    // 2. キャッシュミス時のみDBアクセス
+    product = await db.query(
+      'SELECT * FROM products WHERE id = ?',
+      [req.params.id]
+    );
+    // 3. キャッシュに保存(TTL: 5分)
+    await redis.set(key, product, 'EX', 300);
+  }
+  res.json(product);
+});</code></pre>
+    </div>
   </div>
 
   <div class="quiz" id="quiz-cloud-a9">

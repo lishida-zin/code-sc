@@ -50,6 +50,72 @@ document
                  └─ "本文"</code></pre>
       </div>
 
+      <!-- SVG: DOMツリー構造 -->
+      <svg viewBox="0 0 600 320" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="DOMツリー構造の図。documentからhtml、head、body、子要素への階層構造を木構造で表示">
+        <defs>
+          <marker id="arrow-dom" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#6b7280"/>
+          </marker>
+        </defs>
+        <!-- document（ルート） -->
+        <rect x="235" y="10" width="130" height="38" rx="8" fill="#8b5cf6" stroke="none"/>
+        <text x="300" y="35" text-anchor="middle" font-size="14" font-weight="bold" fill="white">document</text>
+        <!-- 接続線 document → html -->
+        <line x1="300" y1="48" x2="300" y2="70" stroke="#6b7280" stroke-width="2"/>
+        <!-- html -->
+        <rect x="245" y="70" width="110" height="35" rx="8" fill="#3b82f6" stroke="none"/>
+        <text x="300" y="93" text-anchor="middle" font-size="13" font-weight="bold" fill="white">&lt;html&gt;</text>
+        <!-- 接続線 html → head, body -->
+        <line x1="300" y1="105" x2="300" y2="120" stroke="#6b7280" stroke-width="2"/>
+        <line x1="300" y1="120" x2="150" y2="120" stroke="#6b7280" stroke-width="2"/>
+        <line x1="300" y1="120" x2="450" y2="120" stroke="#6b7280" stroke-width="2"/>
+        <line x1="150" y1="120" x2="150" y2="140" stroke="#6b7280" stroke-width="2"/>
+        <line x1="450" y1="120" x2="450" y2="140" stroke="#6b7280" stroke-width="2"/>
+        <!-- head -->
+        <rect x="95" y="140" width="110" height="35" rx="8" fill="#10b981" stroke="none"/>
+        <text x="150" y="163" text-anchor="middle" font-size="13" font-weight="bold" fill="white">&lt;head&gt;</text>
+        <!-- body -->
+        <rect x="395" y="140" width="110" height="35" rx="8" fill="#10b981" stroke="none"/>
+        <text x="450" y="163" text-anchor="middle" font-size="13" font-weight="bold" fill="white">&lt;body&gt;</text>
+        <!-- head children -->
+        <line x1="150" y1="175" x2="150" y2="205" stroke="#6b7280" stroke-width="1.5"/>
+        <rect x="95" y="205" width="110" height="30" rx="6" fill="#f59e0b" stroke="none"/>
+        <text x="150" y="225" text-anchor="middle" font-size="12" font-weight="bold" fill="white">&lt;title&gt;</text>
+        <line x1="150" y1="235" x2="150" y2="258" stroke="#6b7280" stroke-width="1"/>
+        <rect x="100" y="258" width="100" height="25" rx="4" fill="#FEF3C7" stroke="#f59e0b" stroke-width="1"/>
+        <text x="150" y="276" text-anchor="middle" font-size="11" fill="currentColor">"My Page"</text>
+        <!-- body children -->
+        <line x1="450" y1="175" x2="450" y2="190" stroke="#6b7280" stroke-width="1.5"/>
+        <line x1="450" y1="190" x2="350" y2="190" stroke="#6b7280" stroke-width="1.5"/>
+        <line x1="450" y1="190" x2="550" y2="190" stroke="#6b7280" stroke-width="1.5"/>
+        <line x1="350" y1="190" x2="350" y2="205" stroke="#6b7280" stroke-width="1.5"/>
+        <line x1="550" y1="190" x2="550" y2="205" stroke="#6b7280" stroke-width="1.5"/>
+        <!-- h1 -->
+        <rect x="300" y="205" width="100" height="30" rx="6" fill="#f59e0b" stroke="none"/>
+        <text x="350" y="225" text-anchor="middle" font-size="12" font-weight="bold" fill="white">&lt;h1&gt;</text>
+        <line x1="350" y1="235" x2="350" y2="258" stroke="#6b7280" stroke-width="1"/>
+        <rect x="305" y="258" width="90" height="25" rx="4" fill="#FEF3C7" stroke="#f59e0b" stroke-width="1"/>
+        <text x="350" y="276" text-anchor="middle" font-size="11" fill="currentColor">"タイトル"</text>
+        <!-- p -->
+        <rect x="500" y="205" width="90" height="30" rx="6" fill="#f59e0b" stroke="none"/>
+        <text x="545" y="225" text-anchor="middle" font-size="12" font-weight="bold" fill="white">&lt;p&gt;</text>
+        <line x1="545" y1="235" x2="545" y2="258" stroke="#6b7280" stroke-width="1"/>
+        <rect x="505" y="258" width="80" height="25" rx="4" fill="#FEF3C7" stroke="#f59e0b" stroke-width="1"/>
+        <text x="545" y="276" text-anchor="middle" font-size="11" fill="currentColor">"本文"</text>
+        <!-- 凡例 -->
+        <text x="20" y="310" font-size="10" fill="#6b7280">凡例:</text>
+        <rect x="55" y="300" width="12" height="12" rx="2" fill="#8b5cf6"/>
+        <text x="72" y="310" font-size="10" fill="#6b7280">ルート</text>
+        <rect x="110" y="300" width="12" height="12" rx="2" fill="#3b82f6"/>
+        <text x="127" y="310" font-size="10" fill="#6b7280">ルート要素</text>
+        <rect x="185" y="300" width="12" height="12" rx="2" fill="#10b981"/>
+        <text x="202" y="310" font-size="10" fill="#6b7280">構造要素</text>
+        <rect x="255" y="300" width="12" height="12" rx="2" fill="#f59e0b"/>
+        <text x="272" y="310" font-size="10" fill="#6b7280">子要素</text>
+        <rect x="315" y="300" width="12" height="12" rx="2" fill="#FEF3C7" stroke="#f59e0b" stroke-width="0.5"/>
+        <text x="332" y="310" font-size="10" fill="#6b7280">テキストノード</text>
+      </svg>
+
       <h2>なぜ「ツリー」と呼ぶのか</h2>
 
       <p>
@@ -395,6 +461,15 @@ el.classList.add('highlight');
 // CSS: .highlight { color: red; font-weight: bold; }</code></pre>
       </div>
 
+      <div class="card card-danger">
+        <div class="card-title"><span class="icon">🔍</span> コードレビューの観点</div>
+        <ul>
+          <li><strong>innerHTML + ユーザー入力 = XSSリスク</strong>：ユーザー由来のデータは必ず<code>textContent</code>で挿入する</li>
+          <li><strong>イベントリスナーのメモリリーク</strong>：SPA等で要素を削除する際、<code>removeEventListener</code>で不要なリスナーを解除しているか</li>
+          <li><strong>querySelector vs getElementById</strong>：プロジェクト内でAPIを統一し、<code>querySelector</code>系に揃えるのが推奨</li>
+        </ul>
+      </div>
+
       <!-- クイズ1 -->
       <h2>確認クイズ</h2>
 
@@ -711,6 +786,61 @@ parent.addEventListener('click', (e) => {
       <p>
         子要素で発生したイベントは、<strong>親要素にも伝わります</strong>。
       </p>
+
+      <!-- SVG: イベント伝播フロー -->
+      <svg viewBox="0 0 600 360" style="width:100%;max-width:600px;display:block;margin:1rem auto;" role="img" aria-label="イベント伝播フローの図。キャプチャリングフェーズ、ターゲットフェーズ、バブリングフェーズの3段階を垂直フローで表示">
+        <defs>
+          <marker id="arrow-cap" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#3b82f6"/>
+          </marker>
+          <marker id="arrow-bub" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#ef4444"/>
+          </marker>
+        </defs>
+        <!-- タイトル -->
+        <text x="300" y="24" text-anchor="middle" font-size="15" font-weight="bold" fill="currentColor">イベント伝播の3フェーズ</text>
+        <!-- DOM要素の階層 -->
+        <rect x="180" y="45" width="240" height="44" rx="8" fill="#EDE9FE" stroke="#8b5cf6" stroke-width="2"/>
+        <text x="300" y="72" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">window / document</text>
+        <rect x="200" y="105" width="200" height="44" rx="8" fill="#DBEAFE" stroke="#3b82f6" stroke-width="2"/>
+        <text x="300" y="132" text-anchor="middle" font-size="13" font-weight="bold" fill="#3b82f6">&lt;div&gt; 親要素</text>
+        <rect x="220" y="165" width="160" height="44" rx="8" fill="#D1FAE5" stroke="#10b981" stroke-width="2"/>
+        <text x="300" y="192" text-anchor="middle" font-size="13" font-weight="bold" fill="#10b981">&lt;button&gt; 子要素</text>
+        <!-- ターゲットバッジ -->
+        <rect x="250" y="220" width="100" height="28" rx="14" fill="#f59e0b" stroke="none"/>
+        <text x="300" y="239" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Target!</text>
+        <!-- キャプチャリング（左側） -->
+        <text x="100" y="55" text-anchor="middle" font-size="13" font-weight="bold" fill="#3b82f6">Capturing</text>
+        <text x="100" y="70" text-anchor="middle" font-size="10" fill="#3b82f6">（上→下）</text>
+        <line x1="100" y1="80" x2="100" y2="110" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-cap)"/>
+        <text x="100" y="128" text-anchor="middle" font-size="10" fill="#3b82f6">1</text>
+        <line x1="100" y1="135" x2="100" y2="165" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-cap)"/>
+        <text x="100" y="183" text-anchor="middle" font-size="10" fill="#3b82f6">2</text>
+        <line x1="100" y1="190" x2="100" y2="220" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-cap)"/>
+        <text x="100" y="238" text-anchor="middle" font-size="10" fill="#3b82f6">3</text>
+        <!-- バブリング（右側） -->
+        <text x="500" y="240" text-anchor="middle" font-size="13" font-weight="bold" fill="#ef4444">Bubbling</text>
+        <text x="500" y="255" text-anchor="middle" font-size="10" fill="#ef4444">（下→上）</text>
+        <line x1="500" y1="220" x2="500" y2="190" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow-bub)"/>
+        <text x="500" y="183" text-anchor="middle" font-size="10" fill="#ef4444">4</text>
+        <line x1="500" y1="165" x2="500" y2="135" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow-bub)"/>
+        <text x="500" y="128" text-anchor="middle" font-size="10" fill="#ef4444">5</text>
+        <line x1="500" y1="110" x2="500" y2="80" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow-bub)"/>
+        <text x="500" y="72" text-anchor="middle" font-size="10" fill="#ef4444">6</text>
+        <!-- フェーズ説明 -->
+        <rect x="40" y="275" width="155" height="70" rx="8" fill="#DBEAFE" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="117" y="298" text-anchor="middle" font-size="12" font-weight="bold" fill="#3b82f6">Phase 1</text>
+        <text x="117" y="315" text-anchor="middle" font-size="11" fill="#3b82f6">キャプチャリング</text>
+        <text x="117" y="332" text-anchor="middle" font-size="10" fill="#3b82f6">上から下へ伝わる</text>
+        <rect x="222" y="275" width="155" height="70" rx="8" fill="#FEF3C7" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="299" y="298" text-anchor="middle" font-size="12" font-weight="bold" fill="#f59e0b">Phase 2</text>
+        <text x="299" y="315" text-anchor="middle" font-size="11" fill="#f59e0b">ターゲット</text>
+        <text x="299" y="332" text-anchor="middle" font-size="10" fill="#f59e0b">実際にクリックした要素</text>
+        <rect x="405" y="275" width="155" height="70" rx="8" fill="#FEE2E2" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="482" y="298" text-anchor="middle" font-size="12" font-weight="bold" fill="#ef4444">Phase 3</text>
+        <text x="482" y="315" text-anchor="middle" font-size="11" fill="#ef4444">バブリング</text>
+        <text x="482" y="332" text-anchor="middle" font-size="10" fill="#ef4444">下から上へ伝わる</text>
+      </svg>
 
       <pre><code>&lt;div id="parent"&gt;
   &lt;button id="child"&gt;クリック&lt;/button&gt;

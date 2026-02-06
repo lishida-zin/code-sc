@@ -324,6 +324,62 @@
     </ul>
   </div>
 
+  <!-- ステークホルダーの影響度・関心度マトリクスSVG -->
+  <svg role="img" aria-label="ステークホルダーの影響度と関心度のマトリクス図" viewBox="0 0 600 320" style="max-width:600px;width:100%;margin:1.5rem auto;display:block;">
+    <title>ステークホルダーマトリクス（影響度×関心度）</title>
+    <!-- 軸 -->
+    <line x1="100" y1="280" x2="560" y2="280" stroke="currentColor" stroke-width="2"/>
+    <line x1="100" y1="40" x2="100" y2="280" stroke="currentColor" stroke-width="2"/>
+    <text x="330" y="310" text-anchor="middle" fill="currentColor" font-size="12">関心度（高い →）</text>
+    <text x="55" y="160" text-anchor="middle" fill="currentColor" font-size="12" transform="rotate(-90, 55, 160)">影響度（高い →）</text>
+    <!-- 4象限の背景 -->
+    <rect x="100" y="40" width="230" height="120" fill="#fef3c7" opacity="0.4"/>
+    <rect x="330" y="40" width="230" height="120" fill="#dcfce7" opacity="0.4"/>
+    <rect x="100" y="160" width="230" height="120" fill="#f3f4f6" opacity="0.4"/>
+    <rect x="330" y="160" width="230" height="120" fill="#dbeafe" opacity="0.4"/>
+    <!-- 象限ラベル -->
+    <text x="215" y="70" text-anchor="middle" fill="#92400e" font-size="12" font-weight="bold">満足を維持</text>
+    <text x="215" y="90" text-anchor="middle" fill="#92400e" font-size="10">例: 経営層（多忙だが決定権あり）</text>
+    <text x="445" y="70" text-anchor="middle" fill="#166534" font-size="12" font-weight="bold">密接に管理</text>
+    <text x="445" y="90" text-anchor="middle" fill="#166534" font-size="10">例: プロジェクトオーナー</text>
+    <text x="215" y="195" text-anchor="middle" fill="#6b7280" font-size="12" font-weight="bold">最小限の注力</text>
+    <text x="215" y="215" text-anchor="middle" fill="#6b7280" font-size="10">例: 他部署の一般社員</text>
+    <text x="445" y="195" text-anchor="middle" fill="#1d4ed8" font-size="12" font-weight="bold">情報を提供</text>
+    <text x="445" y="215" text-anchor="middle" fill="#1d4ed8" font-size="10">例: エンドユーザー</text>
+    <!-- 中心線 -->
+    <line x1="330" y1="40" x2="330" y2="280" stroke="currentColor" stroke-width="1" stroke-dasharray="4,4"/>
+    <line x1="100" y1="160" x2="560" y2="160" stroke="currentColor" stroke-width="1" stroke-dasharray="4,4"/>
+  </svg>
+
+  <div class="compare-box">
+    <div class="bad-example">
+      <h4>❌ ステークホルダー分析なし</h4>
+<pre><code>要件定義の参加者:
+- 開発チーム
+- プロジェクトマネージャー
+（これだけで要件定義を進めてしまう）
+
+結果:
+→ リリース後に運用チームから「監視要件がない」
+→ 法務から「個人情報の取り扱いルールが未定義」
+→ 大幅な手戻り発生</code></pre>
+    </div>
+    <div class="good-example">
+      <h4>⭕ ステークホルダーを網羅的に特定</h4>
+<pre><code>ステークホルダー一覧:
+- 経営層（承認権限・予算）
+- 業務部門（実際の利用者）
+- 開発チーム（実装担当）
+- 運用チーム（保守・監視）
+- 法務/コンプライアンス
+- セキュリティチーム
+- 外部パートナー
+
+→ 全員の要件を事前にヒアリング
+→ 抜け漏れのない要件定義が可能</code></pre>
+    </div>
+  </div>
+
   <div class="quiz" id="quiz-req2">
     <div class="quiz-title">
       <span class="icon">❓</span>
@@ -864,6 +920,45 @@ Then: 「注文履歴がありません」と表示される</code></pre>
       <li><strong>異常系のシナリオも含まれているか？</strong></li>
     </ul>
   </div>
+
+  <!-- INVEST基準SVG -->
+  <svg role="img" aria-label="INVEST基準の6つの要素" viewBox="0 0 600 200" style="max-width:600px;width:100%;margin:1.5rem auto;display:block;">
+    <title>ユーザーストーリーのINVEST基準</title>
+    <!-- 6つの要素を横並びで表示 -->
+    <rect x="10" y="30" width="85" height="70" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5"/>
+    <text x="52" y="55" text-anchor="middle" fill="white" font-size="18" font-weight="bold">I</text>
+    <text x="52" y="78" text-anchor="middle" fill="#e0e7ff" font-size="9">Independent</text>
+    <text x="52" y="120" text-anchor="middle" fill="currentColor" font-size="9">独立している</text>
+
+    <rect x="108" y="30" width="85" height="70" rx="8" fill="#10b981" stroke="#047857" stroke-width="1.5"/>
+    <text x="150" y="55" text-anchor="middle" fill="white" font-size="18" font-weight="bold">N</text>
+    <text x="150" y="78" text-anchor="middle" fill="#d1fae5" font-size="9">Negotiable</text>
+    <text x="150" y="120" text-anchor="middle" fill="currentColor" font-size="9">交渉可能</text>
+
+    <rect x="206" y="30" width="85" height="70" rx="8" fill="#f59e0b" stroke="#d97706" stroke-width="1.5"/>
+    <text x="248" y="55" text-anchor="middle" fill="white" font-size="18" font-weight="bold">V</text>
+    <text x="248" y="78" text-anchor="middle" fill="#fef3c7" font-size="9">Valuable</text>
+    <text x="248" y="120" text-anchor="middle" fill="currentColor" font-size="9">価値がある</text>
+
+    <rect x="304" y="30" width="85" height="70" rx="8" fill="#ef4444" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="346" y="55" text-anchor="middle" fill="white" font-size="18" font-weight="bold">E</text>
+    <text x="346" y="78" text-anchor="middle" fill="#fecaca" font-size="9">Estimable</text>
+    <text x="346" y="120" text-anchor="middle" fill="currentColor" font-size="9">見積もり可能</text>
+
+    <rect x="402" y="30" width="85" height="70" rx="8" fill="#8b5cf6" stroke="#7c3aed" stroke-width="1.5"/>
+    <text x="444" y="55" text-anchor="middle" fill="white" font-size="18" font-weight="bold">S</text>
+    <text x="444" y="78" text-anchor="middle" fill="#ede9fe" font-size="9">Small</text>
+    <text x="444" y="120" text-anchor="middle" fill="currentColor" font-size="9">小さい</text>
+
+    <rect x="500" y="30" width="85" height="70" rx="8" fill="#ec4899" stroke="#db2777" stroke-width="1.5"/>
+    <text x="542" y="55" text-anchor="middle" fill="white" font-size="18" font-weight="bold">T</text>
+    <text x="542" y="78" text-anchor="middle" fill="#fce7f3" font-size="9">Testable</text>
+    <text x="542" y="120" text-anchor="middle" fill="currentColor" font-size="9">テスト可能</text>
+
+    <!-- 下部の補足 -->
+    <rect x="50" y="145" width="500" height="40" rx="6" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="300" y="170" text-anchor="middle" fill="currentColor" font-size="11">全ての基準を満たすストーリーが「良いユーザーストーリー」</text>
+  </svg>
 
   <div class="quiz" id="quiz-req5">
     <div class="quiz-title">
@@ -1604,6 +1699,68 @@ Then: 「注文履歴がありません」と表示される</code></pre>
       <li>「この機能は誰がいつ使いますか？」</li>
       <li>「この要件の根拠は何ですか？」</li>
     </ul>
+  </div>
+
+  <!-- 要件レビュープロセスSVG -->
+  <svg role="img" aria-label="要件レビューの4ステッププロセス" viewBox="0 0 600 200" style="max-width:600px;width:100%;margin:1.5rem auto;display:block;">
+    <title>要件レビュープロセスの流れ</title>
+    <defs>
+      <marker id="arrow-req" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+        <path d="M0,0 L8,4 L0,8 z" fill="#6366f1"/>
+      </marker>
+    </defs>
+    <!-- Step 1 -->
+    <rect x="20" y="30" width="120" height="60" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5"/>
+    <text x="80" y="55" text-anchor="middle" fill="white" font-size="11" font-weight="bold">1. 準備</text>
+    <text x="80" y="73" text-anchor="middle" fill="#e0e7ff" font-size="9">資料配布・個人レビュー</text>
+    <!-- Arrow -->
+    <line x1="140" y1="60" x2="168" y2="60" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-req)"/>
+    <!-- Step 2 -->
+    <rect x="170" y="30" width="120" height="60" rx="8" fill="#10b981" stroke="#047857" stroke-width="1.5"/>
+    <text x="230" y="55" text-anchor="middle" fill="white" font-size="11" font-weight="bold">2. レビュー会議</text>
+    <text x="230" y="73" text-anchor="middle" fill="#d1fae5" font-size="9">指摘・議論・記録</text>
+    <!-- Arrow -->
+    <line x1="290" y1="60" x2="318" y2="60" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-req)"/>
+    <!-- Step 3 -->
+    <rect x="320" y="30" width="120" height="60" rx="8" fill="#f59e0b" stroke="#d97706" stroke-width="1.5"/>
+    <text x="380" y="55" text-anchor="middle" fill="white" font-size="11" font-weight="bold">3. 修正</text>
+    <text x="380" y="73" text-anchor="middle" fill="#fef3c7" font-size="9">指摘事項の反映</text>
+    <!-- Arrow -->
+    <line x1="440" y1="60" x2="468" y2="60" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-req)"/>
+    <!-- Step 4 -->
+    <rect x="470" y="30" width="120" height="60" rx="8" fill="#8b5cf6" stroke="#7c3aed" stroke-width="1.5"/>
+    <text x="530" y="55" text-anchor="middle" fill="white" font-size="11" font-weight="bold">4. 承認</text>
+    <text x="530" y="73" text-anchor="middle" fill="#ede9fe" font-size="9">ベースライン確定</text>
+    <!-- 下部の注意点 -->
+    <rect x="50" y="120" width="500" height="60" rx="8" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="300" y="142" text-anchor="middle" fill="currentColor" font-size="11" font-weight="bold">レビューの鉄則</text>
+    <text x="300" y="162" text-anchor="middle" fill="currentColor" font-size="10">「人を批判するのではなく、成果物を改善する」— レビューは品質向上の手段</text>
+  </svg>
+
+  <div class="compare-box">
+    <div class="bad-example">
+      <h4>❌ 形だけのレビュー</h4>
+<pre><code>レビュー会議:
+- 作成者が30分プレゼン
+- 参加者は事前に読んでいない
+- 「特に問題ありません」で終了
+- 指摘事項の記録なし
+
+→ 後工程で重大な漏れが発覚
+→ 要件レビューが形骸化</code></pre>
+    </div>
+    <div class="good-example">
+      <h4>⭕ 効果的なレビュー</h4>
+<pre><code>レビュー会議:
+- 事前に資料を配布（2日前）
+- 参加者は個人レビュー済み
+- チェックリストに基づく指摘
+- 指摘事項はIssue/チケットで管理
+- 修正後の再レビューを実施
+
+→ 曖昧な要件・矛盾を早期発見
+→ 手戻りコストを大幅削減</code></pre>
+    </div>
   </div>
 
   <div class="quiz" id="quiz-req9">
