@@ -1093,6 +1093,8 @@ function initNavigation() {
   }
 }
 
+let isPopstateNavigation = false;
+
 function showSection(sectionId) {
   // すべてのセクションを非表示
   document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
@@ -1105,8 +1107,10 @@ function showSection(sectionId) {
   const activeLink = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
   if (activeLink) activeLink.classList.add('active');
 
-  // URLハッシュ更新
-  history.pushState(null, '', `#${sectionId}`);
+  // URLハッシュ更新（popstate中はブラウザがURL管理するためスキップ）
+  if (!isPopstateNavigation) {
+    history.pushState(null, '', `#${sectionId}`);
+  }
 
   // ページトップにスクロール
   window.scrollTo(0, 0);
@@ -1128,11 +1132,13 @@ function handleInitialHash() {
 // ブラウザの戻る/進むボタン対応
 window.addEventListener('popstate', () => {
   const hash = window.location.hash.slice(1);
+  isPopstateNavigation = true;
   if (hash) {
     loadSection(hash);
   } else {
     showSection('dashboard');
   }
+  isPopstateNavigation = false;
 });
 
 // ============================================
