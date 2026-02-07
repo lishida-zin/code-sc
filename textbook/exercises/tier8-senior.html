@@ -67,7 +67,7 @@ class InventoryRepository {
         SQLクエリがリポジトリ内にハードコードされている
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-1')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-1')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t8-1')">
@@ -140,7 +140,7 @@ class Order {
         confirm()メソッドがasyncである必要がない
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-2')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-2')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t8-2')">
@@ -226,7 +226,7 @@ class Order {
         Value Objectはシリアライズが容易でAPI通信に適しているため
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-3')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-3')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t8-3')">
@@ -306,7 +306,7 @@ class CreateUserUseCase {
         JSONシリアライズで循環参照が発生する可能性がある
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-4')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-4')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t8-4')">
@@ -395,7 +395,7 @@ class PaymentService {
         Port（インターフェース）にStripe固有の型が漏れており、Adapterの差し替えが不可能。またAdapter内にビジネスロジックが記述されている
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-5')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-5')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t8-5')">
@@ -471,7 +471,7 @@ alerts:
         YAML形式のSLO定義はバージョン管理に不向きであること
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-6')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-6')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t8-6')">
@@ -554,7 +554,7 @@ function authMiddleware(req, res, next) {
         トークンをHttpOnly Cookieではなくレスポンスボディで返している
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-7')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-7')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t8-7')">
@@ -628,7 +628,7 @@ describe('ユーザー登録 → ログイン → 商品購入 → 履歴確認'
         Integration Testの件数が8件と少なすぎる
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-8')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-8')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t8-8')">
@@ -707,7 +707,7 @@ test.describe('注文フロー', () =&gt; {
         URLの完全一致で検証している
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-9')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-9')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t8-9')">
@@ -784,7 +784,7 @@ const acceptanceCriteria = {
         受け入れ基準の数が多すぎる
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-10')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-10')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t8-10')">
@@ -855,7 +855,7 @@ disaster_recovery:
         バックアップが同一リージョンに保存されている
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-11')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-11')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t8-11')">
@@ -944,7 +944,7 @@ class ProductService {
         Redisをクラスター構成にしてスケールアウトする
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-12')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-12')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t8-12')">
@@ -1031,7 +1031,7 @@ class OrderCreator {
         冪等性キー（Idempotency Key）をDBに記録し、処理済みのメッセージはスキップする。外部APIにもIdempotency Keyを渡して重複呼び出しを防ぐ
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-13')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-13')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t8-13')">
@@ -1119,7 +1119,7 @@ class AIChatBot {
         レート制限がなくAPI利用コストが爆発するリスクがある
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-14')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-14')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t8-14')">
@@ -1212,7 +1212,7 @@ const preventionPlan = {
         カナリアデプロイ・自動ロールバック・ドメインレベルのバリデーション（Value Object）など、人間の注意力に依存せず仕組みで防ぐシステム的な対策が全て欠落している
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-15')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-15')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t8-15')">
@@ -1282,7 +1282,7 @@ class ProductRepository {
         注文処理全体をメッセージキューに入れてシリアルに処理すれば、並行性の問題は発生しない
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-16')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-16')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1363,7 +1363,7 @@ class InventoryConsumer {
         Transactional Outboxパターンでイベント発行を保証し、コンシューマにイベントIDによる冪等性チェックを追加し、順序依存の処理はステータス確認で前提条件を検証する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-17')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-17')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1427,7 +1427,7 @@ class InventoryConsumer {
         Kafkaを導入してイベントソーシングで全ステップを記録する。イベントストアがあれば同期・非同期の問題は全て解決する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-18')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t8-18')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 

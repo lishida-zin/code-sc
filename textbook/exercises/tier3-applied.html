@@ -53,7 +53,7 @@ console.log('F');</code></pre>
         A → B → D → F → C → E
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-1')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-1')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -124,7 +124,7 @@ btn.addEventListener('click', async () => {
         addEventListenerのコールバックにasyncを使ってはいけない
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-2')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-2')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -192,7 +192,7 @@ async function initDashboard() {
         Promise.raceを使い最初に完了したリクエストから順に描画する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-3')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-3')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -265,7 +265,7 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
         async関数の中でfor文を使うとエラーハンドリングが無効になるため
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-4')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-4')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -342,7 +342,7 @@ async function fetchMultipleAPIsImproved() {
         'completed' が入る。Promise.allSettledは完了したものだけを配列で返す
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-5')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-5')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -406,7 +406,7 @@ console.log('score:', score);</code></pre>
         name: 田中太郎, age: null, email: no-email@example.com, role: general, score: 100
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-6')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-6')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -468,7 +468,7 @@ console.log('元のtags:', originalConfig.tags);</code></pre>
         元のtheme: light, 元のemail: true, 元のtags: ['javascript', 'react']
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-7')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-7')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -538,7 +538,7 @@ console.log(getDefaultGreeting());</code></pre>
         dynamic import（import()）を使えば循環参照は自動的に解決される
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-8')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-8')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -607,7 +607,7 @@ console.log(getBioSummary(user));</code></pre>
         TypeScriptでは string | null 型は自動的にnullが除外されるため問題ない
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-9')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-9')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -684,7 +684,7 @@ function processItems(items: unknown[]) {
         asキャストの代わりにinstanceofチェックを使えばProduct型を検証できる
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-10')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-10')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -750,7 +750,7 @@ const result4 = getProperty(user, 'age');</code></pre>
         result1: (number | string)[], result2: (number | string)[], result3: Record&lt;string, unknown&gt;, result4: unknown
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-11')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-11')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -827,7 +827,7 @@ function getStatusMessageSafe(status: OrderStatus): string {
         neverチェックはTypeScript独自の構文であり、JavaScriptにコンパイルすると削除される
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-12')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-12')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -909,7 +909,7 @@ function processUser(user: User) {
         宣言マージはTypeScript 5.0で廃止された非推奨機能である
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-13')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-13')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -992,7 +992,7 @@ type ProductListItemV2 = Pick&lt;Product, 'id' | 'name' | 'price' | 'category'&g
         ユーティリティ型は実行時のパフォーマンスに影響するため、小さい型には使うべきでない
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-14')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-14')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1106,7 +1106,7 @@ async function handleUserAction() {
         問題4のみが問題。他のasキャストはfetchのレスポンス型が保証されているので安全
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-15')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-15')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1164,7 +1164,7 @@ loadDashboard();</code></pre>
         Promise.all をやめて3つのawaitを順番に書き、それぞれにtry-catchを付ける
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-16')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-16')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1231,7 +1231,7 @@ console.log(formatUserAddress(user));</code></pre>
         addressをoptional（address?:）に修正し、asキャストをやめて型ガード関数またはバリデーションで実行時検証を行い、formatUserAddress内でもaddressの存在確認を追加する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-17')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t3-17')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 

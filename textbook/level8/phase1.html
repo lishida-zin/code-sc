@@ -151,11 +151,11 @@
       確認クイズ
     </div>
     <p>本番リリース後にバグを発見した場合、開発時に発見した場合と比べてどのくらいの修正コストがかかる？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing1" style="display:none;">
       <span>同じくらい</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing1" style="display:none;">
       <span>2〜3倍</span>
     </label>
@@ -163,7 +163,7 @@
       <input type="radio" name="q-testing1" style="display:none;">
       <span>30〜100倍</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-testing1')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing1')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -334,11 +334,11 @@ test('商品を購入できる', async () => {
       確認クイズ
     </div>
     <p>「ユーザーがログインして商品を購入する」というフロー全体をテストするのは何テスト？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing2" style="display:none;">
       <span>単体テスト</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing2" style="display:none;">
       <span>結合テスト</span>
     </label>
@@ -346,7 +346,7 @@ test('商品を購入できる', async () => {
       <input type="radio" name="q-testing2" style="display:none;">
       <span>E2Eテスト</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-testing2')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing2')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -525,15 +525,15 @@ test('購入フロー完了', () => {...});</code></pre>
       <input type="radio" name="q-testing3" style="display:none;">
       <span>単体テスト</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing3" style="display:none;">
       <span>結合テスト</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing3" style="display:none;">
       <span>E2Eテスト</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-testing3')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing3')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -646,7 +646,7 @@ describe('ユーザー取得', () => {
       確認クイズ
     </div>
     <p>QAマインドセットで重要なのは？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing4" style="display:none;">
       <span>正常系が動くことを確認する</span>
     </label>
@@ -654,11 +654,11 @@ describe('ユーザー取得', () => {
       <input type="radio" name="q-testing4" style="display:none;">
       <span>どうしたら壊れるかを考える</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing4" style="display:none;">
       <span>できるだけ多くのテストを書く</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-testing4')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing4')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -808,7 +808,7 @@ test('2段階認証付きで登録', () => {
       確認クイズ
     </div>
     <p>「同じテストを繰り返すと、新しいバグが見つからなくなる」現象を何という？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing5" style="display:none;">
       <span>パレートの法則</span>
     </label>
@@ -816,11 +816,11 @@ test('2段階認証付きで登録', () => {
       <input type="radio" name="q-testing5" style="display:none;">
       <span>殺虫剤のパラドックス</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing5" style="display:none;">
       <span>テストピラミッド</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-testing5')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing5')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -992,7 +992,7 @@ test('無効なデータでエラー', () => {
       確認クイズ
     </div>
     <p>内部構造を知らずに、入力と出力だけでテストするアプローチは？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing6" style="display:none;">
       <span>ホワイトボックステスト</span>
     </label>
@@ -1000,11 +1000,11 @@ test('無効なデータでエラー', () => {
       <input type="radio" name="q-testing6" style="display:none;">
       <span>ブラックボックステスト</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing6" style="display:none;">
       <span>グレーボックステスト</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-testing6')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing6')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1147,15 +1147,15 @@ test('無効なデータでエラー', () => {
       <input type="radio" name="q-testing7" style="display:none;">
       <span>静的テスト</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing7" style="display:none;">
       <span>動的テスト</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing7" style="display:none;">
       <span>E2Eテスト</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-testing7')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing7')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1294,15 +1294,15 @@ test('無効なデータでエラー', () => {
       <input type="radio" name="q-testing8" style="display:none;">
       <span>スコープ（何をテストするか）</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing8" style="display:none;">
       <span>使用するツール</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing8" style="display:none;">
       <span>テスト担当者</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-testing8')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing8')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1411,11 +1411,11 @@ test('無効なデータでエラー', () => {
       確認クイズ
     </div>
     <p>良いテストケースの条件として正しくないものは？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing9" style="display:none;">
       <span>再現性がある</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing9" style="display:none;">
       <span>他のテストに依存しない</span>
     </label>
@@ -1423,7 +1423,7 @@ test('無効なデータでエラー', () => {
       <input type="radio" name="q-testing9" style="display:none;">
       <span>特定の順序で実行する必要がある</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-testing9')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing9')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1578,15 +1578,15 @@ test('ユーザー検索', async () => {
       <input type="radio" name="q-testing10" style="display:none;">
       <span>本番環境との差異を最小限にする</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing10" style="display:none;">
       <span>できるだけ多くのデータを用意する</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-testing10" style="display:none;">
       <span>本番データをそのまま使う</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-testing10')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-testing10')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 

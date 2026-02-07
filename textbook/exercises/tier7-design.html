@@ -72,7 +72,7 @@
         ISP違反。UserService のメソッドを複数のインターフェースに分割する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-1')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-1')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t7-1')">
@@ -147,7 +147,7 @@
         method を enum にして型安全にするだけで十分
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-2')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-2')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t7-2')">
@@ -225,7 +225,7 @@ async function backupFiles(storage: FileStorage, files: FileData[]) {
         FileStorage に isReadOnly プロパティを追加して利用側で判定する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-3')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-3')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t7-3')">
@@ -306,7 +306,7 @@ class ReportUserRepository implements IUserRepository {
         IReadableUserRepo, IWritableUserRepo, IBulkUserRepo に分離し、ReportUserRepository は IReadableUserRepo のみ実装する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-4')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-4')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t7-4')">
@@ -388,7 +388,7 @@ class NotificationService {
         各通知手段を static メソッドにして直接呼び出す
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-5')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-5')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t7-5')">
@@ -479,7 +479,7 @@ class OrderService {
         DIコンテナでライフサイクルを管理し、インターフェース経由の注入に変更。テスト時はモック実装をコンテナに登録する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-6')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-6')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t7-6')">
@@ -560,7 +560,7 @@ class OrderService {
         各 carrier を継承で実装し、Template Method パターンで共通処理を親に置く
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-7')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-7')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t7-7')">
@@ -637,7 +637,7 @@ class OrderService {
         Chain of Responsibility パターンで各サービスを連鎖的に呼び出す
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-8')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-8')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t7-8')">
@@ -716,7 +716,7 @@ class ProductController {
         SQLインジェクションのリスクだけが問題。パラメータ化クエリにすれば構造はこのままで良い
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-9')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-9')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t7-9')">
@@ -800,7 +800,7 @@ class SearchInput extends AnimatedStyledValidatedInput {
         深い継承を2階層までに制限するルールをlintで強制する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-10')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-10')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t7-10')">
@@ -905,7 +905,7 @@ class SearchInput extends AnimatedStyledValidatedInput {
         GraphQL に移行すれば Controller が不要になる
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-11')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-11')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t7-11')">
@@ -997,7 +997,7 @@ class OrderService {
         必須処理は同期Sagaパターン、非必須処理は非同期メッセージキュー（Kafka等）に分離し、各サービスの独立性を確保する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-12')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-12')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t7-12')">
@@ -1091,7 +1091,7 @@ async function processSubscription(sub: Subscription) {
         共通の基底クラスを作って継承する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-13')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-13')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t7-13')">
@@ -1172,7 +1172,7 @@ class TransactionConsumer {
         イベント駆動をやめて同期的なAPIコールに戻す
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-14')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-14')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t7-14')">
@@ -1296,7 +1296,7 @@ class OrderProcessor {
         トランザクション未使用（決済成功→在庫減算失敗でデータ不整合の可能性）、Fat Controller（ビジネスロジックがHTTPハンドラに集中）
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-15')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-15')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
   <button class="complete-btn" onclick="completeSection('ex-t7-15')">
@@ -1361,7 +1361,7 @@ class OrderProcessor {
         集計ロジックを別クラスに抽出し、フォーマット出力はReportFormatterインターフェースの実装クラス（Html/Csv/Pdf各Formatter）に分離する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-16')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-16')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1440,7 +1440,7 @@ class ChatUI {
         leaveRoom()でglobal.gc()を呼び出して強制的にガベージコレクションを実行する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-17')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-17')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1497,7 +1497,7 @@ class ChatUI {
         Mixinパターンを採用し、各機能をMixinとしてButtonクラスに動的に合成する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-18')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t7-18')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
