@@ -153,7 +153,7 @@ greet({ name: '太郎', age: 25 });
         <pre><code>const obj = { a: 1, b: 2, c: 3 };
 const { b: x } = obj;</code></pre>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern1-q1" value="1">
             <span>1</span>
           </label>
@@ -161,7 +161,7 @@ const { b: x } = obj;</code></pre>
             <input type="radio" name="modern1-q1" value="2">
             <span>2</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern1-q1" value="3">
             <span>undefined</span>
           </label>
@@ -181,7 +181,7 @@ const { b: x } = obj;</code></pre>
         </p>
         <pre><code>const [first, second] = [10, 20, 30];</code></pre>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern1-q2" value="1">
             <span>10</span>
           </label>
@@ -189,7 +189,7 @@ const { b: x } = obj;</code></pre>
             <input type="radio" name="modern1-q2" value="2">
             <span>20</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern1-q2" value="3">
             <span>30</span>
           </label>
@@ -386,7 +386,7 @@ sum(...numbers);  // → 6
 const b = [3, 4];
 const result = [...a, ...b];</code></pre>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern2-q1" value="1">
             <span>[[1, 2], [3, 4]]</span>
           </label>
@@ -394,7 +394,7 @@ const result = [...a, ...b];</code></pre>
             <input type="radio" name="modern2-q1" value="2">
             <span>[1, 2, 3, 4]</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern2-q1" value="3">
             <span>[1, 2, [3, 4]]</span>
           </label>
@@ -415,7 +415,7 @@ const result = [...a, ...b];</code></pre>
         <pre><code>const user = { name: '太郎', age: 25 };
 const updated = { ...user, age: 30 };</code></pre>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern2-q2" value="1">
             <span>25</span>
           </label>
@@ -423,7 +423,7 @@ const updated = { ...user, age: 30 };</code></pre>
             <input type="radio" name="modern2-q2" value="2">
             <span>30</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern2-q2" value="3">
             <span>エラー</span>
           </label>
@@ -611,7 +611,7 @@ const html = `<ul>
 const b = 3;
 const result = `${a} + ${b} = ${a + b}`;</code></pre>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern3-q1" value="1">
             <span>'a + b = a + b'</span>
           </label>
@@ -619,7 +619,7 @@ const result = `${a} + ${b} = ${a + b}`;</code></pre>
             <input type="radio" name="modern3-q1" value="2">
             <span>'5 + 3 = 8'</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern3-q1" value="3">
             <span>'${a} + ${b} = ${a + b}'</span>
           </label>
@@ -638,11 +638,11 @@ const result = `${a} + ${b} = ${a + b}`;</code></pre>
           <strong>クイズ2：</strong>次のうち、正しいテンプレートリテラルは？
         </p>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern3-q2" value="1">
             <span>'Hello ${name}'</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern3-q2" value="2">
             <span>"Hello ${name}"</span>
           </label>
@@ -859,11 +859,11 @@ math.add(1, 2);    // 3</code></pre>
             <input type="radio" name="modern4-q1" value="1">
             <span>import { add } from './math.js'</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern4-q1" value="2">
             <span>import add from './math.js'</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern4-q1" value="3">
             <span>import (add) from './math.js'</span>
           </label>
@@ -882,7 +882,7 @@ math.add(1, 2);    // 3</code></pre>
           <strong>クイズ2：</strong>デフォルトエクスポートの特徴は？
         </p>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern4-q2" value="1">
             <span>1ファイルに複数作れる</span>
           </label>
@@ -890,7 +890,7 @@ math.add(1, 2);    // 3</code></pre>
             <input type="radio" name="modern4-q2" value="2">
             <span>1ファイルに1つだけ</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern4-q2" value="3">
             <span>必ず定義が必要</span>
           </label>
@@ -1123,7 +1123,7 @@ MathUtil.add(1, 2);  // 3</code></pre>
           <strong>クイズ1：</strong>クラスからインスタンスを作る正しい方法は？
         </p>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern5-q1" value="1">
             <span>User('太郎')</span>
           </label>
@@ -1131,7 +1131,7 @@ MathUtil.add(1, 2);  // 3</code></pre>
             <input type="radio" name="modern5-q1" value="2">
             <span>new User('太郎')</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern5-q1" value="3">
             <span>User.create('太郎')</span>
           </label>
@@ -1150,7 +1150,7 @@ MathUtil.add(1, 2);  // 3</code></pre>
           <strong>クイズ2：</strong>子クラスのconstructorで必ず最初にすることは？
         </p>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern5-q2" value="1">
             <span>this.name = name;</span>
           </label>
@@ -1158,7 +1158,7 @@ MathUtil.add(1, 2);  // 3</code></pre>
             <input type="radio" name="modern5-q2" value="2">
             <span>super()を呼ぶ</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern5-q2" value="3">
             <span>return this;</span>
           </label>
@@ -1411,7 +1411,7 @@ for (var i = 0; i < 3; i++) {
           <strong>クイズ1：</strong>クロージャとは何ですか？
         </p>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern6-q1" value="1">
             <span>関数を閉じる構文</span>
           </label>
@@ -1419,7 +1419,7 @@ for (var i = 0; i < 3; i++) {
             <input type="radio" name="modern6-q1" value="2">
             <span>外側の変数を覚えている関数</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern6-q1" value="3">
             <span>関数を終了させる仕組み</span>
           </label>
@@ -1446,11 +1446,11 @@ for (var i = 0; i < 3; i++) {
 const counter = createCounter();
 counter(); counter(); counter();</code></pre>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern6-q2" value="1">
             <span>1, 1, 1</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern6-q2" value="2">
             <span>0, 0, 0</span>
           </label>
@@ -1476,7 +1476,7 @@ counter(); counter(); counter();</code></pre>
   setTimeout(() => console.log(i), 1000);
 }</code></pre>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern6-q3" value="1">
             <span>0, 1, 2</span>
           </label>
@@ -1484,7 +1484,7 @@ counter(); counter(); counter();</code></pre>
             <input type="radio" name="modern6-q3" value="2">
             <span>3, 3, 3</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern6-q3" value="3">
             <span>undefined, undefined, undefined</span>
           </label>
@@ -1757,7 +1757,7 @@ user.greet.apply({ name: '花子' });  // '花子'</code></pre>
           <strong>クイズ1：</strong>アロー関数のthisの特徴は？
         </p>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern7-q1" value="1">
             <span>呼び出し方でthisが変わる</span>
           </label>
@@ -1765,7 +1765,7 @@ user.greet.apply({ name: '花子' });  // '花子'</code></pre>
             <input type="radio" name="modern7-q1" value="2">
             <span>外側のthisをそのまま使う</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern7-q1" value="3">
             <span>thisは常にundefined</span>
           </label>
@@ -1796,11 +1796,11 @@ user.greet();</code></pre>
             <input type="radio" name="modern7-q2" value="1">
             <span>'太郎'</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern7-q2" value="2">
             <span>undefined</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern7-q2" value="3">
             <span>エラー</span>
           </label>
@@ -1827,7 +1827,7 @@ user.greet();</code></pre>
 };
 user.greet();</code></pre>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern7-q3" value="1">
             <span>'太郎'</span>
           </label>
@@ -1835,7 +1835,7 @@ user.greet();</code></pre>
             <input type="radio" name="modern7-q3" value="2">
             <span>undefined</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="modern7-q3" value="3">
             <span>エラー</span>
           </label>

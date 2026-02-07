@@ -50,7 +50,7 @@ CMD ["node", "server.js"]</code></pre>
         COPY . .が2回実行されている、package.jsonを先にコピーする意味がない
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-1')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-1')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -113,7 +113,7 @@ CMD ["/app/server"]</code></pre>
         .dockerignoreを追加してCOPY . .の対象を減らせば、イメージサイズは大幅に減る
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-2')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-2')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -181,7 +181,7 @@ volumes:
         version: "3.8"が古い。version: "3.9"にすれば自動的にヘルスチェックが有効になる
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-3')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-3')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -250,7 +250,7 @@ spec:
         containerPort: 8080が指定されているが、ポート番号は80を使うべき
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-4')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-4')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -331,7 +331,7 @@ spec:
         livenessとreadinessで同じパス/healthを使っていることが問題。別々のエンドポイントにすべき
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-5')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-5')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -394,7 +394,7 @@ data:
         ConfigMapとSecretを同じファイルに書いていることが問題。別ファイルに分割すべき
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-6')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-6')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -465,7 +465,7 @@ resource "aws_iam_role_policy" "lambda_policy" {
         Lambda関数にはIAMロールではなく、アクセスキーを直接渡すべき
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-7')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-7')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -535,7 +535,7 @@ resource "aws_s3_bucket_policy" "user_uploads" {
         暗号化設定（SSE-S3やSSE-KMS）が有効になっていないのが問題
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-8')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-8')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -605,7 +605,7 @@ resource "aws_s3_bucket_policy" "user_uploads" {
         tagsにProtected = trueを追加すれば、Terraformは自動的に削除を拒否する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-9')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-9')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -671,7 +671,7 @@ terraform {
         variableではなく、直接main.tfにパスワードをハードコードすれば、stateに保存されない
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-10')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-10')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -750,7 +750,7 @@ jobs:
         ubuntu-latestが不安定。ubuntu-22.04のように固定バージョンを指定すべき
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-11')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-11')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -828,7 +828,7 @@ jobs:
         runner.osをキーに含めているのが問題。すべてubuntu-latestなので不要
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-12')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-12')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -903,7 +903,7 @@ app.post('/api/orders', async (req, res) => {
         ログの量が多すぎることが問題。本番環境ではログ出力を最小限にすべき
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-13')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-13')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -984,7 +984,7 @@ resource "aws_cloudwatch_metric_alarm" "memory_high" {
         CloudWatchではなくDatadogやPrometheusを使うべき。AWS純正の監視では精度が不十分
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-14')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-14')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1077,7 +1077,7 @@ jobs:
         シークレットの平文管理、latestタグによる再現性の欠如、セキュリティ設定の欠如が全体に共通する問題
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-15')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-15')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1134,7 +1134,7 @@ CMD ["node", "dist/server.js"]</code></pre>
         docker buildコマンドに--squashオプションを付けてレイヤーを統合すればイメージサイズは解決する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-16')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-16')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1212,7 +1212,7 @@ jobs:
         actions/cacheの代わりにセルフホストランナーを使えばnode_modulesが永続化されるのでキャッシュ不要になる
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-17')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-17')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1269,7 +1269,7 @@ jobs:
         RailsからGoやRustに全面リライトし、パフォーマンスの根本的な問題を解決した上でマイクロサービス化する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-18')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t6-18')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 

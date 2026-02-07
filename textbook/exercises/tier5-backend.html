@@ -71,7 +71,7 @@ router.post('/api/updateUserInfo/:id', async (req, res) =&gt; {
         routerではなくappを直接使うべき
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-1')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-1')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -152,7 +152,7 @@ const createProduct = async (req, res) =&gt; {
         JSON形式ではなくXMLで返すべき
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-2')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-2')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -228,7 +228,7 @@ router.get('/api/products/search', async (req, res) =&gt; {
         500エラーが返されるだけで実害はない
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-3')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-3')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -312,7 +312,7 @@ const login = async (email, password) =&gt; {
         パスワードを2回MD5ハッシュすれば十分安全
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-4')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-4')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -388,7 +388,7 @@ module.exports = { generateToken, verifyToken, SECRET };</code></pre>
         Bearerプレフィックスの検証がないことだけが問題
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-5')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-5')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -469,7 +469,7 @@ router.get('/search', async (req, res) =&gt; {
         ユーザー入力をHTMLエスケープせずに埋め込んでおり、スクリプト注入が可能
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-6')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-6')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -559,7 +559,7 @@ app.post('/api/change-email', requireAuth, async (req, res) =&gt; {
         express.json()がCSRFを防ぐフィルターとして機能する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-7')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-7')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -638,7 +638,7 @@ const getArticleList = async (page = 1, limit = 20) =&gt; {
         1回（Prismaが自動的にJOINに最適化する）
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-8')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-8')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -728,7 +728,7 @@ const createOrder = async (userId, items) =&gt; {
         JavaScriptはシングルスレッドなので不整合は起きない
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-9')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-9')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -809,7 +809,7 @@ ORDER BY month DESC, total_sales DESC;</code></pre>
         GROUP BYがボトルネックなのでVIEWを作るべき
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-10')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-10')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -885,7 +885,7 @@ GROUP BY o.id;</code></pre>
         外部キー制約があるとINSERTが遅くなる
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-11')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-11')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -977,7 +977,7 @@ const getTeamInfo = async (req, res) =&gt; {
         0箇所（認証済みなのでuserは必ず存在する）
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-12')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-12')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1066,7 +1066,7 @@ router.get('/users/:id/orders', async (req, res) =&gt; {
         router.useで認証を適用しているので安全
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-13')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-13')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1146,7 +1146,7 @@ app.use(errorHandler);
         JSONで返していることが問題。HTMLエラーページにすべき
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-14')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-14')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1246,7 +1246,7 @@ router.post('/api/deleteUser/:id', async (req, res) =&gt; {
         1〜2個（SQLインジェクションだけが重大な問題）
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-15')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-15')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1309,7 +1309,7 @@ router.get('/api/users/search', async (req, res) =&gt; {
         パラメータ化クエリ（$1, $2等のプレースホルダ）を使い、ユーザー入力を値として別途バインドする
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-16')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-16')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1373,7 +1373,7 @@ app.post('/api/orders', async (req, res) =&gt; {
         err.messageの内容をBase64エンコードしてクライアントに返すことで、一般ユーザーには読めないようにする
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-17')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-17')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1436,7 +1436,7 @@ app.post('/api/orders', async (req, res) =&gt; {
         最初からPostgreSQL + MongoDB + Elasticsearchの3つを導入し、それぞれの得意領域を活かしたポリグロットパーシステンスを構築する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-18')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t5-18')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 

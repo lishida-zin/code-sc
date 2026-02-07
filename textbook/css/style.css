@@ -7,6 +7,23 @@
    - WCAG 2.0 アクセシビリティ基準
    ============================================ */
 
+/* スキップリンク（アクセシビリティ） */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 10000;
+  padding: 12px 24px;
+  background: var(--accent-blue, #1D4ED8);
+  color: #fff;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 0 0 8px 0;
+}
+.skip-link:focus {
+  top: 0;
+}
+
 :root {
   /* ============================================
      WCAG 2.1 AA準拠カラーパレット
@@ -51,6 +68,59 @@
   /* 字間（読みやすさのため少し広め） */
   --letter-spacing: 0.05em;
 
+  /* カード背景色（ライトモード） */
+  --card-info-bg: #EFF6FF;
+  --card-success-bg: #F0FDF4;
+  --card-warning-bg: #FFF7ED;
+  --card-danger-bg: #FEF2F2;
+
+  /* 比較ボックス背景色（ライトモード） */
+  --compare-good-bg: #F0FDF4;
+  --compare-bad-bg: #FEF2F2;
+  --compare-blue-bg: #EFF6FF;
+  --compare-green-bg: #F0FDF4;
+  --compare-orange-bg: #FFF7ED;
+
+  /* クイズ状態色（ライトモード） */
+  --quiz-option-bg: var(--bg-card);
+  --quiz-option-border: var(--border-light);
+  --quiz-option-hover-bg: #F5F3FF;
+  --quiz-selected-bg: #EDE9FE;
+  --quiz-correct-bg: #DCFCE7;
+  --quiz-incorrect-bg: #FEE2E2;
+  --quiz-feedback-correct-bg: #F0FDF4;
+  --quiz-feedback-incorrect-bg: #FEF2F2;
+
+  /* ラジオボタン（ライトモード） */
+  --radio-border: var(--border-light);
+  --radio-bg: transparent;
+  --radio-checked-border: var(--accent-purple);
+  --radio-checked-bg: var(--accent-purple);
+
+  /* ダッシュボード（ライトモード） */
+  --dashboard-card-bg: white;
+  --dashboard-hover-shadow: rgba(29, 78, 216, 0.1);
+  --dashboard-link-bg: var(--accent-blue);
+  --dashboard-link-hover-bg: #1d4ed8;
+  --dashboard-completed-bg: var(--accent-green);
+  --progress-container-bg: white;
+
+  /* コード色（ライトモード） */
+  --code-inline-bg: var(--bg-code);
+  --code-inline-color: var(--accent-purple);
+  --pre-bg: var(--bg-code);
+  --pre-border: var(--border-light);
+
+  /* UI部品（ライトモード） */
+  --back-to-top-bg: var(--bg-card);
+  --back-to-top-border: var(--border-light);
+  --back-to-top-color: var(--text-main);
+  --back-to-top-shadow: rgba(0,0,0,0.15);
+  --next-page-bg: var(--accent-blue);
+  --next-page-hover-bg: #1d4ed8;
+  --next-page-hover-shadow: rgba(29, 78, 216, 0.3);
+  --diagram-bg: white;
+
   /* レイアウト */
   --content-width: 720px;
   --nav-width: 300px;
@@ -80,134 +150,59 @@
 
   --border-light: #334155;   /* Slate 700 */
   --border-accent: #60A5FA;
-}
 
-[data-theme="dark"] .card-info {
-  background: #1E3A5F;
-  border-left-color: #60A5FA;
-}
-[data-theme="dark"] .card-success {
-  background: #14532D;
-  border-left-color: #4ADE80;
-}
-[data-theme="dark"] .card-warning {
-  background: #451A03;
-  border-left-color: #FB923C;
-}
-[data-theme="dark"] .card-danger {
-  background: #450A0A;
-  border-left-color: #F87171;
-}
-[data-theme="dark"] .compare-good {
-  background: #14532D;
-  border-color: #4ADE80;
-}
-[data-theme="dark"] .compare-bad {
-  background: #450A0A;
-  border-color: #F87171;
-}
-[data-theme="dark"] .compare-blue {
-  background: #1E3A5F;
-  border-color: #60A5FA;
-}
-[data-theme="dark"] .compare-green {
-  background: #14532D;
-  border-color: #4ADE80;
-}
-[data-theme="dark"] .compare-orange {
-  background: #451A03;
-  border-color: #FB923C;
-}
-[data-theme="dark"] .quiz-option {
-  background: #1E293B;
-  border-color: #334155;
-}
-[data-theme="dark"] .quiz-option input[type="radio"] {
-  border-color: #475569;
-  background: #1E293B;
-}
-[data-theme="dark"] .quiz-option input[type="radio"]:checked {
-  border-color: #A78BFA;
-  background: #A78BFA;
-}
-[data-theme="dark"] .quiz-option:hover {
-  background: #334155;
-  border-color: #A78BFA;
-}
-[data-theme="dark"] .quiz-option:has(input:checked),
-[data-theme="dark"] .quiz-option.selected {
-  background: #3B2E63;
-  border-color: #A78BFA;
-  box-shadow: 0 0 0 2px #A78BFA;
-}
-[data-theme="dark"] .quiz-option.correct {
-  background: #14532D;
-  border-color: #4ADE80;
-  box-shadow: 0 0 0 2px #4ADE80;
-}
-[data-theme="dark"] .quiz-option.correct input[type="radio"]:checked {
-  border-color: #4ADE80;
-  background: #4ADE80;
-}
-[data-theme="dark"] .quiz-option.incorrect {
-  background: #450A0A;
-  border-color: #F87171;
-  box-shadow: 0 0 0 2px #F87171;
-}
-[data-theme="dark"] .quiz-option.incorrect input[type="radio"]:checked {
-  border-color: #F87171;
-  background: #F87171;
-}
-[data-theme="dark"] .quiz-feedback.correct {
-  background: #14532D;
-}
-[data-theme="dark"] .quiz-feedback.incorrect {
-  background: #450A0A;
-}
-[data-theme="dark"] .progress-container,
-[data-theme="dark"] .dashboard-card,
-[data-theme="dark"] .diagram-container {
-  background: #1E293B;
-}
-[data-theme="dark"] .dashboard-card:hover {
-  border-color: #60A5FA;
-  box-shadow: 0 4px 16px rgba(96, 165, 250, 0.15);
-}
-[data-theme="dark"] .dashboard-card-link {
-  background: #2563EB;
-}
-[data-theme="dark"] .dashboard-card-link:hover {
-  background: #3B82F6;
-}
-[data-theme="dark"] .dashboard-card-link.completed-level {
-  background: #16A34A;
-}
-[data-theme="dark"] .progress-text {
-  color: #94A3B8;
-}
-[data-theme="dark"] .back-to-top {
-  background: #1E293B;
-  border-color: #334155;
-  color: #F1F5F9;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-}
-[data-theme="dark"] .next-page-btn {
-  background: #2563EB;
-}
-[data-theme="dark"] .next-page-btn:hover {
-  background: #3B82F6;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-[data-theme="dark"] code {
-  background: #334155;
-  color: #E2E8F0;
-}
-[data-theme="dark"] pre {
-  background: #1E293B;
-  border-color: #334155;
-}
-[data-theme="dark"] pre code {
-  background: none;
+  /* カード背景色（ダークモード） */
+  --card-info-bg: #1E3A5F;
+  --card-success-bg: #14532D;
+  --card-warning-bg: #451A03;
+  --card-danger-bg: #450A0A;
+
+  /* 比較ボックス背景色（ダークモード） */
+  --compare-good-bg: #14532D;
+  --compare-bad-bg: #450A0A;
+  --compare-blue-bg: #1E3A5F;
+  --compare-green-bg: #14532D;
+  --compare-orange-bg: #451A03;
+
+  /* クイズ状態色（ダークモード） */
+  --quiz-option-bg: #1E293B;
+  --quiz-option-border: #334155;
+  --quiz-option-hover-bg: #334155;
+  --quiz-selected-bg: #3B2E63;
+  --quiz-correct-bg: #14532D;
+  --quiz-incorrect-bg: #450A0A;
+  --quiz-feedback-correct-bg: #14532D;
+  --quiz-feedback-incorrect-bg: #450A0A;
+
+  /* ラジオボタン（ダークモード） */
+  --radio-border: #475569;
+  --radio-bg: #1E293B;
+  --radio-checked-border: #A78BFA;
+  --radio-checked-bg: #A78BFA;
+
+  /* ダッシュボード（ダークモード） */
+  --dashboard-card-bg: #1E293B;
+  --dashboard-hover-shadow: rgba(96, 165, 250, 0.15);
+  --dashboard-link-bg: #2563EB;
+  --dashboard-link-hover-bg: #3B82F6;
+  --dashboard-completed-bg: #16A34A;
+  --progress-container-bg: #1E293B;
+
+  /* コード色（ダークモード） */
+  --code-inline-bg: #334155;
+  --code-inline-color: #E2E8F0;
+  --pre-bg: #1E293B;
+  --pre-border: #334155;
+
+  /* UI部品（ダークモード） */
+  --back-to-top-bg: #1E293B;
+  --back-to-top-border: #334155;
+  --back-to-top-color: #F1F5F9;
+  --back-to-top-shadow: rgba(0,0,0,0.4);
+  --next-page-bg: #2563EB;
+  --next-page-hover-bg: #3B82F6;
+  --next-page-hover-shadow: rgba(59, 130, 246, 0.3);
+  --diagram-bg: #1E293B;
 }
 
 /* ダークモードトグル */
@@ -239,10 +234,13 @@
 
 .nav-accordion-header {
   display: flex;
+  width: 100%;
   align-items: center;
   justify-content: space-between;
   padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 2);
   background: var(--bg-card);
+  font-family: inherit;
+  text-align: left;
   border: 2px solid var(--border-light);
   border-radius: 8px;
   cursor: pointer;
@@ -263,7 +261,7 @@
   border-color: var(--accent-blue);
 }
 .nav-accordion-header.level:hover {
-  background: #1d4ed8;
+  background: var(--dashboard-link-hover-bg);
 }
 .nav-accordion-header.disabled {
   opacity: 0.5;
@@ -519,28 +517,28 @@ li {
 /* 情報カード（青） */
 .card-info {
   border-left: 6px solid var(--accent-blue);
-  background: #EFF6FF;
+  background: var(--card-info-bg);
 }
 .card-info .card-title { color: var(--accent-blue); }
 
 /* 成功カード（緑） */
 .card-success {
   border-left: 6px solid var(--accent-green);
-  background: #F0FDF4;
+  background: var(--card-success-bg);
 }
 .card-success .card-title { color: var(--accent-green); }
 
 /* 警告カード（オレンジ） */
 .card-warning {
   border-left: 6px solid var(--accent-orange);
-  background: #FFF7ED;
+  background: var(--card-warning-bg);
 }
 .card-warning .card-title { color: var(--accent-orange); }
 
 /* 危険カード（赤） */
 .card-danger {
   border-left: 6px solid var(--accent-red);
-  background: #FEF2F2;
+  background: var(--card-danger-bg);
 }
 .card-danger .card-title { color: var(--accent-red); }
 
@@ -548,20 +546,20 @@ li {
    コードブロック
    ============================================ */
 pre {
-  background: var(--bg-code);
+  background: var(--pre-bg);
   padding: calc(var(--spacing-unit) * 3);
   border-radius: 12px;
   overflow-x: auto;
   margin: calc(var(--spacing-unit) * 3) 0;
-  border: 2px solid var(--border-light);
+  border: 2px solid var(--pre-border);
   line-height: 1.8;
 }
 
 code {
-  background: var(--bg-code);
+  background: var(--code-inline-bg);
   padding: 4px 8px;
   border-radius: 6px;
-  color: var(--accent-purple);
+  color: var(--code-inline-color);
 }
 
 pre code {
@@ -580,18 +578,25 @@ pre code {
   margin: calc(var(--spacing-unit) * 3) 0;
 }
 
-.compare-good {
-  background: #F0FDF4;
-  border: 3px solid var(--accent-green);
+/* 比較ボックス共通スタイル */
+.compare-good,
+.compare-bad,
+.compare-blue,
+.compare-green,
+.compare-orange {
+  border: 3px solid;
   border-radius: 12px;
   padding: calc(var(--spacing-unit) * 3);
 }
 
+.compare-good {
+  background: var(--compare-good-bg);
+  border-color: var(--accent-green);
+}
+
 .compare-bad {
-  background: #FEF2F2;
-  border: 3px solid var(--accent-red);
-  border-radius: 12px;
-  padding: calc(var(--spacing-unit) * 3);
+  background: var(--compare-bad-bg);
+  border-color: var(--accent-red);
 }
 
 .compare-label {
@@ -608,26 +613,20 @@ pre code {
 
 /* 青と緑の比較ボックス（ブラウザ/サーバーなど） */
 .compare-blue {
-  background: #EFF6FF;
-  border: 3px solid var(--accent-blue);
-  border-radius: 12px;
-  padding: calc(var(--spacing-unit) * 3);
+  background: var(--compare-blue-bg);
+  border-color: var(--accent-blue);
 }
 .compare-blue .compare-title { color: var(--accent-blue); }
 
 .compare-green {
-  background: #F0FDF4;
-  border: 3px solid var(--accent-green);
-  border-radius: 12px;
-  padding: calc(var(--spacing-unit) * 3);
+  background: var(--compare-green-bg);
+  border-color: var(--accent-green);
 }
 .compare-green .compare-title { color: var(--accent-green); }
 
 .compare-orange {
-  background: #FFF7ED;
-  border: 3px solid var(--accent-orange);
-  border-radius: 12px;
-  padding: calc(var(--spacing-unit) * 3);
+  background: var(--compare-orange-bg);
+  border-color: var(--accent-orange);
 }
 .compare-orange .compare-title { color: var(--accent-orange); }
 
@@ -685,8 +684,8 @@ tr:nth-child(even) {
   gap: 12px;
   padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 3);
   margin: calc(var(--spacing-unit) * 1.5) 0;
-  background: var(--bg-card);
-  border: 3px solid var(--border-light);
+  background: var(--quiz-option-bg);
+  border: 3px solid var(--quiz-option-border);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
@@ -702,17 +701,18 @@ tr:nth-child(even) {
   width: 24px;
   height: 24px;
   min-width: 24px;
-  border: 3px solid var(--border-light);
+  border: 3px solid var(--radio-border);
   border-radius: 50%;
   margin: 2px 0 0 0;
   cursor: pointer;
   transition: all 0.2s;
   position: relative;
+  background: var(--radio-bg);
 }
 
 .quiz-option input[type="radio"]:checked {
-  border-color: var(--accent-purple);
-  background: var(--accent-purple);
+  border-color: var(--radio-checked-border);
+  background: var(--radio-checked-bg);
 }
 
 .quiz-option input[type="radio"]:checked::after {
@@ -729,19 +729,19 @@ tr:nth-child(even) {
 
 .quiz-option:hover {
   border-color: var(--accent-purple);
-  background: #F5F3FF;
+  background: var(--quiz-option-hover-bg);
 }
 
 .quiz-option:has(input:checked),
 .quiz-option.selected {
   border-color: var(--accent-purple);
-  background: #EDE9FE;
+  background: var(--quiz-selected-bg);
   box-shadow: 0 0 0 2px var(--accent-purple);
 }
 
 .quiz-option.correct {
   border-color: var(--accent-green);
-  background: #DCFCE7;
+  background: var(--quiz-correct-bg);
   box-shadow: 0 0 0 2px var(--accent-green);
 }
 
@@ -752,7 +752,7 @@ tr:nth-child(even) {
 
 .quiz-option.incorrect {
   border-color: var(--accent-red);
-  background: #FEE2E2;
+  background: var(--quiz-incorrect-bg);
   box-shadow: 0 0 0 2px var(--accent-red);
 }
 
@@ -788,8 +788,8 @@ tr:nth-child(even) {
 }
 
 .quiz-feedback.show { display: block; }
-.quiz-feedback.correct { background: #F0FDF4; color: var(--accent-green); border: 2px solid var(--accent-green); }
-.quiz-feedback.incorrect { background: #FEF2F2; color: var(--accent-red); border: 2px solid var(--accent-red); }
+.quiz-feedback.correct { background: var(--quiz-feedback-correct-bg); color: var(--accent-green); border: 2px solid var(--accent-green); }
+.quiz-feedback.incorrect { background: var(--quiz-feedback-incorrect-bg); color: var(--accent-red); border: 2px solid var(--accent-red); }
 
 /* ============================================
    完了ボタン
@@ -849,7 +849,7 @@ tr:nth-child(even) {
 }
 
 .next-page-btn {
-  background: var(--accent-blue);
+  background: var(--next-page-bg);
   color: white;
   border: none;
   padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 5);
@@ -867,7 +867,7 @@ tr:nth-child(even) {
 
 .next-page-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+  box-shadow: 0 4px 12px var(--next-page-hover-shadow);
 }
 
 .next-page-btn:active {
@@ -887,7 +887,7 @@ tr:nth-child(even) {
    進捗バー
    ============================================ */
 .progress-container {
-  background: white;
+  background: var(--progress-container-bg);
   border: 2px solid var(--border-light);
   border-radius: 10px;
   padding: calc(var(--spacing-unit) * 2);
@@ -923,7 +923,7 @@ progress::-webkit-progress-value {
 }
 
 .diagram-container {
-  background: white;
+  background: var(--diagram-bg);
   border: 2px solid var(--border-light);
   border-radius: 12px;
   padding: calc(var(--spacing-unit) * 3);
@@ -957,7 +957,7 @@ progress::-webkit-progress-value {
 }
 
 .dashboard-card {
-  background: white;
+  background: var(--dashboard-card-bg);
   border: 3px solid var(--border-light);
   border-radius: 12px;
   padding: calc(var(--spacing-unit) * 3);
@@ -968,7 +968,7 @@ progress::-webkit-progress-value {
 
 .dashboard-card:hover {
   border-color: var(--accent-blue);
-  box-shadow: 0 4px 16px rgba(29, 78, 216, 0.1);
+  box-shadow: 0 4px 16px var(--dashboard-hover-shadow);
 }
 
 .dashboard-card h3 {
@@ -1015,12 +1015,12 @@ progress::-webkit-progress-value {
 }
 
 .dashboard-card-link:hover {
-  background: #1d4ed8;
+  background: var(--dashboard-link-hover-bg);
   transform: translateY(-1px);
 }
 
 .dashboard-card-link.completed-level {
-  background: var(--accent-green);
+  background: var(--dashboard-completed-bg);
 }
 
 .dashboard-card.disabled {
@@ -1106,12 +1106,12 @@ progress::-webkit-progress-value {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border: 2px solid var(--border-light);
-  background: var(--bg-card);
-  color: var(--text-main);
+  border: 2px solid var(--back-to-top-border);
+  background: var(--back-to-top-bg);
+  color: var(--back-to-top-color);
   font-size: 18px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px var(--back-to-top-shadow);
   transition: opacity 0.3s, transform 0.2s;
   opacity: 0;
   pointer-events: none;
@@ -1415,6 +1415,79 @@ progress::-webkit-progress-value {
     .back-to-top {
       bottom: calc(24px + env(safe-area-inset-bottom));
     }
+  }
+}
+
+/* ============================================
+   OSのダークモード設定に自動対応
+   - data-theme属性が未設定の場合のみ適用
+   - ユーザーが明示的にテーマを選択した場合は上書きしない
+   ============================================ */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) {
+    --bg-main: #0F172A;
+    --bg-card: #1E293B;
+    --bg-code: #1E293B;
+    --bg-nav: #1E293B;
+
+    --text-main: #F1F5F9;
+    --text-sub: #CBD5E1;
+    --text-light: #94A3B8;
+
+    --accent-blue: #60A5FA;
+    --accent-green: #4ADE80;
+    --accent-orange: #FB923C;
+    --accent-red: #F87171;
+    --accent-purple: #A78BFA;
+
+    --border-light: #334155;
+    --border-accent: #60A5FA;
+
+    --card-info-bg: #1E3A5F;
+    --card-success-bg: #14532D;
+    --card-warning-bg: #451A03;
+    --card-danger-bg: #450A0A;
+
+    --compare-good-bg: #14532D;
+    --compare-bad-bg: #450A0A;
+    --compare-blue-bg: #1E3A5F;
+    --compare-green-bg: #14532D;
+    --compare-orange-bg: #451A03;
+
+    --quiz-option-bg: #1E293B;
+    --quiz-option-border: #334155;
+    --quiz-option-hover-bg: #334155;
+    --quiz-selected-bg: #3B2E63;
+    --quiz-correct-bg: #14532D;
+    --quiz-incorrect-bg: #450A0A;
+    --quiz-feedback-correct-bg: #14532D;
+    --quiz-feedback-incorrect-bg: #450A0A;
+
+    --radio-border: #475569;
+    --radio-bg: #1E293B;
+    --radio-checked-border: #A78BFA;
+    --radio-checked-bg: #A78BFA;
+
+    --dashboard-card-bg: #1E293B;
+    --dashboard-hover-shadow: rgba(96, 165, 250, 0.15);
+    --dashboard-link-bg: #2563EB;
+    --dashboard-link-hover-bg: #3B82F6;
+    --dashboard-completed-bg: #16A34A;
+    --progress-container-bg: #1E293B;
+
+    --code-inline-bg: #334155;
+    --code-inline-color: #E2E8F0;
+    --pre-bg: #1E293B;
+    --pre-border: #334155;
+
+    --back-to-top-bg: #1E293B;
+    --back-to-top-border: #334155;
+    --back-to-top-color: #F1F5F9;
+    --back-to-top-shadow: rgba(0,0,0,0.4);
+    --next-page-bg: #2563EB;
+    --next-page-hover-bg: #3B82F6;
+    --next-page-hover-shadow: rgba(59, 130, 246, 0.3);
+    --diagram-bg: #1E293B;
   }
 }
 

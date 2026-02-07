@@ -4,9 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>エンジニアへの道 - LD/ディスレクシア対応教科書</title>
+  <meta name="description" content="AI時代のシニアエンジニアを育成する実践型プログラミング教科書。HTML/CSSからReact、インフラ、設計パターン、テスト戦略まで全10レベルで体系的に学習。">
+  <meta name="keywords" content="プログラミング教科書, エンジニア育成, コードレビュー, React, TypeScript, DevOps, 設計パターン">
+  <meta property="og:title" content="Code SC - AI時代のエンジニア教科書">
+  <meta property="og:description" content="初心者からシニアエンジニアまで、全10レベルの体系的カリキュラム">
+  <meta property="og:type" content="website">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">メインコンテンツへスキップ</a>
   <!-- ハンバーガーメニューボタン（モバイル用） -->
   <button id="hamburger-btn" class="hamburger-btn" aria-label="メニューを開く" aria-expanded="false">
     <span class="hamburger-line"></span>
@@ -15,7 +21,7 @@
   </button>
   <div id="nav-overlay" class="nav-overlay"></div>
 
-  <nav id="main-nav">
+  <nav id="main-nav" aria-label="教科書ナビゲーション">
     <a href="#dashboard" class="nav-title" data-section="dashboard">
       エンジニアへの道
     </a>
@@ -28,10 +34,10 @@
     <div class="nav-section">
       <!-- Level 0 -->
       <div class="nav-accordion" data-accordion="level0">
-        <div class="nav-accordion-header level open" onclick="toggleAccordion('level0')">
+        <button class="nav-accordion-header level open" aria-expanded="true" onclick="toggleAccordion('level0')">
           <span>Level 0: AI時代のエンジニア</span>
           <span class="nav-accordion-icon">▶</span>
-        </div>
+        </button>
         <div class="nav-accordion-content open">
           <a href="#l0-1" class="nav-link" data-section="l0-1">1. エンジニアの役割の変化</a>
           <a href="#l0-2" class="nav-link" data-section="l0-2">2. なぜ「読む力」が最優先か</a>
@@ -46,18 +52,18 @@
 
       <!-- Level 1 -->
       <div class="nav-accordion" data-accordion="level1">
-        <div class="nav-accordion-header level open" onclick="toggleAccordion('level1')">
+        <button class="nav-accordion-header level open" aria-expanded="true" onclick="toggleAccordion('level1')">
           <span>Level 1: HTML/CSS</span>
           <span class="nav-accordion-icon">▶</span>
-        </div>
+        </button>
         <div class="nav-accordion-content open">
 
           <!-- Phase 1 -->
           <div class="nav-accordion" data-accordion="phase1">
-            <div class="nav-accordion-header open" onclick="toggleAccordion('phase1')">
+            <button class="nav-accordion-header open" aria-expanded="true" onclick="toggleAccordion('phase1')">
               <span>Phase 1: HTML基礎</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content open">
               <a href="#html1" class="nav-link" data-section="html1">1. HTMLとは？</a>
               <a href="#html2" class="nav-link" data-section="html2">2. タグの基本</a>
@@ -72,10 +78,10 @@
 
           <!-- Phase 2 -->
           <div class="nav-accordion" data-accordion="phase2">
-            <div class="nav-accordion-header open" onclick="toggleAccordion('phase2')">
+            <button class="nav-accordion-header open" aria-expanded="true" onclick="toggleAccordion('phase2')">
               <span>Phase 2: CSS基礎</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content open">
               <a href="#css1" class="nav-link" data-section="css1">8. CSSとは？</a>
               <a href="#css2" class="nav-link" data-section="css2">9. セレクタ</a>
@@ -90,10 +96,10 @@
 
           <!-- Phase 3 -->
           <div class="nav-accordion" data-accordion="phase3">
-            <div class="nav-accordion-header open" onclick="toggleAccordion('phase3')">
+            <button class="nav-accordion-header open" aria-expanded="true" onclick="toggleAccordion('phase3')">
               <span>Phase 3: 実践</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content open">
               <a href="#prac1" class="nav-link" data-section="prac1">15. DevTools</a>
               <a href="#prac2" class="nav-link" data-section="prac2">16. 実サイト読解</a>
@@ -108,18 +114,18 @@
 
       <!-- Level 2 -->
       <div class="nav-accordion" data-accordion="level2">
-        <div class="nav-accordion-header level" onclick="toggleAccordion('level2')">
+        <button class="nav-accordion-header level" aria-expanded="false" onclick="toggleAccordion('level2')">
           <span>Level 2: JavaScript</span>
           <span class="nav-accordion-icon">▶</span>
-        </div>
+        </button>
         <div class="nav-accordion-content">
 
           <!-- Phase 1: JavaScript基礎 -->
           <div class="nav-accordion" data-accordion="js-phase1">
-            <div class="nav-accordion-header" onclick="toggleAccordion('js-phase1')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('js-phase1')">
               <span>Phase 1: JavaScript基礎</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#js1" class="nav-link" data-section="js1">1. JavaScriptとは</a>
               <a href="#js2" class="nav-link" data-section="js2">2. 変数と定数</a>
@@ -135,10 +141,10 @@
 
           <!-- Phase 2: DOM操作・イベント -->
           <div class="nav-accordion" data-accordion="js-phase2">
-            <div class="nav-accordion-header" onclick="toggleAccordion('js-phase2')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('js-phase2')">
               <span>Phase 2: DOM操作</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#dom1" class="nav-link" data-section="dom1">10. DOMとは</a>
               <a href="#dom2" class="nav-link" data-section="dom2">11. 要素の取得</a>
@@ -151,10 +157,10 @@
 
           <!-- Phase 3: 非同期処理 -->
           <div class="nav-accordion" data-accordion="js-phase3">
-            <div class="nav-accordion-header" onclick="toggleAccordion('js-phase3')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('js-phase3')">
               <span>Phase 3: 非同期処理</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#async1" class="nav-link" data-section="async1">16. 同期と非同期</a>
               <a href="#async2" class="nav-link" data-section="async2">17. コールバック</a>
@@ -170,10 +176,10 @@
 
           <!-- Phase 4: モダンJS・実践 -->
           <div class="nav-accordion" data-accordion="js-phase4">
-            <div class="nav-accordion-header" onclick="toggleAccordion('js-phase4')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('js-phase4')">
               <span>Phase 4: モダンJS</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#modern1" class="nav-link" data-section="modern1">24. 分割代入</a>
               <a href="#modern2" class="nav-link" data-section="modern2">25. スプレッド構文</a>
@@ -193,18 +199,18 @@
 
       <!-- Level 3 -->
       <div class="nav-accordion" data-accordion="level3">
-        <div class="nav-accordion-header level" onclick="toggleAccordion('level3')">
+        <button class="nav-accordion-header level" aria-expanded="false" onclick="toggleAccordion('level3')">
           <span>Level 3: React/TypeScript</span>
           <span class="nav-accordion-icon">▶</span>
-        </div>
+        </button>
         <div class="nav-accordion-content">
 
           <!-- Phase 1: TypeScript基礎 -->
           <div class="nav-accordion" data-accordion="ts-phase1">
-            <div class="nav-accordion-header" onclick="toggleAccordion('ts-phase1')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('ts-phase1')">
               <span>Phase 1: TypeScript基礎</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#ts1" class="nav-link" data-section="ts1">1. TypeScriptとは</a>
               <a href="#ts2" class="nav-link" data-section="ts2">2. 基本の型</a>
@@ -219,10 +225,10 @@
 
           <!-- Phase 2: React基礎 -->
           <div class="nav-accordion" data-accordion="react-phase2">
-            <div class="nav-accordion-header" onclick="toggleAccordion('react-phase2')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('react-phase2')">
               <span>Phase 2: React基礎</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#react1" class="nav-link" data-section="react1">9. Reactとは</a>
               <a href="#react2" class="nav-link" data-section="react2">10. JSXの仕組み</a>
@@ -237,10 +243,10 @@
 
           <!-- Phase 3: Hooks深掘り -->
           <div class="nav-accordion" data-accordion="hooks-phase3">
-            <div class="nav-accordion-header" onclick="toggleAccordion('hooks-phase3')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('hooks-phase3')">
               <span>Phase 3: Hooks深掘り</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#hooks1" class="nav-link" data-section="hooks1">17. useEffect基礎</a>
               <a href="#hooks2" class="nav-link" data-section="hooks2">18. useEffect実践</a>
@@ -256,10 +262,10 @@
 
           <!-- Phase 4: 実践パターン -->
           <div class="nav-accordion" data-accordion="advanced-phase4">
-            <div class="nav-accordion-header" onclick="toggleAccordion('advanced-phase4')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('advanced-phase4')">
               <span>Phase 4: 実践パターン</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#advanced1" class="nav-link" data-section="advanced1">25. Server Components</a>
               <a href="#advanced2" class="nav-link" data-section="advanced2">26. データフェッチング</a>
@@ -277,18 +283,18 @@
 
       <!-- Level 4 -->
       <div class="nav-accordion" data-accordion="level4">
-        <div class="nav-accordion-header level" onclick="toggleAccordion('level4')">
+        <button class="nav-accordion-header level" aria-expanded="false" onclick="toggleAccordion('level4')">
           <span>Level 4: Node.js/API/DB</span>
           <span class="nav-accordion-icon">▶</span>
-        </div>
+        </button>
         <div class="nav-accordion-content">
 
           <!-- Phase 1: Node.js基礎 -->
           <div class="nav-accordion" data-accordion="node-phase1">
-            <div class="nav-accordion-header" onclick="toggleAccordion('node-phase1')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('node-phase1')">
               <span>Phase 1: Node.js基礎</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#node0" class="nav-link" data-section="node0">0. データフロー全体像</a>
               <a href="#node1" class="nav-link" data-section="node1">1. Node.jsとは</a>
@@ -304,10 +310,10 @@
 
           <!-- Phase 2: API設計 -->
           <div class="nav-accordion" data-accordion="api-phase2">
-            <div class="nav-accordion-header" onclick="toggleAccordion('api-phase2')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('api-phase2')">
               <span>Phase 2: API設計</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#api1" class="nav-link" data-section="api1">9. REST原則</a>
               <a href="#api2" class="nav-link" data-section="api2">10. URL設計</a>
@@ -322,10 +328,10 @@
 
           <!-- Phase 3: データベース -->
           <div class="nav-accordion" data-accordion="db-phase3">
-            <div class="nav-accordion-header" onclick="toggleAccordion('db-phase3')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('db-phase3')">
               <span>Phase 3: データベース</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#db1" class="nav-link" data-section="db1">17. RDBの基本</a>
               <a href="#db2" class="nav-link" data-section="db2">18. SQL基礎</a>
@@ -345,10 +351,10 @@
 
           <!-- Phase 4: 認証・セキュリティ -->
           <div class="nav-accordion" data-accordion="sec-phase4">
-            <div class="nav-accordion-header" onclick="toggleAccordion('sec-phase4')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('sec-phase4')">
               <span>Phase 4: 認証・セキュリティ</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#sec1" class="nav-link" data-section="sec1">27. 認証 vs 認可</a>
               <a href="#sec2" class="nav-link" data-section="sec2">28. パスワード管理</a>
@@ -367,10 +373,10 @@
 
           <!-- Phase 5: テスト・品質 -->
           <div class="nav-accordion" data-accordion="test-phase5">
-            <div class="nav-accordion-header" onclick="toggleAccordion('test-phase5')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('test-phase5')">
               <span>Phase 5: テスト・品質</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#test1" class="nav-link" data-section="test1">37. テストピラミッド</a>
               <a href="#test2" class="nav-link" data-section="test2">38. Vitest基礎</a>
@@ -388,18 +394,18 @@
 
       <!-- Level 5 -->
       <div class="nav-accordion" data-accordion="level5">
-        <div class="nav-accordion-header level" onclick="toggleAccordion('level5')">
+        <button class="nav-accordion-header level" aria-expanded="false" onclick="toggleAccordion('level5')">
           <span>Level 5: インフラ/DevOps</span>
           <span class="nav-accordion-icon">▶</span>
-        </div>
+        </button>
         <div class="nav-accordion-content">
 
           <!-- Phase 1: Docker基礎 -->
           <div class="nav-accordion" data-accordion="docker-phase1">
-            <div class="nav-accordion-header" onclick="toggleAccordion('docker-phase1')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('docker-phase1')">
               <span>Phase 1: Docker基礎</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#docker1" class="nav-link" data-section="docker1">1. コンテナとは</a>
               <a href="#docker2" class="nav-link" data-section="docker2">2. Dockerの仕組み</a>
@@ -416,10 +422,10 @@
 
           <!-- Phase 2: Kubernetes基礎 -->
           <div class="nav-accordion" data-accordion="k8s-phase2">
-            <div class="nav-accordion-header" onclick="toggleAccordion('k8s-phase2')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('k8s-phase2')">
               <span>Phase 2: Kubernetes基礎</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#k8s1" class="nav-link" data-section="k8s1">11. Kubernetesとは</a>
               <a href="#k8s2" class="nav-link" data-section="k8s2">12. アーキテクチャ</a>
@@ -436,10 +442,10 @@
 
           <!-- Phase 3: クラウド入門 AWS -->
           <div class="nav-accordion" data-accordion="aws-phase3">
-            <div class="nav-accordion-header" onclick="toggleAccordion('aws-phase3')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('aws-phase3')">
               <span>Phase 3: AWS入門</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#aws1" class="nav-link" data-section="aws1">21. AWSの全体像</a>
               <a href="#aws2" class="nav-link" data-section="aws2">22. IAM基礎</a>
@@ -459,10 +465,10 @@
 
           <!-- Phase 4: Terraform -->
           <div class="nav-accordion" data-accordion="tf-phase4">
-            <div class="nav-accordion-header" onclick="toggleAccordion('tf-phase4')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('tf-phase4')">
               <span>Phase 4: Terraform</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#tf1" class="nav-link" data-section="tf1">31. IaCとは</a>
               <a href="#tf2" class="nav-link" data-section="tf2">32. Terraform基礎</a>
@@ -479,10 +485,10 @@
 
           <!-- Phase 5: GitHub Actions -->
           <div class="nav-accordion" data-accordion="cicd-phase5">
-            <div class="nav-accordion-header" onclick="toggleAccordion('cicd-phase5')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('cicd-phase5')">
               <span>Phase 5: GitHub Actions</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#cicd1" class="nav-link" data-section="cicd1">41. CI/CDとは</a>
               <a href="#cicd2" class="nav-link" data-section="cicd2">42. Actions基礎</a>
@@ -497,10 +503,10 @@
 
           <!-- Phase 6: 可観測性 -->
           <div class="nav-accordion" data-accordion="obs-phase6">
-            <div class="nav-accordion-header" onclick="toggleAccordion('obs-phase6')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('obs-phase6')">
               <span>Phase 6: 可観測性</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#obs1" class="nav-link" data-section="obs1">49. 可観測性とは</a>
               <a href="#obs2" class="nav-link" data-section="obs2">50. 構造化ログ</a>
@@ -521,18 +527,18 @@
 
       <!-- Level 6 -->
       <div class="nav-accordion" data-accordion="level6">
-        <div class="nav-accordion-header level" onclick="toggleAccordion('level6')">
+        <button class="nav-accordion-header level" aria-expanded="false" onclick="toggleAccordion('level6')">
           <span>Level 6: 設計原則とパターン</span>
           <span class="nav-accordion-icon">▶</span>
-        </div>
+        </button>
         <div class="nav-accordion-content">
 
           <!-- Phase 1: OOP基礎 -->
           <div class="nav-accordion" data-accordion="oop-phase1">
-            <div class="nav-accordion-header" onclick="toggleAccordion('oop-phase1')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('oop-phase1')">
               <span>Phase 1: OOP基礎</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#oop1" class="nav-link" data-section="oop1">1. OOPとは</a>
               <a href="#oop2" class="nav-link" data-section="oop2">2. クラスとオブジェクト</a>
@@ -547,10 +553,10 @@
 
           <!-- Phase 2: SOLID原則 -->
           <div class="nav-accordion" data-accordion="solid-phase2">
-            <div class="nav-accordion-header" onclick="toggleAccordion('solid-phase2')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('solid-phase2')">
               <span>Phase 2: SOLID原則</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#solid1" class="nav-link" data-section="solid1">9. SOLID概要</a>
               <a href="#solid2" class="nav-link" data-section="solid2">10. 単一責任の原則(SRP)</a>
@@ -567,10 +573,10 @@
 
           <!-- Phase 3: デザインパターン（生成・構造） -->
           <div class="nav-accordion" data-accordion="pattern-phase3">
-            <div class="nav-accordion-header" onclick="toggleAccordion('pattern-phase3')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('pattern-phase3')">
               <span>Phase 3: デザインパターン（生成・構造）</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#pattern1" class="nav-link" data-section="pattern1">19. デザインパターンとは</a>
               <a href="#pattern2" class="nav-link" data-section="pattern2">20. Factory Method</a>
@@ -587,10 +593,10 @@
 
           <!-- Phase 4: デザインパターン（振る舞い） -->
           <div class="nav-accordion" data-accordion="behavior-phase4">
-            <div class="nav-accordion-header" onclick="toggleAccordion('behavior-phase4')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('behavior-phase4')">
               <span>Phase 4: デザインパターン（振る舞い）</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#behavior1" class="nav-link" data-section="behavior1">29. Strategy</a>
               <a href="#behavior2" class="nav-link" data-section="behavior2">30. Observer</a>
@@ -607,10 +613,10 @@
 
           <!-- Phase 5: アーキテクチャ基礎 -->
           <div class="nav-accordion" data-accordion="arch-phase5">
-            <div class="nav-accordion-header" onclick="toggleAccordion('arch-phase5')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('arch-phase5')">
               <span>Phase 5: アーキテクチャ基礎</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#arch1" class="nav-link" data-section="arch1">39. アーキテクチャとは</a>
               <a href="#arch2" class="nav-link" data-section="arch2">40. レイヤードアーキテクチャ</a>
@@ -629,10 +635,10 @@
 
           <!-- Phase 6: クリーン/ヘキサゴナル -->
           <div class="nav-accordion" data-accordion="clean-phase6">
-            <div class="nav-accordion-header" onclick="toggleAccordion('clean-phase6')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('clean-phase6')">
               <span>Phase 6: クリーン/ヘキサゴナル</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#clean1" class="nav-link" data-section="clean1">49. クリーンアーキテクチャ概要</a>
               <a href="#clean2" class="nav-link" data-section="clean2">50. 依存性の方向</a>
@@ -650,10 +656,10 @@
 
           <!-- Phase 7: DDD戦略的設計 -->
           <div class="nav-accordion" data-accordion="ddd-s-phase7">
-            <div class="nav-accordion-header" onclick="toggleAccordion('ddd-s-phase7')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('ddd-s-phase7')">
               <span>Phase 7: DDD戦略的設計</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#ddd-s1" class="nav-link" data-section="ddd-s1">59. DDDとは</a>
               <a href="#ddd-s2" class="nav-link" data-section="ddd-s2">60. ユビキタス言語</a>
@@ -670,10 +676,10 @@
 
           <!-- Phase 8: DDD戦術的設計 -->
           <div class="nav-accordion" data-accordion="ddd-t-phase8">
-            <div class="nav-accordion-header" onclick="toggleAccordion('ddd-t-phase8')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('ddd-t-phase8')">
               <span>Phase 8: DDD戦術的設計</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#ddd-t1" class="nav-link" data-section="ddd-t1">69. 戦術的パターン概要</a>
               <a href="#ddd-t2" class="nav-link" data-section="ddd-t2">70. Entity</a>
@@ -693,18 +699,18 @@
 
       <!-- Level 7 -->
       <div class="nav-accordion" data-accordion="level7">
-        <div class="nav-accordion-header level" onclick="toggleAccordion('level7')">
+        <button class="nav-accordion-header level" aria-expanded="false" onclick="toggleAccordion('level7')">
           <span>Level 7: 実践設計とAI活用</span>
           <span class="nav-accordion-icon">▶</span>
-        </div>
+        </button>
         <div class="nav-accordion-content">
 
           <!-- Phase 1: データモデリング基礎 -->
           <div class="nav-accordion" data-accordion="data-phase1">
-            <div class="nav-accordion-header" onclick="toggleAccordion('data-phase1')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('data-phase1')">
               <span>Phase 1: データモデリング基礎</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#data1" class="nav-link" data-section="data1">79. データモデリングとは</a>
               <a href="#data2" class="nav-link" data-section="data2">80. 概念/論理/物理モデル</a>
@@ -721,10 +727,10 @@
 
           <!-- Phase 2: DB設計応用 -->
           <div class="nav-accordion" data-accordion="dba-phase2">
-            <div class="nav-accordion-header" onclick="toggleAccordion('dba-phase2')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('dba-phase2')">
               <span>Phase 2: DB設計応用</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#dba1" class="nav-link" data-section="dba1">89. NoSQL概要</a>
               <a href="#dba2" class="nav-link" data-section="dba2">90. RDB vs NoSQL</a>
@@ -741,10 +747,10 @@
 
           <!-- Phase 3: クラウド基礎 -->
           <div class="nav-accordion" data-accordion="cloud-phase3">
-            <div class="nav-accordion-header" onclick="toggleAccordion('cloud-phase3')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('cloud-phase3')">
               <span>Phase 3: クラウド基礎</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#cloud1" class="nav-link" data-section="cloud1">99. クラウドネイティブとは</a>
               <a href="#cloud2" class="nav-link" data-section="cloud2">100. Well-Architected概要</a>
@@ -761,10 +767,10 @@
 
           <!-- Phase 4: クラウド応用 -->
           <div class="nav-accordion" data-accordion="cloud-a-phase4">
-            <div class="nav-accordion-header" onclick="toggleAccordion('cloud-a-phase4')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('cloud-a-phase4')">
               <span>Phase 4: クラウド応用</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#cloud-a1" class="nav-link" data-section="cloud-a1">109. 可用性設計</a>
               <a href="#cloud-a2" class="nav-link" data-section="cloud-a2">110. 災害復旧(DR)</a>
@@ -781,10 +787,10 @@
 
           <!-- Phase 5: 要件定義 -->
           <div class="nav-accordion" data-accordion="req-phase5">
-            <div class="nav-accordion-header" onclick="toggleAccordion('req-phase5')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('req-phase5')">
               <span>Phase 5: 要件定義</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#req1" class="nav-link" data-section="req1">119. 要件定義とは</a>
               <a href="#req2" class="nav-link" data-section="req2">120. 機能要件の書き方</a>
@@ -801,10 +807,10 @@
 
           <!-- Phase 6: 非機能要件 -->
           <div class="nav-accordion" data-accordion="nfr-phase6">
-            <div class="nav-accordion-header" onclick="toggleAccordion('nfr-phase6')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('nfr-phase6')">
               <span>Phase 6: 非機能要件</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#nfr1" class="nav-link" data-section="nfr1">129. 非機能要件とは</a>
               <a href="#nfr2" class="nav-link" data-section="nfr2">130. 性能要件</a>
@@ -821,10 +827,10 @@
 
           <!-- Phase 7: AI基礎 -->
           <div class="nav-accordion" data-accordion="ai-phase7">
-            <div class="nav-accordion-header" onclick="toggleAccordion('ai-phase7')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('ai-phase7')">
               <span>Phase 7: AI基礎</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#ai1" class="nav-link" data-section="ai1">139. 生成AIの基礎</a>
               <a href="#ai2" class="nav-link" data-section="ai2">140. LLMの仕組み</a>
@@ -841,10 +847,10 @@
 
           <!-- Phase 8: AI応用 -->
           <div class="nav-accordion" data-accordion="ai-a-phase8">
-            <div class="nav-accordion-header" onclick="toggleAccordion('ai-a-phase8')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('ai-a-phase8')">
               <span>Phase 8: AI応用</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#ai-a1" class="nav-link" data-section="ai-a1">149. RAG基礎</a>
               <a href="#ai-a2" class="nav-link" data-section="ai-a2">150. ベクトルDB</a>
@@ -864,18 +870,18 @@
 
       <!-- Level 8 -->
       <div class="nav-accordion" data-accordion="level8">
-        <div class="nav-accordion-header level" onclick="toggleAccordion('level8')">
+        <button class="nav-accordion-header level" aria-expanded="false" onclick="toggleAccordion('level8')">
           <span>Level 8: テスト戦略・品質保証</span>
           <span class="nav-accordion-icon">▶</span>
-        </div>
+        </button>
         <div class="nav-accordion-content">
 
           <!-- Phase 1: テスト基礎・マインドセット -->
           <div class="nav-accordion" data-accordion="testing-phase1">
-            <div class="nav-accordion-header" onclick="toggleAccordion('testing-phase1')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('testing-phase1')">
               <span>Phase 1: テスト基礎</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#testing1" class="nav-link" data-section="testing1">159. テストの目的</a>
               <a href="#testing2" class="nav-link" data-section="testing2">160. テストの種類</a>
@@ -892,10 +898,10 @@
 
           <!-- Phase 2: 単体テスト -->
           <div class="nav-accordion" data-accordion="unit-phase2">
-            <div class="nav-accordion-header" onclick="toggleAccordion('unit-phase2')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('unit-phase2')">
               <span>Phase 2: 単体テスト</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#unit1" class="nav-link" data-section="unit1">169. FIRST原則</a>
               <a href="#unit2" class="nav-link" data-section="unit2">170. AAA/Given-When-Then</a>
@@ -912,10 +918,10 @@
 
           <!-- Phase 3: 結合テスト・APIテスト -->
           <div class="nav-accordion" data-accordion="int-phase3">
-            <div class="nav-accordion-header" onclick="toggleAccordion('int-phase3')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('int-phase3')">
               <span>Phase 3: 結合テスト・API</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#int1" class="nav-link" data-section="int1">179. 結合テストの目的</a>
               <a href="#int2" class="nav-link" data-section="int2">180. 結合テスト戦略</a>
@@ -932,10 +938,10 @@
 
           <!-- Phase 4: E2Eテスト -->
           <div class="nav-accordion" data-accordion="e2e-phase4">
-            <div class="nav-accordion-header" onclick="toggleAccordion('e2e-phase4')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('e2e-phase4')">
               <span>Phase 4: E2Eテスト</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#e2e1" class="nav-link" data-section="e2e1">189. E2Eテストの目的</a>
               <a href="#e2e2" class="nav-link" data-section="e2e2">190. E2Eテストの制約</a>
@@ -952,10 +958,10 @@
 
           <!-- Phase 5: テスト設計技法 -->
           <div class="nav-accordion" data-accordion="tech-phase5">
-            <div class="nav-accordion-header" onclick="toggleAccordion('tech-phase5')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('tech-phase5')">
               <span>Phase 5: テスト設計技法</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#tech1" class="nav-link" data-section="tech1">199. 同値分割</a>
               <a href="#tech2" class="nav-link" data-section="tech2">200. 境界値分析</a>
@@ -972,10 +978,10 @@
 
           <!-- Phase 6: TDD/BDD -->
           <div class="nav-accordion" data-accordion="tdd-phase6">
-            <div class="nav-accordion-header" onclick="toggleAccordion('tdd-phase6')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('tdd-phase6')">
               <span>Phase 6: TDD/BDD</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#tdd1" class="nav-link" data-section="tdd1">209. TDDとは</a>
               <a href="#tdd2" class="nav-link" data-section="tdd2">210. TDDの実践</a>
@@ -992,10 +998,10 @@
 
           <!-- Phase 7: CI/CDとテスト自動化 -->
           <div class="nav-accordion" data-accordion="ci-phase7">
-            <div class="nav-accordion-header" onclick="toggleAccordion('ci-phase7')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('ci-phase7')">
               <span>Phase 7: CI/CDテスト自動化</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#ci1" class="nav-link" data-section="ci1">219. CI/CDでのテスト</a>
               <a href="#ci2" class="nav-link" data-section="ci2">220. テストの並列化</a>
@@ -1012,10 +1018,10 @@
 
           <!-- Phase 8: 品質保証・品質管理 -->
           <div class="nav-accordion" data-accordion="qa-phase8">
-            <div class="nav-accordion-header" onclick="toggleAccordion('qa-phase8')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('qa-phase8')">
               <span>Phase 8: 品質保証・管理</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#qa1" class="nav-link" data-section="qa1">229. QA vs QC</a>
               <a href="#qa2" class="nav-link" data-section="qa2">230. パフォーマンステスト</a>
@@ -1033,20 +1039,191 @@
         </div>
       </div>
 
+      <!-- Level 9 -->
+      <div class="nav-accordion" data-accordion="level9">
+        <button class="nav-accordion-header level" aria-expanded="false" onclick="toggleAccordion('level9')">
+          <span>Level 9: チーム開発・PM</span>
+        <span class="nav-accordion-icon">▶</span>
+      </button>
+      <div class="nav-accordion-content">
+
+          <!-- Phase 1: アジャイル開発 -->
+          <div class="nav-accordion" data-accordion="agile-phase1">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('agile-phase1')">
+              <span>Phase 1: アジャイル開発</span>
+              <span class="nav-accordion-icon">▶</span>
+            </button>
+            <div class="nav-accordion-content">
+              <a href="#agile1" class="nav-link" data-section="agile1">1. アジャイルマニフェスト</a>
+              <a href="#agile2" class="nav-link" data-section="agile2">2. スクラムフレームワーク</a>
+              <a href="#agile3" class="nav-link" data-section="agile3">3. スプリント計画</a>
+              <a href="#agile4" class="nav-link" data-section="agile4">4. プロダクトバックログ</a>
+              <a href="#agile5" class="nav-link" data-section="agile5">5. 見積もり手法</a>
+              <a href="#agile6" class="nav-link" data-section="agile6">6. デイリースクラム</a>
+              <a href="#agile7" class="nav-link" data-section="agile7">7. レビュー/レトロ</a>
+              <a href="#agile8" class="nav-link" data-section="agile8">8. カンバン</a>
+              <a href="#agile9" class="nav-link" data-section="agile9">9. ベロシティ/メトリクス</a>
+              <a href="#agile10" class="nav-link" data-section="agile10">10. スケーリング</a>
+            </div>
+          </div>
+
+          <!-- Phase 2: Git運用/コードレビュー -->
+          <div class="nav-accordion" data-accordion="gitrev-phase2">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('gitrev-phase2')">
+              <span>Phase 2: Git運用/コードレビュー</span>
+              <span class="nav-accordion-icon">▶</span>
+            </button>
+            <div class="nav-accordion-content">
+              <a href="#gitrev1" class="nav-link" data-section="gitrev1">1. ブランチ戦略</a>
+              <a href="#gitrev2" class="nav-link" data-section="gitrev2">2. PR運用</a>
+              <a href="#gitrev3" class="nav-link" data-section="gitrev3">3. レビューの目的</a>
+              <a href="#gitrev4" class="nav-link" data-section="gitrev4">4. レビュー観点</a>
+              <a href="#gitrev5" class="nav-link" data-section="gitrev5">5. 建設的フィードバック</a>
+              <a href="#gitrev6" class="nav-link" data-section="gitrev6">6. マージ戦略</a>
+              <a href="#gitrev7" class="nav-link" data-section="gitrev7">7. コンフリクト解決</a>
+              <a href="#gitrev8" class="nav-link" data-section="gitrev8">8. CI連携</a>
+              <a href="#gitrev9" class="nav-link" data-section="gitrev9">9. 自動レビューツール</a>
+              <a href="#gitrev10" class="nav-link" data-section="gitrev10">10. ペアプロ/モブプロ</a>
+            </div>
+          </div>
+
+          <!-- Phase 3: チームコミュニケーション -->
+          <div class="nav-accordion" data-accordion="comm-phase3">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('comm-phase3')">
+              <span>Phase 3: チームコミュニケーション</span>
+              <span class="nav-accordion-icon">▶</span>
+            </button>
+            <div class="nav-accordion-content">
+              <a href="#comm1" class="nav-link" data-section="comm1">1. 心理的安全性</a>
+              <a href="#comm2" class="nav-link" data-section="comm2">2. 1on1ミーティング</a>
+              <a href="#comm3" class="nav-link" data-section="comm3">3. フィードバック技法</a>
+              <a href="#comm4" class="nav-link" data-section="comm4">4. ADR</a>
+              <a href="#comm5" class="nav-link" data-section="comm5">5. RFC</a>
+              <a href="#comm6" class="nav-link" data-section="comm6">6. 技術ドキュメント</a>
+              <a href="#comm7" class="nav-link" data-section="comm7">7. 非同期コミュニケーション</a>
+              <a href="#comm8" class="nav-link" data-section="comm8">8. ステークホルダー管理</a>
+              <a href="#comm9" class="nav-link" data-section="comm9">9. 知識共有</a>
+              <a href="#comm10" class="nav-link" data-section="comm10">10. コンフリクト解決</a>
+            </div>
+          </div>
+
+          <!-- Phase 4: プロジェクト管理 -->
+          <div class="nav-accordion" data-accordion="proj-phase4">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('proj-phase4')">
+              <span>Phase 4: プロジェクト管理</span>
+              <span class="nav-accordion-icon">▶</span>
+            </button>
+            <div class="nav-accordion-content">
+              <a href="#proj1" class="nav-link" data-section="proj1">1. プロジェクト計画</a>
+              <a href="#proj2" class="nav-link" data-section="proj2">2. リスク管理</a>
+              <a href="#proj3" class="nav-link" data-section="proj3">3. スコープ管理</a>
+              <a href="#proj4" class="nav-link" data-section="proj4">4. 見積もり</a>
+              <a href="#proj5" class="nav-link" data-section="proj5">5. 依存関係管理</a>
+              <a href="#proj6" class="nav-link" data-section="proj6">6. ステータスレポート</a>
+              <a href="#proj7" class="nav-link" data-section="proj7">7. 技術的負債管理</a>
+              <a href="#proj8" class="nav-link" data-section="proj8">8. リリース管理</a>
+              <a href="#proj9" class="nav-link" data-section="proj9">9. プロジェクト振り返り</a>
+              <a href="#proj10" class="nav-link" data-section="proj10">10. 複数プロジェクト管理</a>
+            </div>
+          </div>
+
+          <!-- Phase 5: SRE/インシデント管理 -->
+          <div class="nav-accordion" data-accordion="sre-phase5">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('sre-phase5')">
+              <span>Phase 5: SRE/インシデント管理</span>
+              <span class="nav-accordion-icon">▶</span>
+            </button>
+            <div class="nav-accordion-content">
+              <a href="#sre1" class="nav-link" data-section="sre1">1. SREとは</a>
+              <a href="#sre2" class="nav-link" data-section="sre2">2. SLI/SLO/SLA</a>
+              <a href="#sre3" class="nav-link" data-section="sre3">3. エラーバジェット</a>
+              <a href="#sre4" class="nav-link" data-section="sre4">4. 障害対応フロー</a>
+              <a href="#sre5" class="nav-link" data-section="sre5">5. インシデント指揮</a>
+              <a href="#sre6" class="nav-link" data-section="sre6">6. Post-mortem</a>
+              <a href="#sre7" class="nav-link" data-section="sre7">7. On-call運用</a>
+              <a href="#sre8" class="nav-link" data-section="sre8">8. 障害レベル分類</a>
+              <a href="#sre9" class="nav-link" data-section="sre9">9. DR/BCP</a>
+              <a href="#sre10" class="nav-link" data-section="sre10">10. カオスエンジニアリング</a>
+            </div>
+          </div>
+
+          <!-- Phase 6: オブザーバビリティ -->
+          <div class="nav-accordion" data-accordion="obs9-phase6">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('obs9-phase6')">
+              <span>Phase 6: オブザーバビリティ</span>
+              <span class="nav-accordion-icon">▶</span>
+            </button>
+            <div class="nav-accordion-content">
+              <a href="#obs9-1" class="nav-link" data-section="obs9-1">1. オブザーバビリティとは</a>
+              <a href="#obs9-2" class="nav-link" data-section="obs9-2">2. 構造化ログ</a>
+              <a href="#obs9-3" class="nav-link" data-section="obs9-3">3. メトリクス設計</a>
+              <a href="#obs9-4" class="nav-link" data-section="obs9-4">4. 分散トレーシング</a>
+              <a href="#obs9-5" class="nav-link" data-section="obs9-5">5. アラート設計</a>
+              <a href="#obs9-6" class="nav-link" data-section="obs9-6">6. ダッシュボード設計</a>
+              <a href="#obs9-7" class="nav-link" data-section="obs9-7">7. APM</a>
+              <a href="#obs9-8" class="nav-link" data-section="obs9-8">8. ログ集約</a>
+              <a href="#obs9-9" class="nav-link" data-section="obs9-9">9. 監視コスト管理</a>
+              <a href="#obs9-10" class="nav-link" data-section="obs9-10">10. 可観測性文化</a>
+            </div>
+          </div>
+
+          <!-- Phase 7: テックリーダーシップ -->
+          <div class="nav-accordion" data-accordion="lead-phase7">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('lead-phase7')">
+              <span>Phase 7: テックリーダーシップ</span>
+              <span class="nav-accordion-icon">▶</span>
+            </button>
+            <div class="nav-accordion-content">
+              <a href="#lead1" class="nav-link" data-section="lead1">1. テックリードの役割</a>
+              <a href="#lead2" class="nav-link" data-section="lead2">2. 技術的意思決定</a>
+              <a href="#lead3" class="nav-link" data-section="lead3">3. メンタリング基礎</a>
+              <a href="#lead4" class="nav-link" data-section="lead4">4. ペアプロ/モブプロ</a>
+              <a href="#lead5" class="nav-link" data-section="lead5">5. 技術戦略策定</a>
+              <a href="#lead6" class="nav-link" data-section="lead6">6. Build vs Buy</a>
+              <a href="#lead7" class="nav-link" data-section="lead7">7. 技術的負債の交渉</a>
+              <a href="#lead8" class="nav-link" data-section="lead8">8. アーキテクチャ審査</a>
+              <a href="#lead9" class="nav-link" data-section="lead9">9. エンジニア評価</a>
+              <a href="#lead10" class="nav-link" data-section="lead10">10. 影響力の行使</a>
+            </div>
+          </div>
+
+          <!-- Phase 8: キャリア・組織文化 -->
+          <div class="nav-accordion" data-accordion="career-phase8">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('career-phase8')">
+              <span>Phase 8: キャリア・組織文化</span>
+              <span class="nav-accordion-icon">▶</span>
+            </button>
+            <div class="nav-accordion-content">
+              <a href="#career1" class="nav-link" data-section="career1">1. キャリアパス</a>
+              <a href="#career2" class="nav-link" data-section="career2">2. エンジニアリング文化</a>
+              <a href="#career3" class="nav-link" data-section="career3">3. 学習する組織</a>
+              <a href="#career4" class="nav-link" data-section="career4">4. バーンアウト防止</a>
+              <a href="#career5" class="nav-link" data-section="career5">5. D&I</a>
+              <a href="#career6" class="nav-link" data-section="career6">6. 採用と面接</a>
+              <a href="#career7" class="nav-link" data-section="career7">7. 技術コミュニティ</a>
+              <a href="#career8" class="nav-link" data-section="career8">8. OSS貢献</a>
+              <a href="#career9" class="nav-link" data-section="career9">9. 個人ブランディング</a>
+              <a href="#career10" class="nav-link" data-section="career10">10. これからのエンジニア</a>
+            </div>
+          </div>
+
+      </div>
+    </div>
+
       <!-- 実践問題集 -->
       <div class="nav-accordion" data-accordion="exercises">
-        <div class="nav-accordion-header level" onclick="toggleAccordion('exercises')">
+        <button class="nav-accordion-header level" aria-expanded="false" onclick="toggleAccordion('exercises')">
           <span>実践問題集</span>
           <span class="nav-accordion-icon">▶</span>
-        </div>
+        </button>
         <div class="nav-accordion-content">
 
           <!-- Tier 1: 入門 -->
           <div class="nav-accordion" data-accordion="ex-tier1">
-            <div class="nav-accordion-header" onclick="toggleAccordion('ex-tier1')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('ex-tier1')">
               <span>Tier 1: 入門（HTML/CSS）</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#ex-t1-1" class="nav-link" data-section="ex-t1-1">1. セマンティックHTML</a>
               <a href="#ex-t1-2" class="nav-link" data-section="ex-t1-2">2. アクセシビリティ</a>
@@ -1070,10 +1247,10 @@
 
           <!-- Tier 2: 基礎 -->
           <div class="nav-accordion" data-accordion="ex-tier2">
-            <div class="nav-accordion-header" onclick="toggleAccordion('ex-tier2')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('ex-tier2')">
               <span>Tier 2: 基礎（JavaScript）</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#ex-t2-1" class="nav-link" data-section="ex-t2-1">1. varホイスティング</a>
               <a href="#ex-t2-2" class="nav-link" data-section="ex-t2-2">2. == vs ===</a>
@@ -1097,10 +1274,10 @@
 
           <!-- Tier 3: 応用基礎 -->
           <div class="nav-accordion" data-accordion="ex-tier3">
-            <div class="nav-accordion-header" onclick="toggleAccordion('ex-tier3')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('ex-tier3')">
               <span>Tier 3: 応用基礎（非同期/TS）</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#ex-t3-1" class="nav-link" data-section="ex-t3-1">1. Promise連鎖</a>
               <a href="#ex-t3-2" class="nav-link" data-section="ex-t3-2">2. await忘れ</a>
@@ -1124,10 +1301,10 @@
 
           <!-- Tier 4: 実践初級 -->
           <div class="nav-accordion" data-accordion="ex-tier4">
-            <div class="nav-accordion-header" onclick="toggleAccordion('ex-tier4')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('ex-tier4')">
               <span>Tier 4: 実践初級（React）</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#ex-t4-1" class="nav-link" data-section="ex-t4-1">1. JSX属性名</a>
               <a href="#ex-t4-2" class="nav-link" data-section="ex-t4-2">2. state直接変更</a>
@@ -1151,10 +1328,10 @@
 
           <!-- Tier 5: 実践中級 -->
           <div class="nav-accordion" data-accordion="ex-tier5">
-            <div class="nav-accordion-header" onclick="toggleAccordion('ex-tier5')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('ex-tier5')">
               <span>Tier 5: 実践中級（API/DB）</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#ex-t5-1" class="nav-link" data-section="ex-t5-1">1. REST設計</a>
               <a href="#ex-t5-2" class="nav-link" data-section="ex-t5-2">2. ステータスコード</a>
@@ -1179,10 +1356,10 @@
 
           <!-- Tier 6: 実践上級 -->
           <div class="nav-accordion" data-accordion="ex-tier6">
-            <div class="nav-accordion-header" onclick="toggleAccordion('ex-tier6')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('ex-tier6')">
               <span>Tier 6: 実践上級（インフラ）</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#ex-t6-1" class="nav-link" data-section="ex-t6-1">1. Dockerfile安全性</a>
               <a href="#ex-t6-2" class="nav-link" data-section="ex-t6-2">2. イメージ最適化</a>
@@ -1207,10 +1384,10 @@
 
           <!-- Tier 7: 設計 -->
           <div class="nav-accordion" data-accordion="ex-tier7">
-            <div class="nav-accordion-header" onclick="toggleAccordion('ex-tier7')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('ex-tier7')">
               <span>Tier 7: 設計（SOLID/パターン）</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#ex-t7-1" class="nav-link" data-section="ex-t7-1">1. SRP違反</a>
               <a href="#ex-t7-2" class="nav-link" data-section="ex-t7-2">2. OCP違反</a>
@@ -1235,10 +1412,10 @@
 
           <!-- Tier 8: シニア -->
           <div class="nav-accordion" data-accordion="ex-tier8">
-            <div class="nav-accordion-header" onclick="toggleAccordion('ex-tier8')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('ex-tier8')">
               <span>Tier 8: シニア（DDD/総合）</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#ex-t8-1" class="nav-link" data-section="ex-t8-1">1. コンテキスト分割</a>
               <a href="#ex-t8-2" class="nav-link" data-section="ex-t8-2">2. Aggregate境界</a>
@@ -1263,10 +1440,10 @@
 
           <!-- AI生成の罠 -->
           <div class="nav-accordion" data-accordion="ex-ai">
-            <div class="nav-accordion-header" onclick="toggleAccordion('ex-ai')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('ex-ai')">
               <span>AI生成コードの罠</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#ex-ai-1" class="nav-link" data-section="ex-ai-1">1. 架空API</a>
               <a href="#ex-ai-2" class="nav-link" data-section="ex-ai-2">2. 古い書き方混在</a>
@@ -1290,10 +1467,10 @@
 
           <!-- Tier 9: SRE/チーム開発 -->
           <div class="nav-accordion" data-accordion="ex-tier9">
-            <div class="nav-accordion-header" onclick="toggleAccordion('ex-tier9')">
+            <button class="nav-accordion-header" aria-expanded="false" onclick="toggleAccordion('ex-tier9')">
               <span>Tier 9: SRE/チーム開発</span>
               <span class="nav-accordion-icon">▶</span>
-            </div>
+            </button>
             <div class="nav-accordion-content">
               <a href="#ex-t9-1" class="nav-link" data-section="ex-t9-1">1. スプリント見積もり</a>
               <a href="#ex-t9-2" class="nav-link" data-section="ex-t9-2">2. ブランチ戦略</a>
@@ -1315,355 +1492,10 @@
 
         </div>
       </div>
-
-      <!-- Level 8 -->
-      <div class="nav-accordion" data-accordion="level8">
-        <div class="nav-accordion-header level" onclick="toggleAccordion('level8')">
-          <span>Level 8: テスト戦略・品質保証</span>
-          <span class="nav-accordion-icon">▶</span>
-        </div>
-        <div class="nav-accordion-content">
-
-          <!-- Phase 1: テスト基礎・マインドセット -->
-          <div class="nav-accordion" data-accordion="testing-phase1">
-            <div class="nav-accordion-header" onclick="toggleAccordion('testing-phase1')">
-              <span>Phase 1: テスト基礎</span>
-              <span class="nav-accordion-icon">▶</span>
-            </div>
-            <div class="nav-accordion-content">
-              <a href="#testing1" class="nav-link" data-section="testing1">159. テストの目的</a>
-              <a href="#testing2" class="nav-link" data-section="testing2">160. テストの種類</a>
-              <a href="#testing3" class="nav-link" data-section="testing3">161. テストピラミッド</a>
-              <a href="#testing4" class="nav-link" data-section="testing4">162. QAマインドセット</a>
-              <a href="#testing5" class="nav-link" data-section="testing5">163. テストの7原則</a>
-              <a href="#testing6" class="nav-link" data-section="testing6">164. ボックステスト</a>
-              <a href="#testing7" class="nav-link" data-section="testing7">165. 静的/動的テスト</a>
-              <a href="#testing8" class="nav-link" data-section="testing8">166. テスト計画</a>
-              <a href="#testing9" class="nav-link" data-section="testing9">167. テストケース設計</a>
-              <a href="#testing10" class="nav-link" data-section="testing10">168. テスト環境</a>
-            </div>
-          </div>
-
-          <!-- Phase 2: 単体テスト -->
-          <div class="nav-accordion" data-accordion="unit-phase2">
-            <div class="nav-accordion-header" onclick="toggleAccordion('unit-phase2')">
-              <span>Phase 2: 単体テスト</span>
-              <span class="nav-accordion-icon">▶</span>
-            </div>
-            <div class="nav-accordion-content">
-              <a href="#unit1" class="nav-link" data-section="unit1">169. FIRST原則</a>
-              <a href="#unit2" class="nav-link" data-section="unit2">170. AAA/Given-When-Then</a>
-              <a href="#unit3" class="nav-link" data-section="unit3">171. アサーション</a>
-              <a href="#unit4" class="nav-link" data-section="unit4">172. テストダブル概要</a>
-              <a href="#unit5" class="nav-link" data-section="unit5">173. Mock</a>
-              <a href="#unit6" class="nav-link" data-section="unit6">174. Stub</a>
-              <a href="#unit7" class="nav-link" data-section="unit7">175. Jest/Vitest基礎</a>
-              <a href="#unit8" class="nav-link" data-section="unit8">176. 非同期テスト</a>
-              <a href="#unit9" class="nav-link" data-section="unit9">177. カバレッジ</a>
-              <a href="#unit10" class="nav-link" data-section="unit10">178. テスタブルな設計</a>
-            </div>
-          </div>
-
-          <!-- Phase 3: 結合テスト・APIテスト -->
-          <div class="nav-accordion" data-accordion="int-phase3">
-            <div class="nav-accordion-header" onclick="toggleAccordion('int-phase3')">
-              <span>Phase 3: 結合テスト・API</span>
-              <span class="nav-accordion-icon">▶</span>
-            </div>
-            <div class="nav-accordion-content">
-              <a href="#int1" class="nav-link" data-section="int1">179. 結合テストの目的</a>
-              <a href="#int2" class="nav-link" data-section="int2">180. 結合テスト戦略</a>
-              <a href="#int3" class="nav-link" data-section="int3">181. APIテスト基礎</a>
-              <a href="#int4" class="nav-link" data-section="int4">182. Supertest</a>
-              <a href="#int5" class="nav-link" data-section="int5">183. 契約テスト</a>
-              <a href="#int6" class="nav-link" data-section="int6">184. DBテスト</a>
-              <a href="#int7" class="nav-link" data-section="int7">185. 外部サービステスト</a>
-              <a href="#int8" class="nav-link" data-section="int8">186. 認証・認可テスト</a>
-              <a href="#int9" class="nav-link" data-section="int9">187. エラーハンドリング</a>
-              <a href="#int10" class="nav-link" data-section="int10">188. テストデータ管理</a>
-            </div>
-          </div>
-
-          <!-- Phase 4: E2Eテスト -->
-          <div class="nav-accordion" data-accordion="e2e-phase4">
-            <div class="nav-accordion-header" onclick="toggleAccordion('e2e-phase4')">
-              <span>Phase 4: E2Eテスト</span>
-              <span class="nav-accordion-icon">▶</span>
-            </div>
-            <div class="nav-accordion-content">
-              <a href="#e2e1" class="nav-link" data-section="e2e1">189. E2Eテストの目的</a>
-              <a href="#e2e2" class="nav-link" data-section="e2e2">190. E2Eテストの制約</a>
-              <a href="#e2e3" class="nav-link" data-section="e2e3">191. Playwright基礎</a>
-              <a href="#e2e4" class="nav-link" data-section="e2e4">192. Cypress基礎</a>
-              <a href="#e2e5" class="nav-link" data-section="e2e5">193. Page Object Model</a>
-              <a href="#e2e6" class="nav-link" data-section="e2e6">194. Flakyテスト対策</a>
-              <a href="#e2e7" class="nav-link" data-section="e2e7">195. Visual Regression</a>
-              <a href="#e2e8" class="nav-link" data-section="e2e8">196. クロスブラウザ</a>
-              <a href="#e2e9" class="nav-link" data-section="e2e9">197. モバイルテスト</a>
-              <a href="#e2e10" class="nav-link" data-section="e2e10">198. E2Eテスト戦略</a>
-            </div>
-          </div>
-
-          <!-- Phase 5: テスト設計技法 -->
-          <div class="nav-accordion" data-accordion="tech-phase5">
-            <div class="nav-accordion-header" onclick="toggleAccordion('tech-phase5')">
-              <span>Phase 5: テスト設計技法</span>
-              <span class="nav-accordion-icon">▶</span>
-            </div>
-            <div class="nav-accordion-content">
-              <a href="#tech1" class="nav-link" data-section="tech1">199. 同値分割</a>
-              <a href="#tech2" class="nav-link" data-section="tech2">200. 境界値分析</a>
-              <a href="#tech3" class="nav-link" data-section="tech3">201. デシジョンテーブル</a>
-              <a href="#tech4" class="nav-link" data-section="tech4">202. 状態遷移テスト</a>
-              <a href="#tech5" class="nav-link" data-section="tech5">203. ペアワイズテスト</a>
-              <a href="#tech6" class="nav-link" data-section="tech6">204. 探索的テスト</a>
-              <a href="#tech7" class="nav-link" data-section="tech7">205. ユースケーステスト</a>
-              <a href="#tech8" class="nav-link" data-section="tech8">206. エラー推測</a>
-              <a href="#tech9" class="nav-link" data-section="tech9">207. ミューテーションテスト</a>
-              <a href="#tech10" class="nav-link" data-section="tech10">208. リスクベーステスト</a>
-            </div>
-          </div>
-
-          <!-- Phase 6: TDD/BDD -->
-          <div class="nav-accordion" data-accordion="tdd-phase6">
-            <div class="nav-accordion-header" onclick="toggleAccordion('tdd-phase6')">
-              <span>Phase 6: TDD/BDD</span>
-              <span class="nav-accordion-icon">▶</span>
-            </div>
-            <div class="nav-accordion-content">
-              <a href="#tdd1" class="nav-link" data-section="tdd1">209. TDDとは</a>
-              <a href="#tdd2" class="nav-link" data-section="tdd2">210. TDDの実践</a>
-              <a href="#tdd3" class="nav-link" data-section="tdd3">211. TDDのデメリット</a>
-              <a href="#tdd4" class="nav-link" data-section="tdd4">212. BDDとは</a>
-              <a href="#tdd5" class="nav-link" data-section="tdd5">213. Gherkin記法</a>
-              <a href="#tdd6" class="nav-link" data-section="tdd6">214. Cucumber</a>
-              <a href="#tdd7" class="nav-link" data-section="tdd7">215. ATDD</a>
-              <a href="#tdd8" class="nav-link" data-section="tdd8">216. テストファースト vs ラスト</a>
-              <a href="#tdd9" class="nav-link" data-section="tdd9">217. レガシーコードのテスト</a>
-              <a href="#tdd10" class="nav-link" data-section="tdd10">218. リファクタリングとテスト</a>
-            </div>
-          </div>
-
-          <!-- Phase 7: CI/CDとテスト自動化 -->
-          <div class="nav-accordion" data-accordion="ci-phase7">
-            <div class="nav-accordion-header" onclick="toggleAccordion('ci-phase7')">
-              <span>Phase 7: CI/CDテスト自動化</span>
-              <span class="nav-accordion-icon">▶</span>
-            </div>
-            <div class="nav-accordion-content">
-              <a href="#ci1" class="nav-link" data-section="ci1">219. CI/CDでのテスト</a>
-              <a href="#ci2" class="nav-link" data-section="ci2">220. テストの並列化</a>
-              <a href="#ci3" class="nav-link" data-section="ci3">221. テストの順序と依存</a>
-              <a href="#ci4" class="nav-link" data-section="ci4">222. Flakyテスト管理</a>
-              <a href="#ci5" class="nav-link" data-section="ci5">223. テストレポート</a>
-              <a href="#ci6" class="nav-link" data-section="ci6">224. カバレッジレポート</a>
-              <a href="#ci7" class="nav-link" data-section="ci7">225. テスト高速化</a>
-              <a href="#ci8" class="nav-link" data-section="ci8">226. ブランチ戦略とテスト</a>
-              <a href="#ci9" class="nav-link" data-section="ci9">227. テストメンテナンス</a>
-              <a href="#ci10" class="nav-link" data-section="ci10">228. テスト環境自動化</a>
-              <a href="#ci11" class="nav-link" data-section="ci11">11. Flakyテスト対策</a>
-            </div>
-          </div>
-
-          <!-- Phase 8: 品質保証・品質管理 -->
-          <div class="nav-accordion" data-accordion="qa-phase8">
-            <div class="nav-accordion-header" onclick="toggleAccordion('qa-phase8')">
-              <span>Phase 8: 品質保証・管理</span>
-              <span class="nav-accordion-icon">▶</span>
-            </div>
-            <div class="nav-accordion-content">
-              <a href="#qa1" class="nav-link" data-section="qa1">229. QA vs QC</a>
-              <a href="#qa2" class="nav-link" data-section="qa2">230. パフォーマンステスト</a>
-              <a href="#qa3" class="nav-link" data-section="qa3">231. セキュリティテスト</a>
-              <a href="#qa4" class="nav-link" data-section="qa4">232. アクセシビリティテスト</a>
-              <a href="#qa5" class="nav-link" data-section="qa5">233. テストメトリクス</a>
-              <a href="#qa6" class="nav-link" data-section="qa6">234. 品質ダッシュボード</a>
-              <a href="#qa7" class="nav-link" data-section="qa7">235. AIを活用したテスト</a>
-              <a href="#qa8" class="nav-link" data-section="qa8">236. AIコードのテスト</a>
-              <a href="#qa9" class="nav-link" data-section="qa9">237. Shift-Left/Right</a>
-              <a href="#qa10" class="nav-link" data-section="qa10">238. 品質文化</a>
-              <a href="#qa11" class="nav-link" data-section="qa11">11. OWASPテスト</a>
-              <a href="#qa12" class="nav-link" data-section="qa12">12. AIコードテスト</a>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- Level 9 -->
-    <div class="nav-accordion" data-accordion="level9">
-      <div class="nav-accordion-header level" onclick="toggleAccordion('level9')">
-        <span>Level 9: チーム開発・PM</span>
-        <span class="nav-accordion-icon">▶</span>
-      </div>
-      <div class="nav-accordion-content">
-
-          <!-- Phase 1: アジャイル開発 -->
-          <div class="nav-accordion" data-accordion="agile-phase1">
-            <div class="nav-accordion-header" onclick="toggleAccordion('agile-phase1')">
-              <span>Phase 1: アジャイル開発</span>
-              <span class="nav-accordion-icon">▶</span>
-            </div>
-            <div class="nav-accordion-content">
-              <a href="#agile1" class="nav-link" data-section="agile1">1. アジャイルマニフェスト</a>
-              <a href="#agile2" class="nav-link" data-section="agile2">2. スクラムフレームワーク</a>
-              <a href="#agile3" class="nav-link" data-section="agile3">3. スプリント計画</a>
-              <a href="#agile4" class="nav-link" data-section="agile4">4. プロダクトバックログ</a>
-              <a href="#agile5" class="nav-link" data-section="agile5">5. 見積もり手法</a>
-              <a href="#agile6" class="nav-link" data-section="agile6">6. デイリースクラム</a>
-              <a href="#agile7" class="nav-link" data-section="agile7">7. レビュー/レトロ</a>
-              <a href="#agile8" class="nav-link" data-section="agile8">8. カンバン</a>
-              <a href="#agile9" class="nav-link" data-section="agile9">9. ベロシティ/メトリクス</a>
-              <a href="#agile10" class="nav-link" data-section="agile10">10. スケーリング</a>
-            </div>
-          </div>
-
-          <!-- Phase 2: Git運用/コードレビュー -->
-          <div class="nav-accordion" data-accordion="gitrev-phase2">
-            <div class="nav-accordion-header" onclick="toggleAccordion('gitrev-phase2')">
-              <span>Phase 2: Git運用/コードレビュー</span>
-              <span class="nav-accordion-icon">▶</span>
-            </div>
-            <div class="nav-accordion-content">
-              <a href="#gitrev1" class="nav-link" data-section="gitrev1">1. ブランチ戦略</a>
-              <a href="#gitrev2" class="nav-link" data-section="gitrev2">2. PR運用</a>
-              <a href="#gitrev3" class="nav-link" data-section="gitrev3">3. レビューの目的</a>
-              <a href="#gitrev4" class="nav-link" data-section="gitrev4">4. レビュー観点</a>
-              <a href="#gitrev5" class="nav-link" data-section="gitrev5">5. 建設的フィードバック</a>
-              <a href="#gitrev6" class="nav-link" data-section="gitrev6">6. マージ戦略</a>
-              <a href="#gitrev7" class="nav-link" data-section="gitrev7">7. コンフリクト解決</a>
-              <a href="#gitrev8" class="nav-link" data-section="gitrev8">8. CI連携</a>
-              <a href="#gitrev9" class="nav-link" data-section="gitrev9">9. 自動レビューツール</a>
-              <a href="#gitrev10" class="nav-link" data-section="gitrev10">10. ペアプロ/モブプロ</a>
-            </div>
-          </div>
-
-          <!-- Phase 3: チームコミュニケーション -->
-          <div class="nav-accordion" data-accordion="comm-phase3">
-            <div class="nav-accordion-header" onclick="toggleAccordion('comm-phase3')">
-              <span>Phase 3: チームコミュニケーション</span>
-              <span class="nav-accordion-icon">▶</span>
-            </div>
-            <div class="nav-accordion-content">
-              <a href="#comm1" class="nav-link" data-section="comm1">1. 心理的安全性</a>
-              <a href="#comm2" class="nav-link" data-section="comm2">2. 1on1ミーティング</a>
-              <a href="#comm3" class="nav-link" data-section="comm3">3. フィードバック技法</a>
-              <a href="#comm4" class="nav-link" data-section="comm4">4. ADR</a>
-              <a href="#comm5" class="nav-link" data-section="comm5">5. RFC</a>
-              <a href="#comm6" class="nav-link" data-section="comm6">6. 技術ドキュメント</a>
-              <a href="#comm7" class="nav-link" data-section="comm7">7. 非同期コミュニケーション</a>
-              <a href="#comm8" class="nav-link" data-section="comm8">8. ステークホルダー管理</a>
-              <a href="#comm9" class="nav-link" data-section="comm9">9. 知識共有</a>
-              <a href="#comm10" class="nav-link" data-section="comm10">10. コンフリクト解決</a>
-            </div>
-          </div>
-
-          <!-- Phase 4: プロジェクト管理 -->
-          <div class="nav-accordion" data-accordion="proj-phase4">
-            <div class="nav-accordion-header" onclick="toggleAccordion('proj-phase4')">
-              <span>Phase 4: プロジェクト管理</span>
-              <span class="nav-accordion-icon">▶</span>
-            </div>
-            <div class="nav-accordion-content">
-              <a href="#proj1" class="nav-link" data-section="proj1">1. プロジェクト計画</a>
-              <a href="#proj2" class="nav-link" data-section="proj2">2. リスク管理</a>
-              <a href="#proj3" class="nav-link" data-section="proj3">3. スコープ管理</a>
-              <a href="#proj4" class="nav-link" data-section="proj4">4. 見積もり</a>
-              <a href="#proj5" class="nav-link" data-section="proj5">5. 依存関係管理</a>
-              <a href="#proj6" class="nav-link" data-section="proj6">6. ステータスレポート</a>
-              <a href="#proj7" class="nav-link" data-section="proj7">7. 技術的負債管理</a>
-              <a href="#proj8" class="nav-link" data-section="proj8">8. リリース管理</a>
-              <a href="#proj9" class="nav-link" data-section="proj9">9. プロジェクト振り返り</a>
-              <a href="#proj10" class="nav-link" data-section="proj10">10. 複数プロジェクト管理</a>
-            </div>
-          </div>
-
-          <!-- Phase 5: SRE/インシデント管理 -->
-          <div class="nav-accordion" data-accordion="sre-phase5">
-            <div class="nav-accordion-header" onclick="toggleAccordion('sre-phase5')">
-              <span>Phase 5: SRE/インシデント管理</span>
-              <span class="nav-accordion-icon">▶</span>
-            </div>
-            <div class="nav-accordion-content">
-              <a href="#sre1" class="nav-link" data-section="sre1">1. SREとは</a>
-              <a href="#sre2" class="nav-link" data-section="sre2">2. SLI/SLO/SLA</a>
-              <a href="#sre3" class="nav-link" data-section="sre3">3. エラーバジェット</a>
-              <a href="#sre4" class="nav-link" data-section="sre4">4. 障害対応フロー</a>
-              <a href="#sre5" class="nav-link" data-section="sre5">5. インシデント指揮</a>
-              <a href="#sre6" class="nav-link" data-section="sre6">6. Post-mortem</a>
-              <a href="#sre7" class="nav-link" data-section="sre7">7. On-call運用</a>
-              <a href="#sre8" class="nav-link" data-section="sre8">8. 障害レベル分類</a>
-              <a href="#sre9" class="nav-link" data-section="sre9">9. DR/BCP</a>
-              <a href="#sre10" class="nav-link" data-section="sre10">10. カオスエンジニアリング</a>
-            </div>
-          </div>
-
-          <!-- Phase 6: オブザーバビリティ -->
-          <div class="nav-accordion" data-accordion="obs9-phase6">
-            <div class="nav-accordion-header" onclick="toggleAccordion('obs9-phase6')">
-              <span>Phase 6: オブザーバビリティ</span>
-              <span class="nav-accordion-icon">▶</span>
-            </div>
-            <div class="nav-accordion-content">
-              <a href="#obs9-1" class="nav-link" data-section="obs9-1">1. オブザーバビリティとは</a>
-              <a href="#obs9-2" class="nav-link" data-section="obs9-2">2. 構造化ログ</a>
-              <a href="#obs9-3" class="nav-link" data-section="obs9-3">3. メトリクス設計</a>
-              <a href="#obs9-4" class="nav-link" data-section="obs9-4">4. 分散トレーシング</a>
-              <a href="#obs9-5" class="nav-link" data-section="obs9-5">5. アラート設計</a>
-              <a href="#obs9-6" class="nav-link" data-section="obs9-6">6. ダッシュボード設計</a>
-              <a href="#obs9-7" class="nav-link" data-section="obs9-7">7. APM</a>
-              <a href="#obs9-8" class="nav-link" data-section="obs9-8">8. ログ集約</a>
-              <a href="#obs9-9" class="nav-link" data-section="obs9-9">9. 監視コスト管理</a>
-              <a href="#obs9-10" class="nav-link" data-section="obs9-10">10. 可観測性文化</a>
-            </div>
-          </div>
-
-          <!-- Phase 7: テックリーダーシップ -->
-          <div class="nav-accordion" data-accordion="lead-phase7">
-            <div class="nav-accordion-header" onclick="toggleAccordion('lead-phase7')">
-              <span>Phase 7: テックリーダーシップ</span>
-              <span class="nav-accordion-icon">▶</span>
-            </div>
-            <div class="nav-accordion-content">
-              <a href="#lead1" class="nav-link" data-section="lead1">1. テックリードの役割</a>
-              <a href="#lead2" class="nav-link" data-section="lead2">2. 技術的意思決定</a>
-              <a href="#lead3" class="nav-link" data-section="lead3">3. メンタリング基礎</a>
-              <a href="#lead4" class="nav-link" data-section="lead4">4. ペアプロ/モブプロ</a>
-              <a href="#lead5" class="nav-link" data-section="lead5">5. 技術戦略策定</a>
-              <a href="#lead6" class="nav-link" data-section="lead6">6. Build vs Buy</a>
-              <a href="#lead7" class="nav-link" data-section="lead7">7. 技術的負債の交渉</a>
-              <a href="#lead8" class="nav-link" data-section="lead8">8. アーキテクチャ審査</a>
-              <a href="#lead9" class="nav-link" data-section="lead9">9. エンジニア評価</a>
-              <a href="#lead10" class="nav-link" data-section="lead10">10. 影響力の行使</a>
-            </div>
-          </div>
-
-          <!-- Phase 8: キャリア・組織文化 -->
-          <div class="nav-accordion" data-accordion="career-phase8">
-            <div class="nav-accordion-header" onclick="toggleAccordion('career-phase8')">
-              <span>Phase 8: キャリア・組織文化</span>
-              <span class="nav-accordion-icon">▶</span>
-            </div>
-            <div class="nav-accordion-content">
-              <a href="#career1" class="nav-link" data-section="career1">1. キャリアパス</a>
-              <a href="#career2" class="nav-link" data-section="career2">2. エンジニアリング文化</a>
-              <a href="#career3" class="nav-link" data-section="career3">3. 学習する組織</a>
-              <a href="#career4" class="nav-link" data-section="career4">4. バーンアウト防止</a>
-              <a href="#career5" class="nav-link" data-section="career5">5. D&I</a>
-              <a href="#career6" class="nav-link" data-section="career6">6. 採用と面接</a>
-              <a href="#career7" class="nav-link" data-section="career7">7. 技術コミュニティ</a>
-              <a href="#career8" class="nav-link" data-section="career8">8. OSS貢献</a>
-              <a href="#career9" class="nav-link" data-section="career9">9. 個人ブランディング</a>
-              <a href="#career10" class="nav-link" data-section="career10">10. これからのエンジニア</a>
-            </div>
-          </div>
-
-      </div>
     </div>
   </nav>
 
-  <main>
+  <main id="main-content">
     <!-- ダッシュボード（インライン） -->
     <section id="dashboard" class="active">
       <h1>学習ダッシュボード</h1>
@@ -1783,7 +1615,6 @@
           <p>アジャイル開発、Git運用、チームコミュニケーション、プロジェクト管理を読めるようになります。</p>
           <a href="#agile1" class="dashboard-card-link" data-first-section="agile1" onclick="goToLevel(event, 'agile1', ['agile1','agile2','agile3','agile4','agile5','agile6','agile7','agile8','agile9','agile10','gitrev1','gitrev2','gitrev3','gitrev4','gitrev5','gitrev6','gitrev7','gitrev8','gitrev9','gitrev10','comm1','comm2','comm3','comm4','comm5','comm6','comm7','comm8','comm9','comm10','proj1','proj2','proj3','proj4','proj5','proj6','proj7','proj8','proj9','proj10','sre1','sre2','sre3','sre4','sre5','sre6','sre7','sre8','sre9','sre10','obs9-1','obs9-2','obs9-3','obs9-4','obs9-5','obs9-6','obs9-7','obs9-8','obs9-9','obs9-10','lead1','lead2','lead3','lead4','lead5','lead6','lead7','lead8','lead9','lead10','career1','career2','career3','career4','career5','career6','career7','career8','career9','career10'])">学習を始める</a>
         </div>
-      </div>
 
         <div class="dashboard-card" data-level="exercises">
           <h3>実践問題集（172問）</h3>

@@ -83,11 +83,11 @@
       <input type="radio" name="q-qa1" style="display:none;">
       <span>QA（品質保証）</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa1" style="display:none;">
       <span>QC（品質管理）</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-qa1')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa1')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -176,11 +176,11 @@ export default function() {
       確認クイズ
     </div>
     <p>急激なアクセス増加への対応をテストするのは？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa2" style="display:none;">
       <span>負荷テスト</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa2" style="display:none;">
       <span>ストレステスト</span>
     </label>
@@ -188,7 +188,7 @@ export default function() {
       <input type="radio" name="q-qa2" style="display:none;">
       <span>スパイクテスト</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-qa2')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa2')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -276,15 +276,15 @@ export default function() {
       <input type="radio" name="q-qa3" style="display:none;">
       <span>SAST</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa3" style="display:none;">
       <span>DAST</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa3" style="display:none;">
       <span>ペネトレーションテスト</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-qa3')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa3')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -363,15 +363,15 @@ test('ホームページのa11yチェック', async ({ page }) => {
       <input type="radio" name="q-qa4" style="display:none;">
       <span>30%</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa4" style="display:none;">
       <span>70%</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa4" style="display:none;">
       <span>100%</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-qa4')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa4')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -450,7 +450,7 @@ test('ホームページのa11yチェック', async ({ page }) => {
       確認クイズ
     </div>
     <p>障害からの復旧にかかる平均時間を表すメトリクスは？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa5" style="display:none;">
       <span>MTTF</span>
     </label>
@@ -458,11 +458,11 @@ test('ホームページのa11yチェック', async ({ page }) => {
       <input type="radio" name="q-qa5" style="display:none;">
       <span>MTTR</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa5" style="display:none;">
       <span>MTBF</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-qa5')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa5')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -527,15 +527,15 @@ test('ホームページのa11yチェック', async ({ page }) => {
       <input type="radio" name="q-qa6" style="display:none;">
       <span>新しいコードにテストが追いついていない</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa6" style="display:none;">
       <span>テストが速くなっている</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa6" style="display:none;">
       <span>バグが減っている</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-qa6')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa6')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -616,15 +616,15 @@ test('ホームページのa11yチェック', async ({ page }) => {
       <input type="radio" name="q-qa7" style="display:none;">
       <span>自己修復テスト</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa7" style="display:none;">
       <span>テスト自動生成</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa7" style="display:none;">
       <span>バグ予測</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-qa7')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa7')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -725,15 +725,15 @@ describe('データ取得', () => {
       <input type="radio" name="q-qa8" style="display:none;">
       <span>ハルシネーション</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa8" style="display:none;">
       <span>オーバーフィッティング</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa8" style="display:none;">
       <span>バイアス</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-qa8')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa8')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -817,7 +817,7 @@ describe('データ取得', () => {
       確認クイズ
     </div>
     <p>本番環境で一部ユーザーに新機能を試す手法は？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa9" style="display:none;">
       <span>Shift-Left</span>
     </label>
@@ -825,11 +825,11 @@ describe('データ取得', () => {
       <input type="radio" name="q-qa9" style="display:none;">
       <span>Shift-Right（カナリアリリース）</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa9" style="display:none;">
       <span>回帰テスト</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-qa9')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa9')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -907,7 +907,7 @@ describe('データ取得', () => {
       確認クイズ
     </div>
     <p>品質文化において正しいのは？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa10" style="display:none;">
       <span>品質はQAチームの責任</span>
     </label>
@@ -915,11 +915,11 @@ describe('データ取得', () => {
       <input type="radio" name="q-qa10" style="display:none;">
       <span>品質はチーム全体の責任</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa10" style="display:none;">
       <span>テストは開発後にまとめて行う</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-qa10')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa10')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1060,15 +1060,15 @@ jobs:
       <input type="radio" name="q-qa11" style="display:none;">
       <span>SAST（静的解析）</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa11" style="display:none;">
       <span>DAST（動的解析）</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa11" style="display:none;">
       <span>IAST（対話型解析）</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-qa11')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa11')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1179,7 +1179,7 @@ test('sort result is always ordered', () =&gt; {
       確認クイズ
     </div>
     <p>AI生成コードのテストで最も重要なのは？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa12" style="display:none;">
       <span>AIが生成したテストをそのまま使う</span>
     </label>
@@ -1187,11 +1187,11 @@ test('sort result is always ordered', () =&gt; {
       <input type="radio" name="q-qa12" style="display:none;">
       <span>人間によるレビューと追加テストで検証する</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-qa12" style="display:none;">
       <span>テストカバレッジ100%を目指す</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-qa12')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-qa12')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 

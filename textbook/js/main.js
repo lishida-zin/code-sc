@@ -837,6 +837,38 @@ const sectionMapping = {
   'ex-t9-15': 'exercises/tier9-sre.html'
 };
 
+// ============================================
+// ヘルパー関数
+// ============================================
+
+/**
+ * sectionMappingからレベル別のセクションIDを抽出する
+ * @param {string} level - 'level0'~'level9' または 'exercises'
+ * @returns {string[]} セクションIDの配列
+ */
+function getSectionsByLevel(level) {
+  const prefix = level === 'exercises' ? 'exercises/' : level + '/';
+  return Object.keys(sectionMapping).filter(
+    id => sectionMapping[id].startsWith(prefix)
+  );
+}
+
+/**
+ * localStorageから安全にJSONを読み取る
+ * @param {string} key - localStorageのキー
+ * @param {*} fallback - パース失敗時のデフォルト値
+ * @returns {*} パースされた値またはfallback
+ */
+function safeGetLocalStorage(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw === null) return fallback;
+    return JSON.parse(raw);
+  } catch {
+    return fallback;
+  }
+}
+
 // 読み込み済みファイルを追跡
 const loadedFiles = new Set();
 
@@ -891,34 +923,35 @@ function toggleAccordion(id) {
 
   const isOpen = header.classList.toggle('open');
   content.classList.toggle('open', isOpen);
+  header.setAttribute('aria-expanded', String(isOpen));
 
   // 状態を保存
-  const states = JSON.parse(localStorage.getItem('accordionStates') || '{}');
+  const states = safeGetLocalStorage('accordionStates', {});
   states[id] = isOpen;
   localStorage.setItem('accordionStates', JSON.stringify(states));
 }
 
 // 保存された折りたたみ状態を適用
-(function() {
-  document.addEventListener('DOMContentLoaded', () => {
-    const states = JSON.parse(localStorage.getItem('accordionStates') || '{}');
-    Object.keys(states).forEach(id => {
-      const accordion = document.querySelector(`[data-accordion="${id}"]`);
-      if (!accordion) return;
-      const header = accordion.querySelector('.nav-accordion-header');
-      const content = accordion.querySelector('.nav-accordion-content');
-      if (!header || !content) return;
+function restoreAccordionStates() {
+  const states = safeGetLocalStorage('accordionStates', {});
+  Object.keys(states).forEach(id => {
+    const accordion = document.querySelector(`[data-accordion="${id}"]`);
+    if (!accordion) return;
+    const header = accordion.querySelector('.nav-accordion-header');
+    const content = accordion.querySelector('.nav-accordion-content');
+    if (!header || !content) return;
 
-      if (states[id]) {
-        header.classList.add('open');
-        content.classList.add('open');
-      } else {
-        header.classList.remove('open');
-        content.classList.remove('open');
-      }
-    });
+    if (states[id]) {
+      header.classList.add('open');
+      content.classList.add('open');
+      header.setAttribute('aria-expanded', 'true');
+    } else {
+      header.classList.remove('open');
+      content.classList.remove('open');
+      header.setAttribute('aria-expanded', 'false');
+    }
   });
-})();
+}
 
 // ============================================
 // 動的コンテンツ読み込み
@@ -1026,7 +1059,7 @@ function closeMobileNav() {
 // ============================================
 // ナビゲーション制御
 // ============================================
-document.addEventListener('DOMContentLoaded', () => {
+function initNavigation() {
   // ハンバーガーボタン
   const hamburgerBtn = document.getElementById('hamburger-btn');
   if (hamburgerBtn) {
@@ -1058,7 +1091,7 @@ document.addEventListener('DOMContentLoaded', () => {
       closeMobileNav();
     });
   }
-});
+}
 
 function showSection(sectionId) {
   // すべてのセクションを非表示
@@ -1084,11 +1117,21 @@ function showSection(sectionId) {
   }
 }
 
-// 初期表示
-document.addEventListener('DOMContentLoaded', () => {
+// 初期表示（ハッシュ対応）
+function handleInitialHash() {
   const hash = window.location.hash.slice(1);
   if (hash && hash !== 'dashboard') {
     loadSection(hash);
+  }
+}
+
+// ブラウザの戻る/進むボタン対応
+window.addEventListener('popstate', () => {
+  const hash = window.location.hash.slice(1);
+  if (hash) {
+    loadSection(hash);
+  } else {
+    showSection('dashboard');
   }
 });
 
@@ -1127,11 +1170,35 @@ function checkQuiz(quizId) {
   if (correct) {
     feedback.classList.add('correct');
     feedback.classList.remove('incorrect');
-    feedback.innerHTML = '<strong>正解！</strong>' + (explanation ? '<br><span style="font-weight:normal;">' + explanation + '</span>' : ' その通りです。');
+    feedback.textContent = '';
+    const correctStrong = document.createElement('strong');
+    correctStrong.textContent = '正解！';
+    feedback.appendChild(correctStrong);
+    if (explanation) {
+      feedback.appendChild(document.createElement('br'));
+      const span = document.createElement('span');
+      span.style.fontWeight = 'normal';
+      span.textContent = explanation;
+      feedback.appendChild(span);
+    } else {
+      feedback.appendChild(document.createTextNode(' その通りです。'));
+    }
   } else {
     feedback.classList.add('incorrect');
     feedback.classList.remove('correct');
-    feedback.innerHTML = '<strong>不正解...</strong>' + (explanation ? '<br><span style="font-weight:normal;">正解の理由: ' + explanation + '</span>' : ' もう一度考えてみましょう。');
+    feedback.textContent = '';
+    const incorrectStrong = document.createElement('strong');
+    incorrectStrong.textContent = '不正解...';
+    feedback.appendChild(incorrectStrong);
+    if (explanation) {
+      feedback.appendChild(document.createElement('br'));
+      const span = document.createElement('span');
+      span.style.fontWeight = 'normal';
+      span.textContent = '正解の理由: ' + explanation;
+      feedback.appendChild(span);
+    } else {
+      feedback.appendChild(document.createTextNode(' もう一度考えてみましょう。'));
+    }
   }
 }
 
@@ -1152,7 +1219,7 @@ function getNextSectionLabel(sectionId) {
 
 function completeSection(sectionId) {
   // ローカルストレージに保存
-  const completed = JSON.parse(localStorage.getItem('completedSections') || '[]');
+  const completed = safeGetLocalStorage('completedSections', []);
   if (!completed.includes(sectionId)) {
     completed.push(sectionId);
     localStorage.setItem('completedSections', JSON.stringify(completed));
@@ -1207,7 +1274,7 @@ function showNextPageButton(sectionId) {
 }
 
 function applyCompletedStates() {
-  const completed = JSON.parse(localStorage.getItem('completedSections') || '[]');
+  const completed = safeGetLocalStorage('completedSections', []);
   completed.forEach(sectionId => {
     const link = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
     if (link) link.classList.add('completed');
@@ -1225,147 +1292,30 @@ function applyCompletedStates() {
 }
 
 function updateProgress() {
-  const completed = JSON.parse(localStorage.getItem('completedSections') || '[]');
+  const completed = safeGetLocalStorage('completedSections', []);
+  const completedSet = new Set(completed);
 
-  // Level 0
-  const level0Sections = ['l0-1','l0-2','l0-3','l0-4','l0-5','l0-6','l0-7','l0-8'];
-  const level0Count = completed.filter(s => level0Sections.includes(s)).length;
-  const level0Progress = document.getElementById('level0-progress');
-  if (level0Progress) level0Progress.value = level0Count;
-  updateProgressText('level0', level0Count, level0Sections.length);
-
-  // Level 1
-  const level1Sections = ['html1','html2','html3','html4','html5','html6','html7','html8',
-                          'css1','css2','css3','css4','css5','css6','css7','css8',
-                          'prac1','prac2','prac3','prac4','prac5'];
-  const level1Count = completed.filter(s => level1Sections.includes(s)).length;
-  const level1Progress = document.getElementById('level1-progress');
-  if (level1Progress) level1Progress.value = level1Count;
-  updateProgressText('level1', level1Count, level1Sections.length);
-
-  // Level 2
-  const level2Sections = ['js1','js2','js3','js4','js5','js6','js7','js8','js9',
-                          'dom1','dom2','dom3','dom4','dom5','dom6',
-                          'async1','async2','async3','async4','async5','async6','async7','async8','async9',
-                          'modern1','modern2','modern3','modern4','modern5','modern6','modern7','modern8','modern9','modern10'];
-  const level2Count = completed.filter(s => level2Sections.includes(s)).length;
-  const level2Progress = document.getElementById('level2-progress');
-  if (level2Progress) level2Progress.value = level2Count;
-  updateProgressText('level2', level2Count, level2Sections.length);
-
-  // Level 3
-  const level3Sections = ['ts1','ts2','ts3','ts4','ts5','ts6','ts7','ts8',
-                          'react1','react2','react3','react4','react5','react6','react7','react8',
-                          'hooks1','hooks2','hooks3','hooks4','hooks5','hooks6','hooks7','hooks8','hooks9',
-                          'advanced1','advanced2','advanced3','advanced4','advanced5','advanced6','advanced7','advanced8'];
-  const level3Count = completed.filter(s => level3Sections.includes(s)).length;
-  const level3Progress = document.getElementById('level3-progress');
-  if (level3Progress) level3Progress.value = level3Count;
-  updateProgressText('level3', level3Count, level3Sections.length);
-
-  // Level 4
-  const level4Sections = ['node0','node1','node2','node3','node4','node5','node6','node7','node8',
-                          'api1','api2','api3','api4','api5','api6','api7','api8',
-                          'db1','db2','db3','db4','db5','db6','db7','db8','db9','db10','db11','db12','db13',
-                          'sec1','sec2','sec3','sec4','sec5','sec6','sec7','sec8','sec9','sec10','sec11','sec12',
-                          'test1','test2','test3','test4','test5','test6','test7','test8'];
-  const level4Count = completed.filter(s => level4Sections.includes(s)).length;
-  const level4Progress = document.getElementById('level4-progress');
-  if (level4Progress) level4Progress.value = level4Count;
-  updateProgressText('level4', level4Count, level4Sections.length);
-
-  // Level 5
-  const level5Sections = ['docker1','docker2','docker3','docker4','docker5','docker6','docker7','docker8','docker9','docker10',
-                          'k8s1','k8s2','k8s3','k8s4','k8s5','k8s6','k8s7','k8s8','k8s9','k8s10',
-                          'aws1','aws2','aws3','aws4','aws5','aws6','aws7','aws8','aws9','aws10','aws11','aws12','aws13',
-                          'tf1','tf2','tf3','tf4','tf5','tf6','tf7','tf8','tf9','tf10',
-                          'cicd1','cicd2','cicd3','cicd4','cicd5','cicd6','cicd7','cicd8',
-                          'obs1','obs2','obs3','obs4','obs5','obs6','obs7','obs8','obs9','obs10','obs11'];
-  const level5Count = completed.filter(s => level5Sections.includes(s)).length;
-  const level5Progress = document.getElementById('level5-progress');
-  if (level5Progress) level5Progress.value = level5Count;
-  updateProgressText('level5', level5Count, level5Sections.length);
-
-  // Level 6
-  const level6Sections = [
-    'oop1','oop2','oop3','oop4','oop5','oop6','oop7','oop8',
-    'solid1','solid2','solid3','solid4','solid5','solid6','solid7','solid8','solid9','solid10',
-    'pattern1','pattern2','pattern3','pattern4','pattern5','pattern6','pattern7','pattern8','pattern9','pattern10',
-    'behavior1','behavior2','behavior3','behavior4','behavior5','behavior6','behavior7','behavior8','behavior9','behavior10',
-    'arch1','arch2','arch3','arch4','arch5','arch6','arch7','arch8','arch9','arch10','arch11','arch12',
-    'clean1','clean2','clean3','clean4','clean5','clean6','clean7','clean8','clean9','clean10','clean11',
-    'ddd-s1','ddd-s2','ddd-s3','ddd-s4','ddd-s5','ddd-s6','ddd-s7','ddd-s8','ddd-s9','ddd-s10',
-    'ddd-t1','ddd-t2','ddd-t3','ddd-t4','ddd-t5','ddd-t6','ddd-t7','ddd-t8','ddd-t9','ddd-t10'
-  ];
-  const level6Count = completed.filter(s => level6Sections.includes(s)).length;
-  const level6Progress = document.getElementById('level6-progress');
-  if (level6Progress) level6Progress.value = level6Count;
-  updateProgressText('level6', level6Count, level6Sections.length);
-
-  // Level 7
-  const level7Sections = [
-    'data1','data2','data3','data4','data5','data6','data7','data8','data9','data10',
-    'dba1','dba2','dba3','dba4','dba5','dba6','dba7','dba8','dba9','dba10',
-    'cloud1','cloud2','cloud3','cloud4','cloud5','cloud6','cloud7','cloud8','cloud9','cloud10',
-    'cloud-a1','cloud-a2','cloud-a3','cloud-a4','cloud-a5','cloud-a6','cloud-a7','cloud-a8','cloud-a9','cloud-a10',
-    'req1','req2','req3','req4','req5','req6','req7','req8','req9','req10',
-    'nfr1','nfr2','nfr3','nfr4','nfr5','nfr6','nfr7','nfr8','nfr9','nfr10',
-    'ai1','ai2','ai3','ai4','ai5','ai6','ai7','ai8','ai9','ai10',
-    'ai-a1','ai-a2','ai-a3','ai-a4','ai-a5','ai-a6','ai-a7','ai-a8','ai-a9','ai-a10'
-  ];
-  const level7Count = completed.filter(s => level7Sections.includes(s)).length;
-  const level7Progress = document.getElementById('level7-progress');
-  if (level7Progress) level7Progress.value = level7Count;
-  updateProgressText('level7', level7Count, level7Sections.length);
-
-  // Level 8
-  const level8Sections = [
-    'testing1','testing2','testing3','testing4','testing5','testing6','testing7','testing8','testing9','testing10',
-    'unit1','unit2','unit3','unit4','unit5','unit6','unit7','unit8','unit9','unit10',
-    'int1','int2','int3','int4','int5','int6','int7','int8','int9','int10',
-    'e2e1','e2e2','e2e3','e2e4','e2e5','e2e6','e2e7','e2e8','e2e9','e2e10',
-    'tech1','tech2','tech3','tech4','tech5','tech6','tech7','tech8','tech9','tech10',
-    'tdd1','tdd2','tdd3','tdd4','tdd5','tdd6','tdd7','tdd8','tdd9','tdd10',
-    'ci1','ci2','ci3','ci4','ci5','ci6','ci7','ci8','ci9','ci10','ci11',
-    'qa1','qa2','qa3','qa4','qa5','qa6','qa7','qa8','qa9','qa10','qa11','qa12'
-  ];
-  const level8Count = completed.filter(s => level8Sections.includes(s)).length;
-  const level8Progress = document.getElementById('level8-progress');
-  if (level8Progress) level8Progress.value = level8Count;
-  updateProgressText('level8', level8Count, level8Sections.length);
-
-  // Level 9
-  const level9Sections = [
-    'agile1','agile2','agile3','agile4','agile5','agile6','agile7','agile8','agile9','agile10',
-    'gitrev1','gitrev2','gitrev3','gitrev4','gitrev5','gitrev6','gitrev7','gitrev8','gitrev9','gitrev10',
-    'comm1','comm2','comm3','comm4','comm5','comm6','comm7','comm8','comm9','comm10',
-    'proj1','proj2','proj3','proj4','proj5','proj6','proj7','proj8','proj9','proj10',
-    'sre1','sre2','sre3','sre4','sre5','sre6','sre7','sre8','sre9','sre10',
-    'obs9-1','obs9-2','obs9-3','obs9-4','obs9-5','obs9-6','obs9-7','obs9-8','obs9-9','obs9-10',
-    'lead1','lead2','lead3','lead4','lead5','lead6','lead7','lead8','lead9','lead10',
-    'career1','career2','career3','career4','career5','career6','career7','career8','career9','career10'
-  ];
-  const level9Count = completed.filter(s => level9Sections.includes(s)).length;
-  const level9Progress = document.getElementById('level9-progress');
-  if (level9Progress) level9Progress.value = level9Count;
-  updateProgressText('level9', level9Count, level9Sections.length);
+  // Level 0~9の進捗を一括更新
+  for (let i = 0; i <= 9; i++) {
+    const levelKey = 'level' + i;
+    const sections = getSectionsByLevel(levelKey);
+    const count = sections.filter(s => completedSet.has(s)).length;
+    const progressEl = document.getElementById(levelKey + '-progress');
+    if (progressEl) {
+      progressEl.max = sections.length;
+      progressEl.value = count;
+    }
+    updateProgressText(levelKey, count, sections.length);
+  }
 
   // 実践問題集
-  const exercisesSections = [
-    'ex-t1-1','ex-t1-2','ex-t1-3','ex-t1-4','ex-t1-5','ex-t1-6','ex-t1-7','ex-t1-8','ex-t1-9','ex-t1-10','ex-t1-11','ex-t1-12','ex-t1-13','ex-t1-14','ex-t1-15','ex-t1-16','ex-t1-17',
-    'ex-t2-1','ex-t2-2','ex-t2-3','ex-t2-4','ex-t2-5','ex-t2-6','ex-t2-7','ex-t2-8','ex-t2-9','ex-t2-10','ex-t2-11','ex-t2-12','ex-t2-13','ex-t2-14','ex-t2-15','ex-t2-16','ex-t2-17',
-    'ex-t3-1','ex-t3-2','ex-t3-3','ex-t3-4','ex-t3-5','ex-t3-6','ex-t3-7','ex-t3-8','ex-t3-9','ex-t3-10','ex-t3-11','ex-t3-12','ex-t3-13','ex-t3-14','ex-t3-15','ex-t3-16','ex-t3-17',
-    'ex-t4-1','ex-t4-2','ex-t4-3','ex-t4-4','ex-t4-5','ex-t4-6','ex-t4-7','ex-t4-8','ex-t4-9','ex-t4-10','ex-t4-11','ex-t4-12','ex-t4-13','ex-t4-14','ex-t4-15','ex-t4-16','ex-t4-17',
-    'ex-t5-1','ex-t5-2','ex-t5-3','ex-t5-4','ex-t5-5','ex-t5-6','ex-t5-7','ex-t5-8','ex-t5-9','ex-t5-10','ex-t5-11','ex-t5-12','ex-t5-13','ex-t5-14','ex-t5-15','ex-t5-16','ex-t5-17','ex-t5-18',
-    'ex-t6-1','ex-t6-2','ex-t6-3','ex-t6-4','ex-t6-5','ex-t6-6','ex-t6-7','ex-t6-8','ex-t6-9','ex-t6-10','ex-t6-11','ex-t6-12','ex-t6-13','ex-t6-14','ex-t6-15','ex-t6-16','ex-t6-17','ex-t6-18',
-    'ex-t7-1','ex-t7-2','ex-t7-3','ex-t7-4','ex-t7-5','ex-t7-6','ex-t7-7','ex-t7-8','ex-t7-9','ex-t7-10','ex-t7-11','ex-t7-12','ex-t7-13','ex-t7-14','ex-t7-15','ex-t7-16','ex-t7-17','ex-t7-18',
-    'ex-t8-1','ex-t8-2','ex-t8-3','ex-t8-4','ex-t8-5','ex-t8-6','ex-t8-7','ex-t8-8','ex-t8-9','ex-t8-10','ex-t8-11','ex-t8-12','ex-t8-13','ex-t8-14','ex-t8-15','ex-t8-16','ex-t8-17','ex-t8-18',
-    'ex-ai-1','ex-ai-2','ex-ai-3','ex-ai-4','ex-ai-5','ex-ai-6','ex-ai-7','ex-ai-8','ex-ai-9','ex-ai-10','ex-ai-11','ex-ai-12','ex-ai-13','ex-ai-14','ex-ai-15','ex-ai-16','ex-ai-17',
-    'ex-t9-1','ex-t9-2','ex-t9-3','ex-t9-4','ex-t9-5','ex-t9-6','ex-t9-7','ex-t9-8','ex-t9-9','ex-t9-10','ex-t9-11','ex-t9-12','ex-t9-13','ex-t9-14','ex-t9-15'
-  ];
-  const exercisesCount = completed.filter(s => exercisesSections.includes(s)).length;
+  const exercisesSections = getSectionsByLevel('exercises');
+  const exercisesCount = exercisesSections.filter(s => completedSet.has(s)).length;
   const exercisesProgress = document.getElementById('exercises-progress');
-  if (exercisesProgress) exercisesProgress.value = exercisesCount;
+  if (exercisesProgress) {
+    exercisesProgress.max = exercisesSections.length;
+    exercisesProgress.value = exercisesCount;
+  }
   const exercisesText = document.getElementById('exercises-progress-text');
   if (exercisesText) exercisesText.textContent = exercisesCount + ' / ' + exercisesSections.length;
 
@@ -1395,7 +1345,7 @@ function updateProgress() {
 // 次のステップ表示更新
 // ============================================
 function updateNextStep() {
-  const completed = JSON.parse(localStorage.getItem('completedSections') || '[]');
+  const completed = safeGetLocalStorage('completedSections', []);
   const nextStepText = document.getElementById('next-step-text');
   const nextStepCard = document.getElementById('next-step-card');
   if (!nextStepText || !nextStepCard) return;
@@ -1435,7 +1385,7 @@ function updateNextStep() {
 // ============================================
 function goToLevel(event, firstSection, sections) {
   event.preventDefault();
-  const completed = JSON.parse(localStorage.getItem('completedSections') || '[]');
+  const completed = safeGetLocalStorage('completedSections', []);
 
   // 未完了のセクションを見つける
   let target = firstSection;
@@ -1454,27 +1404,25 @@ function goToLevel(event, firstSection, sections) {
 // ============================================
 // トップに戻るボタン
 // ============================================
-(function() {
-  document.addEventListener('DOMContentLoaded', () => {
-    const backToTop = document.getElementById('back-to-top');
-    if (!backToTop) return;
+function initBackToTop() {
+  const backToTop = document.getElementById('back-to-top');
+  if (!backToTop) return;
 
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          if (window.scrollY > 300) {
-            backToTop.classList.add('visible');
-          } else {
-            backToTop.classList.remove('visible');
-          }
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }, { passive: true });
-  });
-})();
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        if (window.scrollY > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+}
 
 // ============================================
 // 進捗テキスト更新
@@ -1503,8 +1451,23 @@ function updateProgressText(levelId, count, max) {
   }
 }
 
-// 初期化
+// ============================================
+// 統合初期化（DOMContentLoaded）
+// ============================================
 document.addEventListener('DOMContentLoaded', () => {
+  // アコーディオン状態復元
+  restoreAccordionStates();
+
+  // ナビゲーション制御
+  initNavigation();
+
+  // 初期表示（ハッシュ対応）
+  handleInitialHash();
+
+  // トップに戻るボタン
+  initBackToTop();
+
+  // 完了状態・進捗の初期化
   applyCompletedStates();
   updateProgress();
 

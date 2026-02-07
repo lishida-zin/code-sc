@@ -281,7 +281,7 @@ console.log('3');        // → コールスタックで即実行
 setTimeout(() => console.log('B'), 0);
 console.log('C');</code></pre>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async1-q1" value="1">
             <span>A → B → C</span>
           </label>
@@ -289,7 +289,7 @@ console.log('C');</code></pre>
             <input type="radio" name="async1-q1" value="2">
             <span>A → C → B</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async1-q1" value="3">
             <span>B → A → C</span>
           </label>
@@ -473,11 +473,11 @@ getUser(userId, (error, user) => {
           <strong>クイズ：</strong>コールバック地獄の最大の問題点は？
         </p>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async2-q1" value="1">
             <span>実行速度が遅くなる</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async2-q1" value="2">
             <span>メモリを大量に消費する</span>
           </label>
@@ -501,7 +501,7 @@ getUser(userId, (error, user) => {
           <strong>クイズ2：</strong>コールバック地獄を解消する現代的な方法は？
         </p>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async2-q2" value="1">
             <span>関数を分割する</span>
           </label>
@@ -509,7 +509,7 @@ getUser(userId, (error, user) => {
             <input type="radio" name="async2-q2" value="2">
             <span>Promise / async-await を使う</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async2-q2" value="3">
             <span>コメントを増やす</span>
           </label>
@@ -787,11 +787,11 @@ getUser(id)
           <strong>クイズ：</strong>Promiseの状態として<strong>存在しない</strong>のは？
         </p>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async3-q1" value="1">
             <span>pending</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async3-q1" value="2">
             <span>fulfilled</span>
           </label>
@@ -955,11 +955,11 @@ Promise.resolve()
   .then(x => { x + 5; })  // ここに注目
   .then(x => console.log(x));</code></pre>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async4-q1" value="1">
             <span>25</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async4-q1" value="2">
             <span>20</span>
           </label>
@@ -984,7 +984,7 @@ Promise.resolve()
           <strong>クイズ2：</strong>Promiseチェーンでエラーが発生した場合、どこまで伝播する？
         </p>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async4-q2" value="1">
             <span>次の.then()で止まる</span>
           </label>
@@ -992,7 +992,7 @@ Promise.resolve()
             <input type="radio" name="async4-q2" value="2">
             <span>.catch()まで伝播する</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async4-q2" value="3">
             <span>すべての.then()を実行してから.catch()</span>
           </label>
@@ -1205,7 +1205,7 @@ async function processItems(items) {
   return data;
 }</code></pre>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async5-q1" value="1">
             <span>問題なし</span>
           </label>
@@ -1213,7 +1213,7 @@ async function processItems(items) {
             <input type="radio" name="async5-q1" value="2">
             <span>awaitが2箇所足りない</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async5-q1" value="3">
             <span>asyncが不要</span>
           </label>
@@ -1234,7 +1234,7 @@ async function processItems(items) {
           <strong>クイズ2：</strong>配列の各要素を順番に処理したい。正しいのは？
         </p>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async5-q2" value="1">
             <span>items.forEach(async (item) => await process(item))</span>
           </label>
@@ -1242,7 +1242,7 @@ async function processItems(items) {
             <input type="radio" name="async5-q2" value="2">
             <span>for (const item of items) await process(item)</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async5-q2" value="3">
             <span>items.map(item => process(item))</span>
           </label>
@@ -1265,7 +1265,7 @@ async function processItems(items) {
   return 42;
 }</code></pre>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async5-q3" value="1">
             <span>42（数値）</span>
           </label>
@@ -1273,7 +1273,7 @@ async function processItems(items) {
             <input type="radio" name="async5-q3" value="2">
             <span>Promise（42で解決される）</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async5-q3" value="3">
             <span>undefined</span>
           </label>
@@ -1539,11 +1539,11 @@ async function getData() {
           <strong>クイズ：</strong>finallyブロックが実行されるのは？
         </p>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async6-q1" value="1">
             <span>tryが成功した時だけ</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async6-q1" value="2">
             <span>catchが実行された時だけ</span>
           </label>
@@ -1572,7 +1572,7 @@ async function getData() {
 }</code></pre>
         </p>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async6-q2" value="1">
             <span>問題なし</span>
           </label>
@@ -1580,7 +1580,7 @@ async function getData() {
             <input type="radio" name="async6-q2" value="2">
             <span>エラーを握り潰している</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async6-q2" value="3">
             <span>finallyがない</span>
           </label>
@@ -1797,11 +1797,11 @@ async function checkout() {
   return { user, posts, comments };
 }</code></pre>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async7-q1" value="1">
             <span>問題なし</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async7-q1" value="2">
             <span>try/catchがない</span>
           </label>
@@ -1825,7 +1825,7 @@ async function checkout() {
           <strong>クイズ2：</strong>Promise.all と Promise.allSettled の違いは？
         </p>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async7-q2" value="1">
             <span>違いはない</span>
           </label>
@@ -1833,7 +1833,7 @@ async function checkout() {
             <input type="radio" name="async7-q2" value="2">
             <span>allは1つでも失敗すると即エラー、allSettledは全結果を返す</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async7-q2" value="3">
             <span>allSettledは速い</span>
           </label>
@@ -2053,7 +2053,7 @@ const data = await response.json();</code></pre>
           <strong>クイズ：</strong>fetch()のレスポンスでJSONを取得するには？
         </p>
         <div class="quiz-options">
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async8-q1" value="1">
             <span>response.data</span>
           </label>
@@ -2061,7 +2061,7 @@ const data = await response.json();</code></pre>
             <input type="radio" name="async8-q1" value="2">
             <span>await response.json()</span>
           </label>
-          <label class="quiz-option">
+          <label class="quiz-option" data-correct="false">
             <input type="radio" name="async8-q1" value="3">
             <span>JSON.parse(response)</span>
           </label>

@@ -63,7 +63,7 @@ export default LoginForm;</code></pre>
         inputタグにvalue属性がないため、制御コンポーネントとして機能しない
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-1')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-1')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -145,7 +145,7 @@ export default TodoList;</code></pre>
         keyにindexを使っているため、Reactの差分検出が正しく動作しない
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-2')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-2')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -233,7 +233,7 @@ export default ProductSearch;</code></pre>
         setResultsが非同期コールバック内にあるため、stateが更新されない。useRefを使う
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-3')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-3')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -316,7 +316,7 @@ export default ChatRoom;</code></pre>
         messagesのstateが毎回新しい配列を作成しているのが原因。useRefでメッセージを管理する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-4')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-4')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -412,7 +412,7 @@ export default ProductList;</code></pre>
         key属性にp.idを使っているため、Reactが毎回新しい要素として認識している
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-5')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-5')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -489,7 +489,7 @@ export default SortableTaskList;</code></pre>
         スプレッド演算子でコピーが浅いため、オブジェクトの参照が共有されている
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-6')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-6')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -571,7 +571,7 @@ export default NotificationBell;</code></pre>
         Reactのバグで、数値型のstateは条件付きレンダリングに使えない。Boolean()で変換する必要がある
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-7')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-7')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -648,7 +648,7 @@ export default Stopwatch;</code></pre>
         seconds.current += 1 は不正な操作。useRefは読み取り専用なのでエラーが発生している
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-8')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-8')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -743,7 +743,7 @@ function Logo() {
         各コンポーネント内でfetch APIを呼び出してユーザー情報を個別に取得する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-9')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-9')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -839,7 +839,7 @@ const initialState: CartState = { items: [], totalPrice: 0 };</code></pre>
         switch文にbreak文がないため、次のcaseにフォールスルーしている
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-10')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-10')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -922,7 +922,7 @@ function UserProfile() {
         containerStyle の useMemo だけ適切。オブジェクトは毎回新しい参照になるため常にメモ化すべき
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-11')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-11')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1014,7 +1014,7 @@ function Dashboard({ isLoggedIn }: { isLoggedIn: boolean }) {
         fetchの戻り値をawaitせずにjson()を呼んでいるため、Promiseの処理順が壊れている
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-12')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-12')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1096,7 +1096,7 @@ export default async function ProductPage({
         useStateの代わりにcookiesを使ってお気に入り状態を管理する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-13')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-13')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1206,7 +1206,7 @@ export default BlogArticle;</code></pre>
         コメントのstateがクライアント側のみで管理されているため、ページリロードでデータが消える
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-14')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-14')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1327,7 +1327,7 @@ export default ProfileEditor;</code></pre>
         3つの問題。最も深刻なのはstateの直接変更によりUIが更新されないこと
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-15')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-15')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1405,7 +1405,7 @@ function TodoList() {
         handleAdd で setTodos([...todos, input]) に変更し、handleRemove で setTodos(todos.filter((_, i) =&gt; i !== index)) に変更する
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-16')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-16')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1493,7 +1493,7 @@ function UserSearch() {
         fetchの前に AbortController を追加すればリクエストが重複しなくなるので、依存配列はそのままでよい
       </label>
     </div>
-    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-17')">回答する</button>
+    <button class="quiz-submit" onclick="checkQuiz('quiz-ex-t4-17')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 

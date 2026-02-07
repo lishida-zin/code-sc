@@ -194,7 +194,7 @@ git push -u origin feature/add-search
       確認クイズ
     </div>
     <p>GitHub Flow の特徴として正しいものはどれ？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev1" style="display:none;">
       <span>develop ブランチとrelease ブランチを使い分ける</span>
     </label>
@@ -202,11 +202,11 @@ git push -u origin feature/add-search
       <input type="radio" name="q-gitrev1" style="display:none;">
       <span>main ブランチと短命な feature ブランチだけで運用する</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev1" style="display:none;">
       <span>全員が main に直接コミットする</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev1')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev1')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -388,11 +388,11 @@ feat: 検索機能（API + UI + DB + テスト）
       確認クイズ
     </div>
     <p>PR運用のベストプラクティスとして最も適切なものはどれ？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev2" style="display:none;">
       <span>1つのPRにできるだけ多くの変更をまとめて効率化する</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev2" style="display:none;">
       <span>レビュアーは常に同じ人に固定する</span>
     </label>
@@ -400,7 +400,7 @@ feat: 検索機能（API + UI + DB + テスト）
       <input type="radio" name="q-gitrev2" style="display:none;">
       <span>PRを小さく保ち、テンプレートで背景を明記する</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev2')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev2')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -515,7 +515,7 @@ feat: 検索機能（API + UI + DB + テスト）
       確認クイズ
     </div>
     <p>コードレビューの目的として適切でないものはどれ？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev3" style="display:none;">
       <span>チームメンバーへの知識共有</span>
     </label>
@@ -523,11 +523,11 @@ feat: 検索機能（API + UI + DB + テスト）
       <input type="radio" name="q-gitrev3" style="display:none;">
       <span>ミスをした開発者を指摘し反省を促すこと</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev3" style="display:none;">
       <span>設計の改善点を見つけること</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev3')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev3')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -674,15 +674,15 @@ const result = await db.query(query, [userInput]);</code></pre>
       <input type="radio" name="q-gitrev4" style="display:none;">
       <span>チェックリストを用意し、セキュリティ・パフォーマンス・保守性などを網羅的に確認する</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev4" style="display:none;">
       <span>経験豊富なレビュアーなら直感でレビューすれば十分</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev4" style="display:none;">
       <span>コードスタイルの統一が最も重要なレビュー観点である</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev4')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev4')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -834,11 +834,11 @@ const result = await db.query(
       確認クイズ
     </div>
     <p>建設的なレビューコメントとして最も適切なものはどれ？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev5" style="display:none;">
       <span>「ここ間違ってます。直してください。」</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev5" style="display:none;">
       <span>「なんでこんな書き方したんですか？」</span>
     </label>
@@ -846,7 +846,7 @@ const result = await db.query(
       <input type="radio" name="q-gitrev5" style="display:none;">
       <span>「[should] この部分はメモリ効率の面で、配列の代わりにSetを使うと改善できそうです」</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev5')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev5')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -988,7 +988,7 @@ git merge feature/user-auth
       確認クイズ
     </div>
     <p>Squash Merge の特徴として正しいものはどれ？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev6" style="display:none;">
       <span>ブランチの全コミットが個別にmainに追加される</span>
     </label>
@@ -996,11 +996,11 @@ git merge feature/user-auth
       <input type="radio" name="q-gitrev6" style="display:none;">
       <span>複数のコミットを1つにまとめてマージし、クリーンな履歴を保つ</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev6" style="display:none;">
       <span>マージコミットが作成され、分岐の履歴が残る</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev6')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev6')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1126,11 +1126,11 @@ git commit -m "merge: feature/increase-retry のコンフリクトを解決"</co
       確認クイズ
     </div>
     <p>意味的コンフリクトについて正しい説明はどれ？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev7" style="display:none;">
       <span>Gitが自動検出してコンフリクトマーカーを挿入する</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev7" style="display:none;">
       <span>同じファイルの同じ行を変更した時に起きる</span>
     </label>
@@ -1138,7 +1138,7 @@ git commit -m "merge: feature/increase-retry のコンフリクトを解決"</co
       <input type="radio" name="q-gitrev7" style="display:none;">
       <span>Gitでは検出できないが、マージ後に論理的な矛盾が生じるもの</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev7')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev7')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1287,11 +1287,11 @@ gh pr checks &lt;PR番号&gt;</code></pre>
       確認クイズ
     </div>
     <p>ブランチ保護ルールの「Require status checks to pass」の効果はどれ？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev8" style="display:none;">
       <span>PRのタイトルが規約に沿っているかチェックする</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev8" style="display:none;">
       <span>コードの行数が多すぎる場合にマージをブロックする</span>
     </label>
@@ -1299,7 +1299,7 @@ gh pr checks &lt;PR番号&gt;</code></pre>
       <input type="radio" name="q-gitrev8" style="display:none;">
       <span>指定したCIジョブが成功しないとマージできないようにする</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev8')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev8')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1475,7 +1475,7 @@ documentation:
       確認クイズ
     </div>
     <p>Danger.js の主な役割として正しいものはどれ？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev9" style="display:none;">
       <span>コードのセキュリティ脆弱性を自動修正する</span>
     </label>
@@ -1483,11 +1483,11 @@ documentation:
       <input type="radio" name="q-gitrev9" style="display:none;">
       <span>PRのメタ情報を基にルールベースのチェックを行い、警告をPR上にコメントする</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev9" style="display:none;">
       <span>テストを自動生成してカバレッジを向上させる</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev9')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev9')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
@@ -1675,7 +1675,7 @@ Co-authored-by: Bob &lt;bob@example.com&gt;"</code></pre>
       確認クイズ
     </div>
     <p>ペアプログラミングの「Strong-style」とはどのようなルール？</p>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev10" style="display:none;">
       <span>経験豊富な方が常にドライバーを担当する</span>
     </label>
@@ -1683,11 +1683,11 @@ Co-authored-by: Bob &lt;bob@example.com&gt;"</code></pre>
       <input type="radio" name="q-gitrev10" style="display:none;">
       <span>アイデアはナビゲーターが口で伝え、ドライバーが手で実装する</span>
     </label>
-    <label class="quiz-option">
+    <label class="quiz-option" data-correct="false">
       <input type="radio" name="q-gitrev10" style="display:none;">
       <span>テストが全て通るまでドライバーを交代しない</span>
     </label>
-    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev10')">回答する</button>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-gitrev10')">答え合わせ</button>
     <div class="quiz-feedback"></div>
   </div>
 
